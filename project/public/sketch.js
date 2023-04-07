@@ -18,7 +18,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(3.0);
+		pixelDensity(1.0);
 	}
 	createCanvas(3600, 3600);
 	colorMode(HSB, 360, 100, 100, 100);
@@ -57,6 +57,6 @@ function INIT(seed) {
 		let y = random(-0.1, 1.1) * height;
 		movers.push(new Mover(x, y, hue, scl1, scl2, seed));
 	}
-
-	background(35, 20, 100);
+	let bgCol = spectral.mix('#fff', '#D79900', 0.038);
+	background(bgCol);
 }
