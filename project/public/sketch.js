@@ -1,5 +1,9 @@
 let features = '';
-
+let movers = [];
+let scl1;
+let scl2;
+let rseed;
+let nseed;
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
@@ -16,24 +20,43 @@ function setup() {
 	} else {
 		pixelDensity(3.0);
 	}
-	createCanvas(1500, 1500);
+	createCanvas(3600, 3600);
 	colorMode(HSB, 360, 100, 100, 100);
-	randomSeed(fxrand() * 10000);
-	noiseSeed(fxrand() * 10000);
-	console.log(features);
+	rseed = randomSeed(fxrand() * 10000);
+	nseed = noiseSeed(fxrand() * 10000);
+	INIT(rseed);
 }
 
 function draw() {
 	// put drawing code here
-	background(255);
-	noStroke();
-	fill(0, 100, 100);
+	for (let i = 0; i < movers.length; i++) {
+		for (let step = 0; step < 1; step++) {
+			movers[i].show();
+			movers[i].move();
+		}
+	}
 
-	if (features.shape_type == 'ellipse') {
-		ellipse(mouseX, mouseY, 100, 100);
+	if (frameCount > 150) {
+		console.log('done');
+		noLoop();
 	}
-	if (features.shape_type == 'rectangle') {
-		rectMode(CENTER);
-		rect(mouseX, mouseY, 100, 100);
+}
+
+function windowResized() {
+	resizeCanvas(windowWidth, windowHeight);
+	INIT(rseed);
+}
+
+function INIT(seed) {
+	movers = [];
+	scl1 = random(0.0001, 0.005);
+	scl2 = random(0.0001, 0.005);
+	let hue = random(360);
+	for (let i = 0; i < 100000; i++) {
+		let x = random(-0.1, 1.1) * width;
+		let y = random(-0.1, 1.1) * height;
+		movers.push(new Mover(x, y, hue, scl1, scl2, seed));
 	}
+
+	background(35, 20, 100);
 }
