@@ -20,7 +20,7 @@ function setup() {
 	} else {
 		pixelDensity(1.0);
 	}
-	createCanvas(3600, 3600);
+	createCanvas(5400, 3600);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -52,9 +52,15 @@ function INIT(seed) {
 	scl1 = random(0.0001, 0.005);
 	scl2 = random(0.0001, 0.005);
 	let hue = random(360);
+	let y = random(height / 1.5, height / 3);
+	let x = -100;
 	for (let i = 0; i < 100000; i++) {
-		let x = random(-0.1, 1.1) * width;
-		let y = random(-0.1, 1.1) * height;
+		// make x iterate from 0 to width with a step of 20 pixels
+		x += random(0.2);
+		// make y start at height/2 but every other steps it's position is affected by noise
+
+		y += map(noise(x * 0.0025, seed), 0, 1, -0.3, 0.3);
+
 		movers.push(new Mover(x, y, hue, scl1, scl2, seed));
 	}
 	let bgCol = spectral.mix('#fff', '#D79900', 0.038);
