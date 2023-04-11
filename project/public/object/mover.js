@@ -1,12 +1,11 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, seed) {
+	constructor(x, y, hue, scl1, scl2, ang1, ang2, seed) {
 		this.x = x;
 		this.y = y;
 		this.hue = hue;
 		this.sat = 50;
 		this.bri = 10;
-		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 4;
+		this.s = 3;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.seed = seed;
@@ -27,8 +26,8 @@ class Mover {
 		//this.sat = map(p.x, -4, 4, this.sat + 2, this.sat - 2, true);
 		//this.bri = map(p.x, -4, 4, this.bri - 2, this.bri + 2, true);
 
-		this.x += p.x / random(0.0001, 2.01) + random(-2.1, 0.1);
-		this.y += p.y / random(0.0001, 2.01) + random(-0.1, 2.1);
+		this.x += p.x / random(0.0001, 2.01) + random(-0.1, 0.1);
+		this.y += p.y / random(0.0001, 2.01) + random(-0.1, 3.1);
 		this.s += map(p.x, -4, 4, -0.1, 0.1);
 
 		/* 		if (this.hue < 0) {
@@ -56,8 +55,34 @@ class Mover {
 }
 
 function superCurve(x, y, scl1, scl2, seed) {
-	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
-	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4);
+	let nx = x,
+		ny = y,
+		a1 = ang1,
+		a2 = ang2,
+		scale1 = scl1,
+		scale2 = scl2,
+		dx,
+		dy;
+
+	dx = n3(nx, ny, scale1, 0);
+	dy = n3(ny, nx, scale2, 1);
+	nx += dx * a1;
+	ny += dy / a2;
+
+	dx = n3(nx, ny, scale1, 0);
+	dy = n3(ny, nx, scale2, 1);
+	nx += dx * a1;
+	ny += dy / a2;
+	dx = n3(nx, ny, scale1, 0);
+	dy = n3(ny, nx, scale2, 1);
+	nx += dx * a1;
+	ny += dy / a2;
+
+	let un = n3(nx, ny, scale1, 0);
+	let vn = n3(ny, nx, scale2, 1);
+
+	let u = map(un, -1, 1, -4, 4);
+	let v = map(vn, -1, 1, -4, 4);
 	//let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
 	//let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) - sin(x * scl2 * 0.2 + seed);
 	let p = createVector(u, v);
