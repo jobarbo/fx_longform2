@@ -49,18 +49,24 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.00001, 0.005);
-	scl2 = random(0.00001, 0.005);
-	ang1 = int(random([1, 50, 100, 500, 1000]));
-	ang2 = int(random([1, 50, 100, 500, 1000]));
-	console.log(scl1);
-	console.log(scl2);
-	console.log(ang1);
-	console.log(ang2);
+	scl1 = random(0.00001, 0.01);
+	scl2 = random(0.00001, 0.01);
+	ang1 = int(random(360));
+	ang2 = int(random(360));
+	console.log('scl1: ' + scl1);
+	console.log('scl2: ' + scl2);
+	console.log('ang1: ' + ang1);
+	console.log('ang2: ' + ang2);
 	let hue = random(360);
-	for (let i = 0; i < 100000; i++) {
-		let x = random(0.4, 0.6) * width;
-		let y = random(0.4, 0.6) * height;
+	let y = random(height / 1.5, height / 3);
+	let x = -100;
+	for (let i = 0; i < 50000; i++) {
+		// make x iterate from 0 to width with a step of 20 pixels
+		x += random(0.6);
+		// make y start at height/2 but every other steps it's position is affected by noise
+
+		y += map(noise(x * 0.006, seed), 0, 1, -0.43, 0.43);
+
 		movers.push(new Mover(x, y, hue, scl1, scl2, ang1, ang2, seed));
 	}
 	let bgCol = spectral.mix('#fff', '#D79900', 0.038);
