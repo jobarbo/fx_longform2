@@ -6,7 +6,7 @@ class Mover {
 		this.hue = hue;
 		this.sat = 50;
 		this.bri = 10;
-		this.s = 3;
+		this.s = 2;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.ang1 = ang1;
@@ -81,8 +81,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = n3(nx, ny, scale1, 2);
-	let vn = n3(nx, ny, scale2, 5);
+	let un = n3(nx, ny, scale1, 1);
+	let vn = n3(nx, ny, scale2, 2);
 
 	let u = map(un, -0.5, 0.5, -4, 4, true);
 	let v = map(vn, -0.5, 0.5, -4, 4, true);
