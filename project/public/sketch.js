@@ -32,8 +32,10 @@ function setup() {
 function draw() {
 	// put drawing code here
 	for (let i = 0; i < movers.length; i++) {
-		movers[i].show();
-		movers[i].move();
+		for (let j = 0; j < 1; j++) {
+			movers[i].show();
+			movers[i].move();
+		}
 	}
 
 	if (frameCount > 150) {
@@ -59,8 +61,15 @@ function INIT(seed) {
 	console.log(ang2);
 	let hue = random(360);
 	for (let i = 0; i < 100000; i++) {
+		/* 		// distribue the movers within a circle using polar coordinates
+		let r = randomGaussian(4, 2);
+		let theta = random(0, TWO_PI);
+		let x = width / 2 + r * cos(theta) * 100;
+		let y = height / 2 + r * sin(theta) * 100; */
+
 		let x = random(-0.1, 1.1) * width;
 		let y = random(-0.1, 1.1) * height;
+
 		movers.push(new Mover(x, y, hue, scl1, scl2, ang1, ang2, seed));
 	}
 	let bgCol = spectral.mix('#fff', '#D79900', 0.038);
