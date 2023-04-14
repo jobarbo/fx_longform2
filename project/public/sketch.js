@@ -67,8 +67,8 @@ function INIT(seed) {
 		let x = width / 2 + r * cos(theta) * 100;
 		let y = height / 2 + r * sin(theta) * 100; */
 
-		let x = random(-0.1, 1.1) * width;
-		let y = random(-0.1, 1.1) * height;
+		let x = random(0.2, 0.8) * width;
+		let y = random(0.2, 0.8) * height;
 
 		movers.push(new Mover(x, y, hue, scl1, scl2, ang1, ang2, seed));
 	}
