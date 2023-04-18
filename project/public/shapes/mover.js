@@ -116,11 +116,11 @@ function superCurve(x, y, scl1, scl2, scl3, ang1, ang2, seed) {
 		un =
 			sin(ny * scale1 * angOffset1 + nseed) +
 			cos(ny * scale2 * angOffset2 + nseed) +
-			sin(ny * scale3 * angOffset3 + nseed);
+			sin(ny * scale3 * angOffset1 + nseed);
 		vn =
-			sin(nx * scale1 * angOffset1 + nseed) -
-			cos(nx * scale2 * angOffset2 + nseed) +
-			sin(nx * scale3 * angOffset3 + nseed);
+			sin(nx * scale1 * angOffset2 + nseed) -
+			cos(nx * scale2 * angOffset1 + nseed) +
+			sin(nx * scale3 * angOffset2 + nseed);
 	}
 	let u = map(un, -3, 3, -4, 4, true);
 	let v = map(vn, -3, 3, -4, 4, true);
