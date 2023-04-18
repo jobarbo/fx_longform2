@@ -80,22 +80,22 @@ function superCurve(x, y, scl1, scl2, seed) {
 		dx,
 		dy;
 
-	dx = n3(nx, ny, scale1, 0);
-	dy = n3(ny, nx, scale2, 1);
+	dx = oct3(nx, ny, scale1, 0);
+	dy = oct3(ny, nx, scale2, 1);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = n3(nx, ny, scale1, 0);
-	dy = n3(ny, nx, scale2, 1);
+	dx = oct3(nx, ny, scale1, 0);
+	dy = oct3(ny, nx, scale2, 1);
 	nx += dx * a1;
 	ny += dy * a2;
-	dx = n3(nx, ny, scale1, 0);
-	dy = n3(ny, nx, scale2, 1);
+	dx = oct3(nx, ny, scale1, 0);
+	dy = oct3(ny, nx, scale2, 1);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = n3(nx, ny, scale1, 0);
-	let vn = n3(ny, nx, scale2, 1);
+	let un = oct3(nx, ny, scale1, 0);
+	let vn = oct3(ny, nx, scale2, 1);
 
 	let u = map(un, -1, 1, -4, 4);
 	let v = map(vn, -1, 1, 0, 4);
