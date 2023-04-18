@@ -39,13 +39,13 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
 
-		this.xRandDivider = random(0.000001, 2.1);
-		this.yRandDivider = random(0.000001, 2.1);
+		this.xRandDivider = random(0.0001, 2.1);
+		this.yRandDivider = random(0.00001, 2.1);
 		this.xRandSkipper = random(-1.1, 1.1);
 		this.yRandSkipper = random(-1.1, 1.1);
 
-		this.x += p.x / this.xRandDivider + this.xRandSkipper;
-		this.y += p.y / this.yRandDivider + this.yRandSkipper;
+		this.x += p.x / random(0.0001, 2) + random(-0.1, 0.1);
+		this.y += p.y / random(0.00001, 1.1) + random(0.1, 0.1);
 
 		this.s = map(p.x, -4, 4, 5, 1, true);
 		this.a = map(p.x, -4, 4, 10, 30, true);
@@ -99,8 +99,11 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	let un = oct3(nx, ny, scale1, 1);
 	let vn = oct3(nx, ny, scale2, 2);
 
-	let u = map(un, -0.5, 0.5, -4, 4, true);
-	let v = map(vn, -0.5, 0.5, -4, 4, true);
+	//let u = map(un, -0.5, 0.5, -4, 4, true);
+	//let v = map(vn, -0.5, 0.5, -4, 4, true);
+
+	let u = sin(ny * scale1 + seed) + cos(ny * scale2 + seed) + sin(ny * scale2 * 0.2 + seed);
+	let v = sin(nx * scale1 + seed) + cos(nx * scale2 + seed) - sin(nx * scale2 * 0.2 + seed);
 	let p = createVector(u, v);
 	return p;
 }
