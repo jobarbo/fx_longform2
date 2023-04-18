@@ -1,18 +1,19 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed) {
+	constructor(x, y, hue, scl1, scl2, scl3, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0, 5, 10, 10, 90, 100]);
-		this.initBri = random([0, 5, 10, 10, 20, 100]);
+		this.initSat = random([0, 5, 10, 10, 90, 100, 100]);
+		this.initBri = random([0, 5, 10, 10, 20, 90, 100]);
 		this.initAlpha = random(0, 60);
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.s = 3;
+		this.s = random([0.5, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
+		this.scl3 = scl3;
 		this.ang1 = ang1;
 		this.ang2 = ang2;
 		this.seed = seed;
@@ -37,7 +38,7 @@ class Mover {
 	}
 
 	move() {
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.ang1, this.ang2, this.seed);
 
 		/* 	this.xRandDivider = random(0.1, 5.1);
 		this.yRandDivider = random(0.1, 5.1);
@@ -71,13 +72,14 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
+function superCurve(x, y, scl1, scl2, scl3, ang1, ang2, seed) {
 	let nx = x,
 		ny = y,
 		a1 = ang1,
 		a2 = ang2,
 		scale1 = scl1,
 		scale2 = scl2,
+		scale3 = scl3,
 		dx,
 		dy,
 		nseed = seed;
@@ -89,9 +91,9 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 
 	let un = oct3(nx, ny, scale1, 1);
 	let vn = oct3(nx, ny, scale2, 2);
-	let angOffset1 = 100;
-	let angOffset2 = 100;
-	let angOffset3 = 100;
+	let angOffset1 = 1.2;
+	let angOffset2 = 11.4;
+	let angOffset3 = 1.2;
 	if (mode == 0) {
 		dx = oct3(nx, ny, scale1, 0);
 		dy = oct3(nx, ny, scale2, 1);
@@ -113,12 +115,12 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	} else {
 		un =
 			sin(ny * scale1 * angOffset1 + nseed) +
-			cos(nx * scale2 * angOffset2 + nseed) +
-			sin(ny * scale2 * angOffset3 + nseed);
+			cos(ny * scale2 * angOffset2 + nseed) +
+			sin(ny * scale3 * angOffset3 + nseed);
 		vn =
 			sin(nx * scale1 * angOffset1 + nseed) -
 			cos(nx * scale2 * angOffset2 + nseed) +
-			sin(ny * scale2 * angOffset3 + nseed);
+			sin(nx * scale3 * angOffset3 + nseed);
 	}
 	let u = map(un, -3, 3, -4, 4, true);
 	let v = map(vn, -3, 3, -4, 4, true);

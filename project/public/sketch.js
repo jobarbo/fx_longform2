@@ -49,8 +49,9 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.0001, 0.0008);
-	scl2 = random(0.0001, 0.0008);
+	scl1 = random(0.00001, 0.01);
+	scl2 = random(0.00001, 0.008);
+	scl3 = random(0.00001, 0.01);
 	ang1 = int(random(1000));
 	ang2 = int(random(1000));
 
@@ -78,7 +79,7 @@ function INIT(seed) {
 		let hueOffset = random(-20, 20);
 		let initHue = hue + hueOffset;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(new Mover(x, y, initHue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed));
+		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
 	let bgCol = spectral.mix('#000', '#faedcd', 0.938);
 	background(bgCol);
