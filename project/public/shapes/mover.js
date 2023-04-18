@@ -91,9 +91,9 @@ function superCurve(x, y, scl1, scl2, scl3, ang1, ang2, seed) {
 
 	let un = oct3(nx, ny, scale1, 1);
 	let vn = oct3(nx, ny, scale2, 2);
-	let angOffset1 = 1.2;
+	let angOffset1 = 10.2;
 	let angOffset2 = 11.4;
-	let angOffset3 = 1.2;
+	let angOffset3 = 9.2;
 	if (mode == 0) {
 		dx = oct3(nx, ny, scale1, 0);
 		dy = oct3(nx, ny, scale2, 1);
