@@ -49,22 +49,22 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.00001, 0.002);
-	scl2 = random(0.00001, 0.002);
+	scl1 = random(0.0001, 0.0008);
+	scl2 = random(0.0001, 0.0008);
 	ang1 = int(random(1000));
 	ang2 = int(random(1000));
 
-	xMin = 0.05;
-	xMax = 0.95;
-	yMin = 0.05;
-	yMax = 0.95;
+	xMin = 0.2;
+	xMax = 0.8;
+	yMin = 0.2;
+	yMax = 0.8;
 	/* xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
 	yMax = 1.05;*/
 
 	let hue = random(360);
-	for (let i = 0; i < 100000; i++) {
+	for (let i = 0; i < 10000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);

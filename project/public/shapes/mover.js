@@ -3,8 +3,8 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([40, 70, 90, 100]);
-		this.initBri = random([30, 80, 100]);
+		this.initSat = random([0, 5, 10, 10, 90, 100]);
+		this.initBri = random([0, 5, 10, 10, 20, 100]);
 		this.initAlpha = random(0, 60);
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -39,8 +39,8 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
 
-		/* 		this.xRandDivider = random(0.01, 5.1);
-		this.yRandDivider = random(0.01, 5.1);
+		/* 	this.xRandDivider = random(0.1, 5.1);
+		this.yRandDivider = random(0.1, 5.1);
 		this.xRandSkipper = random(-0.1, 0.1);
 		this.yRandSkipper = random(-0.1, 0.1); */
 
@@ -49,6 +49,10 @@ class Mover {
 
 		//this.s = map(p.x, -4, 4, 5, 1, true);
 		//this.a = map(p.x, -4, 4, 0, 30, true);
+
+		//shortand for if this.x is less than 0, set this.x to width and vice versa
+		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
+		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y;
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {
@@ -75,28 +79,47 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 		scale1 = scl1,
 		scale2 = scl2,
 		dx,
-		dy;
-	/*
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
-	nx += dx * a1;
-	ny += dy * a2;
+		dy,
+		nseed = seed;
 
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
-	nx += dx * a1;
-	ny += dy * a2;
+	//convert frameCount to a value equivalent to seconds
+	let mode = 1;
+	let t = int(frameCount / 60);
+	// every 5 seconds, change the seed
 
 	let un = oct3(nx, ny, scale1, 1);
-	let vn = oct3(nx, ny, scale2, 2); */
+	let vn = oct3(nx, ny, scale2, 2);
+	let angOffset1 = 100;
+	let angOffset2 = 100;
+	let angOffset3 = 100;
+	if (mode == 0) {
+		dx = oct3(nx, ny, scale1, 0);
+		dy = oct3(nx, ny, scale2, 1);
+		nx += dx * a1;
+		ny += dy * a2;
 
-	let un = sin(ny * scale1 * 10.0002 + seed) + cos(ny * scale2 * 20.0002 + seed) + sin(ny * scale2 * 5.0002 + seed);
-	let vn = sin(nx * scale1 * 10.0002 + seed) - cos(nx * scale2 * 20.0002 + seed) + sin(nx * scale2 * 5.0002 + seed);
+		dx = oct3(nx, ny, scale1, 0);
+		dy = oct3(nx, ny, scale2, 1);
+		nx += dx * a1;
+		ny += dy * a2;
+
+		dx = oct3(nx, ny, scale1, 0);
+		dy = oct3(nx, ny, scale2, 1);
+		nx += dx * a1;
+		ny += dy * a2;
+
+		un = oct3(nx, ny, scale1, 1);
+		vn = oct3(nx, ny, scale2, 2);
+	} else {
+		un =
+			sin(ny * scale1 * angOffset1 + nseed) +
+			cos(nx * scale2 * angOffset2 + nseed) +
+			sin(ny * scale2 * angOffset3 + nseed);
+		vn =
+			sin(nx * scale1 * angOffset1 + nseed) -
+			cos(nx * scale2 * angOffset2 + nseed) +
+			sin(ny * scale2 * angOffset3 + nseed);
+	}
 	let u = map(un, -3, 3, -4, 4, true);
 	let v = map(vn, -3, 3, -4, 4, true);
 
