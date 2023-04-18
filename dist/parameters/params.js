@@ -1,1 +1,0 @@
-const shapeArr=[["ellipse",50],["rectangle",50]];function generate_composition_params(e){return void 0===e&&(e=weighted_choice(shapeArr)),{shape_type:e}}

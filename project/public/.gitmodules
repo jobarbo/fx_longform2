@@ -1,3 +1,0 @@
-[submodule "public/library"]
-	path = public/library
-	url = https://github.com/jobarbo/generative-utils.git
