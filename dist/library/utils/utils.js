@@ -1,1 +1,0 @@
-function weighted_choice(e){let n=0;for(let t=0;t<e.length;++t)n+=e[t][1];const t=rand()*n;n=0;for(let r=0;r<e.length-1;++r)if(n+=e[r][1],n>=t)return e[r][0];return e[e.length-1][0]}rand=fxrand;

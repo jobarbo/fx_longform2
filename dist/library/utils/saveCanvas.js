@@ -1,1 +1,0 @@
-function keyPressed(){if("s"==key&&(keyIsDown(91)||keyIsDown(93)))return saveArtwork(),!1}function saveArtwork(){var e=new Date,t=e.getDate()+"_"+`${e.getMonth()+1}_`+e.getFullYear()+"_"+`${e.getHours()}:${e.getMinutes()}:${e.getSeconds()}.png`;save(t),console.log("saved "+t)}
