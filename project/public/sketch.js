@@ -41,7 +41,7 @@ function draw() {
 			movers[i].move();
 		}
 	}
-	if (frameCount > 5000) {
+	if (frameCount > 100) {
 		console.log('done');
 		noLoop();
 	}
@@ -53,9 +53,9 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random([0.00005, 0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03]);
-	scl2 = random([0.00005, 0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03]);
-	scl3 = random([0.00005, 0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03]);
+	scl1 = random([0.00005, 0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
+	scl2 = random([0.00005, 0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
+	scl3 = random([0.00005, 0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
 	ang1 = int(random(1000));
 	ang2 = int(random(1000));
 
@@ -77,7 +77,7 @@ function INIT(seed) {
 	let angOffset1 = random(1, 2);
 	let angOffset2 = random(1, 2);
 	let angOffset3 = random(1, 2);
-	for (let i = 0; i < 10000; i++) {
+	for (let i = 0; i < 30000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);

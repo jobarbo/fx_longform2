@@ -23,12 +23,12 @@ class Mover {
 		this.initHue = hue;
 		this.initSat = random([0, 5, 10, 10, 90, 100, 100]);
 		this.initBri = random([0, 5, 10, 10, 20, 90, 100]);
-		this.initAlpha = random(10, 30);
+		this.initAlpha = random(30, 60);
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.s = random([0.5, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 5]);
+		this.s = random([0.5, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 5, 5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
