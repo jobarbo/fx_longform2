@@ -2,4 +2,3 @@ node_modules/
 dist/
 dist-zipped/
 yarn.lock
-project/public/library/
