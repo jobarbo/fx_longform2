@@ -60,12 +60,12 @@ function INIT(seed) {
 	let hue = 45;
 	let y = random(height / 1.5, height / 3);
 	let x = -100;
-	for (let i = 0; i < 50000; i++) {
+	for (let i = 0; i < 15000; i++) {
 		// make x iterate from 0 to width with a step of 20 pixels
-		x += random(0.6);
+		x += width / 10000;
 		// make y start at height/2 but every other steps it's position is affected by noise
 
-		y += map(noise(x * 0.006, seed), 0, 1, -0.43, 0.43);
+		y += map(noise(x * 0.006, seed), 0, 1, -1.13, 1.13);
 
 		movers.push(new Mover(x, y, hue, scl1, scl2, ang1, ang2, seed));
 	}
