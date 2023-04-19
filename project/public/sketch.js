@@ -69,6 +69,6 @@ function INIT(seed) {
 
 		movers.push(new Mover(x, y, hue, scl1, scl2, ang1, ang2, seed));
 	}
-	let bgCol = spectral.mix('#fff', '#D79900', 0.038);
+	let bgCol = spectral.mix('#fff', '#D79900', 0.938);
 	background(bgCol);
 }
