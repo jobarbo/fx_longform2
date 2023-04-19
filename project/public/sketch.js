@@ -57,7 +57,7 @@ function INIT(seed) {
 	console.log('scl2: ' + scl2);
 	console.log('ang1: ' + ang1);
 	console.log('ang2: ' + ang2);
-	let hue = random(360);
+	let hue = 45;
 	let y = random(height / 1.5, height / 3);
 	let x = -100;
 	for (let i = 0; i < 50000; i++) {
@@ -69,6 +69,6 @@ function INIT(seed) {
 
 		movers.push(new Mover(x, y, hue, scl1, scl2, ang1, ang2, seed));
 	}
-	let bgCol = spectral.mix('#fff', '#D79900', 0.938);
+	let bgCol = spectral.mix('#fff', '#00152C', 0.999);
 	background(bgCol);
 }

@@ -3,8 +3,8 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.hue = hue;
-		this.sat = 50;
-		this.bri = 10;
+		this.sat = random(10, 100);
+		this.bri = random(70, 100);
 		this.s = 3;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
