@@ -5,6 +5,7 @@ class Mover {
 		this.hue = hue;
 		this.sat = random(10, 100);
 		this.bri = random(70, 100);
+		this.a = random(0, 20);
 		this.s = 3;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -19,7 +20,7 @@ class Mover {
 	show() {
 		//
 		//blendMode(SCREEN);
-		fill(this.hue, this.sat, this.bri, 10);
+		fill(this.hue, this.sat, this.bri, this.a);
 		noStroke();
 		rect(this.x, this.y, this.s);
 	}
