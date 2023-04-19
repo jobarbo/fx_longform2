@@ -41,10 +41,10 @@ function draw() {
 			movers[i].move();
 		}
 	}
-	if (frameCount > 100) {
+	/* 	if (frameCount > 100) {
 		console.log('done');
 		noLoop();
-	}
+	} */
 }
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
@@ -77,7 +77,7 @@ function INIT(seed) {
 	let angOffset1 = random(1, 2);
 	let angOffset2 = random(1, 2);
 	let angOffset3 = random(1, 2);
-	for (let i = 0; i < 30000; i++) {
+	for (let i = 0; i < 20000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
