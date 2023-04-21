@@ -99,11 +99,9 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	let un = oct3(nx, ny, scale1, 1);
 	let vn = oct3(nx, ny, scale2, 2);
 
-	//let u = map(un, -0.5, 0.5, -4, 4, true);
-	//let v = map(vn, -0.5, 0.5, -4, 4, true);
+	let u = map(un, -0.5, 0.5, -4, 4, true);
+	let v = map(vn, -0.5, 0.5, -4, 4, true);
 
-	let u = sin(ny * scale1 + seed) + cos(ny * scale2 + seed) + sin(ny * scale2 * 0.2 + seed);
-	let v = sin(nx * scale1 + seed) + cos(nx * scale2 + seed) - sin(nx * scale2 * 0.2 + seed);
 	let p = createVector(u, v);
 	return p;
 }
