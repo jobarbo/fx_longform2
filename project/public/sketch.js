@@ -27,7 +27,7 @@ function setup() {
 	} else {
 		pixelDensity(3.0);
 	}
-	createCanvas((30 * 300) / 3, (30 * 300) / 3);
+	createCanvas((16 * 300) / 3, (22 * 300) / 3);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000);
 	randomSeed(seed);
@@ -41,10 +41,10 @@ function draw() {
 			movers[i].move();
 		}
 	}
-	/* 	if (frameCount > 100) {
+	if (frameCount > 100) {
 		console.log('done');
 		noLoop();
-	} */
+	}
 }
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
@@ -113,6 +113,6 @@ function INIT(seed) {
 			)
 		);
 	}
-	let bgCol = spectral.mix('#000', '#faedcd', 0.938);
+	let bgCol = spectral.mix('#000', '#FAE8E0', 0.938);
 	background(bgCol);
 }
