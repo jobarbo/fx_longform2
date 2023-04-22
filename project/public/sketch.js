@@ -41,10 +41,10 @@ function draw() {
 			movers[i].move();
 		}
 	}
-	if (frameCount > 100) {
+	/* if (frameCount > 100) {
 		console.log('done');
 		noLoop();
-	}
+	} */
 }
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
