@@ -71,6 +71,7 @@ class Mover {
 			this.angOffset3,
 			this.seed
 		);
+		// after 1 second, change the scale
 
 		/* 		this.xRandDivider = random(0.001, 2.1);
 		this.yRandDivider = random(0.001, 2.1);
@@ -109,9 +110,9 @@ function superCurve(x, y, scl1, scl2, scl3, ang1, ang2, angOff1, angOff2, angOff
 		ny = y,
 		a1 = ang1,
 		a2 = ang2,
-		scale1 = 0.01,
-		scale2 = 0.1,
-		scale3 = 0.01,
+		scale1 = scl1,
+		scale2 = scl2,
+		scale3 = scl3,
 		angOffset1 = angOff1,
 		angOffset2 = angOff2,
 		angOffset3 = angOff3,
