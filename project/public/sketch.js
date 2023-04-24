@@ -78,15 +78,15 @@ function INIT(seed) {
 	let angOffset2 = random(1, 2);
 	let angOffset3 = random(1, 2);
 	for (let i = 0; i < 20000; i++) {
-		/* 		// distribue the movers within a circle using polar coordinates
+		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
 		let x = width / 2 + r * cos(theta) * 100;
-		let y = height / 2 + r * sin(theta) * 100; */
+		let y = height / 2 + r * sin(theta) * 100;
 
-		let x = random(xMin, xMax) * width;
+		/* 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
-
+ */
 		//let hueOffset = map(x, xMin * width, xMax * width, -10, 10);
 		let hueOffset = random(-10, 10);
 		let initHue = hue + hueOffset;

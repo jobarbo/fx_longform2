@@ -110,12 +110,12 @@ function superCurve(x, y, scl1, scl2, scl3, ang1, ang2, angOff1, angOff2, angOff
 		ny = y,
 		a1 = ang1,
 		a2 = ang2,
-		scale1 = scl1,
-		scale2 = scl2,
-		scale3 = scl3,
-		angOffset1 = angOff1,
-		angOffset2 = angOff2,
-		angOffset3 = angOff3,
+		scale1 = 0.01,
+		scale2 = 0.01,
+		scale3 = 0.01,
+		angOffset1 = 10,
+		angOffset2 = 10,
+		angOffset3 = 10,
 		dx,
 		dy,
 		nseed = seed;
@@ -129,8 +129,13 @@ function superCurve(x, y, scl1, scl2, scl3, ang1, ang2, angOff1, angOff2, angOff
 		sin(nx * scale2 * angOffset2 + nseed) +
 		cos(nx * scale3 * angOffset3 + nseed);
 
-	let u = map(un, -3, 3, -3, 3, true);
-	let v = map(vn, -3, 3, -3, 3, true);
+	let maxU = map(ny, 0, height, 3, -3, true);
+	let maxV = map(nx, 0, width, 3, -3, true);
+	let minU = map(ny, 0, height, -3, 3, true);
+	let minV = map(nx, 0, width, -3, 3, true);
+
+	let u = map(un, -0.1, 0.1, minU, maxU, true);
+	let v = map(vn, -0.1, 0.1, minV, maxV, true);
 
 	let p = createVector(u, v);
 	return p;
