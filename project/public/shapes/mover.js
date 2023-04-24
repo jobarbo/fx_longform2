@@ -23,7 +23,7 @@ class Mover {
 		this.initHue = hue;
 		this.initSat = random([0, 5, 10, 10, 90, 100, 100]);
 		this.initBri = random([0, 5, 10, 10, 20, 90, 100]);
-		this.initAlpha = random(30, 60);
+		this.initAlpha = random(10, 60);
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
@@ -110,12 +110,12 @@ function superCurve(x, y, scl1, scl2, scl3, ang1, ang2, angOff1, angOff2, angOff
 		ny = y,
 		a1 = ang1,
 		a2 = ang2,
-		scale1 = 0.01,
-		scale2 = 0.01,
-		scale3 = 0.01,
-		angOffset1 = 10,
-		angOffset2 = 10,
-		angOffset3 = 10,
+		scale1 = 0.02,
+		scale2 = 0.02,
+		scale3 = 0.02,
+		angOffset1 = angOff1,
+		angOffset2 = angOff2,
+		angOffset3 = angOff3,
 		dx,
 		dy,
 		nseed = seed;
