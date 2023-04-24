@@ -60,18 +60,18 @@ function INIT(seed) {
 	scl2 = random(0.00001, 0.005);
 	ang1 = int(random(1000));
 	ang2 = int(random(1000));
-	/*
-	xMin = 0.15;
+
+	/* 	xMin = 0.15;
 	xMax = 0.85;
 	yMin = 0.15;
-	yMax = 0.85;*/
+	yMax = 0.85; */
 	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
 	yMax = 1.05;
 
 	let hue = random(360);
-	for (let i = 0; i < 100000; i++) {
+	for (let i = 0; i < 80000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
@@ -81,7 +81,7 @@ function INIT(seed) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
-		let initHue = hue + random(-40, 40);
+		let initHue = hue + random(-10, 10);
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}

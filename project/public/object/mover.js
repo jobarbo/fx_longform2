@@ -3,14 +3,15 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random(0, 100);
-		this.initBri = random(0, 20);
-		this.initAlpha = random(0, 20);
+		this.initSat = random(40, 60);
+		this.initBri = random(0, 40);
+		this.initAlpha = 10;
+		this.initS = 3;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.s = 1;
+		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.ang1 = ang1;
@@ -33,26 +34,28 @@ class Mover {
 
 		fill(this.hue, this.sat, this.bri, this.a);
 		noStroke();
-		circle(this.x, this.y, this.s);
+		rect(this.x, this.y, this.s);
 	}
 
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
 
-		this.xRandDivider = random(0.0001, 2.1);
-		this.yRandDivider = random(0.00001, 2.1);
+		this.xRandDivider = random(0.001, 2.1);
+		this.yRandDivider = random(0.001, 2.1);
 		this.xRandSkipper = random(-1.1, 1.1);
 		this.yRandSkipper = random(-1.1, 1.1);
 
-		this.x += p.x / random(0.0001, 2) + random(-0.1, 0.1);
-		this.y += p.y / random(0.00001, 1.1) + random(0.1, 0.1);
+		this.x += p.x / this.xRandDivider + this.xRandSkipper;
+		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
-		this.s = map(p.x, -4, 4, 5, 1, true);
-		this.a = map(p.x, -4, 4, 10, 30, true);
-		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
+		let pxy = p.x + p.y;
+
+		this.a = map(pxy, -8, 8, this.initAlpha - 5, this.initAlpha + 5, true);
+		this.s = map(pxy, -8, 8, this.initS + 2, this.initS - 2, true);
+		this.hue = map(pxy, -8, 8, this.initHue - 60, this.initHue + 60);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		this.sat = map(p.x, -4, 4, 20, 60, true);
-		this.bri = map(p.x, -4, 4, 20, 10, true);
+		this.sat = map(pxy, -4, 4, this.initSat * 1.5, this.initSat - this.initSat, true);
+		this.bri = map(pxy, -8, 8, this.initBri - this.initBri, this.initBri * 1.5, true);
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {
@@ -81,23 +84,23 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 		dx,
 		dy;
 
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
+	dx = oct6(nx, ny, scale1, 0);
+	dy = oct6(nx, ny, scale2, 2);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
+	dx = oct6(nx, ny, scale1, 1);
+	dy = oct6(nx, ny, scale2, 3);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
+	dx = oct6(nx, ny, scale1, 1);
+	dy = oct6(nx, ny, scale2, 1);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct3(nx, ny, scale1, 1);
-	let vn = oct3(nx, ny, scale2, 2);
+	let un = oct6(nx, ny, scale1, 3);
+	let vn = oct6(nx, ny, scale2, 2);
 
 	let u = map(un, -0.5, 0.5, -4, 4, true);
 	let v = map(vn, -0.5, 0.5, -4, 4, true);
