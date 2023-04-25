@@ -25,7 +25,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(3.0);
+		pixelDensity(1.0);
 	}
 	createCanvas((16 * 300) / 3, (22 * 300) / 3);
 	colorMode(HSB, 360, 100, 100, 100);
@@ -53,11 +53,17 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random([0.00005, 0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
-	scl2 = random([0.00005, 0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
-	scl3 = random([0.00005, 0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
+	scl1 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
+	scl2 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
+	scl3 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
 	ang1 = int(random(1000));
 	ang2 = int(random(1000));
+
+	let hue = random(360);
+
+	let angOffset1 = random(10);
+	let angOffset2 = random(10);
+	let angOffset3 = random(10);
 
 	console.log('scl1', scl1);
 	console.log('scl2', scl2);
@@ -72,11 +78,6 @@ function INIT(seed) {
 	yMin = -0.05;
 	yMax = 1.05; */
 
-	let hue = random(360);
-
-	let angOffset1 = random(1, 2);
-	let angOffset2 = random(1, 2);
-	let angOffset3 = random(1, 2);
 	for (let i = 0; i < 20000; i++) {
 		// distribue the movers within a circle using polar coordinates
 		/* 		let r = randomGaussian(4, 2);
