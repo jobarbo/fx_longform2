@@ -21,8 +21,8 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0, 5, 10, 10, 90, 100, 100]);
-		this.initBri = random([0, 5, 10, 10, 20, 90, 100]);
+		this.initSat = random([0, 0, 5, 10, 10, 80, 90, 100, 100]);
+		this.initBri = random([10, 15, 20, 40, 50, 70, 90, 100]);
 		this.initAlpha = random(10, 60);
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -78,6 +78,11 @@ class Mover {
 		this.xRandSkipper = random(-0.01, 0.01);
 		this.yRandSkipper = random(-0.01, 0.01); */
 
+		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
+		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
+		this.sat = map(p.x, -4, 4, this.initSat - 20, this.initSat + 20, true);
+		this.bri = map(p.x, -4, 4, this.initBri - 20, this.initBri + 20, true);
+
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
@@ -118,26 +123,34 @@ function superCurve(x, y, scl1, scl2, scl3, ang1, ang2, angOff1, angOff2, angOff
 		nseed = seed;
 
 	un =
-		sin(nx * (scale1 * angOffset1) + nseed) -
-		cos(nx * (scale2 * angOffset2) + nseed) +
-		sin(nx * (scale3 * angOffset1) + nseed);
+		sin(nx * (scale1 * angOffset1) + nseed) +
+		cos(nx * (scale2 * angOffset2) + nseed) -
+		sin(nx * (scale3 * angOffset3) + nseed);
 	vn =
-		cos(ny * (scale1 * angOffset3) + nseed) -
-		sin(ny * (scale2 * angOffset2) + nseed) +
+		cos(ny * (scale1 * angOffset1) + nseed) +
+		sin(ny * (scale2 * angOffset2) + nseed) -
 		cos(ny * (scale3 * angOffset3) + nseed);
 
+	//! center focused
 	/* 	let maxU = map(ny, 0, height, 3, -3, true);
 	let maxV = map(nx, 0, width, 3, -3, true);
 	let minU = map(ny, 0, height, -3, 3, true);
 	let minV = map(nx, 0, width, -3, 3, true); */
 
-	let maxU = map(noise(ny * (scale1 * angOffset1) + nseed), 0, 1, 0, 3, true);
+	//! Wobbly noise square and stuff
+	/* 	let maxU = map(noise(ny * (scale1 * angOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * angOffset2) + nseed), 0, 1, 0, 3, true);
 	let minU = map(noise(ny * (scale2 * angOffset3) + nseed), 0, 1, -3, 0, true);
-	let minV = map(noise(nx * (scale3 * angOffset1) + nseed), 0, 1, -3, 0, true);
+	let minV = map(noise(nx * (scale3 * angOffset1) + nseed), 0, 1, -3, 0, true); */
 
-	let u = map(vn, -0.1, 0.1, minU, maxU, true);
-	let v = map(un, -0.1, 0.1, minV, maxV, true);
+	//! Standard
+	let maxU = random(0.001, 4);
+	let maxV = random(0.001, 4);
+	let minU = random(-4, -0.001);
+	let minV = random(-4, -0.001);
+
+	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -4, -0.001), map(ny, 0, height, 0.001, 4), minV, maxV, true);
 
 	let p = createVector(u, v);
 	return p;
