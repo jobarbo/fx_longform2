@@ -56,27 +56,25 @@ function INIT(seed) {
 	scl1 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
 	scl2 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
 	scl3 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
-	ang1 = 0;
-	ang2 = 0;
 
 	let hue = random(360);
 
-	let angOffset1 = int(random(12) + 1);
-	let angOffset2 = int(random(2) + 1);
-	let angOffset3 = int(random(2) + 1);
+	let sclOffset1 = int(random(12) + 1);
+	let sclOffset2 = int(random(2) + 1);
+	let sclOffset3 = int(random(2) + 1);
 
-	console.log('angOffset1', angOffset1);
-	console.log('angOffset2', angOffset2);
-	console.log('angOffset3', angOffset3);
+	console.log('sclOffset1', sclOffset1);
+	console.log('sclOffset2', sclOffset2);
+	console.log('sclOffset3', sclOffset3);
 
 	console.log('scl1', scl1);
 	console.log('scl2', scl2);
 	console.log('scl3', scl3);
 
-	xMin = 0.2;
-	xMax = 0.8;
-	yMin = 0.1;
-	yMax = 0.9;
+	xMin = 0.1;
+	xMax = 0.9;
+	yMin = 0.05;
+	yMax = 0.95;
 	/* 	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
@@ -93,7 +91,7 @@ function INIT(seed) {
 		let y = random(yMin, yMax) * height;
 
 		//let hueOffset = map(x, xMin * width, xMax * width, -10, 10);
-		let hueOffset = random(-180, 180);
+		let hueOffset = random(-20, 20);
 		let initHue = hue + hueOffset;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(
@@ -104,11 +102,9 @@ function INIT(seed) {
 				scl1,
 				scl2,
 				scl3,
-				ang1,
-				ang2,
-				angOffset1,
-				angOffset2,
-				angOffset3,
+				sclOffset1,
+				sclOffset2,
+				sclOffset2,
 				xMin,
 				xMax,
 				yMin,

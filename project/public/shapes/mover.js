@@ -6,11 +6,9 @@ class Mover {
 		scl1,
 		scl2,
 		scl3,
-		ang1,
-		ang2,
-		angOffset1,
-		angOffset2,
-		angOffset3,
+		sclOffset1,
+		sclOffset2,
+		sclOffset3,
 		xMin,
 		xMax,
 		yMin,
@@ -32,11 +30,9 @@ class Mover {
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
-		this.ang1 = ang1;
-		this.ang2 = ang2;
-		this.angOffset1 = angOffset1;
-		this.angOffset2 = angOffset2;
-		this.angOffset3 = angOffset3;
+		this.sclOffset1 = sclOffset1;
+		this.sclOffset2 = sclOffset2;
+		this.sclOffset3 = sclOffset3;
 		this.seed = seed;
 		this.xRandDivider = 1;
 		this.yRandDivider = 1;
@@ -66,22 +62,18 @@ class Mover {
 			this.scl3,
 			this.ang1,
 			this.ang2,
-			this.angOffset1,
-			this.angOffset2,
-			this.angOffset3,
+			this.sclOffset1,
+			this.sclOffset2,
+			this.sclOffset3,
 			this.seed
 		);
 		// after 1 second, change the scale
 
-		/* 		this.xRandDivider = random(0.001, 2.1);
-		this.yRandDivider = random(0.001, 2.1);
-		this.xRandSkipper = random(-0.01, 0.01);
-		this.yRandSkipper = random(-0.01, 0.01); */
-
-		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
-		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		this.sat = map(p.x, -4, 4, this.initSat - 20, this.initSat + 20, true);
-		this.bri = map(p.x, -4, 4, this.initBri - 20, this.initBri + 20, true);
+		//! crayon effect too
+		/* 		this.xRandDivider = random(0.1, 1.1);
+		this.yRandDivider = random(0.1, 1.1);
+		this.xRandSkipper = random(-0.001, 0.001);
+		this.yRandSkipper = random(-0.001, 0.001); */
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
@@ -107,29 +99,31 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, scl3, ang1, ang2, angOff1, angOff2, angOff3, seed) {
+function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let nx = x,
 		ny = y,
-		a1 = ang1,
-		a2 = ang2,
-		scale1 = scl1,
-		scale2 = scl2,
-		scale3 = scl3,
-		angOffset1 = angOff1,
-		angOffset2 = angOff2,
-		angOffset3 = angOff3,
-		dx,
-		dy,
+		scale1 = 0.04,
+		scale2 = 0.04,
+		scale3 = 0.04,
+		scaleOffset1 = 1,
+		scaleOffset2 = 1,
+		scaleOffset3 = 1,
+		noiseScale1 = 0.05,
+		noiseScale2 = 0.05,
+		noiseScale3 = 0.05,
+		noiseScaleOffset1 = 1,
+		noiseScaleOffset2 = 1,
+		noiseScaleOffset3 = 1,
 		nseed = seed;
 
 	un =
-		sin(nx * (scale1 * angOffset1) + nseed) +
-		cos(nx * (scale2 * angOffset2) + nseed) -
-		sin(nx * (scale3 * angOffset3) + nseed);
+		sin(nx * (scale1 * scaleOffset1) + nseed) +
+		cos(nx * (scale2 * scaleOffset2) + nseed) -
+		sin(nx * (scale3 * scaleOffset3) + nseed);
 	vn =
-		cos(ny * (scale1 * angOffset1) + nseed) +
-		sin(ny * (scale2 * angOffset2) + nseed) -
-		cos(ny * (scale3 * angOffset3) + nseed);
+		cos(ny * (scale1 * scaleOffset1) + nseed) +
+		sin(ny * (scale2 * scaleOffset2) + nseed) -
+		cos(ny * (scale3 * scaleOffset3) + nseed);
 
 	//! center focused
 	/* 	let maxU = map(ny, 0, height, 3, -3, true);
@@ -137,20 +131,69 @@ function superCurve(x, y, scl1, scl2, scl3, ang1, ang2, angOff1, angOff2, angOff
 	let minU = map(ny, 0, height, -3, 3, true);
 	let minV = map(nx, 0, width, -3, 3, true); */
 
-	//! Wobbly noise square and stuff
-	/* 	let maxU = map(noise(ny * (scale1 * angOffset1) + nseed), 0, 1, 0, 3, true);
-	let maxV = map(noise(nx * (scale2 * angOffset2) + nseed), 0, 1, 0, 3, true);
-	let minU = map(noise(ny * (scale2 * angOffset3) + nseed), 0, 1, -3, 0, true);
-	let minV = map(noise(nx * (scale3 * angOffset1) + nseed), 0, 1, -3, 0, true); */
+	//! pNoise x SineCos
+	let maxU = map(
+		oct6(ny * (scale1 * scaleOffset1) + nseed, nx * (scale2 * scaleOffset3) + nseed, noiseScale1, 1),
+		-0.5,
+		0.5,
+		0,
+		3,
+		true
+	);
+	let maxV = map(
+		oct6(nx * (scale2 * scaleOffset1) + nseed, ny * (scale1 * scaleOffset2) + nseed, noiseScale2, 2),
+		-0.5,
+		0.5,
+		0,
+		3,
+		true
+	);
+	let minU = map(
+		oct6(ny * (scale3 * scaleOffset1) + nseed, nx * (scale1 * scaleOffset3) + nseed, noiseScale3, 0),
+		-0.5,
+		0.5,
+		-3,
+		0,
+		true
+	);
+	let minV = map(
+		oct6(nx * (scale1 * scaleOffset2) + nseed, ny * (scale3 * scaleOffset3) + nseed, noiseScale2, 3),
+		-0.5,
+		0.5,
+		-3,
+		0,
+		true
+	);
 
-	//! Standard
-	let maxU = random(0.001, 4);
+	//! Wobbly noise square and stuff
+	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
+	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
+	let minU = map(noise(ny * (scale2 * scaleOffset3) + nseed), 0, 1, -3, 0, true);
+	let minV = map(noise(nx * (scale3 * scaleOffset1) + nseed), 0, 1, -3, 0, true); */
+
+	//! Crayon mode
+	/* 	let maxU = random(0.001, 4);
 	let maxV = random(0.001, 4);
 	let minU = random(-4, -0.001);
 	let minV = random(-4, -0.001);
+ */
+	//! Standard Mode
+	/* 	let maxU = 3;
+	let maxV = 3;
+	let minU = -3;
+	let minV = -3; */
 
+	//! Introverted
 	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
 	let v = map(un, map(ny, 0, height, -4, -0.001), map(ny, 0, height, 0.001, 4), minV, maxV, true);
+
+	//! Extroverted
+	/* 	let u = map(vn, map(ny, 0, width, -4, -0.001), map(ny, 0, width, 0.001, 4), minU, maxU, true);
+	let v = map(un, map(nx, 0, height, -4, -0.001), map(nx, 0, height, 0.001, 4), minV, maxV, true); */
+
+	//! Equilibrium
+	/* 	let u = map(vn, -3, 3, minU, maxU, true);
+	let v = map(un, -3, 3, minV, maxV, true); */
 
 	let p = createVector(u, v);
 	return p;
