@@ -3,10 +3,10 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random(40, 60);
+		this.initSat = random(10);
 		this.initBri = random(0, 40);
 		this.initAlpha = 10;
-		this.initS = 3;
+		this.initS = 2;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
@@ -48,14 +48,14 @@ class Mover {
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
-		let pxy = p.x + p.y;
+		//let pxy = p.x - p.y;
 
-		this.a = map(pxy, -8, 8, this.initAlpha - 5, this.initAlpha + 5, true);
-		this.s = map(pxy, -8, 8, this.initS + 2, this.initS - 2, true);
-		this.hue = map(pxy, -8, 8, this.initHue - 60, this.initHue + 60);
+		//this.a = map(p.x, -4, 4, this.initAlpha - 5, this.initAlpha + 5, true);
+		this.s = map(p.x, -4, 4, this.initS + 1, this.initS - 1, true);
+		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		this.sat = map(pxy, -4, 4, this.initSat * 1.5, this.initSat - this.initSat, true);
-		this.bri = map(pxy, -8, 8, this.initBri - this.initBri, this.initBri * 1.5, true);
+		this.sat = map(p.x, -4, 4, 0, 20, true);
+		this.bri = map(p.x, -4, 4, 0, 40, true);
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {

@@ -25,9 +25,9 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(1.0);
+		pixelDensity(3.0);
 	}
-	createCanvas(3600, 3600);
+	createCanvas((16 * 300) / 3, (22 * 300) / 3);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
