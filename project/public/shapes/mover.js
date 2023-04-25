@@ -102,9 +102,9 @@ class Mover {
 function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let nx = x,
 		ny = y,
-		scale1 = 0.04,
-		scale2 = 0.04,
-		scale3 = 0.04,
+		scale1 = scl1,
+		scale2 = scl2,
+		scale3 = scl3,
 		scaleOffset1 = 1,
 		scaleOffset2 = 1,
 		scaleOffset3 = 1,
@@ -133,34 +133,34 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 
 	//! pNoise x SineCos
 	let maxU = map(
-		oct6(ny * (scale1 * scaleOffset1) + nseed, nx * (scale2 * scaleOffset3) + nseed, noiseScale1, 1),
+		oct6(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1),
 		-0.5,
 		0.5,
 		0,
-		3,
+		23,
 		true
 	);
 	let maxV = map(
-		oct6(nx * (scale2 * scaleOffset1) + nseed, ny * (scale1 * scaleOffset2) + nseed, noiseScale2, 2),
+		oct6(nx * (scale2 * scaleOffset1) + nseed, nx * (scale1 * scaleOffset2) + nseed, noiseScale2, 2),
 		-0.5,
 		0.5,
 		0,
-		3,
+		23,
 		true
 	);
 	let minU = map(
-		oct6(ny * (scale3 * scaleOffset1) + nseed, nx * (scale1 * scaleOffset3) + nseed, noiseScale3, 0),
+		oct6(ny * (scale3 * scaleOffset1) + nseed, ny * (scale1 * scaleOffset3) + nseed, noiseScale3, 0),
 		-0.5,
 		0.5,
-		-3,
+		-23,
 		0,
 		true
 	);
 	let minV = map(
-		oct6(nx * (scale1 * scaleOffset2) + nseed, ny * (scale3 * scaleOffset3) + nseed, noiseScale2, 3),
+		oct6(nx * (scale1 * scaleOffset2) + nseed, nx * (scale3 * scaleOffset3) + nseed, noiseScale2, 3),
 		-0.5,
 		0.5,
-		-3,
+		-23,
 		0,
 		true
 	);

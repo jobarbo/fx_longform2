@@ -25,7 +25,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(1.0);
+		pixelDensity(3.0);
 	}
 	createCanvas((16 * 300) / 3, (22 * 300) / 3);
 	colorMode(HSB, 360, 100, 100, 100);
@@ -41,7 +41,7 @@ function draw() {
 			movers[i].move();
 		}
 	}
-	if (frameCount > 100) {
+	if (frameCount > 1500) {
 		console.log('done');
 		noLoop();
 	}
@@ -75,10 +75,10 @@ function INIT(seed) {
 	xMax = 0.9;
 	yMin = 0.05;
 	yMax = 0.95;
-	/* 	xMin = -0.05;
-	xMax = 1.05;
-	yMin = -0.05;
-	yMax = 1.05; */
+	/* 	xMin = -0.01;
+	xMax = 1.01;
+	yMin = -0.01;
+	yMax = 1.01; */
 
 	for (let i = 0; i < 20000; i++) {
 		// distribue the movers within a circle using polar coordinates
