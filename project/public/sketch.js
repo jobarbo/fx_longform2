@@ -6,6 +6,7 @@ let ang1;
 let ang2;
 let rseed;
 let nseed;
+let starPos = [];
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
@@ -20,26 +21,39 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(1.0);
+		pixelDensity(3.0);
 	}
-	createCanvas(3600, 3600);
+	createCanvas((16 * 300) / 3, (22 * 300) / 3);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
+	for (let i = 0; i < 10000; i++) {
+		// make stars
+		let x = random(width);
+		let y = random(height);
+		let size = random(0.1, 5);
+		let hue = random([0, 15, 20, 30, 40, 45, 170, 180, 190, 200, 210, 220]);
+		let sat = random(0, 70);
+		let bri = random(80, 100);
+		let alpha = random(80, 100);
+		let col = color(hue, sat, bri, alpha);
+		starPos.push({x: x, y: y, size: size, col: col});
+	}
 	INIT(rseed);
 }
 
 function draw() {
 	// put drawing code here
+
 	for (let i = 0; i < movers.length; i++) {
 		movers[i].show();
 		movers[i].move();
 	}
 
-	if (frameCount > 150) {
+	/* 	if (frameCount > 150) {
 		console.log('done');
 		noLoop();
-	}
+	} */
 }
 
 function windowResized() {
@@ -49,26 +63,45 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.00001, 0.01);
-	scl2 = random(0.00001, 0.01);
-	ang1 = int(random(360));
-	ang2 = int(random(360));
+	scl1 = 0.006;
+	scl2 = 0.006;
+	ang1 = 1;
+	ang2 = 1;
 	console.log('scl1: ' + scl1);
 	console.log('scl2: ' + scl2);
 	console.log('ang1: ' + ang1);
 	console.log('ang2: ' + ang2);
+
 	let hue = 45;
-	let y = random(height / 1.5, height / 3);
+	let y = random(height / 1.2, height / 1.5);
 	let x = -100;
-	for (let i = 0; i < 25000; i++) {
+	let bgCol = spectral.mix('#fff', '#00152C', 0.999);
+
+	background(bgCol);
+
+	for (let i = 0; i < starPos.length; i++) {
+		fill(starPos[i].col);
+		noStroke();
+		ellipse(starPos[i].x, starPos[i].y, starPos[i].size);
+	}
+
+	fill(230, 60, 10, 100);
+	strokeWeight(3);
+	stroke(hue, 90, 20, 100);
+	beginShape();
+	vertex(-100, height);
+	for (let i = 0; i < 55000; i++) {
 		// make x iterate from 0 to width with a step of 20 pixels
-		x += width / 20000;
+		x += width / 51000;
 		// make y start at height/2 but every other steps it's position is affected by noise
 
-		y += map(noise(x * 0.006, seed), 0, 1, -0.53, 0.53);
-
-		movers.push(new Mover(x, y, hue, scl1, scl2, ang1, ang2, seed));
+		y += map(noise(x * 0.007, seed), 0, 1, -0.1, 0.086);
+		ellipse();
+		vertex(x, y);
+		let initHue = hue + random(-40, 40);
+		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
+		movers.push(new Mover(x, y, initHue, scl1, scl2, ang1, ang2, seed));
 	}
-	let bgCol = spectral.mix('#fff', '#00152C', 0.999);
-	background(bgCol);
+	vertex(width + 100, height);
+	endShape(CLOSE);
 }
