@@ -27,7 +27,7 @@ function setup() {
 	} else {
 		pixelDensity(3.0);
 	}
-	createCanvas((16 * 300) / 3, (22 * 300) / 3);
+	createCanvas((16 * 300) / 3, (16 * 300) / 3);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -61,14 +61,14 @@ function INIT(seed) {
 	ang1 = int(random(1000));
 	ang2 = int(random(1000));
 
-	/* 	xMin = 0.15;
+	xMin = 0.15;
 	xMax = 0.85;
 	yMin = 0.15;
-	yMax = 0.85; */
-	xMin = -0.05;
+	yMax = 0.85;
+	/* 	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
-	yMax = 1.05;
+	yMax = 1.05; */
 
 	let hue = random(360);
 	for (let i = 0; i < 80000; i++) {
