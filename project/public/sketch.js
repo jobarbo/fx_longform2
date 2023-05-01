@@ -11,10 +11,10 @@ let xMax;
 let yMin;
 let yMax;
 let isBordered = false;
-function setup() {
-	console.log(features);
-	features = $fx.getFeatures();
 
+function setup() {
+	features = $fx.getFeatures();
+	console.log(features);
 	let formatMode = features.format_mode;
 	var ua = window.navigator.userAgent;
 	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
@@ -28,6 +28,7 @@ function setup() {
 		pixelDensity(3.0);
 	}
 	createCanvas((16 * 300) / 3, (16 * 300) / 3);
+	/* 	createCanvas(1080, 1920); */
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -42,10 +43,9 @@ function draw() {
 			movers[i].move();
 		}
 	}
-
 	if (frameCount > 100) {
-		console.log('done');
 		noLoop();
+		return;
 	}
 }
 
@@ -69,9 +69,9 @@ function INIT(seed) {
 	xMax = 1.05;
 	yMin = -0.05;
 	yMax = 1.05; */
-
+	rectMode(CENTER);
 	let hue = random(360);
-	for (let i = 0; i < 80000; i++) {
+	for (let i = 0; i < 100000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
