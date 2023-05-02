@@ -61,10 +61,10 @@ function INIT(seed) {
 	ang1 = int(random(1000));
 	ang2 = int(random(1000));
 
-	xMin = 0.15;
-	xMax = 0.85;
-	yMin = 0.15;
-	yMax = 0.85;
+	xMin = 0.25;
+	xMax = 0.75;
+	yMin = 0.25;
+	yMax = 0.75;
 	/* 	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
@@ -81,7 +81,7 @@ function INIT(seed) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
-		let initHue = hue + random(-10, 10);
+		let initHue = hue + random(-1, 1);
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
