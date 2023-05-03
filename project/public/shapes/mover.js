@@ -33,6 +33,7 @@ class Mover {
 		this.sclOffset1 = sclOffset1;
 		this.sclOffset2 = sclOffset2;
 		this.sclOffset3 = sclOffset3;
+
 		this.seed = seed;
 		this.xRandDivider = 1;
 		this.yRandDivider = 1;
@@ -60,8 +61,6 @@ class Mover {
 			this.scl1,
 			this.scl2,
 			this.scl3,
-			this.ang1,
-			this.ang2,
 			this.sclOffset1,
 			this.sclOffset2,
 			this.sclOffset3,
@@ -71,9 +70,10 @@ class Mover {
 
 		//! crayon effect too
 		/* 		this.xRandDivider = random(0.1, 1.1);
-		this.yRandDivider = random(0.1, 1.1);
+		this.yRandDivider = random(0.1, 1.1);*/
+
 		this.xRandSkipper = random(-0.001, 0.001);
-		this.yRandSkipper = random(-0.001, 0.001); */
+		this.yRandSkipper = random(-0.001, 0.001);
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
@@ -105,17 +105,13 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		scale1 = scl1,
 		scale2 = scl2,
 		scale3 = scl3,
-		scaleOffset1 = 1,
-		scaleOffset2 = 1,
-		scaleOffset3 = 1,
+		scaleOffset1 = sclOff1,
+		scaleOffset2 = sclOff1,
+		scaleOffset3 = sclOff2,
 		noiseScale1 = 0.05,
 		noiseScale2 = 0.05,
 		noiseScale3 = 0.05,
-		noiseScaleOffset1 = 1,
-		noiseScaleOffset2 = 1,
-		noiseScaleOffset3 = 1,
 		nseed = seed;
-
 	un =
 		sin(nx * (scale1 * scaleOffset1) + nseed) +
 		cos(nx * (scale2 * scaleOffset2) + nseed) -
@@ -137,7 +133,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		-0.5,
 		0.5,
 		0,
-		23,
+		4,
 		true
 	);
 	let maxV = map(
@@ -145,14 +141,14 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		-0.5,
 		0.5,
 		0,
-		23,
+		4,
 		true
 	);
 	let minU = map(
 		oct6(ny * (scale3 * scaleOffset1) + nseed, ny * (scale1 * scaleOffset3) + nseed, noiseScale3, 0),
 		-0.5,
 		0.5,
-		-23,
+		-4,
 		0,
 		true
 	);
@@ -160,7 +156,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		oct6(nx * (scale1 * scaleOffset2) + nseed, nx * (scale3 * scaleOffset3) + nseed, noiseScale2, 3),
 		-0.5,
 		0.5,
-		-23,
+		-4,
 		0,
 		true
 	);
@@ -175,8 +171,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	/* 	let maxU = random(0.001, 4);
 	let maxV = random(0.001, 4);
 	let minU = random(-4, -0.001);
-	let minV = random(-4, -0.001);
- */
+	let minV = random(-4, -0.001); */
+
 	//! Standard Mode
 	/* 	let maxU = 3;
 	let maxV = 3;

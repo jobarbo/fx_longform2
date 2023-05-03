@@ -59,7 +59,7 @@ function INIT(seed) {
 
 	let hue = random(360);
 
-	let sclOffset1 = int(random(12) + 1);
+	let sclOffset1 = int(random(2) + 1);
 	let sclOffset2 = int(random(2) + 1);
 	let sclOffset3 = int(random(2) + 1);
 
@@ -104,7 +104,7 @@ function INIT(seed) {
 				scl3,
 				sclOffset1,
 				sclOffset2,
-				sclOffset2,
+				sclOffset3,
 				xMin,
 				xMax,
 				yMin,
