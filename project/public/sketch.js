@@ -61,14 +61,14 @@ function INIT(seed) {
 	ang1 = int(random(1000));
 	ang2 = int(random(1000));
 
-	xMin = 0.25;
+	/* 	xMin = 0.25;
 	xMax = 0.75;
 	yMin = 0.25;
-	yMax = 0.75;
-	/* 	xMin = -0.05;
+	yMax = 0.75; */
+	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
-	yMax = 1.05; */
+	yMax = 1.05;
 	rectMode(CENTER);
 	let hue = random(360);
 	for (let i = 0; i < 100000; i++) {
