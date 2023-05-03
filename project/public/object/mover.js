@@ -111,8 +111,8 @@ function superCurve(x, y, initY, scl1, scl2, seed) {
 	let vn = oct6(ny, nx, scale2, 1);
 
 	let minV = map(currentY, iy, height, 4, -1);
-	let u = map(un, -1, 1, -4, 4);
-	let v = map(vn, -1, 1, minV, 4);
+	let u = map(un, -0.5, 0.5, -4, 4);
+	let v = map(vn, -0.5, 0.5, minV, 4);
 	//let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
 	//let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) - sin(x * scl2 * 0.2 + seed);
 	let p = createVector(u, v);

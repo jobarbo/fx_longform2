@@ -6,7 +6,6 @@ let ang1;
 let ang2;
 let rseed;
 let nseed;
-let starPos = [];
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
@@ -27,18 +26,6 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	for (let i = 0; i < 10000; i++) {
-		// make stars
-		let x = random(width);
-		let y = random(height);
-		let size = random(0.1, 5);
-		let hue = random([0, 15, 20, 30, 40, 45, 170, 180, 190, 200, 210, 220]);
-		let sat = random(0, 70);
-		let bri = random(80, 100);
-		let alpha = random(80, 100);
-		let col = color(hue, sat, bri, alpha);
-		starPos.push({x: x, y: y, size: size, col: col});
-	}
 	INIT(rseed);
 }
 
@@ -79,10 +66,19 @@ function INIT(seed) {
 
 	background(bgCol);
 
-	for (let i = 0; i < starPos.length; i++) {
-		fill(starPos[i].col);
+	for (let i = 0; i < 25000; i++) {
+		// make stars
+		let x = random(width);
+		let y = random(height);
+		let size = random(0.1, 5);
+		let hue = random([0, 15, 20, 30, 40, 45, 170, 180, 190, 200, 210, 220]);
+		let sat = random(0, 70);
+		let bri = random(100);
+		let alpha = random(100) * (1 - y / height);
+		let col = color(hue, sat, bri, alpha);
+		fill(col);
 		noStroke();
-		ellipse(starPos[i].x, starPos[i].y, starPos[i].size);
+		ellipse(x, y, size);
 	}
 
 	fill(230, 60, 10, 100);
