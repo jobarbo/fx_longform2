@@ -58,12 +58,12 @@ class Mover {
 
 		//let pxy = p.x - p.y;
 
-		//this.a = map(p.x, -4, 4, this.initAlpha - 5, this.initAlpha + 5, true);
-		//this.s = map(p.x, -24, 24, this.initS + 10, this.initS - 10, true);
-		this.hue += map(p.x, -20, 20, -0.1, 0.1, true);
+		//this.a = mapValue(p.x, -4, 4, this.initAlpha - 5, this.initAlpha + 5, true);
+		//this.s = mapValue(p.x, -24, 24, this.initS + 10, this.initS - 10, true);
+		this.hue += mapValue(p.x, -20, 20, -0.1, 0.1, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		//this.sat = map(p.x, -2, 2, 0, 20, true);
-		//this.bri = map(p.x, -2, 2, 0, 40, true);
+		//this.sat = mapValue(p.x, -2, 2, 0, 20, true);
+		//this.bri = mapValue(p.x, -2, 2, 0, 40, true);
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {
@@ -85,13 +85,13 @@ class Mover {
 function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	let nx = x,
 		ny = y,
-		a1 = 1,
-		a2 = 1,
+		a1 = ang1,
+		a2 = ang2,
 		scale1 = scl1,
 		scale2 = scl2,
 		dx,
 		dy;
-	/*
+
 	dx = oct1(nx, ny, scale1, 0);
 	dy = oct1(nx, ny, scale2, 2);
 	nx += dx * a1;
@@ -105,13 +105,13 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	dx = oct1(nx, ny, scale1, 1);
 	dy = oct1(nx, ny, scale2, 2);
 	nx += dx * a1;
-	ny += dy * a2; */
+	ny += dy * a2;
 
 	let un = oct1(nx, ny, scale1, 0);
 	let vn = oct1(nx, ny, scale2, 1);
 
-	let u = map(un, -0.0015, 0.15, -15, 15, true);
-	let v = map(vn, -0.15, 0.0015, -15, 15, true);
+	let u = mapValue(un, -0.0015, 0.15, -5, 5, true);
+	let v = mapValue(vn, -0.15, 0.0015, -5, 5, true);
 
 	let p = createVector(u, v);
 	return p;

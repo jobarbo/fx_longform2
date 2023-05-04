@@ -43,8 +43,9 @@ function draw() {
 			movers[i].move();
 		}
 	}
-	if (frameCount > 100) {
+	if (frameCount > 200) {
 		noLoop();
+		document.complete = true;
 		return;
 	}
 }
@@ -56,10 +57,10 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.00001, 0.005);
-	scl2 = random(0.00001, 0.005);
-	ang1 = int(random(1000));
-	ang2 = int(random(1000));
+	scl1 = random(0.001, 0.001);
+	scl2 = random(0.001, 0.001);
+	ang1 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
+	ang2 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
 
 	/* 	xMin = 0.25;
 	xMax = 0.75;
