@@ -11,6 +11,11 @@ let xMax;
 let yMin;
 let yMax;
 let isBordered = false;
+let drawing = false;
+
+P5Capture.setDefaultOptions({
+	format: 'mp4',
+});
 
 function setup() {
 	features = $fx.getFeatures();
@@ -25,10 +30,10 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(3.0);
+		pixelDensity(1.0);
 	}
-	createCanvas((16 * 300) / 3, (16 * 300) / 3);
-	/* 	createCanvas(1080, 1920); */
+	//createCanvas((16 * 300) / 3, (16 * 300) / 3);
+	createCanvas(1080, 1920);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -37,16 +42,28 @@ function setup() {
 
 function draw() {
 	// put drawing code here
-	for (let i = 0; i < movers.length; i++) {
-		for (let j = 0; j < 1; j++) {
-			movers[i].show();
-			movers[i].move();
-		}
+	// once the user has pressed the d key, start drawing
+	if (keyIsDown(68)) {
+		console.log('drawing');
+		drawing = true;
 	}
-	if (frameCount > 200) {
-		noLoop();
-		document.complete = true;
-		return;
+	console.log('drawing: ' + drawing);
+
+	if (drawing) {
+		// get current frame count
+		let fps = frameCount;
+		for (let i = 0; i < movers.length; i++) {
+			for (let j = 0; j < 1; j++) {
+				movers[i].show();
+				movers[i].move();
+			}
+		}
+
+		/* 		if (fps > 30) {
+			noLoop();
+			document.complete = true;
+			return;
+		} */
 	}
 }
 
