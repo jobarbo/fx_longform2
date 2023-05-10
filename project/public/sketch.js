@@ -12,10 +12,9 @@ let yMin;
 let yMax;
 let isBordered = false;
 let drawing = false;
-let scl1Off = 0.00001,
-	scl2Off = 0.00001,
-	ang1Off = 0,
-	ang2Off = 0;
+let easeAng = 0,
+	easeScalar = 0.001;
+cycleCount = 0;
 
 /* P5Capture.setDefaultOptions({
 	format: 'mp4',
@@ -42,6 +41,11 @@ function setup() {
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
 
+	scl1 = random(0.00001, 0.005);
+	scl2 = scl1;
+	ang1 = int(random(1000));
+	ang2 = int(random(1000));
+
 	INIT(rseed);
 }
 
@@ -53,17 +57,21 @@ function draw() {
 	}
 
 	// every 100 frames, save the canvas
-	if (scl2 < 0.005) {
-		if (frameCount % 100 == 0) {
-			console.log('done');
-			scl1Off *= 1.1;
-			scl2Off *= 1.1;
+
+	if (frameCount % 100 == 0) {
+		let cosIndex = cos(radians(easeAng));
+		console.log('cosIndex: ' + cosIndex);
+		if (cosIndex >= 1) {
+			cycleCount += 1;
+		}
+		if (cycleCount < 1) {
+			console.log('screenshot');
 			saveArtwork();
 			INIT(rseed);
-			//noLoop();
+		} else {
+			noLoop();
 		}
-	} else {
-		noLoop();
+		console.log('cycleCount: ' + cycleCount);
 	}
 }
 
@@ -74,34 +82,34 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
+	let easing = radians(easeAng);
+	scale1 = scl1 + easeScalar * cos(easing);
+	scale2 = scl2 + easeScalar * cos(easing);
+	/* 	ang1 = 952;
+	ang2 = 688; */
 
-	scl1 = random(0.00001, 0.005);
-	scl2 = random(0.00001, 0.005);
-	ang1 = int(random(1000));
-	ang2 = int(random(1000));
-	scl1 = 0.00053 + scl1Off;
-	scl2 = 0.00053 + scl2Off;
-	ang1 = 952;
-	ang2 = 688;
+	easeAng += 3;
 
-	console.log('scl1: ' + scl1);
-	console.log('scl2: ' + scl2);
+	console.log('scl1: ' + scale1);
+	console.log('scl2: ' + scale2);
 	console.log('ang1: ' + ang1);
 	console.log('ang2: ' + ang2);
 
-	xMin = 0.2;
+	console.log('cos(easing): ' + cos(easing));
+
+	/* 	xMin = 0.2;
 	xMax = 0.8;
-	yMin = 0.15;
-	yMax = 0.85;
-	/* 	xMin = -0.05;
+	yMin = 0.1;
+	yMax = 0.9; */
+	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
-	yMax = 1.05; */
+	yMax = 1.05;
 
 	let hue = random(360);
 	hue = 71.11800734885037;
 	console.log('hue: ' + hue);
-	for (let i = 0; i < 40000; i++) {
+	for (let i = 0; i < 100000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
@@ -113,7 +121,7 @@ function INIT(seed) {
 
 		let initHue = hue + random(-10, 10);
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(new Mover(x, y, initHue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed));
+		movers.push(new Mover(x, y, initHue, scale1, scale2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
 	let bgCol = spectral.mix('#fff', '#000', 0.138);
 	background(bgCol);

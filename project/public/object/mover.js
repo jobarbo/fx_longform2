@@ -49,8 +49,8 @@ class Mover {
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
 		//shortand for if this.x is less than 0, set this.x to width and vice versa
-		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
-		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y;
+		/* 		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
+		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y; */
 
 		let pxy = p.x - p.y;
 
