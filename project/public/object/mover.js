@@ -5,8 +5,8 @@ class Mover {
 		this.initHue = hue;
 		this.initSat = random([0, 0, 10, 20, 20, 40, 50, 60, 70, 80, 80, 90, 90, 100]);
 		this.initBri = random([10, 10, 20, 20, 40, 50, 60, 70, 80, 80, 90, 100]);
-		this.initAlpha = 10;
-		this.initS = 2;
+		this.initAlpha = 100;
+		this.initS = 0.5;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
