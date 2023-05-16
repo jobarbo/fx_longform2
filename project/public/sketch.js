@@ -11,7 +11,7 @@ let xMax;
 let yMin;
 let yMax;
 let isBordered = false;
-let drawing = false;
+let drawing = true;
 
 P5Capture.setDefaultOptions({
 	format: 'mp4',
@@ -32,8 +32,8 @@ function setup() {
 	} else {
 		pixelDensity(1.0);
 	}
-	//createCanvas((16 * 300) / 3, (16 * 300) / 3);
-	createCanvas(1080, 1920);
+	createCanvas((16 * 300) / 3, (16 * 300) / 3);
+	//createCanvas(1080, 1920);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
