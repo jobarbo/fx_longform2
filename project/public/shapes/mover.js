@@ -128,7 +128,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = map(nx, 0, width, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(
+	/* 	let maxU = map(
 		oct6(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1),
 		-0.5,
 		0.5,
@@ -159,7 +159,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		-4,
 		0,
 		true
-	);
+	); */
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
@@ -174,22 +174,22 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = random(-4, -0.001); */
 
 	//! Standard Mode
-	/* 	let maxU = 3;
+	let maxU = 3;
 	let maxV = 3;
 	let minU = -3;
-	let minV = -3; */
+	let minV = -3;
 
 	//! Introverted
-	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -4, -0.001), map(ny, 0, height, 0.001, 4), minV, maxV, true);
+	/* 	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -4, -0.001), map(ny, 0, height, 0.001, 4), minV, maxV, true); */
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, 0, width, -4, -0.001), map(ny, 0, width, 0.001, 4), minU, maxU, true);
 	let v = map(un, map(nx, 0, height, -4, -0.001), map(nx, 0, height, 0.001, 4), minV, maxV, true); */
 
 	//! Equilibrium
-	/* 	let u = map(vn, -3, 3, minU, maxU, true);
-	let v = map(un, -3, 3, minV, maxV, true); */
+	let u = map(vn, -3, 3, minU, maxU, true);
+	let v = map(un, -3, 3, minV, maxV, true);
 
 	let p = createVector(u, v);
 	return p;
