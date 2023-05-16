@@ -53,18 +53,17 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
-	scl2 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
-	scl3 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
-
-	/* 	scl1 = 0.1;
-	scl2 = 0.1;
-	scl3 = 0.1; */
+	scl1 = random([0.01, 0.03, 0.05, 0.075]);
+	scl2 = scl1 - 0.0015;
+	scl3 = scl2 - 0.0015;
+	/* 	scl1 = 0.05;
+	scl2 = 0.045;
+	scl3 = 0.04; */
 	let hue = random(360);
 
-	let sclOffset1 = int(random(2) + 1);
-	let sclOffset2 = int(random(2) + 1);
-	let sclOffset3 = int(random(2) + 1);
+	let sclOffset1 = int(random(10) + 1);
+	let sclOffset2 = int(random(10) + 1);
+	let sclOffset3 = int(random(10) + 1);
 
 	console.log('sclOffset1', sclOffset1);
 	console.log('sclOffset2', sclOffset2);
