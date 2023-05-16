@@ -7,8 +7,8 @@ class Mover {
 		this.sat = random([0, 10, 60, 80, 100]);
 		this.bri = random([30, 50, 70, 80, 90, 100]);
 		this.a = 0;
-		this.fa = random(0, 20);
-		this.s = 1;
+		this.fa = 100;
+		this.s = 0.5;
 		this.scl1init = scl1;
 		this.scl2init = scl2;
 		this.scl1 = map(this.y, this.initY, height, this.scl1init, this.scl1init - 0.05, true);
@@ -58,7 +58,7 @@ class Mover {
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
 		this.a = map(this.y, this.initY, this.initY + 5, 0, this.fa, true);
-		this.s = map(p.y, -4, 4, 0.0001, 2, true);
+		this.s = map(p.y, -4, 4, 0.4, 0.6, true);
 
 		this.scl1 = map(this.y, this.initY, height, this.scl1init, this.scl1init - 0.0025, true);
 		this.scl2 = map(this.y, this.initY, height, this.scl2init, this.scl2init - 0.0025, true);

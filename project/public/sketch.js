@@ -86,15 +86,15 @@ function INIT(seed) {
 	stroke(hue, 90, 20, 100);
 	beginShape();
 	vertex(-100, height);
-	for (let i = 0; i < 55000; i++) {
+	for (let i = 0; i < 16500; i++) {
 		// make x iterate from 0 to width with a step of 20 pixels
-		x += width / 51000;
+		x += width / 15100;
 		// make y start at height/2 but every other steps it's position is affected by noise
 
-		y += map(noise(x * 0.007, seed), 0, 1, -0.1, 0.086);
+		y += map(noise(x * 0.007, seed), 0, 1, -0.2, 0.2);
 		ellipse();
 		vertex(x, y);
-		let initHue = hue + random(-40, 40);
+		let initHue = hue + random(-10, 10);
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1, scl2, ang1, ang2, seed));
 	}
