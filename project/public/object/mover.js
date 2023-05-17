@@ -56,7 +56,7 @@ class Mover {
 
 		let mapVal = map(pxy, -4, 4, -1, 1, true);
 
-		this.hue = map(mapVal, -1, 1, this.initHue - 20, this.initHue + 20, true);
+		this.hue = map(mapVal, -1, 1, this.initHue - 50, this.initHue + 50, true);
 		this.sat = map(mapVal, -1, 1, this.initSat + 50, this.initSat - 50, true);
 		this.bri = map(mapVal, -1, 1, this.initBri - 50, this.initBri + 50, true);
 		// shorthand for if this.hue is less than 0, set this.hue to 360 and vice versa
