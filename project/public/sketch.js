@@ -27,7 +27,7 @@ function setup() {
 	} else {
 		pixelDensity(3.0);
 	}
-	createCanvas((16 * 300) / 3, (16 * 300) / 3);
+	createCanvas((16 * 300) / 3, (22 * 300) / 3);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -56,15 +56,15 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.00001, 0.005);
-	scl2 = random(0.00001, 0.005);
+	scl1 = random(0.001, 0.005);
+	scl2 = random(0.001, 0.005);
 	ang1 = int(random(1000));
 	ang2 = int(random(1000));
 
 	xMin = 0.15;
 	xMax = 0.85;
-	yMin = 0.15;
-	yMax = 0.85;
+	yMin = 0.1;
+	yMax = 0.9;
 	/* 	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
@@ -85,6 +85,6 @@ function INIT(seed) {
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix('#fff', '#000', 0.138);
+	let bgCol = spectral.mix('#fff', '#000', 0.938);
 	background(bgCol);
 }

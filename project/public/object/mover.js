@@ -3,8 +3,8 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0, 0, 10, 20, 20, 40, 50, 60, 70, 80, 80, 90, 90, 100]);
-		this.initBri = random([10, 10, 20, 20, 30, 40, 50, 60, 70, 70, 80, 80, 90, 100]);
+		this.initSat = random([20, 40, 50, 60, 70, 80, 80, 90, 90, 100]);
+		this.initBri = random([40, 50, 60, 70, 70, 80, 80, 90, 100]);
 		this.initAlpha = 100;
 		this.initS = 0.5;
 		this.hue = this.initHue;
@@ -40,8 +40,8 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
 
-		this.xRandDivider = random(2.001, 2.1);
-		this.yRandDivider = random(2.001, 2.1);
+		this.xRandDivider = random(0.01, 2.1);
+		this.yRandDivider = random(0.01, 2.1);
 		this.xRandSkipper = random(-1.1, 1.1);
 		this.yRandSkipper = random(-1.1, 1.1);
 
@@ -49,8 +49,8 @@ class Mover {
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
 		//shortand for if this.x is less than 0, set this.x to width and vice versa
-		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
-		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y;
+		this.x = this.x < -100 ? width + 100 : this.x > width + 100 ? -100 : this.x;
+		this.y = this.y < -100 ? height + 100 : this.y > height + 100 ? -100 : this.y;
 
 		let pxy = p.x - p.y;
 
