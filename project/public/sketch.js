@@ -43,11 +43,11 @@ function draw() {
 	} */
 }
 
-function windowResized() {
+/* function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 	INIT(rseed);
 }
-
+ */
 function INIT(seed) {
 	movers = [];
 	scl1 = 0.006;
