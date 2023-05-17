@@ -45,11 +45,11 @@ function setup() {
 	var webkit = !!ua.match(/WebKit/i);
 	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
 
-	// if safari mobile use pixelDensity(2.0) to make the canvas bigger else use pixelDensity(3.0)
-	if (iOSSafari) {
-		pixelDensity(1.0);
+	// if Safari mobile or any smartphone browser, use pixelDensity(0.5) to make the canvas bigger, else use pixelDensity(3.0)
+	if (iOSSafari || (iOS && !iOSSafari) || (!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))) {
+		pixelDensity(1);
 	} else {
-		pixelDensity(1.0);
+		pixelDensity(1);
 	}
 	createCanvas((22 * 300) / 1.5, (16 * 300) / 1.5);
 	randomSeed(fxrand() * 10000);
