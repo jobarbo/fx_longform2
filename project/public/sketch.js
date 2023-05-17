@@ -56,19 +56,19 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	colorMode(HSB, 360, 100, 100, 100);
 
-	bgHue = random([10, 30, 50, 180, 200]);
+	bgHue = random([30, 50, 180, 200, 220]);
 	background(bgHue, 23, 0);
-	landMinY = height / 3.9;
-	landMaxY = height / 1.9;
+	landMinY = height / 3.5;
+	landMaxY = height / 2;
 	landYoff = 0.0;
 	landAlpha = 10;
 	landSaturation = 10;
-	landBrightness = 85;
+	landBrightness = 60;
 	landStrokeSaturation = 30;
 	landStrokeBrightness = 100;
 	landStrokeAlpha = 5;
 	landStrokeWeight = 40;
-	landXoffIter = 0.01;
+	landXoffIter = 0.06;
 	landDone = false;
 	isReverted = false;
 
@@ -92,18 +92,6 @@ function setup() {
 	skyMaxY = height / 2;
 	skyYoff = 0.0;
 	skyDone = false;
-	/*
-	while (skyDone != true) {
-		createSky();
-	}
-
- 	if (skyDone) {
-		console.log("Sky Done");
-		while (landDone != true) {
-			createLand();
-			createOcean();
-		}
-	} */
 }
 
 function draw() {
@@ -132,46 +120,48 @@ function createLand() {
 
 			// Option #1: 2D Noise
 			let y = map(noise(landXoff, landYoff), 0, 1, landMinY, landMaxY);
-			let h = map(noise(landXoff, landYoff), 0, 1, 43, 47);
-			let s = map(noise(landXoff, landYoff), 0, 1, 60, 100);
-			let b = map(noise(landXoff, landYoff), 0, 1, 75, 85);
+			let h = map(noise(landXoff, landYoff), 0, 1, 25, 105);
+			let s = map(noise(landXoff, landYoff), 0, 1, 85, 100);
+			let b = map(noise(landXoff, landYoff), 0, 1, 85, 100);
 
 			// Option #2: 1D Noise
 			// let y = map(noise(landXoff), 0, 1, 200,300);
 			strokeWeight(landStrokeWeight);
-			stroke(h, s - 20, b + 20, landStrokeAlpha);
-			fill(h, s, b, landAlpha);
+			stroke(bgHue, landStrokeSaturation, landStrokeBrightness, landStrokeAlpha);
+			fill(h, landSaturation, landBrightness, landAlpha);
 			// Set the vertex
-
 			if (landMinY < height) {
 				curveVertex(x, y);
 				landXoff += landXoffIter;
-				landMinY += 0.0205;
-				landMaxY += 0.0205;
-				landXoffIter = map(y, height / 2, height, 0.02, 0.006, true);
-				if (landSaturation < 80) {
+				landMinY += 0.019;
+				landMaxY += 0.019;
+				landXoffIter = map(y, height / 2, height, 0.06, 0.1, true);
+				landAlpha = map(y, height / 2, height / 1.6, 0, 30, true);
+				landStrokeAlpha = map(y, height / 2, height / 1.8, 0, 5, true);
+				if (landSaturation < 90) {
 					landSaturation *= 1.0003;
 				}
-				if (landBrightness > 60) {
+				if (landBrightness > 70) {
 					landBrightness -= 0.001;
 				}
-				landAlpha = map(y, height / 3, height / 1.3, 0, 10, true);
-				landStrokeAlpha = map(y, height / 3, height / 1.3, 0, 10, true);
-				/* 		if (landStrokeAlpha > 2 && isReverted == false) {
-					landStrokeAlpha -= 0.000001;
+				/* 	if (landAlpha < 100) {
+					landAlpha += 0.001;
 				} */
-				if (landStrokeWeight > 6) {
-					landStrokeWeight -= 0.00045;
+				if (landStrokeAlpha > 2 && isReverted == false) {
+					//landStrokeAlpha -= 0.000001;
+				}
+				if (landStrokeWeight > 4) {
+					landStrokeWeight -= 0.0005;
 				} else {
 					isReverted = true;
 				}
 
 				if (isReverted) {
-					landStrokeWeight += 0.004;
+					landStrokeWeight += 0.002;
 					//landStrokeAlpha += 0.00001;
 				}
 				if (landStrokeSaturation > 0) {
-					landStrokeSaturation -= 0.00015;
+					landStrokeSaturation -= 0.00025;
 				}
 				if (landStrokeBrightness > 95) {
 					landStrokeBrightness -= 0.0001;
@@ -183,7 +173,7 @@ function createLand() {
 			// Increment x dimension for noise
 		}
 		// increment y dimension for noise
-		landYoff += 0.002;
+		landYoff += 0.01;
 		vertex(width + 100, height + 100);
 		vertex(-100, height + 100);
 		endShape(CLOSE);
@@ -218,9 +208,9 @@ function createOcean() {
 
 			// once every three times, change the water color
 			if (int(random(100)) % 21 == 0) {
-				if (waveStrokeAlpha > 2 && waveIsReverted == false) {
-					//waveStrokeAlpha -= 0.000001;
-				}
+				/* 	if (waveStrokeAlpha > 2 && waveIsReverted == false) {
+					waveStrokeAlpha -= 0.000001;
+				} */
 				if (waveStrokeWeight > 3) {
 					waveStrokeWeight -= 0.004;
 				} else {
@@ -268,8 +258,8 @@ function createOcean() {
 					waterFillAlpha *= 1.002;
 				} */
 
-				waterFillAlpha = map(y, height / 3, height / 2.95, 0, 5, true);
-				waveStrokeAlpha = map(y, height / 3, height / 2.95, 0, 10, true);
+				waterFillAlpha = map(y, height / 3, height / 2.8, 0, 10, true);
+				waveStrokeAlpha = map(y, height / 3, height / 2.8, 0, 15, true);
 
 				if (waterBrightness > 100) {
 					waterBrightness -= 0.002;
@@ -291,6 +281,7 @@ function createOcean() {
 		endShape(CLOSE);
 	}
 }
+
 function createSky() {
 	// SKY
 	strokeWeight(20);
@@ -307,15 +298,15 @@ function createSky() {
 
 		// Option #1: 2D Noise
 		let y = map(noise(skyXoff, skyYoff), 0, 1, skyMinY, skyMaxY);
-		let h = map(noise(skyXoff, skyYoff), 0, 1, bgHue - 40, bgHue + 40, true);
-		let s = map(noise(skyXoff, skyYoff), 0.2, 0.8, 20, 60);
+		let h = map(noise(skyXoff, skyYoff), 0.3, 1, bgHue - 30, bgHue + 30, true);
+		let s = map(noise(skyXoff, skyYoff), 0.3, 1, 40, 95);
 		let b = map(noise(skyXoff, skyYoff), 0, 1, 90, 100);
 
 		// Option #2: 1D Noise
 		// let y = map(noise(skyXoff), 0, 1, 200,300);
 		stroke(h, s, b, 5);
 		strokeWeight(20);
-		fill(h, s, b, 5);
+		fill(h, s, b, 10);
 
 		// Set the vertex
 		if (skyMaxY > 100) {
@@ -330,7 +321,7 @@ function createSky() {
 		// Increment x dimension for noise
 	}
 	// increment y dimension for noise
-	skyYoff += 0.02;
+	skyYoff += 0.01;
 	vertex(width + 100, -100);
 	vertex(-100, -100);
 	endShape(CLOSE);
