@@ -14,13 +14,13 @@ function setup() {
 	var webkit = !!ua.match(/WebKit/i);
 	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
 
-	// if safari mobile use pixelDensity(2.0) to make the canvas bigger else use pixelDensity(3.0)
-	if (iOSSafari) {
-		pixelDensity(1.0);
+	// if Safari mobile or any smartphone browser, use pixelDensity(0.5) to make the canvas bigger, else use pixelDensity(3.0)
+	if (iOSSafari || (iOS && !iOSSafari) || (!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))) {
+		pixelDensity(2);
 	} else {
-		pixelDensity(3.0);
+		pixelDensity(3);
 	}
-	createCanvas((22 * 300) / 3, (16 * 300) / 3);
+	createCanvas(16 * 100, 22 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
