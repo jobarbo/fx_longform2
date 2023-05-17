@@ -6,7 +6,7 @@ class Mover {
 		this.sat = 50;
 		this.bri = 10;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 4;
+		this.s = 0.1;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.seed = seed;
@@ -15,7 +15,7 @@ class Mover {
 	show() {
 		//
 		//blendMode(SCREEN);
-		fill(this.hue, this.sat, this.bri, 10);
+		fill(this.hue, this.sat, this.bri, 100);
 		noStroke();
 		rect(this.x, this.y, this.s);
 	}
@@ -29,7 +29,7 @@ class Mover {
 
 		this.x += p.x / random(0.0001, 2) + random(-0.1, 0.1);
 		this.y += p.y / random(0.00001, 1.1) + random(0.1, 0.1);
-		this.s += map(p.x, -4, 4, -0.1, 0.1);
+		this.s = map(p.x, -4, 4, 0.1, 0.5);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
