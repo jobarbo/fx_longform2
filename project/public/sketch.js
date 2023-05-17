@@ -18,9 +18,9 @@ function setup() {
 
 	// if safari mobile use pixelDensity(2.0) to make the canvas bigger else use pixelDensity(3.0)
 	if (iOSSafari) {
-		pixelDensity(1.0);
+		pixelDensity(3.0);
 	} else {
-		pixelDensity(1.0);
+		pixelDensity(3.0);
 	}
 	createCanvas((16 * 300) / 3, (22 * 300) / 3);
 	colorMode(HSB, 360, 100, 100, 100);
