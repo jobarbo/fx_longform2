@@ -42,8 +42,8 @@ class Mover {
 
 		this.xRandDivider = random(1.001, 2.1);
 		this.yRandDivider = random(1.001, 2.1);
-		this.xRandSkipper = random(-0.1, 5.1);
-		this.yRandSkipper = random(-0.1, 5.1);
+		this.xRandSkipper = random(-0.1, 2.1);
+		this.yRandSkipper = random(-0.1, 2.1);
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
