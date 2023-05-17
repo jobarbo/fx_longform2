@@ -155,8 +155,8 @@ function createLand() {
 				if (landBrightness > 60) {
 					landBrightness -= 0.001;
 				}
-				landAlpha = map(y, height / 3, height / 1.3, 0, 10, true);
-				landStrokeAlpha = map(y, height / 3, height / 1.3, 0, 10, true);
+				landAlpha = map(y, height / 3, height / 2, 0, 10, true);
+				landStrokeAlpha = map(y, height / 3, height / 2, 0, 10, true);
 				/* 		if (landStrokeAlpha > 2 && isReverted == false) {
 					landStrokeAlpha -= 0.000001;
 				} */
