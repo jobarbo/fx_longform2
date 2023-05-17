@@ -51,7 +51,7 @@ function setup() {
 	} else {
 		pixelDensity(3);
 	}
-	createCanvas(16 * 100, 22 * 100);
+	createCanvas(22 * 100, 16 * 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
 	colorMode(HSB, 360, 100, 100, 100);
