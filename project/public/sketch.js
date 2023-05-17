@@ -51,7 +51,7 @@ function setup() {
 	} else {
 		pixelDensity(1.0);
 	}
-	createCanvas((22 * 300) / 2, (16 * 300) / 2);
+	createCanvas((22 * 300) / 1.5, (16 * 300) / 1.5);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
 	colorMode(HSB, 360, 100, 100, 100);
@@ -268,8 +268,8 @@ function createOcean() {
 					waterFillAlpha *= 1.002;
 				} */
 
-				waterFillAlpha = map(y, height / 3, height / 2.8, 0, 5, true);
-				waveStrokeAlpha = map(y, height / 3, height / 2.8, 0, 10, true);
+				waterFillAlpha = map(y, height / 3, height / 2.95, 0, 5, true);
+				waveStrokeAlpha = map(y, height / 3, height / 2.95, 0, 10, true);
 
 				if (waterBrightness > 100) {
 					waterBrightness -= 0.002;
@@ -308,7 +308,7 @@ function createSky() {
 		// Option #1: 2D Noise
 		let y = map(noise(skyXoff, skyYoff), 0, 1, skyMinY, skyMaxY);
 		let h = map(noise(skyXoff, skyYoff), 0, 1, bgHue - 40, bgHue + 40, true);
-		let s = map(noise(skyXoff, skyYoff), 0, 1, 0, 85);
+		let s = map(noise(skyXoff, skyYoff), 0.2, 0.8, 20, 60);
 		let b = map(noise(skyXoff, skyYoff), 0, 1, 90, 100);
 
 		// Option #2: 1D Noise
