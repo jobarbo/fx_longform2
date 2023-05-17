@@ -46,10 +46,10 @@ function draw() {
 		noLoop();
 	}
 }
-function windowResized() {
+/* function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 	INIT(seed);
-}
+} */
 
 function INIT(seed) {
 	movers = [];
