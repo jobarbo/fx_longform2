@@ -313,9 +313,9 @@ function createSky() {
 
 		// Option #2: 1D Noise
 		// let y = map(noise(skyXoff), 0, 1, 200,300);
-		stroke(h, s, b, 5);
+		stroke(h, s, b, 50);
 		strokeWeight(20);
-		fill(h, s, b, 5);
+		fill(h, s, b, 50);
 
 		// Set the vertex
 		if (skyMaxY > 100) {
