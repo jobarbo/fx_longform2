@@ -50,8 +50,8 @@ function draw() {
  */
 function INIT(seed) {
 	movers = [];
-	scl1 = 0.006;
-	scl2 = 0.006;
+	scl1 = random(0.0005, 0.01);
+	scl2 = random(0.0005, 0.01);
 	ang1 = random([1, 5, 10, 25, 50, 75, 100, 200, 500, 1000]);
 	ang2 = random([1, 5, 10, 25, 50, 75, 100, 200, 500, 1000]);
 	console.log('scl1: ' + scl1);
@@ -70,7 +70,7 @@ function INIT(seed) {
 		// make stars
 		let x = random(width);
 		let y = random(height);
-		let size = random(0.1, 5);
+		let size = random(0.6, 5);
 		let hue = random([0, 15, 20, 30, 40, 45, 170, 180, 190, 200, 210, 220]);
 		let sat = random(0, 70);
 		let bri = random(100);
