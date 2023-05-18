@@ -52,8 +52,8 @@ function INIT(seed) {
 	movers = [];
 	scl1 = 0.006;
 	scl2 = 0.006;
-	ang1 = 1;
-	ang2 = 1;
+	ang1 = random([1, 5, 10, 25, 50, 75, 100, 200, 500, 1000]);
+	ang2 = random([1, 5, 10, 25, 50, 75, 100, 200, 500, 1000]);
 	console.log('scl1: ' + scl1);
 	console.log('scl2: ' + scl2);
 	console.log('ang1: ' + ang1);
@@ -66,7 +66,7 @@ function INIT(seed) {
 
 	background(bgCol);
 
-	for (let i = 0; i < 25000; i++) {
+	for (let i = 0; i < 55000; i++) {
 		// make stars
 		let x = random(width);
 		let y = random(height);

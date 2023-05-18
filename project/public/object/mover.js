@@ -5,7 +5,7 @@ class Mover {
 		this.initY = y;
 		this.hue = hue;
 		this.sat = random([0, 10, 60, 80, 100]);
-		this.bri = random([30, 50, 70, 80, 90, 100]);
+		this.bri = random([30, 40, 50, 70, 80, 90, 100]);
 		this.a = 0;
 		this.fa = 100;
 		this.s = 0.5;
@@ -49,8 +49,8 @@ class Mover {
 		this.sat = map(p.x, -4, 4, this.sat + 2, this.sat - 2, true);
 		this.bri = map(p.x, -4, 4, this.bri - 2, this.bri + 2, true); */
 
-		this.xRandDivider = random(0.01, 2.1);
-		this.yRandDivider = random(0.01, 2.1);
+		this.xRandDivider = random(0.01, 3.1);
+		this.yRandDivider = random(0.01, 3.1);
 		this.xRandSkipper = random(-0.1, 0.1);
 		this.yRandSkipper = random(-0.1, 0.1);
 
@@ -110,7 +110,7 @@ function superCurve(x, y, initY, scl1, scl2, seed) {
 	let un = oct6(nx, ny, scale1, 0);
 	let vn = oct6(ny, nx, scale2, 1);
 
-	let minV = map(currentY, iy, height, 4, -1);
+	let minV = map(currentY, iy, height + 300, 4, -1);
 	let u = map(un, -0.5, 0.5, -4, 4);
 	let v = map(vn, -0.5, 0.5, minV, 4);
 	//let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
