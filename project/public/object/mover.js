@@ -3,9 +3,12 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initY = y;
-		this.hue = hue;
-		this.sat = random([0, 10, 60, 80, 100]);
-		this.bri = random([30, 40, 50, 70, 80, 90, 100]);
+		this.inithue = hue;
+		this.initsat = random([0, 10, 60, 80, 100]);
+		this.initbri = random([30, 40, 50, 70, 80, 90, 100]);
+		this.hue = this.inithue;
+		this.sat = this.initsat;
+		this.bri = this.initbri;
 		this.a = 0;
 		this.fa = 100;
 		this.s = 0.5;
@@ -45,9 +48,9 @@ class Mover {
 			this.seed
 		);
 
-		/* 		this.hue = map(p.x, -4, 4, this.hue - 3, this.hue + 3, true);
-		this.sat = map(p.x, -4, 4, this.sat + 2, this.sat - 2, true);
-		this.bri = map(p.x, -4, 4, this.bri - 2, this.bri + 2, true); */
+		this.hue = map(p.x, -4, 4, this.inithue - 30, this.inithue + 30, true);
+		this.sat = map(p.x, -4, 4, this.initsat + 20, this.initsat - 20, true);
+		this.bri = map(p.x, -4, 4, this.initbri - 20, this.initbri + 20, true);
 
 		this.xRandDivider = random(0.01, 3.1);
 		this.yRandDivider = random(0.01, 3.1);
