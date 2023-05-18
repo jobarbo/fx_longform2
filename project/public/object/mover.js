@@ -5,7 +5,7 @@ class Mover {
 		this.initY = y;
 		this.inithue = hue;
 		this.initsat = random([0, 10, 60, 80, 100]);
-		this.initbri = random([30, 40, 50, 70, 80, 90, 100]);
+		this.initbri = random([50, 70, 80, 90, 100]);
 		this.hue = this.inithue;
 		this.sat = this.initsat;
 		this.bri = this.initbri;
@@ -48,9 +48,13 @@ class Mover {
 			this.seed
 		);
 
-		this.hue = map(p.x, -4, 4, this.inithue - 30, this.inithue + 30, true);
-		this.sat = map(p.x, -4, 4, this.initsat + 20, this.initsat - 20, true);
-		this.bri = map(p.x, -4, 4, this.initbri - 20, this.initbri + 20, true);
+		let pxy = p.x - p.y;
+
+		let mapVal = map(pxy, -4, 4, -1, 1, true);
+
+		this.hue = map(mapVal, -1, 1, this.inithue - 10, this.inithue + 10, true);
+		this.sat = map(mapVal, -1, 1, this.initsat + 40, this.initsat - 40, true);
+		this.bri = map(mapVal, -1, 1, this.initbri - 20, this.initbri + 20, true);
 
 		this.xRandDivider = random(0.01, 3.1);
 		this.yRandDivider = random(0.01, 3.1);
