@@ -40,8 +40,8 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
 
-		this.xRandDivider = random(0.01, 2.1);
-		this.yRandDivider = random(0.01, 2.1);
+		this.xRandDivider = random(0.1, 3.1);
+		this.yRandDivider = random(0.1, 3.1);
 		this.xRandSkipper = random(-1.1, 1.1);
 		this.yRandSkipper = random(-1.1, 1.1);
 
@@ -63,7 +63,7 @@ class Mover {
 		this.hue = this.hue < 0 ? this.hue + 360 : this.hue > 360 ? this.hue - 360 : this.hue;
 
 		//this.a = map(p.x, -4, 4, this.initAlpha - 5, this.initAlpha + 5, true);
-		this.s = map(mapVal, -4, 4, this.initS + 0.4, this.initS - 0.4, true);
+		this.s = map(mapVal, -1, 1, this.initS + 0.4, this.initS - 0.4, true);
 
 		//this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
 		/* 		this.sat = map(p.x, -4, 4, 0, 100, true);

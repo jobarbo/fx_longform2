@@ -23,7 +23,7 @@ function setup() {
 
 	// if Safari mobile or any smartphone browser, use pixelDensity(0.5) to make the canvas bigger, else use pixelDensity(3.0)
 	if (iOSSafari || (iOS && !iOSSafari) || (!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))) {
-		pixelDensity(2);
+		pixelDensity(1);
 	} else {
 		pixelDensity(3);
 	}
@@ -56,8 +56,8 @@ function draw() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.001, 0.005);
-	scl2 = random(0.001, 0.005);
+	scl1 = random(0.001, 0.006);
+	scl2 = random(0.001, 0.006);
 	ang1 = random([1, 5, 10, 25, 50, 75, 100, 200, 500, 1000]);
 	ang2 = random([1, 5, 10, 25, 50, 75, 100, 200, 500, 1000]);
 
@@ -71,7 +71,7 @@ function INIT(seed) {
 	yMax = 1.05; */
 
 	let hue = random(360);
-	for (let i = 0; i < 80000; i++) {
+	for (let i = 0; i < 100000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
