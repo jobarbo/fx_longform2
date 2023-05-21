@@ -23,7 +23,7 @@ function setup() {
 
 	// if Safari mobile or any smartphone browser, use pixelDensity(0.5) to make the canvas bigger, else use pixelDensity(3.0)
 	if (iOSSafari || (iOS && !iOSSafari) || (!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))) {
-		pixelDensity(1);
+		pixelDensity(0.5);
 	} else {
 		pixelDensity(3);
 	}
