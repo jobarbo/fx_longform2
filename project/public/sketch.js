@@ -32,7 +32,7 @@ function setup() {
 	} else {
 		pixelDensity(1.0);
 	}
-	createCanvas((16 * 300) / 3, (16 * 300) / 3);
+	createCanvas(16 * 100, 22 * 100);
 	//createCanvas(1080, 1920);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
@@ -76,6 +76,7 @@ function INIT(seed) {
 	movers = [];
 	scl1 = random(0.001, 0.001);
 	scl2 = random(0.001, 0.001);
+	random([0.0001, 0.1, 1, 1.5, 2, 2.5, 3]);
 	ang1 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
 	ang2 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
 
