@@ -71,7 +71,7 @@ function INIT(seed) {
 	yMax = 1.05; */
 
 	let hue = random(360);
-	for (let i = 0; i < 50000; i++) {
+	for (let i = 0; i < 150000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
@@ -85,6 +85,6 @@ function INIT(seed) {
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix('#fff', '#000', 0.938);
+	let bgCol = spectral.mix('#fff', '#000', random([0.1, 0.9]));
 	background(bgCol);
 }

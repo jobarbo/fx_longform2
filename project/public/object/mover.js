@@ -3,8 +3,8 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([20, 40, 50, 60, 70, 80, 80, 90, 90, 100]);
-		this.initBri = random([50, 60, 70, 70, 80, 80, 90, 100]);
+		this.initSat = random([20, 40, 50, 60, 70, 80, 90, 100]);
+		this.initBri = random([20, 40, 50, 60, 70, 80, 90, 100]);
 		this.initAlpha = 100;
 		this.initS = 0.6;
 		this.hue = this.initHue;
@@ -42,8 +42,6 @@ class Mover {
 
 		this.xRandDivider = random(0.1, 3.1);
 		this.yRandDivider = random(0.1, 3.1);
-		this.xRandSkipper = random(-1.1, 1.1);
-		this.yRandSkipper = random(-1.1, 1.1);
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
@@ -55,10 +53,9 @@ class Mover {
 		let pxy = p.x - p.y;
 
 		let mapVal = map(pxy, -4, 4, -1, 1, true);
-
 		this.hue = map(mapVal, -1, 1, this.initHue - 50, this.initHue + 50, true);
-		this.sat = map(mapVal, -1, 1, this.initSat + 50, this.initSat - 50, true);
-		this.bri = map(mapVal, -1, 1, this.initBri - 50, this.initBri + 50, true);
+		this.sat = map(mapVal, -1, 1, this.initSat + 20, this.initSat - 20, true);
+		this.bri = map(mapVal, -1, 1, this.initBri - 20, this.initBri + 20, true);
 		// shorthand for if this.hue is less than 0, set this.hue to 360 and vice versa
 		this.hue = this.hue < 0 ? this.hue + 360 : this.hue > 360 ? this.hue - 360 : this.hue;
 
