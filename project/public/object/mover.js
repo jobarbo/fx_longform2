@@ -1,12 +1,14 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed) {
+	constructor(x, y, xi, yi, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed) {
 		this.x = x;
 		this.y = y;
+		this.xi = xi;
+		this.yi = yi;
 		this.initHue = hue;
 		this.initSat = random([0, 0, 10, 20, 20, 40, 50, 60, 70, 80, 80, 90, 90, 100]);
 		this.initBri = random([10, 10, 20, 20, 40, 50, 60, 70, 80, 80, 90, 100]);
 		this.initAlpha = 100;
-		this.initS = 0.5;
+		this.initS = 0.6;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
@@ -38,10 +40,10 @@ class Mover {
 	}
 
 	move() {
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed, this.xi, this.yi);
 
-		this.xRandDivider = random(2.001, 2.1);
-		this.yRandDivider = random(2.001, 2.1);
+		this.xRandDivider = random(2, 2.1);
+		this.yRandDivider = random(2, 2.1);
 		this.xRandSkipper = random(-1.1, 1.1);
 		this.yRandSkipper = random(-1.1, 1.1);
 
@@ -56,14 +58,15 @@ class Mover {
 
 		let mapVal = map(pxy, -4, 4, -1, 1, true);
 
-		this.hue = map(mapVal, -1, 1, this.initHue - 20, this.initHue + 20, true);
-		this.sat = map(mapVal, -1, 1, this.initSat + 50, this.initSat - 50, true);
-		this.bri = map(mapVal, -1, 1, this.initBri - 50, this.initBri + 50, true);
+		this.hue = map(mapVal, -1, 1, this.initHue - 40, this.initHue + 40, true);
+		this.sat = map(mapVal, -1, 1, this.initSat + 20, this.initSat - 20, true);
+		this.bri = map(mapVal, -1, 1, this.initBri - 20, this.initBri + 20, true);
 		// shorthand for if this.hue is less than 0, set this.hue to 360 and vice versa
 		this.hue = this.hue < 0 ? this.hue + 360 : this.hue > 360 ? this.hue - 360 : this.hue;
 
 		//this.a = map(p.x, -4, 4, this.initAlpha - 5, this.initAlpha + 5, true);
-		this.s = map(p.x, -4, 4, this.initS + 0.4, this.initS - 0.4, true);
+		this.s += map(mapVal, -1, 1, -0.001, 0.001, true);
+		this.s = constrain(this.s, 0.2, 1.2);
 
 		//this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
 		/* 		this.sat = map(p.x, -4, 4, 0, 100, true);
@@ -86,9 +89,9 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
-	let nx = x,
-		ny = y,
+function superCurve(x, y, scl1, scl2, ang1, ang2, seed, xi, yi) {
+	let nx = x + xi,
+		ny = y + yi,
 		a1 = ang1,
 		a2 = ang2,
 		scale1 = scl1,
@@ -96,23 +99,23 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 		dx,
 		dy;
 
-	dx = oct6(nx, ny, scale1, 0);
-	dy = oct6(nx, ny, scale2, 2);
+	dx = oct1(nx, ny, scale1, 0);
+	dy = oct1(nx, ny, scale2, 2);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct6(nx, ny, scale1, 1);
-	dy = oct6(nx, ny, scale2, 3);
+	dx = oct1(nx, ny, scale1, 1);
+	dy = oct1(nx, ny, scale2, 3);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct6(nx, ny, scale1, 1);
-	dy = oct6(nx, ny, scale2, 1);
+	dx = oct1(nx, ny, scale1, 1);
+	dy = oct1(nx, ny, scale2, 1);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct6(nx, ny, scale1, 3);
-	let vn = oct6(nx, ny, scale2, 2);
+	let un = oct1(nx, ny, scale1, 3);
+	let vn = oct1(nx, ny, scale2, 2);
 
 	let u = map(un, -0.5, 0.5, -4, 4, true);
 	let v = map(vn, -0.5, 0.5, -4, 4, true);
