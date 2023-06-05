@@ -49,11 +49,6 @@ function draw() {
 	}
 }
 
-function windowResized() {
-	resizeCanvas(windowWidth, windowHeight);
-	INIT(rseed);
-}
-
 function INIT(seed) {
 	movers = [];
 	scl1 = random(0.00001, 0.005);
