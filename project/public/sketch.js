@@ -1,39 +1,24 @@
-let features = '';
+let myShader;
+
+function preload() {
+	myShader = loadShader('shaders/vertexShader.vert', 'shaders/fragmentShader.frag');
+}
 
 function setup() {
-	console.log(features);
-	features = $fx.getFeatures();
+	createCanvas(1500, 1500, WEBGL);
+	noStroke();
 
-	let formatMode = features.format_mode;
-	var ua = window.navigator.userAgent;
-	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-	var webkit = !!ua.match(/WebKit/i);
-	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
-
-	// if safari mobile use pixelDensity(2.0) to make the canvas bigger else use pixelDensity(3.0)
-	if (iOSSafari) {
-		pixelDensity(1.0);
-	} else {
-		pixelDensity(3.0);
-	}
-	createCanvas(1500, 1500);
-	colorMode(HSB, 360, 100, 100, 100);
-	randomSeed(fxrand() * 10000);
-	noiseSeed(fxrand() * 10000);
-	console.log(features);
+	// Set the shader program using the shader() function
+	shader(myShader);
 }
 
 function draw() {
-	// put drawing code here
-	background(255);
-	noStroke();
-	fill(0, 100, 100);
+	background(0);
 
-	if (features.shape_type == 'ellipse') {
-		ellipse(mouseX, mouseY, 100, 100);
-	}
-	if (features.shape_type == 'rectangle') {
-		rectMode(CENTER);
-		rect(mouseX, mouseY, 100, 100);
-	}
+	// Set the uniform values
+	myShader.setUniform('u_resolution', [width, height]);
+	myShader.setUniform('u_time', millis() / 100.0);
+
+	// Render the shader
+	quad(-1, -1, 1, -1, 1, 1, -1, 1);
 }
