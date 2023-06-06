@@ -64,16 +64,15 @@ function setup() {
 
 	let margin = -1;
 
-	amp1 = random([5, 10, 20, 40, 80]);
+	amp1 = random([1, 2, 3, 4, 5, 10]);
 	amp2 = random([1000, 1500, 2000]);
-	scale1Arr = [0.01, 0.0025, 0.005, 0.007, 0.01, 0.02];
-	scale2Arr = [0.008, 0.0005, 0.0003, 0.0001, 0.00005, 0.00001];
-	sclrdn1 = int(random(scale1Arr.length));
-	scale1 = scale1Arr[sclrdn1];
-	scale2 = scale2Arr[sclrdn1];
-
+	scale1 = random([0.0025, 0.005, 0.007, 0.01, 0.02]);
+	scale2 = random([0.001, 0.0005, 0.0001, 0.00005, 0.00001]);
 	yoff = random(100000);
 	xoff = random(100000);
+	/* 	sclrdn1 = int(random(scale1Arr.length));
+	scale1 = scale1Arr[sclrdn1];
+	scale2 = scale2Arr[sclrdn1]; */
 
 	// create a grid of cells that fill the sreen and is relative to the width and height of the screen
 	//noiseDetail(5, 0.55);
