@@ -7,7 +7,7 @@
 const paletteArr = [
 	//['broadleaf', 10],
 	//['lava', 10],
-	['blackwhite', 12.5],
+	['blackwhite', 20.5],
 	['redblack', 12.5],
 	['yellowblack', 12.5],
 	['vintage', 12.5],

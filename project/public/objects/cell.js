@@ -31,25 +31,21 @@ class Cell {
 	display(inc) {
 		// Module ready to be built
 
-		this.createNoise();
-
 		noStroke();
 		fill(this.hue, this.sat, this.bright, 100);
 		rect(this.x, this.y, this.w, this.h);
 
-		//this.xoff += inc;
-		//this.yoff += inc;
+		/* 		this.xoff += inc;
+		this.yoff += inc; */
 	}
 
 	createNoise() {
-		let nx = this.x,
-			ny = this.y,
-			a = this.amp1,
-			a2 = this.amp2,
-			sc = this.scale1,
-			sc2 = this.scale2,
-			dx,
-			dy;
+		let nx = this.x;
+		let ny = this.y;
+		let a = this.amp1;
+		let a2 = this.amp2;
+		let sc = this.scale1;
+		let sc2 = this.scale2;
 
 		let oct = oct1;
 		switch (this.oct) {
@@ -73,20 +69,12 @@ class Cell {
 				break;
 		}
 
-		dx = oct(nx, ny, sc, 3);
-		dy = oct(ny, nx, sc2, 1);
-		nx += dx * a;
-		ny += dy * a2;
+		let dx, dy;
+		dx = oct(nx, ny, sc, 3) * a + oct(nx, ny, sc, 2) * a2 + oct(nx, ny, sc, 1) * a;
+		dy = oct(ny, nx, sc2, 1) * a + oct(ny, nx, sc2, 0) * a2 + oct(ny, nx, sc2, 2) * a2;
 
-		dx = oct(nx, ny, sc, 2);
-		dy = oct(ny, nx, sc2, 0);
-		nx += dx * a2;
-		ny += dy * a2;
-
-		dx = oct(nx, ny, sc, 1);
-		dy = oct(ny, nx, sc2, 2);
-		nx += dx * a;
-		ny += dy * a2;
+		nx += dx;
+		ny += dy;
 
 		let un = oct(nx, ny, sc, 1);
 		let vn = oct(nx, ny, sc2, 3);

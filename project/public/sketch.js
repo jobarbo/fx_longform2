@@ -3,8 +3,10 @@ let features = '';
 let bleed = 0;
 let inc = 0.02;
 let cells = [];
-let w = Math.floor(16 * 100);
-let h = Math.floor(16 * 100);
+let w = Math.floor(1080);
+let h = Math.floor(1920);
+noiseCanvasWidth = w;
+noiseCanvasHeight = h;
 let p_d = 3;
 
 let amp1 = 0;
@@ -40,7 +42,7 @@ function setup() {
 	let palette = features.biomeColorList;
 
 	//let cellSize = features.cellSize;
-	let cellSize = 10;
+	let cellSize = 9;
 
 	// Calculate the number of cells that can fit in the screen according to cellSize
 	let cellCountX = floor(width / cellSize);
@@ -52,10 +54,13 @@ function setup() {
 
 	let margin = -1;
 
-	amp1 = random([1, 2, 3, 4, 5, 10]);
-	amp2 = random([1000, 1500, 2000]);
-	scale1 = random([0.0025, 0.005, 0.007, 0.01]);
-	scale2 = random([0.001, 0.0005, 0.0001, 0.00005, 0.00001]);
+	/* 	amp1 = random([1, 2, 3, 4, 5, 10]) */ /* 	amp2 = random([1000, 1500, 2000]); */
+	/* 	scale1 = random([0.0005, 0.001, 0.0025, 0.005, 0.007, 0.01]);
+	scale2 = random([0.001, 0.0005, 0.0001, 0.00005, 0.00001]); */
+	amp1 = 1;
+	amp2 = 1;
+	scale1 = 0.01;
+	scale2 = 0.01;
 	yoff = random(100000);
 	xoff = random(100000);
 
@@ -66,6 +71,7 @@ function setup() {
 }
 
 function init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette) {
+	cells = [];
 	let framePassed = 0;
 	let grid = drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette);
 
@@ -85,8 +91,13 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 	let count = 0;
 	let draw_every = 600;
 
-	amp1 += 0.1;
-	amp2 -= 1;
+	scale1 += -0.00001;
+	scale2 += 0.00001;
+	/* 	amp1 += 1.1;
+	amp2 += 2.1; */
+
+	scale1 = constrain(scale1, 0, 0.01);
+	scale2 = constrain(scale2, 0, 0.01);
 
 	for (let gridY = 0; gridY < cellCountY; gridY++) {
 		for (let gridX = 0; gridX < cellCountX; gridX++) {
@@ -110,23 +121,13 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 			cells.push(cell);
 			cell.display(inc);
 
-			xoff += inc;
+			//xoff += inc;
 			if (count >= draw_every) {
 				count = 0;
 				yield;
 			}
 		}
 		count++;
-		yoff += inc;
+		//yoff += inc;
 	}
-}
-
-function draw() {
-	/* 	inc = 0.002;
-
-	for (let i = 0; i < cells.length; i++) {
-		cells[i].display(inc);
-	} */
-
-	noLoop();
 }
