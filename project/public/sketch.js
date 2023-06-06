@@ -22,6 +22,7 @@ function setup() {
 
 	// Set the shader program using the shader() function
 	shader(myShader);
+	myShader.setUniform('u_arrayLength', 5);
 }
 
 function draw() {
