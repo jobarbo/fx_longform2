@@ -3,18 +3,28 @@ let features = '';
 let bleed = 0;
 let inc = 0.02;
 let cells = [];
-let w = Math.floor(1080);
-let h = Math.floor(1920);
+let w = Math.floor(25 * 100);
+let h = Math.floor(12 * 100);
 noiseCanvasWidth = w;
 noiseCanvasHeight = h;
 let p_d = 3;
 
-let amp1 = 0;
-let amp2 = 0;
+let amp1 = 10;
+let amp2 = 20;
 let scale1 = 0;
 let scale2 = 0;
-let yoff = 0;
-let xoff = 110;
+let xoff = Math.random() * 10000;
+let yoff = Math.random() * 10000;
+
+let easeAng = 0,
+	easeScalar2 = 200,
+	cycleCount = 0,
+	xi = 0,
+	yi = 0,
+	axoff = Math.random() * 10000,
+	ayoff = Math.random() * 10000,
+	sxoff = Math.random() * 10000,
+	syoff = Math.random() * 10000;
 
 function setup() {
 	//console.log(features);
@@ -42,7 +52,7 @@ function setup() {
 	let palette = features.biomeColorList;
 
 	//let cellSize = features.cellSize;
-	let cellSize = 9;
+	let cellSize = 10;
 
 	// Calculate the number of cells that can fit in the screen according to cellSize
 	let cellCountX = floor(width / cellSize);
@@ -54,13 +64,14 @@ function setup() {
 
 	let margin = -1;
 
-	/* 	amp1 = random([1, 2, 3, 4, 5, 10]) */ /* 	amp2 = random([1000, 1500, 2000]); */
-	/* 	scale1 = random([0.0005, 0.001, 0.0025, 0.005, 0.007, 0.01]);
-	scale2 = random([0.001, 0.0005, 0.0001, 0.00005, 0.00001]); */
-	amp1 = 1;
-	amp2 = 1;
-	scale1 = 0.001;
-	scale2 = 0.01;
+	amp1 = random([5, 10, 20, 40, 80]);
+	amp2 = random([1000, 1500, 2000]);
+	scale1Arr = [0.01, 0.0025, 0.005, 0.007, 0.01, 0.02];
+	scale2Arr = [0.008, 0.0005, 0.0003, 0.0001, 0.00005, 0.00001];
+	sclrdn1 = int(random(scale1Arr.length));
+	scale1 = scale1Arr[sclrdn1];
+	scale2 = scale2Arr[sclrdn1];
+
 	yoff = random(100000);
 	xoff = random(100000);
 
@@ -79,10 +90,17 @@ function init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palett
 		let result = grid.next();
 		framePassed++;
 		if (result.done) {
-			console.log('done');
-			// stop the interval
 			clearInterval(interval);
-			init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette);
+			let cosIndex = cos(radians(easeAng));
+			if (cosIndex >= 1) {
+				cycleCount += 1;
+			}
+			if (cycleCount < 1) {
+				init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette);
+			} else {
+				noLoop();
+			}
+			// stop the interval
 		}
 	}, 0);
 }
@@ -91,13 +109,25 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 	let count = 0;
 	let draw_every = 600;
 
-	scale1 += -0.00001;
-	scale2 += 0.00001;
-	/* 	amp1 += 1.1;
-	amp2 += 2.1; */
+	let easing = radians(easeAng);
 
-	scale1 = constrain(scale1, 0, 0.1);
-	scale2 = constrain(scale2, 0, 0.1);
+	scale1 += map(noise(sxoff, syoff), 0, 1, -0.00001, -0.00001, true);
+
+	scale2 += map(noise(syoff, sxoff), 0, 1, -0.00001, -0.00001, true);
+
+	amp1 += map(noise(axoff, ayoff), 0, 1, -1, 1, true);
+
+	amp2 += map(noise(ayoff, axoff), 0, 1, -1, 1, true);
+
+	amplitude1 = amp1;
+	amplitude2 = amp1;
+
+	/* 	let amplitude1 = int(map(noise(axoff, ayoff), 0, 1, 0, amp1 * 2, true));
+	let amplitude2 = int(map(noise(ayoff, axoff), 0, 1, 0, amp2 * 2, true)); */
+
+	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
+	xi += map(noise(xoff), 0, 1, -0, 0, true);
+	yi += map(noise(yoff), 0, 1, -0, 0, true);
 
 	for (let gridY = 0; gridY < cellCountY; gridY++) {
 		for (let gridX = 0; gridX < cellCountX; gridX++) {
@@ -106,10 +136,12 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 			let cell = new Cell(
 				posX,
 				posY,
+				xi,
+				yi,
 				cellWidth,
 				cellHeight,
-				amp1,
-				amp2,
+				amplitude1,
+				amplitude2,
 				scale1,
 				scale2,
 				margin,
@@ -130,4 +162,11 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 		count++;
 		//yoff += inc;
 	}
+	easeAng += 0.000001;
+	xoff += 0.001;
+	yoff += 0.001;
+	axoff += 0.001;
+	ayoff += 0.001;
+	sxoff += 0.01;
+	syoff += 0.01;
 }

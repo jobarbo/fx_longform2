@@ -1,10 +1,12 @@
 class Cell {
-	constructor(x, y, w, h, amp1, amp2, scale1, scale2, margin, xoff, yoff, inc, palette) {
+	constructor(x, y, xi, yi, w, h, amp1, amp2, scale1, scale2, margin, xoff, yoff, inc, palette) {
 		this.features = $fx.getFeatures();
 
 		// Module ready to be built
 		this.x = x + w / 2;
 		this.y = y + h / 2;
+		this.xi = xi;
+		this.yi = yi;
 		//this.margin = w * random([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
 		this.margin = margin;
 		this.w = w - this.margin;
@@ -40,8 +42,8 @@ class Cell {
 	}
 
 	createNoise() {
-		let nx = this.x;
-		let ny = this.y;
+		let nx = this.x + this.xi;
+		let ny = this.y + this.yi;
 		let a = this.amp1;
 		let a2 = this.amp2;
 		let sc = this.scale1;
