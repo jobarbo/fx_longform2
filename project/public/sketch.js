@@ -60,7 +60,7 @@ function setup() {
 	amp1 = 1;
 	amp2 = 1;
 	scale1 = 0.001;
-	scale2 = 0.001;
+	scale2 = 0.01;
 	yoff = random(100000);
 	xoff = random(100000);
 
@@ -96,8 +96,8 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 	/* 	amp1 += 1.1;
 	amp2 += 2.1; */
 
-	scale1 = constrain(scale1, 0, 0.01);
-	scale2 = constrain(scale2, 0, 0.01);
+	scale1 = constrain(scale1, 0, 0.1);
+	scale2 = constrain(scale2, 0, 0.1);
 
 	for (let gridY = 0; gridY < cellCountY; gridY++) {
 		for (let gridX = 0; gridX < cellCountX; gridX++) {
