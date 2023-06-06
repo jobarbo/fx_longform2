@@ -59,8 +59,8 @@ function setup() {
 	scale2 = random([0.001, 0.0005, 0.0001, 0.00005, 0.00001]); */
 	amp1 = 1;
 	amp2 = 1;
-	scale1 = 0.01;
-	scale2 = 0.01;
+	scale1 = 0.001;
+	scale2 = 0.001;
 	yoff = random(100000);
 	xoff = random(100000);
 
