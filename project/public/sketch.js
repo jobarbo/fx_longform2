@@ -3,8 +3,8 @@ let features = '';
 let bleed = 0;
 let inc = 0.02;
 let cells = [];
-let w = Math.floor(25 * 100);
-let h = Math.floor(12 * 100);
+let w = Math.floor(1080);
+let h = Math.floor(1920);
 noiseCanvasWidth = w;
 noiseCanvasHeight = h;
 let p_d = 3;
@@ -26,6 +26,11 @@ let easeAng = 0,
 	sxoff = Math.random() * 10000,
 	syoff = Math.random() * 10000;
 
+P5Capture.setDefaultOptions({
+	format: 'png',
+	quality: 1,
+});
+
 function setup() {
 	//console.log(features);
 	features = $fx.getFeatures();
@@ -39,10 +44,9 @@ function setup() {
 	if (iOSSafari || (iOS && !iOSSafari) || (!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))) {
 		pixelDensity(2);
 	} else {
-		pixelDensity(3);
+		pixelDensity(1);
 	}
 	createCanvas(w, h);
-	noLoop();
 	colorMode(HSB, 360, 100, 100, 100);
 	background(10, 0, 10, 100);
 	rectMode(CENTER);
@@ -52,7 +56,7 @@ function setup() {
 	let palette = features.biomeColorList;
 
 	//let cellSize = features.cellSize;
-	let cellSize = 10;
+	let cellSize = 8;
 
 	// Calculate the number of cells that can fit in the screen according to cellSize
 	let cellCountX = floor(width / cellSize);
@@ -64,9 +68,9 @@ function setup() {
 
 	let margin = -1;
 
-	amp1 = random([1]);
+	amp1 = random([1, 3, 5, 10]);
 	amp2 = random([1000, 1500, 2000]);
-	scale1Arr = [0.0025, 0.005, 0.007, 0.01, 0.02];
+	scale1Arr = [0.001, 0.0025, 0.005, 0.0075, 0.01];
 	scale2Arr = [0.001, 0.0005, 0.0001, 0.00005, 0.00001];
 	yoff = random(100000);
 	xoff = random(100000);
@@ -110,13 +114,10 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 
 	let easing = radians(easeAng);
 
-	scale1 += map(noise(sxoff, syoff), 0, 1, -0.0000001, -0.0000001, true);
-
-	scale2 += map(noise(syoff, sxoff), 0, 1, -0.0000001, -0.0000001, true);
-
-	amp1 += map(noise(axoff, ayoff), 0, 1, -1, 1, true);
-
-	amp2 += map(noise(ayoff, axoff), 0, 1, -1, 1, true);
+	scale1 += map(noise(sxoff), 0, 1, -0.000000001, 0.000000001, true);
+	scale2 += map(noise(syoff), 0, 1, -0.000000001, 0.000000001, true);
+	amp1 += map(noise(axoff), 0, 1, -30, 30, true);
+	amp2 += map(noise(ayoff), 0, 1, -30, 30, true);
 
 	amplitude1 = amp1;
 	amplitude2 = amp2;
@@ -125,8 +126,8 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 	let amplitude2 = int(map(noise(ayoff, axoff), 0, 1, 0, amp2 * 2, true)); */
 
 	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
-	xi += map(noise(xoff), 0, 1, -0, 0, true);
-	yi += map(noise(yoff), 0, 1, -0, 0, true);
+	xi += map(noise(xoff), 0, 1, -1, 1, true);
+	yi += map(noise(yoff), 0, 1, -1, 1, true);
 
 	for (let gridY = 0; gridY < cellCountY; gridY++) {
 		for (let gridX = 0; gridX < cellCountX; gridX++) {
@@ -164,10 +165,12 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 		//yoff += inc;
 	}
 	easeAng += 0.000001;
-	xoff += 0.01;
-	yoff += 0.01;
-	axoff += 0.001;
-	ayoff += 0.001;
+	xoff += 0.001;
+	yoff += 0.001;
+	axoff += 0.01;
+	ayoff += 0.01;
 	sxoff += 0.01;
 	syoff += 0.01;
 }
+
+function draw() {}
