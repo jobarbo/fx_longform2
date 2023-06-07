@@ -11,7 +11,6 @@ let xMax;
 let yMin;
 let yMax;
 let isBordered = false;
-let drawing = true;
 
 P5Capture.setDefaultOptions({
 	format: 'mp4',
@@ -41,9 +40,6 @@ function setup() {
 }
 
 function draw() {
-	// put drawing code here
-	// once the user has pressed the d key, start drawing
-
 	// get current frame count
 	let fps = frameCount;
 	for (let i = 0; i < movers.length; i++) {
@@ -56,8 +52,8 @@ function draw() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.0001, 0.01);
-	scl2 = random(0.0001, 0.01);
+	scl1 = random(0.001, 0.001);
+	scl2 = random(0.001, 0.001);
 	ang1 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
 	ang2 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
 
