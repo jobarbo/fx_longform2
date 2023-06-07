@@ -43,40 +43,21 @@ function setup() {
 function draw() {
 	// put drawing code here
 	// once the user has pressed the d key, start drawing
-	if (keyIsDown(68)) {
-		console.log('drawing');
-		drawing = true;
-	}
-	console.log('drawing: ' + drawing);
 
-	if (drawing) {
-		// get current frame count
-		let fps = frameCount;
-		for (let i = 0; i < movers.length; i++) {
-			for (let j = 0; j < 1; j++) {
-				movers[i].show();
-				movers[i].move();
-			}
+	// get current frame count
+	let fps = frameCount;
+	for (let i = 0; i < movers.length; i++) {
+		for (let j = 0; j < 1; j++) {
+			movers[i].show();
+			movers[i].move();
 		}
-
-		/* 		if (fps > 30) {
-			noLoop();
-			document.complete = true;
-			return;
-		} */
 	}
-}
-
-function windowResized() {
-	resizeCanvas(windowWidth, windowHeight);
-	INIT(rseed);
 }
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.001, 0.001);
-	scl2 = random(0.001, 0.001);
-	random([0.0001, 0.1, 1, 1.5, 2, 2.5, 3]);
+	scl1 = random(0.0001, 0.01);
+	scl2 = random(0.0001, 0.01);
 	ang1 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
 	ang2 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
 
