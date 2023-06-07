@@ -65,7 +65,7 @@ function setup() {
 	let margin = -1;
 
 	amp1 = random([1]);
-	amp2 = random([2000, 3500, 5000]);
+	amp2 = random([1000, 1500, 2000]);
 	scale1Arr = [0.0025, 0.005, 0.007, 0.01, 0.02];
 	scale2Arr = [0.001, 0.0005, 0.0001, 0.00005, 0.00001];
 	yoff = random(100000);
@@ -110,13 +110,13 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 
 	let easing = radians(easeAng);
 
-	/* 	scale1 += map(noise(sxoff, syoff), 0, 1, -0.00001, -0.00001, true);
+	scale1 += map(noise(sxoff, syoff), 0, 1, -0.0000001, -0.0000001, true);
 
-	scale2 += map(noise(syoff, sxoff), 0, 1, -0.00001, -0.00001, true);
+	scale2 += map(noise(syoff, sxoff), 0, 1, -0.0000001, -0.0000001, true);
 
 	amp1 += map(noise(axoff, ayoff), 0, 1, -1, 1, true);
 
-	amp2 += map(noise(ayoff, axoff), 0, 1, -1, 1, true); */
+	amp2 += map(noise(ayoff, axoff), 0, 1, -1, 1, true);
 
 	amplitude1 = amp1;
 	amplitude2 = amp2;
@@ -153,18 +153,19 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 			cell.display(inc);
 
 			//xoff += inc;
-			xoff += 0.03;
+
 			if (count >= draw_every) {
 				count = 0;
 				yield;
 			}
 		}
 		count++;
-		yoff += 0.03;
+
 		//yoff += inc;
 	}
 	easeAng += 0.000001;
-
+	xoff += 0.01;
+	yoff += 0.01;
 	axoff += 0.001;
 	ayoff += 0.001;
 	sxoff += 0.01;

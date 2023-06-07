@@ -72,18 +72,26 @@ class Cell {
 		}
 
 		let dx, dy;
-		dx = oct(nx, ny, sc, 3) * a + oct(nx, ny, sc, 2) * a2 + oct(nx, ny, sc, 1) * a;
-		dy = oct(ny, nx, sc2, 1) * a + oct(ny, nx, sc2, 0) * a2 + oct(ny, nx, sc2, 2) * a2;
+		dx = oct(nx, ny, sc, 3);
+		dy = oct(ny, nx, sc2, 1);
+		nx += dx * a;
+		ny += dy * a2;
 
-		nx += dx;
-		ny += dy;
+		dx = oct(nx, ny, sc, 2);
+		dy = oct(ny, nx, sc2, 0);
+		nx += dx * a2;
+		ny += dy * a2;
+
+		dx = oct(nx, ny, sc, 1);
+		dy = oct(ny, nx, sc2, 2);
+		nx += dx * a;
+		ny += dy * a2;
 
 		let un = oct(nx, ny, sc, 1);
 		let vn = oct(nx, ny, sc2, 3);
 
 		let u = map(un, -0.5, 0.5, -0.5, 0.5);
 		let v = map(vn, -0.5, 0.5, -0.5, 0.5);
-
 		this.index = int(map(u + v, -1, 1, 0, this.biomes.length - 1, true));
 
 		this.hue = this.biomes[this.index][0];
