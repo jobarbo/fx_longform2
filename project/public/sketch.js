@@ -85,9 +85,6 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 	let count = 0;
 	let draw_every = 600;
 
-	amp1 += 0.1;
-	amp2 -= 1;
-
 	for (let gridY = 0; gridY < cellCountY; gridY++) {
 		for (let gridX = 0; gridX < cellCountX; gridX++) {
 			let posX = cellWidth * gridX;
