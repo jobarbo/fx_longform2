@@ -51,45 +51,23 @@ class Cell {
 			dx,
 			dy;
 
-		let oct = oct1;
-		switch (this.oct) {
-			case 1:
-				oct = oct1;
-				break;
-			case 2:
-				oct = oct2;
-				break;
-			case 3:
-				oct = oct3;
-				break;
-			case 4:
-				oct = oct4;
-				break;
-			case 5:
-				oct = oct5;
-				break;
-			case 6:
-				oct = oct6;
-				break;
-		}
-
-		dx = oct(nx, ny, sc, 3);
-		dy = oct(ny, nx, sc2, 1);
+		dx = oct(nx, ny, sc, 3, 1);
+		dy = oct(ny, nx, sc2, 1, 1);
 		nx += dx * a;
 		ny += dy * a2;
 
-		dx = oct(nx, ny, sc, 2);
-		dy = oct(ny, nx, sc2, 0);
+		dx = oct(nx, ny, sc, 2, 1);
+		dy = oct(ny, nx, sc2, 0, 1);
 		nx += dx * a2;
 		ny += dy * a2;
 
-		dx = oct(nx, ny, sc, 1);
-		dy = oct(ny, nx, sc2, 2);
+		dx = oct(nx, ny, sc, 1, 1);
+		dy = oct(ny, nx, sc2, 2, 1);
 		nx += dx * a;
 		ny += dy * a2;
 
-		let un = oct(nx, ny, sc, 1);
-		let vn = oct(nx, ny, sc2, 3);
+		let un = oct(nx, ny, sc, 1, 1);
+		let vn = oct(nx, ny, sc2, 3, 1);
 
 		let u = map(un, -0.5, 0.5, -0.5, 0.5);
 		let v = map(vn, -0.5, 0.5, -0.5, 0.5);
