@@ -13,6 +13,7 @@ let yMax;
 let isBordered = false;
 let startTime;
 let maxFrames = 60;
+
 P5Capture.setDefaultOptions({
 	format: 'mp4',
 	framerate: 5,
