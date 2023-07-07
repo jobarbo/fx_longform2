@@ -5,12 +5,12 @@
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
 const complexityArr = [
-	['1 octaves', 20],
-	['2 octaves', 70],
-	['3 octaves', 5],
-	['4 octaves', 2],
-	['5 octaves', 2],
-	['6 octaves', 1],
+	['1', 20],
+	['2', 70],
+	['3', 5],
+	['4', 2],
+	['5', 2],
+	['6', 1],
 ];
 
 const themeArr = [
@@ -51,7 +51,7 @@ const clampvalueArr = [
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
-function generate_composition_params(complexity, theme, composition, colorMode, strokestyle, clampvalue) {
+function generate_composition_params(complexity, theme, composition, colormode, strokestyle, clampvalue) {
 	// SET DEFAULTS IF NOT PASSED IN
 	if (complexity === undefined) {
 		complexity = weighted_choice(complexityArr);
@@ -65,8 +65,8 @@ function generate_composition_params(complexity, theme, composition, colorMode, 
 		composition = weighted_choice(compositionArr);
 	}
 
-	if (colorMode === undefined) {
-		colorMode = weighted_choice(colorModeArr);
+	if (colormode === undefined) {
+		colormode = weighted_choice(colorModeArr);
 	}
 
 	if (strokestyle === undefined) {
@@ -85,7 +85,7 @@ function generate_composition_params(complexity, theme, composition, colorMode, 
 		complexity: complexity,
 		theme: theme,
 		composition: composition,
-		colorMode: colorMode,
+		colormode: colormode,
 		strokestyle: strokestyle,
 		clampvalue: clampvalue,
 	};

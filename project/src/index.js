@@ -14,58 +14,73 @@ var {complexity, theme, composition, colorMode, strokestyle, clampvalue} = compo
 //console.log(shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode);
 // this is how to define parameters
 // this is how to define parameters
+console.log(theme);
 $fx.params([
 	{
-		id: 'number_id',
-		name: 'A number/float64',
+		id: 'complexity',
+		name: 'Complexity',
 		type: 'number',
 		//default: Math.PI,
 		options: {
 			min: 1,
-			max: 10,
-			step: 0.00000000000001,
-		},
-	},
-	{
-		id: 'bigint_id',
-		name: 'A bigint',
-		type: 'bigint',
-		//default: BigInt(Number.MAX_SAFE_INTEGER * 2),
-		options: {
-			min: Number.MIN_SAFE_INTEGER * 4,
-			max: Number.MAX_SAFE_INTEGER * 4,
+			max: 6,
 			step: 1,
 		},
 	},
 	{
-		id: 'select_id',
-		name: 'A selection',
+		id: 'theme',
+		name: 'Theme',
 		type: 'select',
-		//default: "pear",
+		//default: Math.PI,
 		options: {
-			options: ['apple', 'orange', 'pear'],
+			options: ['bright', 'dark'],
 		},
 	},
 	{
-		id: 'color_id',
-		name: 'A color',
-		type: 'color',
-		//default: "ff0000",
-	},
-	{
-		id: 'boolean_id',
-		name: 'A boolean',
-		type: 'boolean',
-		//default: true,
-	},
-	{
-		id: 'string_id',
-		name: 'A string',
-		type: 'string',
-		//default: "hello",
+		id: 'composition',
+		name: 'Composition',
+		type: 'select',
+		//default: Math.PI,
 		options: {
-			minLength: 1,
-			maxLength: 64,
+			options: ['semiconstrained', 'constrained', 'compressed'],
+		},
+	},
+	{
+		id: 'colormode',
+		name: 'Color Mode',
+		type: 'select',
+		//default: Math.PI,
+		options: {
+			options: ['monochrome', 'fixed', 'dynamic', 'iridescent'],
+		},
+	},
+	{
+		id: 'strokestyle',
+		name: 'Stroke Style',
+		type: 'select',
+		//default: Math.PI,
+		options: {
+			options: ['thin', 'regular', 'bold'],
+		},
+	},
+	{
+		id: 'clampvalue',
+		name: 'Clamp Value',
+		type: 'select',
+		//default: Math.PI,
+		options: {
+			options: [
+				'0.0000015,0.25,0.25,0.0000015',
+				'0.0000015,0.025,0.025,0.0000015',
+				'0.00015,0.015,0.015,0.00015',
+				'0.15,0.00000015,0.15,0.0000015',
+				'0.0015,0.000015,0.0015,0.000015',
+				'0.05,0.05,0.05,0.05',
+				'0.15,0.15,0.15,0.15',
+				'0.015,0.015,0.015,0.015',
+				'0.0015,0.0015,0.0015,0.0015',
+				'0.0000015,0.0000015,0.0000015,0.0000015',
+			],
 		},
 	},
 ]);
@@ -74,7 +89,7 @@ $fx.features({
 	complexity: $fx.getParam('complexity'),
 	theme: $fx.getParam('theme'),
 	composition: $fx.getParam('composition'),
-	colorMode: $fx.getParam('colorMode'),
+	colormode: $fx.getParam('colormode'),
 	strokestyle: $fx.getParam('strokestyle'),
 	clampvalue: $fx.getParam('clampvalue'),
 });
