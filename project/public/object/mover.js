@@ -96,23 +96,23 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 		dx,
 		dy;
 
-	dx = oct6(nx, ny, scale1, 0);
-	dy = oct6(nx, ny, scale2, 2);
+	dx = oct(nx, ny, scale1, 0, 6);
+	dy = oct(nx, ny, scale2, 2, 6);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct6(nx, ny, scale1, 1);
-	dy = oct6(nx, ny, scale2, 3);
+	dx = oct(nx, ny, scale1, 1, 6);
+	dy = oct(nx, ny, scale2, 3, 6);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct6(nx, ny, scale1, 1);
-	dy = oct6(nx, ny, scale2, 1);
+	dx = oct(nx, ny, scale1, 1, 6);
+	dy = oct(nx, ny, scale2, 1, 6);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct6(nx, ny, scale1, 3);
-	let vn = oct6(nx, ny, scale2, 2);
+	let un = oct(nx, ny, scale1, 3, 6);
+	let vn = oct(nx, ny, scale2, 2, 6);
 
 	let u = map(un, -0.5, 0.5, -4, 4, true);
 	let v = map(vn, -0.5, 0.5, -4, 4, true);
