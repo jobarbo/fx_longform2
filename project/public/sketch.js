@@ -35,13 +35,12 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(2.0);
+		pixelDensity(3.0);
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1600;
-	//c = createCanvas(C_WIDTH, C_WIDTH * 1.375);
-	c = createCanvas(C_WIDTH, windowHeight);
+	c = createCanvas(C_WIDTH, C_WIDTH * 1.375);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -107,7 +106,7 @@ function INIT(seed) {
 		);
 	}
 
-	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == 'bright' ? 93 : 0, 100);
+	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
 
 	background(bgCol);
 }
