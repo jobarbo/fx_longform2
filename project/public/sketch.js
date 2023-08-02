@@ -1,8 +1,31 @@
 let features = '';
+let DEFAULT_SIZE = 1000;
+let WIDTH = window.innerHeight;
+let HEIGHT = window.innerHeight;
+let DIM;
+var M = 1;
+let posX, posY;
+let posXoff, posYoff;
+let balls = [];
+let ballHue, ballBright, ballSat;
+let frame = 0;
+
+let textures = [];
+
+let hueIteration = 0;
+let modeIteration = 0;
 
 function setup() {
-	console.log(features);
 	features = $fx.getFeatures();
+	console.log(features);
+
+	hueIteration = features.hue_type;
+	// moditeraion = if straight use 0 else use 1
+	if (features.mode_type == 'straight') {
+		modeIteration = 0;
+	} else {
+		modeIteration = 0.0013;
+	}
 
 	let formatMode = features.format_mode;
 	var ua = window.navigator.userAgent;
@@ -16,24 +39,86 @@ function setup() {
 	} else {
 		pixelDensity(3.0);
 	}
-	createCanvas(1500, 1500);
+
+	DIM = min(WIDTH, HEIGHT);
+	M = DIM / DEFAULT_SIZE;
+	c = createCanvas(WIDTH, HEIGHT);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
-	console.log(features);
+	background(random(0, 360), 10, 100);
+	posXoff = random(1000000);
+	posYoff = random(1000000);
+	coff = random(1000000);
+
+	posY = height / 2;
+	posX = width / 2;
+
+	ballHue = random(0, 360);
+	ballBright = random(10, 30);
+	ballSat = random(50, 100);
+
+	console.log(ballHue);
+
+	for (let num = 0; num < 50000; num++) {
+		posX = map(noise(posXoff), 0, 0.91, width / 2 - width / 2, width / 2 + width / 2, true);
+		posY = map(noise(posYoff), 0, 0.91, height / 2 - height / 3, height / 2 + height / 3, true);
+		ballHue += map(noise(coff), 0, 0.8, -hueIteration, hueIteration);
+		ballSat += map(noise(coff), 0, 0.91, -0.01, 0.01);
+		ballBright += map(noise(coff), 0, 0.91, -0.05, 0.05);
+		ballSat = constrain(ballSat, 50, 100);
+		ballBright = constrain(ballBright, 10, 80);
+
+		if (ballHue > 360) {
+			ballHue = 0;
+		} else if (ballHue < 0) {
+			ballHue = 360;
+		}
+
+		balls[num] = new Balle_MC(posX, posY, ballHue, ballSat, ballBright);
+
+		balls[num].display();
+
+		posXoff += 0.0013;
+		posYoff += modeIteration;
+		coff += 0.001;
+	}
+	for (let num = 0; num < 100000; num++) {
+		textures[num] = new Texture_MC();
+		textures[num].display();
+	}
 }
 
-function draw() {
-	// put drawing code here
-	background(255);
-	noStroke();
-	fill(0, 100, 100);
-
-	if (features.shape_type == 'ellipse') {
-		ellipse(mouseX, mouseY, 100, 100);
+class Balle_MC {
+	constructor(x, y, h, s, b) {
+		this.x = x;
+		this.y = y;
+		this.w = random(0.5, 2.5) * M;
+		this.h = h;
+		this.s = s;
+		this.b = b;
 	}
-	if (features.shape_type == 'rectangle') {
-		rectMode(CENTER);
-		rect(mouseX, mouseY, 100, 100);
+
+	display() {
+		noStroke();
+		fill(this.h, this.s, this.b, 10);
+		ellipse(this.x, height / 2, this.w, this.y);
+	}
+}
+
+class Texture_MC {
+	constructor() {
+		this.x = random(0, width);
+		this.y = random(0, height);
+		this.w = random(0.1, 0.7) * M;
+		this.b = random(100);
+		this.a = random(2, 20);
+	}
+
+	display() {
+		stroke(0, 0, this.b, this.a);
+		strokeWeight(this.w);
+		noFill();
+		rect(this.x, this.y, this.w, this.w);
 	}
 }

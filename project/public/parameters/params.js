@@ -4,17 +4,28 @@
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
-const shapeArr = [
+const hueArr = [
 	// name, probability(0-100)
-	['ellipse', 50],
-	['rectangle', 50],
+	[0.001, 25],
+	[0.005, 25],
+	[0.01, 25],
+	[0.05, 25],
+];
+
+const modeArr = [
+	['straight', 50],
+	['crazy', 50],
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
-function generate_composition_params(shape_type) {
+function generate_composition_params(hue_type, mode_type) {
 	// SET DEFAULTS IF NOT PASSED IN
-	if (shape_type === undefined) {
-		shape_type = weighted_choice(shapeArr);
+	if (hue_type === undefined) {
+		hue_type = weighted_choice(hueArr);
+	}
+
+	if (mode_type === undefined) {
+		mode_type = weighted_choice(modeArr);
 	}
 
 	//* EXCEPTIONS AND OVER-RIDES *//
@@ -22,7 +33,8 @@ function generate_composition_params(shape_type) {
 
 	//* PACK PARAMETERS INTO OBJECT *//
 	var composition_params = {
-		shape_type: shape_type,
+		hue_type: hue_type,
+		mode_type: mode_type,
 	};
 
 	//* RETURN PARAMETERS *//
