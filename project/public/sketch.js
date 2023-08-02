@@ -20,9 +20,9 @@ function setup() {
 	if (iOSSafari || (iOS && !iOSSafari) || (!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))) {
 		pixelDensity(2);
 	} else {
-		pixelDensity(1);
+		pixelDensity(3);
 	}
-	createCanvas(windowWidth, windowHeight);
+	createCanvas(16 * 100, 22 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -50,8 +50,8 @@ function draw() {
  */
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.005, 0.01);
-	scl2 = random(0.005, 0.01);
+	scl1 = random(0.0005, 0.01);
+	scl2 = random(0.0005, 0.01);
 	ang1 = random([1, 5, 10, 25, 50, 75, 100, 200, 500, 1000]);
 	ang2 = random([1, 5, 10, 25, 50, 75, 100, 200, 500, 1000]);
 	console.log('scl1: ' + scl1);
@@ -83,7 +83,7 @@ function INIT(seed) {
 
 	fill(230, 60, 10, 100);
 	strokeWeight(3);
-	stroke(hue, 90, 20, 0);
+	stroke(hue, 90, 20, 100);
 	beginShape();
 	vertex(-100, height);
 	for (let i = 0; i < 16500; i++) {
@@ -91,7 +91,7 @@ function INIT(seed) {
 		x += width / 15100;
 		// make y start at height/2 but every other steps it's position is affected by noise
 
-		y += map(noise(x * 0.02, seed), 0, 1, -0.5, 0.5);
+		y += map(noise(x * 0.007, seed), 0, 1, -0.2, 0.2);
 		ellipse();
 		vertex(x, y);
 		let initHue = hue + random(-10, 10);
