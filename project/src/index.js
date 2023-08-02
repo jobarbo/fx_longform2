@@ -29,7 +29,7 @@ $fx.params([
 		type: 'select',
 		//default: Math.PI,
 		options: {
-			options: ['straight', 'crazy'],
+			options: ['straight', 'moderate', 'crazy'],
 		},
 	},
 ]);

@@ -23,7 +23,9 @@ function setup() {
 	// moditeraion = if straight use 0 else use 1
 	if (features.mode_type == 'straight') {
 		modeIteration = 0;
-	} else {
+	} else if (features.mode_type == 'moderate') {
+		modeIteration = 0.00013;
+	} else if (features.mode_type == 'crazy') {
 		modeIteration = 0.0013;
 	}
 
@@ -60,9 +62,9 @@ function setup() {
 
 	console.log(ballHue);
 
-	for (let num = 0; num < 50000; num++) {
+	for (let num = 0; num < 60000; num++) {
 		posX = map(noise(posXoff), 0, 0.91, width / 2 - width / 2, width / 2 + width / 2, true);
-		posY = map(noise(posYoff), 0, 0.91, height / 2 - height / 3, height / 2 + height / 3, true);
+		posY = map(noise(posYoff), 0, 0.91, height / 2 - height / 2, height / 2 + height / 2, true);
 		ballHue += map(noise(coff), 0, 0.8, -hueIteration, hueIteration);
 		ballSat += map(noise(coff), 0, 0.91, -0.01, 0.01);
 		ballBright += map(noise(coff), 0, 0.91, -0.05, 0.05);
@@ -79,14 +81,18 @@ function setup() {
 
 		balls[num].display();
 
-		posXoff += 0.0013;
+		posXoff += 0.001;
 		posYoff += modeIteration;
 		coff += 0.001;
 	}
-	for (let num = 0; num < 100000; num++) {
-		textures[num] = new Texture_MC();
+	for (let num = 0; num < 500000; num++) {
+		textures[num] = new Smudge(random(0, width), random(0, height), random(1, 2) * M, color(random(0, 360), 0, 10));
 		textures[num].display();
 	}
+
+	/* 	noStroke();
+	fill(200, 80, 100, 100);
+	rect(0, height / 2, width, height / 2); */
 }
 
 class Balle_MC {
@@ -102,7 +108,7 @@ class Balle_MC {
 	display() {
 		noStroke();
 		fill(this.h, this.s, this.b, 10);
-		ellipse(this.x, height / 2, this.w, this.y);
+		ellipse(this.x, height / 2, this.w, this.y / 1.5);
 	}
 }
 

@@ -14,7 +14,8 @@ const hueArr = [
 
 const modeArr = [
 	['straight', 50],
-	['crazy', 50],
+	['moderate', 25],
+	['crazy', 25],
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
