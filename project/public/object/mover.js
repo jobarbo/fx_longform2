@@ -58,14 +58,14 @@ class Mover {
 
 		this.xRandDivider = random(0.01, 3.1);
 		this.yRandDivider = random(0.01, 3.1);
-		this.xRandSkipper = random(-0.1, 0.1);
+		this.xRandSkipper = random(0.6, 3.3);
 		this.yRandSkipper = random(-0.1, 0.1);
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
 		this.a = map(this.y, this.initY, this.initY + 5, 0, this.fa, true);
-		this.s = map(p.y, -4, 4, 0.4, 0.6, true);
+		this.s = map(p.y, -4, 4, 0.6, 1, true);
 
 		this.scl1 = map(this.y, this.initY, height, this.scl1init, this.scl1init - 0.0025, true);
 		this.scl2 = map(this.y, this.initY, height, this.scl2init, this.scl2init - 0.0025, true);
