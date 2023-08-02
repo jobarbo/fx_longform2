@@ -13,7 +13,7 @@ var {hue_type, mode_type} = composition_params; // unpacking parameters we need 
 
 //console.log(shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode);
 // this is how to define parameters
-$fx.params([
+/* $fx.params([
 	{
 		id: 'hue_type',
 		name: 'Type of',
@@ -32,11 +32,11 @@ $fx.params([
 			options: ['straight', 'moderate', 'crazy'],
 		},
 	},
-]);
+]); */
 // this is how features can be defined
 $fx.features({
-	hue_type: $fx.getParam('hue_type'),
-	mode_type: $fx.getParam('mode_type'),
+	hue_type: hue_type,
+	mode_type: mode_type,
 });
 
 // log the parameters, for debugging purposes, artists won't have to do that

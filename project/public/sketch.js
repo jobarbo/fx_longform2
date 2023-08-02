@@ -89,6 +89,10 @@ function setup() {
 		textures[num] = new Smudge(random(0, width), random(0, height), random(1, 2) * M, color(random(0, 360), 0, 10));
 		textures[num].display();
 	}
+	let timer = setTimeout(() => {
+		fxpreview();
+		console.log('preview');
+	}, 1000);
 
 	/* 	noStroke();
 	fill(200, 80, 100, 100);
