@@ -5,8 +5,8 @@ class Mover {
 		this.initHue = hue;
 		this.initSat = random([0, 20, 40, 60, 80, 100]);
 		this.initBri = random([0, 10, 10, 20, 20, 40, 60, 70, 90]);
-		this.initAlpha = 10;
-		this.initS = 2;
+		this.initAlpha = 50;
+		this.initS = 1;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
@@ -92,23 +92,23 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 		dx,
 		dy;
 
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 2);
+	dx = oct(nx, ny, scale1, 0);
+	dy = oct(nx, ny, scale2, 2);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct3(nx, ny, scale1, 1);
-	dy = oct3(nx, ny, scale2, 3);
+	dx = oct(nx, ny, scale1, 1);
+	dy = oct(nx, ny, scale2, 3);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct3(nx, ny, scale1, 1);
-	dy = oct3(nx, ny, scale2, 2);
+	dx = oct(nx, ny, scale1, 1);
+	dy = oct(nx, ny, scale2, 2);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct3(nx, ny, scale1, 3);
-	let vn = oct3(nx, ny, scale2, 2);
+	let un = oct(nx, ny, scale1, 3);
+	let vn = oct(nx, ny, scale2, 2);
 
 	let u = map(un, -0.015, 0.015, -5, 5, true);
 	let v = map(vn, -0.0015, 0.0015, -15, 15, true);
