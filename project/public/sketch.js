@@ -49,13 +49,18 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.001, 0.003);
-	scl2 = random(0.001, 0.003);
+	scl1 = 0.001;
+	scl2 = scl1;
+
+	/* ang1 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
+	ang2 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280])); */
+	ang1 = 1;
+	ang2 = 1;
 	let hue = random(360);
 	for (let i = 0; i < 300000; i++) {
 		let x = random(-0.1, 1.1) * width;
 		let y = random(-0.1, 1.1) * height;
-		movers.push(new Mover(x, y, hue, scl1, scl2, seed));
+		movers.push(new Mover(x, y, hue, scl1, scl2, ang1, ang2, seed));
 	}
 	let bgCol = spectral.mix('#fff', '#D79900', 0.038);
 	background(bgCol);
