@@ -6,7 +6,7 @@ class Mover {
 		this.yi = yi;
 		this.initHue = hue;
 		this.initSat = random([0, 0, 10, 20, 20, 40, 50, 60, 70, 80, 80, 90, 90, 100]);
-		this.initBri = random([10, 10, 20, 20, 40, 50, 60, 70, 80, 80, 90, 100]);
+		this.initBri = random([10]);
 		this.initAlpha = 100;
 		this.initS = 0.6;
 		this.hue = this.initHue;
@@ -42,10 +42,10 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed, this.xi, this.yi);
 
-		this.xRandDivider = random(2, 2.1);
-		this.yRandDivider = random(2, 2.1);
-		this.xRandSkipper = random(-1.1, 1.1);
-		this.yRandSkipper = random(-1.1, 1.1);
+		this.xRandDivider = 0.01;
+		this.yRandDivider = 0.5;
+		this.xRandSkipper = 0.01;
+		this.yRandSkipper = 0.01;
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
@@ -59,8 +59,8 @@ class Mover {
 		let mapVal = map(pxy, -4, 4, -1, 1, true);
 
 		this.hue = map(mapVal, -1, 1, this.initHue - 40, this.initHue + 40, true);
-		this.sat = map(mapVal, -1, 1, this.initSat + 20, this.initSat - 20, true);
-		this.bri = map(mapVal, -1, 1, this.initBri - 20, this.initBri + 20, true);
+		//this.sat = map(mapVal, -1, 1, this.initSat + 20, this.initSat - 20, true);
+		//this.bri = map(mapVal, -1, 1, this.initBri - 20, this.initBri + 20, true);
 		// shorthand for if this.hue is less than 0, set this.hue to 360 and vice versa
 		this.hue = this.hue < 0 ? this.hue + 360 : this.hue > 360 ? this.hue - 360 : this.hue;
 
@@ -99,26 +99,26 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, xi, yi) {
 		dx,
 		dy;
 
-	dx = oct(nx, ny, scale1, 0, 1);
-	dy = oct(nx, ny, scale2, 2, 1);
+	dx = oct(nx, ny, scale1, 0, 2);
+	dy = oct(nx, ny, scale2, 1, 2);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 1, 1);
-	dy = oct(nx, ny, scale2, 3, 1);
+	dx = oct(nx, ny, scale1, 2, 2);
+	dy = oct(nx, ny, scale2, 3, 2);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 1, 1);
-	dy = oct(nx, ny, scale2, 1, 1);
+	dx = oct(nx, ny, scale1, 3, 2);
+	dy = oct(nx, ny, scale2, 4, 2);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 3, 1);
-	let vn = oct(nx, ny, scale2, 2, 1);
+	let un = oct(nx, ny, scale1, 1, 2);
+	let vn = oct(nx, ny, scale2, 3, 2);
 
-	let u = map(un, -0.5, 0.5, -4, 4, true);
-	let v = map(vn, -0.5, 0.5, -4, 4, true);
+	let u = mapValue(un, -0.45, 0.25, -10, 15, true);
+	let v = mapValue(vn, -0.25, 0.45, -15, 12, true);
 
 	let p = createVector(u, v);
 	return p;

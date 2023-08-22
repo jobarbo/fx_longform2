@@ -4,6 +4,8 @@ let scl1;
 let scl2;
 let ang1;
 let ang2;
+let angle1;
+let angle2;
 let rseed;
 let nseed;
 let xMin;
@@ -45,15 +47,15 @@ function setup() {
 		pixelDensity(1.0);
 	}
 	//createCanvas((16 * 300) / 3, (16 * 300) / 3);
-	createCanvas(1080, 1920);
+	createCanvas(1080 * 2, 1920 * 2);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
 
-	scl1 = random(0.005, 0.005);
+	scl1 = random(0.001, 0.001);
 	scl2 = scl1;
-	ang1 = int(random(500, 1000));
-	ang2 = int(random(500, 1000));
+	ang1 = 1;
+	ang2 = ang1;
 
 	INIT(rseed);
 }
@@ -93,11 +95,11 @@ function INIT(seed) {
 	movers = [];
 	let easing = radians(easeAng);
 	let xpff;
-	scl1 += map(noise(sxoff, syoff), 0, 1, -0.0001, 0.0001, true);
+	scl1 += map(noise(sxoff, syoff), 0, 1, -0.00005, 0.00005, true);
 	scl2 = scl1;
 
-	angle1 = int(map(noise(axoff, ayoff), 0, 1, 0, ang1 * 2, true));
-	angle2 = int(map(noise(ayoff, axoff), 0, 1, 0, ang2 * 2, true));
+	angle1 = int(map(noise(axoff, ayoff), 0, 1, 1, ang1 * 2, true));
+	angle2 = int(map(noise(ayoff, axoff), 0, 1, 1, ang2 * 2, true));
 	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
 	xi += map(noise(xoff), 0, 1, -50, 50, true);
 	yi += map(noise(yoff), 0, 1, -50, 50, true);
@@ -122,16 +124,16 @@ function INIT(seed) {
 
 	console.log('cos(easing): ' + cos(easing));
 
-	xMin = 0.2;
+	/* 	xMin = 0.2;
 	xMax = 0.8;
 	yMin = 0.1;
-	yMax = 0.9;
-	/* 	xMin = -0.15;
-	xMax = 1.15;
-	yMin = -0.15;
-	yMax = 1.15; */
+	yMax = 0.9; */
+	xMin = -0.05;
+	xMax = 1.05;
+	yMin = -0.05;
+	yMax = 1.05;
 
-	for (let i = 0; i < 40000; i++) {
+	for (let i = 0; i < 80000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
@@ -145,6 +147,6 @@ function INIT(seed) {
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, xi, yi, initHue, scl1, scl2, angle1, angle2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix('#000', '#deb887', 0.1);
+	let bgCol = spectral.mix('#deb887', '#fff', 0.58);
 	background(bgCol);
 }
