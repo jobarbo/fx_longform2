@@ -15,7 +15,7 @@ class Mover {
 	show() {
 		//
 		//blendMode(SCREEN);
-		fill(this.hue, this.sat, this.bri, 10);
+		fill(this.hue, this.sat, this.bri, 40);
 		noStroke();
 		rect(this.x, this.y, this.s);
 	}
@@ -28,7 +28,7 @@ class Mover {
 		//this.bri = map(p.x, -4, 4, this.bri - 2, this.bri + 2, true);
 
 		this.x += p.x / 0.01 + random(-0.1, 0.1);
-		this.y += p.y / 0.5 + random(-0.1, 0.1);
+		this.y += p.y / 0.15 + random(-0.1, 0.1);
 		this.s += map(p.x, -4, 4, -0.01, 0.01);
 
 		/* 		if (this.hue < 0) {
