@@ -25,15 +25,17 @@ function setup() {
 
 function draw() {
 	// put drawing code here
-	background(255);
-	noStroke();
-	fill(0, 100, 100);
+	background(0);
+	translate(width / 2, height / 2);
+	stroke(255);
+	noFill();
 
-	if (features.shape_type == 'ellipse') {
-		ellipse(mouseX, mouseY, 100, 100);
+	beginShape();
+	for (let a = 0; a < TWO_PI; a += 0.01) {
+		let r = 200;
+		let x = r * cos(a);
+		let y = r * sin(a);
+		vertex(x, y);
 	}
-	if (features.shape_type == 'rectangle') {
-		rectMode(CENTER);
-		rect(mouseX, mouseY, 100, 100);
-	}
+	endShape();
 }
