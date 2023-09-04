@@ -8,8 +8,10 @@ let p_size = 1;
 let hue = 0;
 let sat = 0;
 let brightness = 100;
+
+let clear = true;
 function setup() {
-	console.log(features);
+	//console.log(features);
 	features = $fx.getFeatures();
 	createCanvas(windowWidth, windowHeight);
 
@@ -34,6 +36,11 @@ function setup() {
 
 function draw() {
 	// put drawing code here
+	if (clear) {
+		background(0);
+	} else {
+		background(0, 0, 0, 1);
+	}
 
 	if (kname == '32') {
 		noiseMax = map(int(kval), 0, 100, 0, 10, true);
@@ -48,9 +55,16 @@ function draw() {
 		p_size = map(int(kval), 0, 100, 0, 2, true);
 	}
 
+	// if midi button 40 is pressed, toggle clear
+	if (kname == '40' && kval > 50) {
+		clear = !clear;
+		console.log(clear);
+		return;
+	}
+
 	translate(width / 2, height / 2);
 	strokeWeight(1);
-	stroke(hue, sat, brightness, 10);
+	stroke(hue, sat, brightness, 100);
 	noFill();
 	let vertex_array = [];
 	//let noiseMax = slider.value();
@@ -74,7 +88,7 @@ function draw() {
 	phase += phase_inc;
 	for (let i = 0; i < vertex_array.length; i++) {
 		strokeWeight(p_size);
-		stroke(hue, sat, brightness, 10);
+		stroke(hue, sat, brightness, 100);
 		point(vertex_array[i].x, vertex_array[i].y);
 	}
 	//noLoop();
