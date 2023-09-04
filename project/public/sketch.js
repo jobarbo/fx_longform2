@@ -3,7 +3,7 @@ let noiseMax = 0;
 
 let phase = 0;
 let phase_inc = 0;
-let max_radius = 0;
+let max_radius = 50;
 let p_size = 1;
 let hue = 0;
 let sat = 0;
@@ -42,7 +42,7 @@ function draw() {
 		phase_inc = map(int(kval), 0, 100, 0, 0.1, true);
 	}
 	if (kname == '34') {
-		max_radius = map(int(kval), 0, 100, 0, width, true);
+		max_radius = map(int(kval), 0, 100, 50, width, true);
 	}
 	if (kname == '35') {
 		p_size = map(int(kval), 0, 100, 0, 2, true);
@@ -62,13 +62,13 @@ function draw() {
 		let r = map(noise(xoff, yoff), 0, 1, 0, max_radius);
 		let x = r * cos(a);
 		let y = r * sin(a);
-		//vertex(x, y);
+		curveVertex(x, y);
 		vertex_array.push({x: x, y: y});
 	}
 
-	/* 	curveVertex(vertex_array[0].x, vertex_array[0].y);
+	curveVertex(vertex_array[0].x, vertex_array[0].y);
 	curveVertex(vertex_array[1].x, vertex_array[1].y);
-	curveVertex(vertex_array[2].x, vertex_array[2].y); */
+	curveVertex(vertex_array[2].x, vertex_array[2].y);
 
 	endShape(CLOSE);
 	phase += phase_inc;
