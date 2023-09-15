@@ -25,7 +25,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(1.0);
+		pixelDensity(2.0);
 	}
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1600;
@@ -65,16 +65,16 @@ function draw() {
 function INIT() {
 	console.log('INIT');
 	let hue = random(360);
-	let bgCol = color(random(0, 360), random([0, 2, 5]), 95, 100);
+	let bgCol = color(random(0, 360), random([0, 2]), 95, 100);
 
 	background(bgCol);
 
 	drawTexture(hue);
 	movers = [];
-	scl1 = random(0.0001, 0.002);
-	scl2 = random(0.0001, 0.002);
-	ang1 = int(random(5));
-	ang2 = int(random(5));
+	scl1 = random(0.0001, 0.004);
+	scl2 = scl1;
+	ang1 = int(random(2000));
+	ang2 = int(random(2000));
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
@@ -117,7 +117,7 @@ function INIT() {
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
 	console.log('drawTexture');
-	for (let i = 0; i < 600000; i++) {
+	for (let i = 0; i < 6; i++) {
 		let x = random(width);
 		let y = random(height);
 		let sw = 0.45;
