@@ -28,8 +28,8 @@ function setup() {
 		pixelDensity(2.0);
 	}
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 1600;
-	c = createCanvas(C_WIDTH, C_WIDTH * 3);
+	MULTIPLIER = C_WIDTH / 4600;
+	c = createCanvas(C_WIDTH, C_WIDTH * 1);
 
 	/*
 		window.addEventListener('resize', onResize);
@@ -71,24 +71,24 @@ function INIT() {
 
 	drawTexture(hue);
 	movers = [];
-	scl1 = random(0.0001, 0.004);
+	scl1 = random(0.0001, 0.0004);
 	scl2 = scl1;
 	ang1 = int(random(2000));
-	ang2 = int(random(2000));
+	ang2 = ang1;
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 
 	xMin = 0.15;
 	xMax = 0.85;
-	yMin = 0.06;
-	yMax = 0.94;
+	yMin = 0.15;
+	yMax = 0.85;
 	/* 	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
 	yMax = 1.05; */
 
-	for (let i = 0; i < 300000; i++) {
+	for (let i = 0; i < 100000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
