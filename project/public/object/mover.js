@@ -3,10 +3,10 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0]);
+		this.initSat = random([0, 10, 20]);
 		this.initBri = random([0, 10, 20, 20, 40]);
-		this.initAlpha = 70;
-		this.initS = 1 * MULTIPLIER;
+		this.initAlpha = 100;
+		this.initS = 0.45 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
@@ -15,8 +15,12 @@ class Mover {
 		this.satStep = 0;
 		this.briStep = 0;
 		this.s = this.initS;
+		this.scl1Init = scl1;
+		this.scl2Init = scl2;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
+		this.ang1Init = ang1;
+		this.ang2Init = ang2;
 		this.ang1 = ang1;
 		this.ang2 = ang2;
 		this.xRandDivider = random(0.001, 2);
@@ -29,6 +33,8 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
+		this.xLimit = 0.015;
+		this.yLimit = 0.015;
 		this.oct = 6;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
@@ -48,14 +54,16 @@ class Mover {
 		// make ang1 smaller when around the center of the canvas both horizontally and vertically using mapValue
 		let distFromCenter = int(dist(this.x, this.y, this.centerX, this.centerY));
 
-		this.ang1 = int(map(distFromCenter, 0, 500, 0, 18000, true));
-		this.ang2 = int(map(distFromCenter, 0, 500, 0, 18000, true));
+		this.ang1 = int(map(distFromCenter, 0, 500, 0, this.ang1Init * 12, true));
+		this.ang2 = int(map(distFromCenter, 0, 500, 0, this.ang2Init * 12, true));
+		/* 		this.scl1 = map(distFromCenter, 0, 500, this.scl1Init / 2, this.scl1Init * 1.5, true);
+		this.scl2 = map(distFromCenter, 0, 500, this.scl2Init / 2, this.scl2Init * 1.5, true); */
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
-		this.xRandDivider = random(0.0000001, 13);
-		this.yRandDivider = random(0.0000001, 13);
+		this.xRandDivider = random(0.0000001, 10);
+		this.yRandDivider = random(0.0000001, 10);
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
@@ -64,27 +72,27 @@ class Mover {
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
 		this.sat += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.satStep, this.satStep, true);
 		this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
-		this.bri += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.briStep, this.briStep, true);
-		this.bri = this.bri > 100 ? 0 : this.bri < 0 ? 100 : this.bri;
+		this.bri += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, this.briStep, -this.briStep, true);
+		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri;
 
-		this.x = this.x <= 0 ? width - 2 : this.x >= width ? 0 : this.x;
-		this.y = this.y <= 0 ? height - 2 : this.y >= height ? 0 : this.y;
+		/* 		this.x = this.x <= 0 ? width - 2 : this.x >= width ? 0 : this.x;
+		this.y = this.y <= 0 ? height - 2 : this.y >= height ? 0 : this.y; */
 
 		if (this.isBordered) {
-			if (this.x < (this.xMin - 0.015) * width) {
-				this.x = (this.xMax + 0.015) * width;
+			if (this.x < (this.xMin - this.xLimit) * width) {
+				this.x = (this.xMax + this.xLimit) * width;
 				//this.a = 0;
 			}
-			if (this.x > (this.xMax + 0.015) * width) {
-				this.x = (this.xMin - 0.015) * width;
+			if (this.x > (this.xMax + this.xLimit) * width) {
+				this.x = (this.xMin - this.xLimit) * width;
 				//this.a = 0;
 			}
-			if (this.y < (this.yMin - 0.015) * height) {
-				this.y = (this.yMax + 0.015) * height;
+			if (this.y < (this.yMin - this.yLimit) * height) {
+				this.y = (this.yMax + this.yLimit) * height;
 				//this.a = 0;
 			}
-			if (this.y > (this.yMax + 0.015) * height) {
-				this.y = (this.yMin - 0.015) * height;
+			if (this.y > (this.yMax + this.yLimit) * height) {
+				this.y = (this.yMin - this.yLimit) * height;
 				//this.a = 0;
 			}
 		}
@@ -118,8 +126,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.5, 0.5, -50, 5, true);
-	let v = map(vn, -0.5, 0.5, -5, 50, true);
+	let u = map(un, -0.5, 0.5, -60, 1, true);
+	let v = map(vn, -0.5, 0.5, -1, 60, true);
 
 	let p = createVector(u, v);
 	return p;

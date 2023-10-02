@@ -10,7 +10,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 60;
+let maxFrames = 120;
 let C_WIDTH;
 let MULTIPLIER;
 
@@ -25,11 +25,11 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(2.0);
+		pixelDensity(3.0);
 	}
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 4600;
-	c = createCanvas(C_WIDTH, C_WIDTH * 1);
+	MULTIPLIER = C_WIDTH / 2600;
+	c = createCanvas(C_WIDTH, C_WIDTH * 1.78);
 
 	/*
 		window.addEventListener('resize', onResize);
@@ -71,24 +71,30 @@ function INIT() {
 
 	drawTexture(hue);
 	movers = [];
-	scl1 = random(0.0001, 0.0004);
+	scl1 = random(0.0002, 0.003);
 	scl2 = scl1;
-	ang1 = int(random(2000));
+	ang1 = int(random(1000));
 	ang2 = ang1;
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 
-	xMin = 0.15;
-	xMax = 0.85;
-	yMin = 0.15;
-	yMax = 0.85;
+	xMin = 0.07;
+	xMax = 0.93;
+	yMin = 0.05;
+	yMax = 0.95;
 	/* 	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
 	yMax = 1.05; */
+	stroke(0);
+	strokeWeight(1);
+	line(xMin * width, yMin * height, xMax * width, yMin * height);
+	line(xMin * width, yMax * height, xMax * width, yMax * height);
+	line(xMin * width, yMin * height, xMin * width, yMax * height);
+	line(xMax * width, yMin * height, xMax * width, yMax * height);
 
-	for (let i = 0; i < 100000; i++) {
+	for (let i = 0; i < 400000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
@@ -117,14 +123,14 @@ function INIT() {
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
 	console.log('drawTexture');
-	for (let i = 0; i < 6; i++) {
+	for (let i = 0; i < 400000; i++) {
 		let x = random(width);
 		let y = random(height);
 		let sw = 0.45;
 		let h = hue + random(-1, 1);
 		let s = random([0, 20, 40, 60, 80, 100]);
 		let b = random([0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100]);
-		fill(h, s, b, 100);
+		fill(h, s, b, 20);
 		noStroke();
 		rect(x, y, sw);
 	}
