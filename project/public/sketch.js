@@ -94,7 +94,7 @@ function INIT() {
 	line(xMin * width, yMin * height, xMin * width, yMax * height);
 	line(xMax * width, yMin * height, xMax * width, yMax * height);
 
-	for (let i = 0; i < 400000; i++) {
+	for (let i = 0; i < 200000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 

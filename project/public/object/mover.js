@@ -33,8 +33,8 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.xLimit = 0.015;
-		this.yLimit = 0.015;
+		this.xLimit = 0.00015;
+		this.yLimit = 0.00015;
 		this.oct = 6;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
@@ -54,10 +54,10 @@ class Mover {
 		// make ang1 smaller when around the center of the canvas both horizontally and vertically using mapValue
 		let distFromCenter = int(dist(this.x, this.y, this.centerX, this.centerY));
 
-		this.ang1 = int(map(distFromCenter, 0, 500, 0, this.ang1Init * 12, true));
-		this.ang2 = int(map(distFromCenter, 0, 500, 0, this.ang2Init * 12, true));
-		/* 		this.scl1 = map(distFromCenter, 0, 500, this.scl1Init / 2, this.scl1Init * 1.5, true);
-		this.scl2 = map(distFromCenter, 0, 500, this.scl2Init / 2, this.scl2Init * 1.5, true); */
+		this.ang1 = int(map(distFromCenter, 0, 400, 700, 0, true));
+		this.ang2 = int(map(distFromCenter, 0, 400, 700, 0, true));
+		/* 		this.scl1 = map(distFromCenter, 0, 500, this.scl1Init * 1.25, this.scl1Init / 1.25, true);
+		this.scl2 = map(distFromCenter, 0, 500, this.scl2Init * 1.25, this.scl2Init / 1.25, true); */
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
@@ -126,8 +126,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.5, 0.5, -60, 1, true);
-	let v = map(vn, -0.5, 0.5, -1, 60, true);
+	let u = map(un, -0.0000005, 0.5, -100, 1, true);
+	let v = map(vn, -0.5, 0.0000005, -1, 100, true);
 
 	let p = createVector(u, v);
 	return p;
