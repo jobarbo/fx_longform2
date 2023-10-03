@@ -35,7 +35,7 @@ class Mover {
 		this.yMax = yMax;
 		this.xLimit = 0.00015;
 		this.yLimit = 0.00015;
-		this.oct = 15;
+		this.oct = 6;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX = width / 2;
