@@ -6,7 +6,7 @@ class Mover {
 		this.initSat = random([0, 10, 20]);
 		this.initBri = random([0, 10, 20, 20, 40]);
 		this.initAlpha = 100;
-		this.initS = 0.45 * MULTIPLIER;
+		this.initS = 0.5 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
@@ -35,7 +35,7 @@ class Mover {
 		this.yMax = yMax;
 		this.xLimit = 0.00015;
 		this.yLimit = 0.00015;
-		this.oct = 6;
+		this.oct = 15;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX = width / 2;
@@ -54,16 +54,16 @@ class Mover {
 		// make ang1 smaller when around the center of the canvas both horizontally and vertically using mapValue
 		let distFromCenter = int(dist(this.x, this.y, this.centerX, this.centerY));
 
-		this.ang1 = int(map(distFromCenter, 0, 400, 700, 0, true));
-		this.ang2 = int(map(distFromCenter, 0, 400, 700, 0, true));
-		/* 		this.scl1 = map(distFromCenter, 0, 500, this.scl1Init * 1.25, this.scl1Init / 1.25, true);
-		this.scl2 = map(distFromCenter, 0, 500, this.scl2Init * 1.25, this.scl2Init / 1.25, true); */
+		this.ang1 = int(map(distFromCenter, 0, 400, this.ang1Init / 15, this.ang1Init * 3, true));
+		this.ang2 = int(map(distFromCenter, 0, 400, this.ang1Init / 15, this.ang1Init * 3, true));
+		this.scl1 = map(distFromCenter, 0, 500, 0.0002, 0.005, true);
+		this.scl2 = map(distFromCenter, 0, 500, 0.0002, 0.005, true);
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
-		this.xRandDivider = random(0.0000001, 10);
-		this.yRandDivider = random(0.0000001, 10);
+		this.xRandDivider = random(0.0000001, 1);
+		this.yRandDivider = random(0.0000001, 1);
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
@@ -126,8 +126,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.0000005, 0.5, -100, 1, true);
-	let v = map(vn, -0.5, 0.0000005, -1, 100, true);
+	let u = map(un, -0.0000000000015, 0.0000000000015, -1, 1, true);
+	let v = map(vn, -0.0000000000015, 0.0000000000015, -1, 1, true);
 
 	let p = createVector(u, v);
 	return p;
