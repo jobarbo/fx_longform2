@@ -74,7 +74,7 @@ function INIT() {
 	movers = [];
 	scl1 = 0.006;
 	scl2 = scl1;
-	ang1 = 2000;
+	ang1 = 1000;
 	ang2 = ang1;
 
 	console.log(scl1, ang1);

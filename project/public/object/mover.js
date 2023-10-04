@@ -60,8 +60,8 @@ class Mover {
 		this.scl2 = map(distFromCenter, 0, 500 * MULTIPLIER, 0.007, 0.0002, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		this.xRandDivider = 0.1;
-		this.yRandDivider = 0.1;
+		this.xRandDivider = random(0.00000000000001, 5);
+		this.yRandDivider = random(0.00000000000001, 5);
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -131,8 +131,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.15, 0.15, -20, 20, true);
-	let v = map(vn, -0.15, 0.15, -20, 20, true);
+	let u = map(un, -0.15, 0.15, -2, 20, true);
+	let v = map(vn, -0.15, 0.15, -20, 2, true);
 
 	let p = createVector(u, v);
 	return p;
