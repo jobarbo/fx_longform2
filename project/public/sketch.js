@@ -25,7 +25,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(2.0);
+		pixelDensity(3.0);
 	}
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 3600;
@@ -72,9 +72,9 @@ function INIT() {
 
 	drawTexture(hue);
 	movers = [];
-	scl1 = 0.003;
+	scl1 = 0.006;
 	scl2 = scl1;
-	ang1 = 500;
+	ang1 = 2000;
 	ang2 = ang1;
 
 	console.log(scl1, ang1);
@@ -91,13 +91,13 @@ function INIT() {
 	yMin = -0.05;
 	yMax = 1.05; */
 	stroke(0);
-	strokeWeight(1);
+	strokeWeight(1 * MULTIPLIER);
 	line(xMin * width, yMin * height, xMax * width, yMin * height);
 	line(xMin * width, yMax * height, xMax * width, yMax * height);
 	line(xMin * width, yMin * height, xMin * width, yMax * height);
 	line(xMax * width, yMin * height, xMax * width, yMax * height);
 
-	for (let i = 0; i < 100000; i++) {
+	for (let i = 0; i < 200000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 

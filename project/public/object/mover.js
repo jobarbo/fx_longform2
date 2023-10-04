@@ -24,8 +24,8 @@ class Mover {
 		this.ang2Init = ang2;
 		this.ang1 = ang1;
 		this.ang2 = ang2;
-		this.xRandDivider = random(0.001, 2);
-		this.yRandDivider = random(0.001, 2);
+		this.xRandDivider = random(0.00000000000001, 5);
+		this.yRandDivider = random(0.00000000000001, 5);
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperVal = 0.1;
@@ -54,14 +54,14 @@ class Mover {
 	move() {
 		let distFromCenter = int(dist(this.x, this.y, this.centerX, this.centerY));
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		/* 		this.ang1 = int(map(distFromCenter, 0, 400 * MULTIPLIER, this.ang1Init / 15, this.ang1Init * 3, true));
-		this.ang2 = int(map(distFromCenter, 0, 400 * MULTIPLIER, this.ang1Init / 15, this.ang1Init * 3, true));
-		this.scl1 = map(distFromCenter, 0, 500 * MULTIPLIER, 0.0002, 0.005, true);
-		this.scl2 = map(distFromCenter, 0, 500 * MULTIPLIER, 0.0002, 0.005, true); */
+		this.ang1 = int(map(distFromCenter, 0, 200 * MULTIPLIER, 0, this.ang1Init * 2, true));
+		this.ang2 = int(map(distFromCenter, 0, 600 * MULTIPLIER, this.ang1Init * 1, 0, true));
+		this.scl1 = map(distFromCenter, 0, 100 * MULTIPLIER, 0.0002, 0.007, true);
+		this.scl2 = map(distFromCenter, 0, 500 * MULTIPLIER, 0.007, 0.0002, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		this.xRandDivider = random(0.00000000000001, 5);
-		this.yRandDivider = random(0.00000000000001, 5);
+		this.xRandDivider = 0.1;
+		this.yRandDivider = 0.1;
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -131,8 +131,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.5, 0.5, -1, 50, true);
-	let v = map(vn, -0.5, 0.5, -50, 1, true);
+	let u = map(un, -0.15, 0.15, -20, 20, true);
+	let v = map(vn, -0.15, 0.15, -20, 20, true);
 
 	let p = createVector(u, v);
 	return p;
