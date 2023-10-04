@@ -25,11 +25,11 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(3.0);
+		pixelDensity(2.0);
 	}
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 2600;
-	c = createCanvas(C_WIDTH, C_WIDTH * 1.78);
+	MULTIPLIER = C_WIDTH / 3600;
+	c = createCanvas(C_WIDTH, C_WIDTH);
 
 	/*
 		window.addEventListener('resize', onResize);
@@ -72,9 +72,9 @@ function INIT() {
 
 	drawTexture(hue);
 	movers = [];
-	scl1 = random(0.0006, 0.005);
+	scl1 = 0.003;
 	scl2 = scl1;
-	ang1 = int(random(1000));
+	ang1 = 500;
 	ang2 = ang1;
 
 	console.log(scl1, ang1);
@@ -84,8 +84,8 @@ function INIT() {
 
 	xMin = 0.07;
 	xMax = 0.93;
-	yMin = 0.05;
-	yMax = 0.95;
+	yMin = 0.07;
+	yMax = 0.93;
 	/* 	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
@@ -97,7 +97,7 @@ function INIT() {
 	line(xMin * width, yMin * height, xMin * width, yMax * height);
 	line(xMax * width, yMin * height, xMax * width, yMax * height);
 
-	for (let i = 0; i < 250000; i++) {
+	for (let i = 0; i < 100000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 

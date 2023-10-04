@@ -3,19 +3,19 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0, 10, 20]);
+		this.initSat = random([0, 10, 20, 20, 30]);
 		this.initBri = random([0, 10, 20, 20, 40]);
 		this.initAlpha = 100;
 		this.initS = 0.6 * MULTIPLIER;
+		this.s = this.initS;
 		this.hue = this.initHue;
-		this.hueArr = [0, 20, 30, 120, 35, 45, 185, 190, 195];
+		this.hueArr = [0, 20, 30, 120, 35, 45];
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
 		this.hueStep = 0;
 		this.satStep = 0;
 		this.briStep = 0;
-		this.s = this.initS;
 		this.scl1Init = scl1;
 		this.scl2Init = scl2;
 		this.scl1 = scl1;
@@ -54,13 +54,14 @@ class Mover {
 	move() {
 		let distFromCenter = int(dist(this.x, this.y, this.centerX, this.centerY));
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distFromCenter, 0, 400 * MULTIPLIER, this.ang1Init / 15, this.ang1Init * 3, true));
+		/* 		this.ang1 = int(map(distFromCenter, 0, 400 * MULTIPLIER, this.ang1Init / 15, this.ang1Init * 3, true));
 		this.ang2 = int(map(distFromCenter, 0, 400 * MULTIPLIER, this.ang1Init / 15, this.ang1Init * 3, true));
 		this.scl1 = map(distFromCenter, 0, 500 * MULTIPLIER, 0.0002, 0.005, true);
-		this.scl2 = map(distFromCenter, 0, 500 * MULTIPLIER, 0.0002, 0.005, true);
+		this.scl2 = map(distFromCenter, 0, 500 * MULTIPLIER, 0.0002, 0.005, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-
+		this.xRandDivider = random(0.00000000000001, 5);
+		this.yRandDivider = random(0.00000000000001, 5);
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -68,9 +69,10 @@ class Mover {
 
 		let pxy = p.x - p.y;
 
-		/* 		let hueIndex = int(map(p.x, -4, 4, this.hueArr.length - 1, 0, true));
-
-		this.hue = this.hueArr[hueIndex]; */
+		/*
+		let hueIndex = int(map(pxy, -80, 0, this.hueArr.length - 1, 0, true));
+		this.hue = this.hueArr[hueIndex];
+		*/
 		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, this.hueStep, -this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
 		this.sat += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.satStep, this.satStep, true);
@@ -129,8 +131,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.0000000000015, 0.0000000000015, -4, 4, true);
-	let v = map(vn, -0.0000000000015, 0.0000000000015, -4, 4, true);
+	let u = map(un, -0.5, 0.5, -1, 50, true);
+	let v = map(vn, -0.5, 0.5, -50, 1, true);
 
 	let p = createVector(u, v);
 	return p;
