@@ -6,7 +6,7 @@ class Mover {
 		this.initSat = random([0, 10, 20, 20, 30]);
 		this.initBri = random([0, 10, 20, 20, 40]);
 		this.initAlpha = 100;
-		this.initS = 0.6 * MULTIPLIER;
+		this.initS = 0.5 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.hueArr = [0, 20, 30, 120, 35, 45];
@@ -24,8 +24,8 @@ class Mover {
 		this.ang2Init = ang2;
 		this.ang1 = ang1;
 		this.ang2 = ang2;
-		this.xRandDivider = random(0.00000000000001, 5);
-		this.yRandDivider = random(0.00000000000001, 5);
+		this.xRandDivider = random(0.0000000000000000000001, 10);
+		this.yRandDivider = random(0.0000000000000000000001, 10);
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperVal = 0.1;
@@ -52,16 +52,16 @@ class Mover {
 	}
 
 	move() {
-		let distFromCenter = int(dist(this.x, this.y, (this.xMax / 1.5) * width, (this.yMax / 1.5) * height));
+		let distFromCenter = int(dist(this.x, this.y, this.xMin * 5 * width, (this.yMax / 1.5) * height));
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		this.ang1 = int(map(distFromCenter, 0, 500 * MULTIPLIER, 0, this.ang1Init * 2, true));
 		this.ang2 = int(map(distFromCenter, 0, 1000 * MULTIPLIER, this.ang1Init * 2, 0, true));
-		this.scl1 = map(distFromCenter, 0, 500 * MULTIPLIER, 0.0002, 0.004, true);
-		this.scl2 = map(distFromCenter, 0, 1000 * MULTIPLIER, 0.004, 0.0002, true);
+		this.scl1 = map(distFromCenter, 0, 500 * MULTIPLIER, 0.0002, 0.005, true);
+		this.scl2 = map(distFromCenter, 0, 1000 * MULTIPLIER, 0.01, 0.0002, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		this.xRandDivider = random(0.00000000000001, 5);
-		this.yRandDivider = random(0.00000000000001, 5);
+		this.xRandDivider = random(0.00001, 5);
+		this.yRandDivider = random(0.00001, 5);
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -131,8 +131,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.5, 0.5, -10, 20, true);
-	let v = map(vn, -0.5, 0.5, -20, 10, true);
+	let u = map(un, -0.5, 0.00000005, -20, 1, true);
+	let v = map(vn, -0.00000005, 0.5, -1, 20, true);
 
 	let p = createVector(u, v);
 	return p;
