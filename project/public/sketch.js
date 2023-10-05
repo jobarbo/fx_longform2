@@ -10,9 +10,12 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 60;
+let maxFrames = 120;
 let currentFrame = 0;
-let C_WIDTH;
+let DEFAULT_SIZE = 3600;
+let W = window.innerWidth;
+let H = window.innerHeight;
+let DIM;
 let MULTIPLIER;
 
 function setup() {
@@ -28,9 +31,9 @@ function setup() {
 	} else {
 		pixelDensity(2.0);
 	}
-	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 3600;
-	c = createCanvas(C_WIDTH, C_WIDTH);
+	DIM = min(windowWidth, windowHeight);
+	MULTIPLIER = DIM / DEFAULT_SIZE;
+	c = createCanvas(DIM, DIM);
 
 	/*
 		window.addEventListener('resize', onResize);
@@ -76,7 +79,7 @@ function INIT() {
 	movers = [];
 	scl1 = 0.004;
 	scl2 = scl1;
-	ang1 = 1000;
+	ang1 = 500;
 	ang2 = ang1;
 
 	console.log(scl1, ang1);
@@ -93,7 +96,7 @@ function INIT() {
 	yMin = -0.05;
 	yMax = 1.05; */
 
-	for (let i = 0; i < 400000; i++) {
+	for (let i = 0; i < 100000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
@@ -125,7 +128,7 @@ function drawTexture(hue) {
 	for (let i = 0; i < 400000; i++) {
 		let x = random(width);
 		let y = random(height);
-		let sw = 0.45;
+		let sw = 0.45 * MULTIPLIER;
 		let h = hue + random(-1, 1);
 		let s = random([0, 20, 40, 60, 80, 100]);
 		let b = random([0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100]);
@@ -163,7 +166,7 @@ function drawUI() {
 
 	// make a larger line that is positionned just outside of the xMin and xMax and yMin and yMax limits. One rectangle for each 1/4th segment of each side. one is black and the other is white and so on. It must look like a the border of a topo map
 	let sw = 20 * MULTIPLIER;
-	strokeWeight(1);
+	strokeWeight(1 * MULTIPLIER);
 	stroke(0);
 
 	// left side
@@ -209,7 +212,7 @@ function drawUI() {
 
 	// add a square to each corner of the xMin,xMax,yMin,yMax rectangle
 
-	strokeWeight(1);
+	strokeWeight(1 * MULTIPLIER);
 	stroke(0);
 	fill(255);
 	rect(xMin * width - sw, yMin * height - sw, sw, sw);

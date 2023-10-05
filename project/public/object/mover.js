@@ -54,10 +54,10 @@ class Mover {
 	move() {
 		let distFromCenter = int(dist(this.x, this.y, this.xMin * 5 * width, (this.yMax / 1.5) * height));
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distFromCenter, 0, 500 * MULTIPLIER, 0, this.ang1Init * 2, true));
+		/* 		this.ang1 = int(map(distFromCenter, 0, 500 * MULTIPLIER, 0, this.ang1Init * 2, true));
 		this.ang2 = int(map(distFromCenter, 0, 1000 * MULTIPLIER, this.ang1Init * 2, 0, true));
 		this.scl1 = map(distFromCenter, 0, 500 * MULTIPLIER, 0.0002, 0.005, true);
-		this.scl2 = map(distFromCenter, 0, 1000 * MULTIPLIER, 0.01, 0.0002, true);
+		this.scl2 = map(distFromCenter, 0, 1000 * MULTIPLIER, 0.01, 0.0002, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 		this.xRandDivider = random(0.00001, 5);
@@ -131,8 +131,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.5, 0.00000005, -20, 1, true);
-	let v = map(vn, -0.00000005, 0.5, -1, 20, true);
+	let u = map(un, -0.005, 0.00000005, -20, 1, true);
+	let v = map(vn, -0.00000005, 0.005, -1, 20, true);
 
 	let p = createVector(u, v);
 	return p;
