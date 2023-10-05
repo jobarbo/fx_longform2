@@ -72,7 +72,7 @@ function INIT() {
 
 	drawTexture(hue);
 	movers = [];
-	scl1 = 0.006;
+	scl1 = 0.004;
 	scl2 = scl1;
 	ang1 = 1000;
 	ang2 = ang1;
@@ -97,7 +97,7 @@ function INIT() {
 	line(xMin * width, yMin * height, xMin * width, yMax * height);
 	line(xMax * width, yMin * height, xMax * width, yMax * height);
 
-	for (let i = 0; i < 200000; i++) {
+	for (let i = 0; i < 400000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
