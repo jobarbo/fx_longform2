@@ -1,10 +1,28 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider) {
+	constructor(
+		x,
+		y,
+		hue,
+		scl1,
+		scl2,
+		ang1,
+		ang2,
+		xMin,
+		xMax,
+		yMin,
+		yMax,
+		xRandDivider,
+		yRandDivider,
+		scl1Zone,
+		scl2Zone,
+		ang1Zone,
+		ang2Zone
+	) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0, 10, 20, 20, 30]);
-		this.initBri = random([0, 10, 20, 20, 40]);
+		this.initSat = random([0, 10, 10, 20, 20, 30]);
+		this.initBri = random([0, 10, 10, 20, 20, 30]);
 		this.initAlpha = 100;
 		this.initS = 0.5 * MULTIPLIER;
 		this.s = this.initS;
@@ -43,6 +61,11 @@ class Mover {
 		this.borderY = height / 2.75;
 		this.uvalue = 4;
 		this.isBordered = true;
+
+		this.ang1Zone = ang1Zone;
+		this.ang2Zone = ang2Zone;
+		this.scl1Zone = scl1Zone;
+		this.scl2Zone = scl2Zone;
 	}
 
 	show() {
@@ -54,14 +77,14 @@ class Mover {
 	move() {
 		let distFromCenter = int(dist(this.x, this.y, this.xMin * 5 * width, (this.yMax / 1.5) * height));
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		/* 		this.ang1 = int(map(distFromCenter, 0, 500 * MULTIPLIER, 0, this.ang1Init * 2, true));
-		this.ang2 = int(map(distFromCenter, 0, 1000 * MULTIPLIER, this.ang1Init * 2, 0, true));
-		this.scl1 = map(distFromCenter, 0, 500 * MULTIPLIER, 0.0002, 0.005, true);
-		this.scl2 = map(distFromCenter, 0, 1000 * MULTIPLIER, 0.01, 0.0002, true); */
+		/* 		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone * MULTIPLIER, 0, this.ang1Init * 1, true));
+		this.ang2 = int(map(distFromCenter, 0, this.ang2Zone * MULTIPLIER, this.ang2Init * 1, 0, true)); */
+		/* this.scl1 = map(distFromCenter, 0, this.scl1Zone * MULTIPLIER, 0.0002, this.scl1Init, true);
+		this.scl2 = map(distFromCenter, 0, this.scl2Zone * MULTIPLIER, this.scl2Init, 0.0002, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		this.xRandDivider = random(0.00001, 5);
-		this.yRandDivider = random(0.00001, 5);
+		this.xRandDivider = random(0.00000001, 10);
+		this.yRandDivider = random(0.00000001, 10);
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;

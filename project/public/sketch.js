@@ -77,26 +77,30 @@ function INIT() {
 
 	drawTexture(hue);
 	movers = [];
-	scl1 = 0.004;
-	scl2 = scl1;
-	ang1 = 500;
-	ang2 = ang1;
+	scl1 = random(0.0005, 0.005);
+	scl2 = random(0.0005, 0.005);
+	ang1 = int(random(1200));
+	ang2 = int(random(1200));
+	scl1Zone = random(100, 500);
+	scl2Zone = random(100, 900);
+	ang1Zone = random(100, 500);
+	ang2Zone = random(100, 900);
 
 	console.log(scl1, ang1);
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 
-	xMin = 0.07;
-	xMax = 0.93;
-	yMin = 0.07;
-	yMax = 0.93;
+	xMin = 0.01;
+	xMax = 0.99;
+	yMin = 0.01;
+	yMax = 0.99;
 	/* 	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
 	yMax = 1.05; */
 
-	for (let i = 0; i < 100000; i++) {
+	for (let i = 0; i < 250000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
@@ -116,7 +120,11 @@ function INIT() {
 				yMin,
 				yMax,
 				xRandDivider,
-				yRandDivider
+				yRandDivider,
+				scl1Zone,
+				scl2Zone,
+				ang1Zone,
+				ang2Zone
 			)
 		);
 	}
@@ -128,11 +136,11 @@ function drawTexture(hue) {
 	for (let i = 0; i < 400000; i++) {
 		let x = random(width);
 		let y = random(height);
-		let sw = 0.45 * MULTIPLIER;
+		let sw = 1 * MULTIPLIER;
 		let h = hue + random(-1, 1);
 		let s = random([0, 20, 40, 60, 80, 100]);
 		let b = random([0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100]);
-		fill(h, s, b, 20);
+		fill(h, s, b, 50);
 		noStroke();
 		rect(x, y, sw);
 	}
@@ -148,7 +156,7 @@ function drawUI() {
 	line(xMax * width, yMin * height, xMax * width, yMax * height);
 
 	stroke(0, 0, 0, 100);
-	strokeWeight(1 * MULTIPLIER);
+	strokeWeight(3 * MULTIPLIER);
 	// make 3 lines from top to bottom and left to right that represent 1/4th,half and 3/4th of what's inside xMin and xMax
 	let x1 = xMin + (xMax - xMin) / 4;
 	let x2 = xMin + (xMax - xMin) / 2;
@@ -165,7 +173,7 @@ function drawUI() {
 	line(xMin * width, y3 * height, xMax * width, y3 * height);
 
 	// make a larger line that is positionned just outside of the xMin and xMax and yMin and yMax limits. One rectangle for each 1/4th segment of each side. one is black and the other is white and so on. It must look like a the border of a topo map
-	let sw = 20 * MULTIPLIER;
+	let sw = xMin * width;
 	strokeWeight(1 * MULTIPLIER);
 	stroke(0);
 
