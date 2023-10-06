@@ -77,24 +77,24 @@ function INIT() {
 
 	drawTexture(hue);
 	movers = [];
-	scl1 = random(0.0005, 0.005);
-	scl2 = random(0.0005, 0.005);
-	ang1 = int(random(1200));
-	ang2 = int(random(1200));
-	scl1Zone = random(100, 500);
-	scl2Zone = random(100, 900);
-	ang1Zone = random(100, 500);
-	ang2Zone = random(100, 900);
+	scl1 = random(0.00042, 0.00042);
+	scl2 = random(0.00042, 0.00042);
+	ang1 = int(random(4200, 4200));
+	ang2 = int(random(4200, 4200));
+	scl1Zone = random(800, 1000);
+	scl2Zone = random(900, 1200);
+	ang1Zone = random(800, 1000);
+	ang2Zone = random(900, 1200);
 
-	console.log(scl1, ang1);
+	console.log(scl1, scl2, ang1, ang2);
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 
-	xMin = 0.01;
-	xMax = 0.99;
-	yMin = 0.01;
-	yMax = 0.99;
+	xMin = 0.05;
+	xMax = 0.95;
+	yMin = 0.05;
+	yMax = 0.95;
 	/* 	xMin = -0.05;
 	xMax = 1.05;
 	yMin = -0.05;
@@ -155,7 +155,7 @@ function drawUI() {
 	line(xMin * width, yMin * height, xMin * width, yMax * height);
 	line(xMax * width, yMin * height, xMax * width, yMax * height);
 
-	stroke(0, 0, 0, 100);
+	stroke(0, 0, 0, 70);
 	strokeWeight(3 * MULTIPLIER);
 	// make 3 lines from top to bottom and left to right that represent 1/4th,half and 3/4th of what's inside xMin and xMax
 	let x1 = xMin + (xMax - xMin) / 4;
@@ -173,7 +173,7 @@ function drawUI() {
 	line(xMin * width, y3 * height, xMax * width, y3 * height);
 
 	// make a larger line that is positionned just outside of the xMin and xMax and yMin and yMax limits. One rectangle for each 1/4th segment of each side. one is black and the other is white and so on. It must look like a the border of a topo map
-	let sw = xMin * width;
+	let sw = (xMin / 10) * width;
 	strokeWeight(1 * MULTIPLIER);
 	stroke(0);
 
