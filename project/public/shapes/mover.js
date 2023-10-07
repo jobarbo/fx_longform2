@@ -19,21 +19,20 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0, 0, 5, 10, 10, 80, 90, 100, 100]);
-		this.initBri = random([10, 15, 20, 40, 50, 70, 90, 100]);
-		this.initAlpha = random(10, 60);
-		this.hue = this.initHue;
+		this.initSat = random([0, 0, 5, 10, 80]);
+		this.initBri = random([0, 10, 15, 80, 90, 100]);
+		this.initAlpha = random(60, 100);
+		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.s = random([0.5, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 5, 5]);
+		this.s = random([0.5, 1, 1, 1, 2, 2, 3, 3, 3]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
 		this.sclOffset1 = sclOffset1;
 		this.sclOffset2 = sclOffset2;
 		this.sclOffset3 = sclOffset3;
-
 		this.seed = seed;
 		this.xRandDivider = 1;
 		this.yRandDivider = 1;
@@ -69,12 +68,12 @@ class Mover {
 		// after 1 second, change the scale
 
 		//! crayon effect too
-		/* 		this.xRandDivider = random(0.1, 1.1);
-		this.yRandDivider = random(0.1, 1.1);*/
+		/* 		this.xRandDivider = random(0.1, 4);
+		this.yRandDivider = random(0.1, 4); */
 
-		this.xRandSkipper = random(-0.001, 0.001);
-		this.yRandSkipper = random(-0.001, 0.001);
-
+		/* 		this.xRandSkipper = random(-1.001, 1.001);
+		this.yRandSkipper = random(-1.001, 1.001);
+ */
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
@@ -125,11 +124,11 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	/* 	let maxU = map(ny, 0, height, 3, -3, true);
 	let maxV = map(nx, 0, width, 3, -3, true);
 	let minU = map(ny, 0, height, -3, 3, true);
-	let minV = map(nx, 0, width, -3, 3, true); */
-
+	let minV = map(nx, 0, width, -3, 3, true);
+ */
 	//! pNoise x SineCos
 	/* 	let maxU = map(
-		oct6(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1),
+		oct(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1, 6),
 		-0.5,
 		0.5,
 		0,
@@ -137,7 +136,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		true
 	);
 	let maxV = map(
-		oct6(nx * (scale2 * scaleOffset1) + nseed, nx * (scale1 * scaleOffset2) + nseed, noiseScale2, 2),
+		oct(nx * (scale2 * scaleOffset1) + nseed, nx * (scale1 * scaleOffset2) + nseed, noiseScale2, 2, 6),
 		-0.5,
 		0.5,
 		0,
@@ -145,7 +144,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		true
 	);
 	let minU = map(
-		oct6(ny * (scale3 * scaleOffset1) + nseed, ny * (scale1 * scaleOffset3) + nseed, noiseScale3, 0),
+		oct(ny * (scale3 * scaleOffset1) + nseed, ny * (scale1 * scaleOffset3) + nseed, noiseScale3, 0, 6),
 		-0.5,
 		0.5,
 		-4,
@@ -153,7 +152,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		true
 	);
 	let minV = map(
-		oct6(nx * (scale1 * scaleOffset2) + nseed, nx * (scale3 * scaleOffset3) + nseed, noiseScale2, 3),
+		oct(nx * (scale1 * scaleOffset2) + nseed, nx * (scale3 * scaleOffset3) + nseed, noiseScale2, 3, 6),
 		-0.5,
 		0.5,
 		-4,
@@ -174,22 +173,22 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = random(-4, -0.001); */
 
 	//! Standard Mode
-	let maxU = 3;
-	let maxV = 3;
-	let minU = -3;
-	let minV = -3;
+	let maxU = 1;
+	let maxV = 1;
+	let minU = -1;
+	let minV = -1;
 
 	//! Introverted
-	/* 	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -4, -0.001), map(ny, 0, height, 0.001, 4), minV, maxV, true); */
+	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -4, -0.001), map(ny, 0, height, 0.001, 4), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, 0, width, -4, -0.001), map(ny, 0, width, 0.001, 4), minU, maxU, true);
 	let v = map(un, map(nx, 0, height, -4, -0.001), map(nx, 0, height, 0.001, 4), minV, maxV, true); */
 
 	//! Equilibrium
-	let u = map(vn, -3, 3, minU, maxU, true);
-	let v = map(un, -3, 3, minV, maxV, true);
+	/* 	let u = map(vn, -3, 3, minU, maxU, true);
+	let v = map(un, -3, 3, minV, maxV, true); */
 
 	let p = createVector(u, v);
 	return p;

@@ -23,11 +23,11 @@ function setup() {
 
 	// if Safari mobile or any smartphone browser, use pixelDensity(0.5) to make the canvas bigger, else use pixelDensity(3.0)
 	if (iOSSafari || (iOS && !iOSSafari) || (!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))) {
-		pixelDensity(2);
+		pixelDensity(1);
 	} else {
-		pixelDensity(3);
+		pixelDensity(2);
 	}
-	createCanvas(16 * 100, 22 * 100);
+	createCanvas(16 * 100, 16 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000);
 	randomSeed(seed);
@@ -71,16 +71,16 @@ function INIT(seed) {
 	console.log('scl2', scl2);
 	console.log('scl3', scl3);
 
-	xMin = 0.1;
-	xMax = 0.9;
-	yMin = 0.05;
-	yMax = 0.95;
+	xMin = 0.15;
+	xMax = 0.85;
+	yMin = 0.15;
+	yMax = 0.85;
 	/* 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
 	yMax = 1.01; */
 
-	for (let i = 0; i < 20000; i++) {
+	for (let i = 0; i < 12000; i++) {
 		// distribue the movers within a circle using polar coordinates
 		/* 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
@@ -114,6 +114,6 @@ function INIT(seed) {
 			)
 		);
 	}
-	let bgCol = spectral.mix('#000', '#FAE8E0', 0.938);
+	let bgCol = spectral.mix('#000', '#fff', 0.038);
 	background(bgCol);
 }
