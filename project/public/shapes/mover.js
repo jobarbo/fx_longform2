@@ -26,7 +26,7 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.s = random([0.5, 1, 1, 1, 2, 2, 3, 3, 3]);
+		this.s = random([0.5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -34,8 +34,8 @@ class Mover {
 		this.sclOffset2 = sclOffset2;
 		this.sclOffset3 = sclOffset3;
 		this.seed = seed;
-		this.xRandDivider = 1;
-		this.yRandDivider = 1;
+		this.xRandDivider = 0.01;
+		this.yRandDivider = 0.01;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xMin = xMin;
