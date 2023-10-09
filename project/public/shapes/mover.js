@@ -173,10 +173,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = random(-4, -0.001); */
 
 	//! Standard Mode
-	let maxU = 1;
-	let maxV = 1;
-	let minU = -1;
-	let minV = -1;
+	let maxU = 3;
+	let maxV = 3;
+	let minU = -3;
+	let minV = -3;
 
 	//! Introverted
 	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
