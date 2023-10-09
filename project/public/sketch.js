@@ -11,6 +11,14 @@ let xMax;
 let yMin;
 let yMax;
 let isBordered = false;
+
+let img;
+let mask;
+
+function preload() {
+	img = loadImage('./image/Mono.png');
+}
+
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
@@ -27,7 +35,7 @@ function setup() {
 	} else {
 		pixelDensity(2);
 	}
-	createCanvas(16 * 100, 16 * 100);
+	createCanvas(16 * 100, 22 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000);
 	randomSeed(seed);
@@ -59,9 +67,9 @@ function INIT(seed) {
 
 	let hue = random(360);
 
-	let sclOffset1 = int(random(2) + 1);
-	let sclOffset2 = int(random(2) + 1);
-	let sclOffset3 = int(random(2) + 1);
+	let sclOffset1 = 4;
+	let sclOffset2 = 4;
+	let sclOffset3 = 4;
 
 	console.log('sclOffset1', sclOffset1);
 	console.log('sclOffset2', sclOffset2);
@@ -71,16 +79,16 @@ function INIT(seed) {
 	console.log('scl2', scl2);
 	console.log('scl3', scl3);
 
-	xMin = 0.15;
-	xMax = 0.85;
-	yMin = 0.15;
-	yMax = 0.85;
+	xMin = 0.25;
+	xMax = 0.75;
+	yMin = 0.25;
+	yMax = 0.75;
 	/* 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
 	yMax = 1.01; */
 
-	for (let i = 0; i < 12000; i++) {
+	for (let i = 0; i < 152000; i++) {
 		// distribue the movers within a circle using polar coordinates
 		/* 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
