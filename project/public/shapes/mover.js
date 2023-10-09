@@ -25,7 +25,7 @@ class Mover {
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
-		this.a = 20;
+		this.a = 60;
 		this.s = random([0.5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -187,8 +187,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let v = map(un, map(nx, 0, height, -4, -0.001), map(nx, 0, height, 0.001, 4), minV, maxV, true); */
 
 	//! Equilibrium
-	let u = map(vn, -0.1, 0.1, minU, maxU, true);
-	let v = map(un, -0.1, 0.1, minV, maxV, true);
+	let u = map(vn, -0.0001, 0.0001, minU, maxU, true);
+	let v = map(un, -0.0001, 0.0001, minV, maxV, true);
 
 	let p = createVector(u, v);
 	return p;
