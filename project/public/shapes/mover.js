@@ -20,12 +20,12 @@ class Mover {
 		this.y = y;
 		this.initHue = hue;
 		this.initSat = random([0, 0, 5, 10, 80]);
-		this.initBri = random([0, 10, 15, 80, 90, 100]);
+		this.initBri = random([0, 10, 15, 20, 25, 35]);
 		this.initAlpha = random(60, 100);
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
-		this.a = this.initAlpha;
+		this.a = 30;
 		this.s = random([0.5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
