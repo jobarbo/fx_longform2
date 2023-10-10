@@ -29,7 +29,7 @@ class Vehicle {
 		this.pos.add(this.vel);
 		this.acc.set(0, 0);
 		// make the alpha higher when closer to the target
-		this.a = map(this.pos.dist(target), 20, 100, 255, 200);
+		this.a = map(this.pos.dist(target), 20, 100, 255, 255);
 	}
 
 	show() {

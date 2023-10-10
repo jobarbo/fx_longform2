@@ -25,8 +25,8 @@ function setup() {
 	c = createCanvas(DIM, DIM);
 	background(0);
 
-	for (let index = 0; index < 1000; index++) {
-		vehicles[index] = new Vehicle(random(width), random([0, height]));
+	for (let index = 0; index < 400; index++) {
+		vehicles[index] = new Vehicle(random(-width, width * 2), random([0, height]));
 	}
 }
 
