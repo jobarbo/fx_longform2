@@ -1,39 +1,72 @@
-let features = '';
+let edge_arr = [];
+let node_arr = [];
+let edge_num = 1;
+let node_num = 30;
+
+let edge_length = 400;
 
 function setup() {
-	console.log(features);
-	features = $fx.getFeatures();
-
-	let formatMode = features.format_mode;
-	var ua = window.navigator.userAgent;
-	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-	var webkit = !!ua.match(/WebKit/i);
-	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
-
-	// if safari mobile use pixelDensity(2.0) to make the canvas bigger else use pixelDensity(3.0)
-	if (iOSSafari) {
-		pixelDensity(1.0);
-	} else {
-		pixelDensity(3.0);
-	}
-	createCanvas(1500, 1500);
+	createCanvas(1000, 1000);
+	pixelDensity(3);
 	colorMode(HSB, 360, 100, 100, 100);
-	randomSeed(fxrand() * 10000);
-	noiseSeed(fxrand() * 10000);
-	console.log(features);
+	angleMode(DEGREES);
+	background(0, 10, 100, 100);
+
+	let edge_start = createVector(width / 2, height / 2);
+	let edge_end = createVector(width / 2, edge_start.y - edge_length);
+
+	for (let j = 0; j < node_num; j++) {
+		// distribute nodes along the edge, the first node is at the edge_start and the last node is at the edge_end. All other nodes are evenly distributed.
+		let node_distance = edge_length / (node_num - 1); // Adjusted to include the last node
+
+		// if this is the first node, store the edge_start position, else store the previous node position
+		let prev_node_x = j == 0 ? edge_start.x : node_arr[j - 1].pos.x;
+		let prev_node_y = j == 0 ? edge_start.y : node_arr[j - 1].pos.y;
+		// calculate the current node position based on the previous node position + the distance between nodes
+		let node_x = prev_node_x;
+		let node_y = prev_node_y - node_distance;
+
+		node_arr.push(new Node(node_x, node_y, prev_node_x, prev_node_y, node_distance * j));
+	}
 }
 
 function draw() {
-	// put drawing code here
-	background(255);
-	noStroke();
-	fill(0, 100, 100);
+	background(0, 10, 100, 100);
 
-	if (features.shape_type == 'ellipse') {
-		ellipse(mouseX, mouseY, 100, 100);
+	for (let i = 0; i < edge_num; i++) {
+		for (let j = 0; j < node_arr.length; j++) {
+			node_arr[j].draw();
+			node_arr[j].update();
+		}
 	}
-	if (features.shape_type == 'rectangle') {
-		rectMode(CENTER);
-		rect(mouseX, mouseY, 100, 100);
+
+	//ellipse(width / 2, height / 2, 5, 5);
+}
+
+class Node {
+	constructor(x, y, px, py, distance) {
+		// if not the first node, store the previous node position
+		this.prev_node_pos = createVector(px, py);
+		this.pos = createVector(x, y);
+		this.angle = 270;
+		this.distance = distance;
+		this.xoff = random(1000);
+		this.yoff = random(1000);
+	}
+
+	draw() {
+		stroke(0, 0, 0, 100);
+		strokeWeight(1);
+		line(this.prev_node_pos.x, this.prev_node_pos.y, this.pos.x, this.pos.y);
+		stroke(0, 0, 100, 100);
+		strokeWeight(5);
+		point(this.pos.x, this.pos.y);
+	}
+
+	update() {
+		this.prev_pos.x = this.pos.x;
+		this.prev_pos.y = this.pos.y;
+		this.pos.x += random(-1, 1);
+		this.pos.y += random(-1, 1);
 	}
 }
