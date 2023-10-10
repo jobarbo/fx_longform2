@@ -25,7 +25,7 @@ function setup() {
 	c = createCanvas(DIM, DIM);
 	background(0);
 
-	for (let index = 0; index < 400; index++) {
+	for (let index = 0; index < 11400; index++) {
 		vehicles[index] = new Vehicle(random(-width, width * 2), random([0, height]));
 	}
 }
@@ -35,11 +35,14 @@ function draw() {
 	fill(255, 0, 0);
 	noStroke();
 
-	target = createVector(mouseX, mouseY);
+	let target = createVector(mouseX, mouseY);
+
 	//circle(target.x, target.y, 20);
-	blendMode(ADD);
+	blendMode(SCREEN);
+
 	for (let vehicle of vehicles) {
-		vehicle.seek(target);
+		let seek = vehicle.arrive(target);
+		vehicle.applyForce(seek);
 		vehicle.update();
 		vehicle.show();
 	}
