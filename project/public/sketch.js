@@ -43,7 +43,7 @@ function setup() {
 
 	orbit = new Orbit(orbit_center, radius, 0, 0.01);
 
-	for (let index = 0; index < 3400; index++) {
+	for (let index = 0; index < 300; index++) {
 		//vehicles[index] = new Vehicle(random(0, width), random(0, height));
 		let rndYMin = randomGaussian(0, 1);
 		let rndYMax = randomGaussian(height, 1);
@@ -78,12 +78,12 @@ function draw() {
 	} */
 
 	//circle(target.x, target.y, 20);
-	//blendMode(SCREEN);
+
 	//orbit.show();
 	orbit.update();
 	let orbitPos = orbit.getPosition();
 
-	blendMode(ADD);
+	//blendMode(SCREEN);
 	for (let vehicle of vehicles) {
 		let seek = vehicle.arrive(orbitPos);
 		vehicle.applyForce(seek);
