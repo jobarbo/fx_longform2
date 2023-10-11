@@ -33,13 +33,13 @@ function setup() {
 		pixelDensity(3.0);
 	}
 
-	DIM = min(windowWidth, windowHeight);
+	DIM = min(W, H);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM);
 	colorMode(HSB, 360, 100, 100, 100);
 	background(0);
 
-	orbit_center = createVector(594, 435);
+	orbit_center = createVector(494, 400);
 
 	orbit = new Orbit(orbit_center, radius, 0, 0.01);
 
