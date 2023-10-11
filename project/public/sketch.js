@@ -45,8 +45,8 @@ function setup() {
 
 	for (let index = 0; index < 3400; index++) {
 		//vehicles[index] = new Vehicle(random(0, width), random(0, height));
-		let rndYMin = randomGaussian(0, 100);
-		let rndYMax = randomGaussian(height, 100);
+		let rndYMin = randomGaussian(0, 1);
+		let rndYMax = randomGaussian(height, 1);
 		vehicles[index] = new Vehicle(random(-width, width * 2), random([rndYMin, rndYMax]));
 	}
 
@@ -71,10 +71,12 @@ function draw() {
 	fill(255, 0, 0);
 	noStroke();
 	let target = createVector(mouseX, mouseY);
-	if (frameCount > 500) {
+
+	/* 	if (frameCount > 500) {
 		fill(0, 10);
 		rect(0, 0, width, height);
-	}
+	} */
+
 	//circle(target.x, target.y, 20);
 	//blendMode(SCREEN);
 	//orbit.show();
@@ -91,15 +93,15 @@ function draw() {
 
 	blendMode(BLEND);
 	for (let starRay of starRays) {
-		starRay.show();
+		//starRay.show();
 
 		if (frameCount > 600) {
-			starRay.update();
+			//starRay.update();
 		}
 	}
 	// show image in the middle of the canvas
 	imageMode(CENTER);
-	image(logo, width / 2, height / 2, width, height);
+	//image(logo, width / 2, height / 2, width, height);
 
 	//orbit.show();
 }

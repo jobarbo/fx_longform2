@@ -10,7 +10,7 @@ class Vehicle {
 		this.maxSpeed = 5;
 		this.maxForce = 0.2;
 		this.r = 1;
-		this.a = 40;
+		this.a = 5;
 	}
 
 	evade(vehicle) {
@@ -64,8 +64,8 @@ class Vehicle {
 		this.vel.limit(this.maxSpeed);
 		this.pos.add(this.vel);
 		this.acc.set(0, 0);
-		this.maxSpeed = map(frameCount, 300, 500, 2, 70, true);
-		this.maxForce = map(frameCount, 500, 600, 0.2, 100, true);
+		this.maxSpeed = map(frameCount, 300, 500, 2, 5, true);
+		this.maxForce = map(frameCount, 500, 600, 2, 3, true);
 		// make the vehicle more opaque once it's closer to the target
 		let target = orbitPos;
 		let distance = p5.Vector.dist(this.pos, target);
