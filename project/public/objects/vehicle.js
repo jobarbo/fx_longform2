@@ -5,7 +5,7 @@ class Vehicle {
 		this.vel = createVector(0, 0);
 		this.acc = createVector(0, 0);
 		this.hue = random([320, 340, 350]);
-		this.sat = random(0, 60);
+		this.sat = random(0, 40);
 		this.bri = random(60, 100);
 		this.maxSpeed = 5;
 		this.maxForce = 0.2;
@@ -64,7 +64,7 @@ class Vehicle {
 		this.vel.limit(this.maxSpeed);
 		this.pos.add(this.vel);
 		this.acc.set(0, 0);
-		this.maxSpeed = map(frameCount, 300, 500, 1, 70, true);
+		this.maxSpeed = map(frameCount, 300, 500, 2, 70, true);
 		this.maxForce = map(frameCount, 500, 600, 0.2, 100, true);
 		// make the vehicle more opaque once it's closer to the target
 		let target = orbitPos;

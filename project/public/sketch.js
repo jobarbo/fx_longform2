@@ -109,7 +109,7 @@ class Orbit {
 		this.center = center;
 		this.radius = radius;
 		this.angle = angle;
-		this.angularVelocity = angularVelocity * 10;
+		this.angularVelocity = angularVelocity * 3;
 		this.dividerX = 1;
 		this.dividerY = 1;
 	}
