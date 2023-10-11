@@ -1,6 +1,6 @@
 let DEFAULT_SIZE = 3600;
-let W = window.innerWidth;
-let H = window.innerHeight;
+let W = 1000;
+let H = 1000;
 let DIM;
 let MULTIPLIER;
 
