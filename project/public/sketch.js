@@ -20,7 +20,7 @@ function preload() {
 }
 
 function setup() {
-	console.time('setup');
+	console.time('setup test');
 	var ua = window.navigator.userAgent;
 	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
 	var webkit = !!ua.match(/WebKit/i);
