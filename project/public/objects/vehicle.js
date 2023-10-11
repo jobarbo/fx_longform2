@@ -4,10 +4,13 @@ class Vehicle {
 		this.prevPos = createVector(x, y);
 		this.vel = createVector(0, 0);
 		this.acc = createVector(0, 0);
+		this.hue = random([320, 340, 350]);
+		this.sat = random(0, 60);
+		this.bri = random(60, 100);
 		this.maxSpeed = 5;
 		this.maxForce = 0.2;
 		this.r = 1;
-		this.a = 10;
+		this.a = 40;
 	}
 
 	evade(vehicle) {
@@ -55,27 +58,25 @@ class Vehicle {
 		this.acc.add(force);
 	}
 
-	update() {
+	update(orbitPos) {
 		this.prevPos = this.pos.copy();
 		this.vel.add(this.acc);
 		this.vel.limit(this.maxSpeed);
 		this.pos.add(this.vel);
 		this.acc.set(0, 0);
+		this.maxSpeed = map(frameCount, 300, 500, 1, 70, true);
+		this.maxForce = map(frameCount, 500, 600, 0.2, 100, true);
 		// make the vehicle more opaque once it's closer to the target
-		this.a = map(this.pos.dist(createVector(mouseX, mouseY)), 0, 300, 20, 0);
+		let target = orbitPos;
+		let distance = p5.Vector.dist(this.pos, target);
+		let maxDistance = map(frameCount, 0, 800, 0, 1000, true);
+		//this.a = map(distance, 0, maxDistance, 255, 0, true);
 	}
 
 	show() {
-		stroke(255, this.a);
-		strokeWeight(2);
-		fill(255);
-		push();
-		translate(this.pos.x, this.pos.y);
-		rotate(this.vel.heading());
-		//triangle(-this.r, -this.r / 2, -this.r, this.r / 2, this.r, 0);
-
-		pop();
-		strokeWeight(0.25);
+		stroke(this.hue, this.sat, this.bri, this.a);
+		fill(255, 255);
+		strokeWeight(0.55);
 		line(this.pos.x, this.pos.y, this.prevPos.x, this.prevPos.y);
 	}
 
