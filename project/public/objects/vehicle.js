@@ -7,10 +7,11 @@ class Vehicle {
 		this.hue = random([320, 340, 350]);
 		this.sat = random(0, 40);
 		this.bri = random(60, 100);
-		this.maxSpeed = 5;
+		this.maxSpeed = 15;
 		this.maxForce = 0.2;
 		this.r = 1;
-		this.a = 5;
+		this.sw = 0.45;
+		this.a = 2;
 	}
 
 	evade(vehicle) {
@@ -64,8 +65,8 @@ class Vehicle {
 		this.vel.limit(this.maxSpeed);
 		this.pos.add(this.vel);
 		this.acc.set(0, 0);
-		this.maxSpeed = map(frameCount, 300, 500, 2, 5, true);
-		this.maxForce = map(frameCount, 500, 600, 2, 3, true);
+		/* 		this.maxSpeed = map(frameCount, 300, 500, 2, 5, true);
+		this.maxForce = map(frameCount, 300, 400, 2, 13, true); */
 		// make the vehicle more opaque once it's closer to the target
 		let target = orbitPos;
 		let distance = p5.Vector.dist(this.pos, target);
@@ -76,7 +77,7 @@ class Vehicle {
 	show() {
 		stroke(this.hue, this.sat, this.bri, this.a);
 		fill(255, 255);
-		strokeWeight(0.55);
+		strokeWeight(this.sw);
 		line(this.pos.x, this.pos.y, this.prevPos.x, this.prevPos.y);
 	}
 

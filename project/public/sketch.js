@@ -10,7 +10,7 @@ let vehicles = [];
 let orbit;
 let orbit_center;
 let angle = 0;
-let radius = 600;
+let radius = 100;
 
 let starRays = [];
 let starRaysCount = 88;
@@ -39,7 +39,7 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 	background(0);
 
-	orbit_center = createVector(494, 400);
+	orbit_center = createVector(width / 2, height / 2);
 
 	orbit = new Orbit(orbit_center, radius, 0, 0.01);
 
@@ -47,7 +47,7 @@ function setup() {
 		//vehicles[index] = new Vehicle(random(0, width), random(0, height));
 		let rndYMin = randomGaussian(0, 1);
 		let rndYMax = randomGaussian(height, 1);
-		vehicles[index] = new Vehicle(random(-width, width * 2), random([rndYMin, rndYMax]));
+		vehicles[index] = new Vehicle(random(0, width), random([rndYMin, rndYMax]));
 	}
 
 	for (let i = 0; i < starRaysCount; i++) {
@@ -118,9 +118,10 @@ class Orbit {
 
 	update() {
 		this.angle += this.angularVelocity;
-		this.radius *= 0.992;
+		//this.radius *= 0.989;
+		this.radius -= 0.1;
 		//this.dividerX += 0.01;
-		this.dividerY += 0.01;
+		//this.dividerY += 0.001;
 		if (this.radius < 0) {
 			this.radius = 0;
 		}
