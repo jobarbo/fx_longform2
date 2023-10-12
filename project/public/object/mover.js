@@ -10,7 +10,7 @@ class Mover {
 				: features.theme === 'bright' && features.colormode === 'monochrome'
 				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
 				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
-		this.initAlpha = 100;
+		this.initAlpha = 10;
 		this.initS = 0.65 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === 'monochrome' ? 0 : this.initSat;
@@ -38,7 +38,7 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.oct = Number(features.complexity);
+		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX =
@@ -59,7 +59,8 @@ class Mover {
 				: height / 2;
 
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
-		this.uvalue = 5;
+		this.uvalue = [1, 1, 1, 1];
+		this.nvalue = [0.5, 0.5, 0.5, 0.5];
 	}
 
 	show() {
@@ -78,9 +79,18 @@ class Mover {
 			this.ang2,
 			this.seed,
 			this.oct,
-			this.clampvaluearray,
+			this.nvalue,
 			this.uvalue
 		);
+		this.uvalue[0] += 2;
+		this.uvalue[1] += 2;
+		this.uvalue[2] += 2;
+		this.uvalue[3] += 2;
+
+		/* 		this.nvalue[0] += 0.00001;
+		this.nvalue[1] += 0.00001;
+		this.nvalue[2] += 0.00001;
+		this.nvalue[3] += 0.00001; */
 
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
@@ -102,12 +112,12 @@ class Mover {
 				: this.y;
 
 		let pxy = p.x - p.y;
-		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
+		this.hue += map(pxy, -this.uvalue[0] * 2, this.uvalue[0] * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
 	}
 }
 
-function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, clampvalueArr, uvalue) {
+function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, nvalue, uvalue) {
 	let nx = x,
 		ny = y,
 		a1 = ang1,
@@ -135,8 +145,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, clampvalueArr, u
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
-	let u = mapValue(un, -clampvalueArr[0], clampvalueArr[1], -uvalue, uvalue, true);
-	let v = mapValue(vn, -clampvalueArr[2], clampvalueArr[3], -uvalue, uvalue, true);
+	let u = mapValue(un, -0.5, 0.5, -uvalue[0], uvalue[1], true);
+	let v = mapValue(vn, -0.5, 0.5, -uvalue[2], uvalue[3], true);
 
 	let p = createVector(u, v);
 	return p;

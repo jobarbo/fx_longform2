@@ -11,7 +11,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 60;
+let maxFrames = 600;
 let C_WIDTH;
 let MULTIPLIER;
 
@@ -50,12 +50,14 @@ function setup() {
 }
 
 function draw() {
+	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
 		for (let j = 0; j < 1; j++) {
 			movers[i].show();
 			movers[i].move();
 		}
 	}
+	blendMode(BLEND);
 
 	let elapsedTime = frameCount - startTime;
 	if (elapsedTime > maxFrames) {
@@ -80,7 +82,7 @@ function INIT(seed) {
 	yMax = 1.01;
 
 	let hue = random(360);
-	for (let i = 0; i < 100000; i++) {
+	for (let i = 0; i < 20000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 		let initHue = hue + random(-1, 1);
