@@ -32,9 +32,9 @@ const colorModeArr = [
 ];
 
 const strokestyleArr = [
-	['thin', 33],
-	['regular', 33],
-	['bold', 33],
+	['thin', 100],
+	['regular', 0],
+	['bold', 0],
 ];
 
 const clampvalueArr = [
