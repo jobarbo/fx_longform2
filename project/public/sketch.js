@@ -89,7 +89,7 @@ function INIT(seed) {
 	yMax = 1.01;
 
 	let hue = random(360);
-	for (let i = 0; i < 100000; i++) {
+	for (let i = 0; i < 10000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 		let initHue = hue + random(-1, 1);
