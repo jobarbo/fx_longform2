@@ -57,6 +57,12 @@ function setup() {
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
+	xoff = random(1000000);
+	yoff = random(1000000);
+	axoff = random(1000000);
+	ayoff = random(1000000);
+	sxoff = random(1000000);
+	syoff = random(1000000);
 	scl1 = random(0.002, 0.0023);
 	scl2 = scl1;
 	ang1 = 100;
@@ -112,15 +118,15 @@ function INIT(seed) {
 	angle1 = int(map(noise(axoff, ayoff), 0, 1, 0, ang1 * 2, true));
 	angle2 = int(map(noise(ayoff, axoff), 0, 1, 0, ang2 * 2, true));
 	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
-	xi += map(noise(xoff), 0, 1, -1150 * MULTIPLIER, 1150 * MULTIPLIER, true);
-	yi += map(noise(yoff), 0, 1, -1150 * MULTIPLIER, 1150 * MULTIPLIER, true);
+	xi += map(noise(xoff), 0, 1, -50 * MULTIPLIER, 50 * MULTIPLIER, true);
+	yi += map(noise(yoff), 0, 1, -50 * MULTIPLIER, 50 * MULTIPLIER, true);
 	hue += map(noise(xoff, yoff), 0, 1, -2, 2, true);
 	hue < 0 ? hue + 360 : hue > 360 ? hue - 360 : hue;
 
 	console.log('xi: ' + xi);
 	console.log('yi: ' + yi);
 
-	easeAng += 1;
+	easeAng += 10;
 	xoff += 0.001;
 	yoff += 0.001;
 	axoff += 0.001;
@@ -156,8 +162,8 @@ function INIT(seed) {
 				initHue,
 				scl1 / MULTIPLIER,
 				scl2 / MULTIPLIER,
-				ang1 * MULTIPLIER,
-				ang2 * MULTIPLIER,
+				angle1 * MULTIPLIER,
+				angle2 * MULTIPLIER,
 				xMin,
 				xMax,
 				yMin,
