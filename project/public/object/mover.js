@@ -10,7 +10,7 @@ class Mover {
 				: features.theme === 'bright' && features.colormode === 'monochrome'
 				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
 				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
-		this.initAlpha = 10;
+		this.initAlpha = 50;
 		this.initS = 0.65 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === 'monochrome' ? 0 : this.initSat;
@@ -59,7 +59,7 @@ class Mover {
 				: height / 2;
 
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
-		this.uvalue = [1, 1, 1, 1];
+		this.uvalue = [5, 5, 5, 5];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
 	}
 
@@ -82,15 +82,15 @@ class Mover {
 			this.nvalue,
 			this.uvalue
 		);
-		this.uvalue[0] += 2;
-		this.uvalue[1] += 2;
-		this.uvalue[2] += 2;
-		this.uvalue[3] += 2;
+		this.uvalue[0] *= 1.05;
+		this.uvalue[1] *= 1.05;
+		this.uvalue[2] *= 1.05;
+		this.uvalue[3] *= 1.05;
 
-		/* 		this.nvalue[0] += 0.00001;
-		this.nvalue[1] += 0.00001;
-		this.nvalue[2] += 0.00001;
-		this.nvalue[3] += 0.00001; */
+		/* 		this.nvalue[0] += 0.005;
+		this.nvalue[1] += 0.005;
+		this.nvalue[2] += 0.005;
+		this.nvalue[3] += 0.005; */
 
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
@@ -145,8 +145,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, nvalue, uvalue) 
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
-	let u = mapValue(un, -0.5, 0.5, -uvalue[0], uvalue[1], true);
-	let v = mapValue(vn, -0.5, 0.5, -uvalue[2], uvalue[3], true);
+	let u = mapValue(un, -nvalue[0], nvalue[1], -uvalue[0], uvalue[1], true);
+	let v = mapValue(vn, -nvalue[2], nvalue[3], -uvalue[2], uvalue[3], true);
 
 	let p = createVector(u, v);
 	return p;
