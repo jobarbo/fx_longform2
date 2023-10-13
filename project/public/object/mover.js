@@ -90,8 +90,18 @@ class Mover {
 		let pxy = p.x - p.y;
 		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		// make the alpha higher if the particle is closer to the center
-		this.a = map(dist(this.x, this.y, this.centerX, this.centerY), 0, 1200, 10, 0);
+
+		// make the alpha transition to zero when the particle are getting 100px closer to the edge of the borderX and borderY calculated from the center of the canvas
+
+		// Check if particle is approaching the edge of the canvas
+		let distanceToEdge = min(
+			abs(this.x - this.centerX + this.borderX),
+			abs(this.x - this.centerX - this.borderX),
+			abs(this.y - this.centerY + this.borderY),
+			abs(this.y - this.centerY - this.borderY)
+		);
+
+		this.a = map(distanceToEdge, 10, 60, 0, 30, true);
 	}
 }
 
