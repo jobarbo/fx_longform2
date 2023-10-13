@@ -39,27 +39,32 @@ function setup() {
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 1600;
-	c = createCanvas(C_WIDTH, C_WIDTH * 1.375);
+	MULTIPLIER = C_WIDTH / 600;
+	c = createCanvas(C_WIDTH, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
 	INIT(rseed);
+	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
+	background(bgCol);
 }
 
 function draw() {
+	//background(bgCol);
+	let elapsedTime = frameCount - startTime;
 	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
 		for (let j = 0; j < 1; j++) {
-			movers[i].show();
+			if (elapsedTime > 1) {
+				movers[i].show();
+			}
 			movers[i].move();
 		}
 	}
 	blendMode(BLEND);
 
-	let elapsedTime = frameCount - startTime;
 	if (elapsedTime > maxFrames) {
 		window.rendered = c.canvas;
 		document.complete = true;
@@ -68,13 +73,13 @@ function draw() {
 }
 
 function INIT(seed) {
-	scl1 = random([0.00095, 0.001, 0.0011, 0.0012]);
+	scl1 = random([0.0021]);
 	scl2 = scl1;
 
-	ang1 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
-	ang2 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
+	ang1 = 100;
+	ang2 = 800;
 
-	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
+	xRandDivider = random([0.07]);
 	yRandDivider = xRandDivider;
 	xMin = -0.01;
 	xMax = 1.01;
@@ -107,8 +112,4 @@ function INIT(seed) {
 			)
 		);
 	}
-
-	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
-
-	background(bgCol);
 }

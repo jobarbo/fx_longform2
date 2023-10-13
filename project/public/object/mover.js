@@ -41,11 +41,11 @@ class Mover {
 		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
-		this.borderX = width / 2;
-		this.borderY = height / 2;
+		this.borderX = width / 3;
+		this.borderY = height / 3;
 
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
-		this.uvalue = 5;
+		this.uvalue = 3;
 	}
 
 	show() {
@@ -76,20 +76,22 @@ class Mover {
 
 		this.x =
 			this.x <= this.centerX - this.borderX
-				? this.centerX + this.borderX + random(-4 * MULTIPLIER, 0)
+				? this.centerX + this.borderX + random(-1 * MULTIPLIER, 0)
 				: this.x >= this.centerX + this.borderX
-				? this.centerX - this.borderX + random(0, 4 * MULTIPLIER)
+				? this.centerX - this.borderX + random(0, 1 * MULTIPLIER)
 				: this.x;
 		this.y =
 			this.y <= this.centerY - this.borderY
-				? this.centerY + this.borderY + random(-4 * MULTIPLIER, 0)
+				? this.centerY + this.borderY + random(-1 * MULTIPLIER, 0)
 				: this.y >= this.centerY + this.borderY
-				? this.centerY - this.borderY + random(0, 4 * MULTIPLIER)
+				? this.centerY - this.borderY + random(0, 1 * MULTIPLIER)
 				: this.y;
 
 		let pxy = p.x - p.y;
 		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
+		// make the alpha higher if the particle is closer to the center
+		this.a = map(dist(this.x, this.y, this.centerX, this.centerY), 0, 1200, 10, 0);
 	}
 }
 
