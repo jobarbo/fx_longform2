@@ -57,11 +57,20 @@ function draw() {
 		}
 	}
 
-	let elapsedTime = frameCount - startTime;
-	if (elapsedTime > maxFrames) {
-		window.rendered = c.canvas;
-		document.complete = true;
-		noLoop();
+	if (frameCount % 100 == 0) {
+		let cosIndex = cos(radians(easeAng));
+		console.log('cosIndex: ' + cosIndex);
+		if (cosIndex >= 1) {
+			cycleCount += 1;
+		}
+		if (cycleCount < 1) {
+			console.log('screenshot');
+			saveArtwork();
+			INIT(rseed);
+		} else {
+			noLoop();
+		}
+		console.log('cycleCount: ' + cycleCount);
 	}
 }
 
