@@ -11,11 +11,12 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 60;
+let maxFrames = 600;
 let C_WIDTH;
 let MULTIPLIER;
 let drawing = false;
 let hue = Math.random() * 360;
+let elapsedTime = 0;
 let easeAng = 0,
 	easeScalar = 0.001,
 	easeScalar2 = 200,
@@ -51,26 +52,31 @@ function setup() {
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 1600;
-	c = createCanvas(C_WIDTH, C_WIDTH * 1.375);
+	MULTIPLIER = C_WIDTH / 600;
+	c = createCanvas(C_WIDTH, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	scl1 = random(0.001, 0.0012);
+	scl1 = random(0.002, 0.0023);
 	scl2 = scl1;
-	ang1 = int(random(500, 1000));
-	ang2 = int(random(500, 1000));
+	ang1 = 100;
+	ang2 = 800;
 
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
 	INIT(rseed);
+	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
+	background(bgCol);
 }
 
 function draw() {
 	blendMode(ADD);
+	elapsedTime = frameCount - startTime;
 	for (let i = 0; i < movers.length; i++) {
 		for (let j = 0; j < 1; j++) {
-			movers[i].show();
+			if (elapsedTime > 1) {
+				movers[i].show();
+			}
 			movers[i].move();
 		}
 	}
@@ -85,7 +91,10 @@ function draw() {
 		if (cycleCount < 1) {
 			movers = [];
 			console.log('screenshot');
-			//saveArtwork();
+			saveArtwork();
+			elapsedTime = 0;
+			frameCount = 0;
+
 			INIT(rseed);
 		} else {
 			noLoop();
@@ -97,14 +106,14 @@ function draw() {
 function INIT(seed) {
 	let easing = radians(easeAng);
 	let xpff;
-	scl1 += map(noise(sxoff, syoff), 0, 1, -0.0001, 0.0001, true);
+	scl1 += map(noise(sxoff, syoff), 0, 1, -0.00001, 0.00001, true);
 	scl2 = scl1;
 
 	angle1 = int(map(noise(axoff, ayoff), 0, 1, 0, ang1 * 2, true));
 	angle2 = int(map(noise(ayoff, axoff), 0, 1, 0, ang2 * 2, true));
 	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
-	xi += map(noise(xoff), 0, 1, -50, 50, true);
-	yi += map(noise(yoff), 0, 1, -50, 50, true);
+	xi += map(noise(xoff), 0, 1, -1150 * MULTIPLIER, 1150 * MULTIPLIER, true);
+	yi += map(noise(yoff), 0, 1, -1150 * MULTIPLIER, 1150 * MULTIPLIER, true);
 	hue += map(noise(xoff, yoff), 0, 1, -2, 2, true);
 	hue < 0 ? hue + 360 : hue > 360 ? hue - 360 : hue;
 
@@ -126,7 +135,7 @@ function INIT(seed) {
 
 	console.log('cos(easing): ' + cos(easing));
 
-	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
+	xRandDivider = random([0.07]);
 	yRandDivider = xRandDivider;
 	xMin = -0.01;
 	xMax = 1.01;

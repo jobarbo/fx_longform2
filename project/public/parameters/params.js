@@ -14,8 +14,8 @@ const complexityArr = [
 ];
 
 const themeArr = [
-	['bright', 50],
-	['dark', 50],
+	['bright', 0],
+	['dark', 100],
 ];
 
 const compositionArr = [

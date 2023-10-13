@@ -38,28 +38,14 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.oct = Number(features.complexity);
+		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
-		this.borderX =
-			features.composition === 'compressed'
-				? width / 3.5
-				: features.composition === 'constrained'
-				? width / 3
-				: features.composition === 'semiconstrained'
-				? width / 2.35
-				: width / 2;
-		this.borderY =
-			features.composition === 'compressed'
-				? height / 2.75
-				: features.composition === 'constrained'
-				? height / 2.5
-				: features.composition === 'semiconstrained'
-				? height / 2.25
-				: height / 2;
+		this.borderX = width / 3;
+		this.borderY = height / 3;
 
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
-		this.uvalue = 5;
+		this.uvalue = 3;
 	}
 
 	show() {
@@ -90,20 +76,32 @@ class Mover {
 
 		this.x =
 			this.x <= this.centerX - this.borderX
-				? this.centerX + this.borderX + random(-4 * MULTIPLIER, 0)
+				? this.centerX + this.borderX + random(-1 * MULTIPLIER, 0)
 				: this.x >= this.centerX + this.borderX
-				? this.centerX - this.borderX + random(0, 4 * MULTIPLIER)
+				? this.centerX - this.borderX + random(0, 1 * MULTIPLIER)
 				: this.x;
 		this.y =
 			this.y <= this.centerY - this.borderY
-				? this.centerY + this.borderY + random(-4 * MULTIPLIER, 0)
+				? this.centerY + this.borderY + random(-1 * MULTIPLIER, 0)
 				: this.y >= this.centerY + this.borderY
-				? this.centerY - this.borderY + random(0, 4 * MULTIPLIER)
+				? this.centerY - this.borderY + random(0, 1 * MULTIPLIER)
 				: this.y;
 
 		let pxy = p.x - p.y;
 		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
+
+		// make the alpha transition to zero when the particle are getting 100px closer to the edge of the borderX and borderY calculated from the center of the canvas
+
+		// Check if particle is approaching the edge of the canvas
+		let distanceToEdge = min(
+			abs(this.x - this.centerX + this.borderX),
+			abs(this.x - this.centerX - this.borderX),
+			abs(this.y - this.centerY + this.borderY),
+			abs(this.y - this.centerY - this.borderY)
+		);
+
+		this.a = map(distanceToEdge, 10, 60, 0, 30, true);
 	}
 }
 
@@ -135,8 +133,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, clampvalueArr, u
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
-	let u = mapValue(un, -clampvalueArr[0], clampvalueArr[1], -uvalue, uvalue, true);
-	let v = mapValue(vn, -clampvalueArr[2], clampvalueArr[3], -uvalue, uvalue, true);
+	let u = mapValue(un, -0.5, 0.5, -uvalue, uvalue, true);
+	let v = mapValue(vn, -0.5, 0.5, -uvalue, uvalue, true);
 
 	let p = createVector(u, v);
 	return p;
