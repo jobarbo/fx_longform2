@@ -21,20 +21,20 @@ const themeArr = [
 const compositionArr = [
 	['semiconstrained', 33],
 	['constrained', 33],
-	['compresed', 33],
+	['compressed', 33],
 ];
 
 const colorModeArr = [
-	['monochrome', 25],
-	['fixed', 25],
-	['dynamic', 25],
-	['iridescent', 25],
+	['monochrome', 100],
+	['fixed', 0],
+	['dynamic', 0],
+	['iridescent', 0],
 ];
 
 const strokestyleArr = [
-	['thin', 33],
-	['regular', 33],
-	['bold', 33],
+	['thin', 100],
+	['regular', 0],
+	['bold', 0],
 ];
 
 const clampvalueArr = [

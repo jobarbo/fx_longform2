@@ -56,7 +56,7 @@ function setup() {
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	scl1 = random(0.005, 0.005);
+	scl1 = random(0.001, 0.0012);
 	scl2 = scl1;
 	ang1 = int(random(500, 1000));
 	ang2 = int(random(500, 1000));
@@ -67,12 +67,14 @@ function setup() {
 }
 
 function draw() {
+	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
 		for (let j = 0; j < 1; j++) {
 			movers[i].show();
 			movers[i].move();
 		}
 	}
+	blendMode(BLEND);
 
 	if (frameCount % 100 == 0) {
 		let cosIndex = cos(radians(easeAng));
@@ -81,6 +83,7 @@ function draw() {
 			cycleCount += 1;
 		}
 		if (cycleCount < 1) {
+			movers = [];
 			console.log('screenshot');
 			saveArtwork();
 			INIT(rseed);
@@ -111,10 +114,10 @@ function INIT(seed) {
 	easeAng += 1;
 	xoff += 0.001;
 	yoff += 0.001;
-	axoff += 0.01;
-	ayoff += 0.01;
-	sxoff += 0.01;
-	syoff += 0.01;
+	axoff += 0.001;
+	ayoff += 0.001;
+	sxoff += 0.001;
+	syoff += 0.001;
 
 	console.log('scl1: ' + scl1);
 	console.log('scl2: ' + scl2);
@@ -155,4 +158,6 @@ function INIT(seed) {
 			)
 		);
 	}
+	let bgCol = spectral.mix('#000', '#deb887', 0.1);
+	background(bgCol);
 }

@@ -9,13 +9,13 @@ let composition_params;
 composition_params = generate_composition_params();
 //console.log(composition_params);
 
-var {complexity, theme, composition, colorMode, strokestyle, clampvalue} = composition_params; // unpacking parameters we need in main.js and turning them into globals
+var {complexity, theme, composition, colormode, strokestyle, clampvalue} = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
 //console.log(shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode);
 // this is how to define parameters
 // this is how to define parameters
 console.log(theme);
-$fx.params([
+/* $fx.params([
 	{
 		id: 'complexity',
 		name: 'Complexity',
@@ -83,15 +83,15 @@ $fx.params([
 			],
 		},
 	},
-]);
+]); */
 // this is how features can be defined
 $fx.features({
-	complexity: $fx.getParam('complexity'),
-	theme: $fx.getParam('theme'),
-	composition: $fx.getParam('composition'),
-	colormode: $fx.getParam('colormode'),
-	strokestyle: $fx.getParam('strokestyle'),
-	clampvalue: $fx.getParam('clampvalue'),
+	complexity: complexity,
+	theme: theme,
+	composition: composition,
+	colormode: colormode,
+	strokestyle: strokestyle,
+	clampvalue: clampvalue,
 });
 
 // log the parameters, for debugging purposes, artists won't have to do that
