@@ -85,7 +85,7 @@ function draw() {
 		if (cycleCount < 1) {
 			movers = [];
 			console.log('screenshot');
-			saveArtwork();
+			//saveArtwork();
 			INIT(rseed);
 		} else {
 			noLoop();
