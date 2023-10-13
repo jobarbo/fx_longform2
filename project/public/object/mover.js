@@ -38,7 +38,7 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.oct = Number(features.complexity);
+		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX =
@@ -135,8 +135,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, clampvalueArr, u
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
-	let u = mapValue(un, -clampvalueArr[0], clampvalueArr[1], -uvalue, uvalue, true);
-	let v = mapValue(vn, -clampvalueArr[2], clampvalueArr[3], -uvalue, uvalue, true);
+	let u = mapValue(un, -0.5, 0.5, -uvalue, uvalue, true);
+	let v = mapValue(vn, -0.5, 0.5, -uvalue, uvalue, true);
 
 	let p = createVector(u, v);
 	return p;
