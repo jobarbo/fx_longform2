@@ -151,6 +151,8 @@ function INIT(seed) {
 			new Mover(
 				x,
 				y,
+				xi,
+				yi,
 				initHue,
 				scl1 / MULTIPLIER,
 				scl2 / MULTIPLIER,

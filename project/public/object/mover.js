@@ -1,7 +1,27 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features) {
+	constructor(
+		x,
+		y,
+		xi,
+		yi,
+		hue,
+		scl1,
+		scl2,
+		ang1,
+		ang2,
+		xMin,
+		xMax,
+		yMin,
+		yMax,
+		xRandDivider,
+		yRandDivider,
+		seed,
+		features
+	) {
 		this.x = x;
 		this.y = y;
+		this.xi = xi;
+		this.yi = yi;
 		this.initHue = hue;
 		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
 		this.initBri =
@@ -58,6 +78,8 @@ class Mover {
 		let p = superCurve(
 			this.x,
 			this.y,
+			this.xi,
+			this.yi,
 			this.scl1,
 			this.scl2,
 			this.ang1,
@@ -105,9 +127,9 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, clampvalueArr, uvalue) {
-	let nx = x,
-		ny = y,
+function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampvalueArr, uvalue) {
+	let nx = x + xi,
+		ny = y + yi,
 		a1 = ang1,
 		a2 = ang2,
 		scale1 = scl1,
