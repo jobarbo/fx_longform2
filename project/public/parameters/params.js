@@ -14,21 +14,21 @@ const complexityArr = [
 ];
 
 const themeArr = [
-	['bright', 50],
-	['dark', 50],
+	['bright', 0],
+	['dark', 100],
 ];
 
 const compositionArr = [
 	['semiconstrained', 33],
 	['constrained', 33],
-	['compresed', 33],
+	['compressed', 33],
 ];
 
 const colorModeArr = [
-	['monochrome', 25],
-	['fixed', 25],
-	['dynamic', 25],
-	['iridescent', 25],
+	['monochrome', 100],
+	['fixed', 0],
+	['dynamic', 0],
+	['iridescent', 0],
 ];
 
 const strokestyleArr = [
