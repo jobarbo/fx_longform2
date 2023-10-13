@@ -75,11 +75,36 @@ function draw() {
 }
 
 function INIT(seed) {
-	scl1 = random([0.00095, 0.001, 0.0011, 0.0012]);
+	let easing = radians(easeAng);
+	let xpff;
+	scl1 += map(noise(sxoff, syoff), 0, 1, -0.0001, 0.0001, true);
 	scl2 = scl1;
 
-	ang1 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
-	ang2 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
+	angle1 = int(map(noise(axoff, ayoff), 0, 1, 0, ang1 * 2, true));
+	angle2 = int(map(noise(ayoff, axoff), 0, 1, 0, ang2 * 2, true));
+	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
+	xi += map(noise(xoff), 0, 1, -50, 50, true);
+	yi += map(noise(yoff), 0, 1, -50, 50, true);
+	hue += map(noise(xoff, yoff), 0, 1, -2, 2, true);
+	hue < 0 ? hue + 360 : hue > 360 ? hue - 360 : hue;
+
+	console.log('xi: ' + xi);
+	console.log('yi: ' + yi);
+
+	easeAng += 1;
+	xoff += 0.001;
+	yoff += 0.001;
+	axoff += 0.01;
+	ayoff += 0.01;
+	sxoff += 0.01;
+	syoff += 0.01;
+
+	console.log('scl1: ' + scl1);
+	console.log('scl2: ' + scl2);
+	console.log('ang1: ' + angle1);
+	console.log('ang2: ' + angle2);
+
+	console.log('cos(easing): ' + cos(easing));
 
 	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	yRandDivider = xRandDivider;
