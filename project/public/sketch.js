@@ -14,7 +14,17 @@ let startTime;
 let maxFrames = 60;
 let C_WIDTH;
 let MULTIPLIER;
-
+let easeAng = 0,
+	easeScalar = 0.001,
+	easeScalar2 = 200,
+	cycleCount = 0,
+	xi = 0,
+	yi = 0,
+	xoff = Math.random() * 10000,
+	yoff = Math.random() * 10000,
+	axoff = Math.random() * 10000,
+	ayoff = Math.random() * 10000;
+(sxoff = Math.random() * 10000), (syoff = Math.random() * 10000);
 ({sin, cos, imul, PI} = Math);
 TAU = PI * 2;
 F = (N, f) => [...Array(N)].map((_, i) => f(i));
