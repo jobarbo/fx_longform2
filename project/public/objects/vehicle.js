@@ -7,7 +7,7 @@ class Vehicle {
 		this.hue = random([320, 340, 350]);
 		this.sat = random(0, 40);
 		this.bri = 100;
-		this.maxSpeed = 1;
+		this.maxSpeed = 4;
 		this.maxForce = 10.2;
 		this.r = 1;
 		this.sw = 0.4;
@@ -71,7 +71,7 @@ class Vehicle {
 		let target = orbitPos;
 		let distance = p5.Vector.dist(this.pos, target);
 		let maxDistance = map(frameCount, 0, 10, 0, 1000, true);
-		this.a = map(distance, 0, maxDistance, 30, 0, true);
+		this.a = map(distance, 0, maxDistance, 50, 0, true);
 	}
 
 	show() {
