@@ -11,7 +11,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 60;
+let maxFrames = 600;
 let C_WIDTH;
 let MULTIPLIER;
 
