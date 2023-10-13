@@ -54,6 +54,10 @@ function setup() {
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
+	scl1 = random(0.005, 0.005);
+	scl2 = scl1;
+	ang1 = int(random(500, 1000));
+	ang2 = int(random(500, 1000));
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
 	INIT(rseed);
