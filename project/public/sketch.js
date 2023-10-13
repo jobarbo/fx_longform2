@@ -14,6 +14,8 @@ let startTime;
 let maxFrames = 60;
 let C_WIDTH;
 let MULTIPLIER;
+let drawing = false;
+let hue = Math.random() * 360;
 let easeAng = 0,
 	easeScalar = 0.001,
 	easeScalar2 = 200,
@@ -58,6 +60,7 @@ function setup() {
 	scl2 = scl1;
 	ang1 = int(random(500, 1000));
 	ang2 = int(random(500, 1000));
+
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
 	INIT(rseed);
@@ -127,7 +130,6 @@ function INIT(seed) {
 	yMin = -0.01;
 	yMax = 1.01;
 
-	let hue = random(360);
 	for (let i = 0; i < 10000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
@@ -153,8 +155,4 @@ function INIT(seed) {
 			)
 		);
 	}
-
-	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
-
-	background(bgCol);
 }
