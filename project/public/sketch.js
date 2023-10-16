@@ -246,3 +246,43 @@ function drawUI() {
 	rect(xMin * width - sw, yMax * height, sw, sw);
 	rect(xMax * width, yMax * height, sw, sw); */
 }
+function keyPressed() {
+	const particleNumMapping = {
+		49: 50000,
+		50: 75000,
+		51: 100000,
+		52: 150000,
+		53: 200000,
+		54: 250000,
+		55: 300000,
+		56: 400000,
+		57: 800000,
+	};
+
+	const maxFramesMapping = {
+		49: 120,
+		50: 120,
+		51: 120,
+		52: 120,
+		53: 100,
+		54: 100,
+		55: 60,
+		56: 60,
+		57: 60,
+	};
+
+	const keyCodeToParticleNum = particleNumMapping[keyCode];
+	const keyCodeToMaxFrames = maxFramesMapping[keyCode];
+
+	if (keyCodeToParticleNum !== undefined && keyCodeToMaxFrames !== undefined) {
+		movers = [];
+		frameCount = 0;
+		elapsedTime = 0;
+		particleNum = keyCodeToParticleNum;
+		maxFrames = keyCodeToMaxFrames;
+		drawing = true;
+		loop();
+		console.log('keyPressed');
+		INIT(particleNum);
+	}
+}
