@@ -75,7 +75,7 @@ class Mover {
 	}
 
 	move() {
-		let distFromCenter = int(dist(this.x, this.y, this.centerX, (this.yMax / 1.5) * height));
+		let distFromCenter = int(dist(this.x, this.y, this.centerX, (this.yMax / 0.5) * height));
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone * MULTIPLIER, this.ang1Init * 3, this.ang1Init * 1, true));
 		this.ang2 = int(map(distFromCenter, 0, this.ang2Zone * MULTIPLIER, this.ang1Init * 3, this.ang2Init * 1, true));

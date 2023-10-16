@@ -56,10 +56,16 @@ function draw() {
 			movers[i].move();
 		}
 	}
+
 	let elapsedTime = frameCount - startTime;
+
+	// render a loading bar on the canvas to show the progress of the sketch, i want the bar to start on the xmin and end on the xmax
+	showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
+	drawUI();
+
 	if (elapsedTime > maxFrames) {
 		console.log('elapsedTime', elapsedTime);
-		drawUI();
+
 		noLoop();
 	}
 }
@@ -146,16 +152,28 @@ function drawTexture(hue) {
 	}
 }
 
+function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
+	rectMode(CORNER);
+	let percent = (elapsedTime / maxFrames) * 100;
+	let barWidth = (percent / 100) * (xMax - xMin) * width - 10;
+	noStroke();
+	fill(0, 0, 100, 50);
+	rect(xMin * width, height - 20, (xMax - xMin) * width, 10);
+	fill(0, 0, 0, 100);
+	rect(xMin * width, height - 20, barWidth, 10);
+	rectMode(CENTER);
+}
+
 function drawUI() {
 	console.log('drawUI');
 	stroke(0);
-	strokeWeight(1 * MULTIPLIER);
+	strokeWeight(2 * MULTIPLIER);
 	line(xMin * width, yMin * height, xMax * width, yMin * height);
 	line(xMin * width, yMax * height, xMax * width, yMax * height);
 	line(xMin * width, yMin * height, xMin * width, yMax * height);
 	line(xMax * width, yMin * height, xMax * width, yMax * height);
 
-	stroke(0, 0, 0, 70);
+	/* 	stroke(0, 0, 0, 70);
 	strokeWeight(3 * MULTIPLIER);
 	// make 3 lines from top to bottom and left to right that represent 1/4th,half and 3/4th of what's inside xMin and xMax
 	let x1 = xMin + (xMax - xMin) / 4;
@@ -226,5 +244,5 @@ function drawUI() {
 	rect(xMin * width - sw, yMin * height - sw, sw, sw);
 	rect(xMax * width, yMin * height - sw, sw, sw);
 	rect(xMin * width - sw, yMax * height, sw, sw);
-	rect(xMax * width, yMax * height, sw, sw);
+	rect(xMax * width, yMax * height, sw, sw); */
 }
