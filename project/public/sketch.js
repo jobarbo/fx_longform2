@@ -17,6 +17,10 @@ let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
+let elapsedTime = 0;
+let particleNum = 500;
+let drawing = true;
+let bgCol;
 
 function setup() {
 	console.time('setup');
