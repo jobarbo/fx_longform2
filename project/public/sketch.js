@@ -49,6 +49,7 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
+	bgCol = color(random(30, 50), random([5, 10, 15]), 95, 100);
 	INIT();
 }
 
