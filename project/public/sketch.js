@@ -77,7 +77,7 @@ function draw() {
 function INIT() {
 	console.log('INIT');
 	let hue = random(360);
-	let bgCol = color(random(30, 50), random([10, 15, 25]), 95, 100);
+	let bgCol = color(random(30, 50), random([5, 10, 15]), 95, 100);
 
 	background(bgCol);
 
