@@ -10,8 +10,8 @@ class Mover {
 				: features.theme === 'bright' && features.colormode === 'monochrome'
 				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
 				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
-		this.initAlpha = 50;
-		this.initS = 0.65 * MULTIPLIER;
+		this.initAlpha = 30;
+		this.initS = 0.45 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === 'monochrome' ? 0 : this.initSat;
 		this.bri = this.initBri;
@@ -48,7 +48,7 @@ class Mover {
 				? width / 3
 				: features.composition === 'semiconstrained'
 				? width / 2.35
-				: width / 2;
+				: width / 2.5;
 		this.borderY =
 			features.composition === 'compressed'
 				? height / 2.75
@@ -56,7 +56,7 @@ class Mover {
 				? height / 2.5
 				: features.composition === 'semiconstrained'
 				? height / 2.25
-				: height / 2;
+				: height / 2.5;
 
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
 		this.uvalue = [5, 5, 5, 5];
@@ -82,15 +82,34 @@ class Mover {
 			this.nvalue,
 			this.uvalue
 		);
-		this.uvalue[0] *= 1.05;
-		this.uvalue[1] *= 1.05;
-		this.uvalue[2] *= 1.05;
-		this.uvalue[3] *= 1.05;
 
-		/* 		this.nvalue[0] += 0.005;
-		this.nvalue[1] += 0.005;
-		this.nvalue[2] += 0.005;
-		this.nvalue[3] += 0.005; */
+		//! STARMAP CONFIGURATION
+		this.uvalue[0] *= 1.013;
+		this.uvalue[1] *= 1.013;
+		this.uvalue[2] *= 1.013;
+		this.uvalue[3] *= 1.013;
+
+		this.nvalue[0] -= 0.005;
+		this.nvalue[1] -= 0.005;
+		this.nvalue[2] -= 0.005;
+		this.nvalue[3] -= 0.005;
+
+		//! Equilibrium CONFIGURATION
+		/* 				this.uvalue[0] *= 1.015;
+				this.uvalue[1] *= 1.015;
+				this.uvalue[2] *= 1.015;
+				this.uvalue[3] *= 1.015;
+
+				this.nvalue[0] -= 0.015;
+				this.nvalue[1] -= 0.015;
+				this.nvalue[2] -= 0.015;
+				this.nvalue[3] -= 0.015; */
+
+		//! ORIGINAL CONFIGURATION
+		/* 		this.uvalue[0] += 1;
+		this.uvalue[1] += 1;
+		this.uvalue[2] += 1;
+		this.uvalue[3] += 1; */
 
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
@@ -100,20 +119,32 @@ class Mover {
 
 		this.x =
 			this.x <= this.centerX - this.borderX
-				? this.centerX + this.borderX + random(-4 * MULTIPLIER, 0)
+				? this.centerX + this.borderX + random(-1 * MULTIPLIER, 0)
 				: this.x >= this.centerX + this.borderX
-				? this.centerX - this.borderX + random(0, 4 * MULTIPLIER)
+				? this.centerX - this.borderX + random(0, 1 * MULTIPLIER)
 				: this.x;
 		this.y =
 			this.y <= this.centerY - this.borderY
-				? this.centerY + this.borderY + random(-4 * MULTIPLIER, 0)
+				? this.centerY + this.borderY + random(-1 * MULTIPLIER, 0)
 				: this.y >= this.centerY + this.borderY
-				? this.centerY - this.borderY + random(0, 4 * MULTIPLIER)
+				? this.centerY - this.borderY + random(0, 1 * MULTIPLIER)
 				: this.y;
 
 		let pxy = p.x - p.y;
 		this.hue += map(pxy, -this.uvalue[0] * 2, this.uvalue[0] * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
+		/* 		// Check if particle is approaching the edge of the canvas
+		let distanceToEdge = min(
+			abs(this.x - this.centerX + this.borderX),
+			abs(this.x - this.centerX - this.borderX),
+			abs(this.y - this.centerY + this.borderY),
+			abs(this.y - this.centerY - this.borderY)
+		);
+
+		this.a = map(distanceToEdge, 10, 60, 0, 40, true); */
+		/*
+		this.a *= 1.1;
+		this.a = this.a > 50 ? 1 : this.a; */
 	}
 }
 

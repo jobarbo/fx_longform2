@@ -20,8 +20,9 @@ const themeArr = [
 
 const compositionArr = [
 	['semiconstrained', 0],
-	['constrained', 50],
-	['compressed', 50],
+	['constrained', 0],
+	['compressed', 0],
+	['unconstrained', 100],
 ];
 
 const colorModeArr = [

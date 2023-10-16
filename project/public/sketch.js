@@ -15,14 +15,14 @@ let maxFrames = 600;
 let C_WIDTH;
 let MULTIPLIER;
 
+let centerX;
+let centerY;
+let borderX;
+let borderY;
+
 ({sin, cos, imul, PI} = Math);
 TAU = PI * 2;
 F = (N, f) => [...Array(N)].map((_, i) => f(i));
-
-P5Capture.setDefaultOptions({
-	format: 'mp4',
-	framerate: 5,
-});
 
 function setup() {
 	features = $fx.getFeatures();
@@ -40,12 +40,31 @@ function setup() {
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1600;
-	c = createCanvas(C_WIDTH, C_WIDTH * 1.375);
+	c = createCanvas(C_WIDTH, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
+
+	centerX = width / 2;
+	centerY = height / 2;
+	borderX =
+		features.composition === 'compressed'
+			? width / 3.5
+			: features.composition === 'constrained'
+			? width / 3
+			: features.composition === 'semiconstrained'
+			? width / 2.35
+			: width / 2.5;
+	borderY =
+		features.composition === 'compressed'
+			? height / 2.75
+			: features.composition === 'constrained'
+			? height / 2.5
+			: features.composition === 'semiconstrained'
+			? height / 2.25
+			: height / 2.5;
 	INIT(rseed);
 }
 
@@ -61,6 +80,12 @@ function draw() {
 
 	let elapsedTime = frameCount - startTime;
 	if (elapsedTime > maxFrames) {
+		noFill();
+		strokeWeight(2 * MULTIPLIER);
+		stroke(0, 0, 100, 100);
+		// draw a rectangle the size of the composition with centerX, centerY as the center and borderX, borderY as the width and height
+		rect(centerX, centerY, borderX * 2, borderY * 2);
+
 		window.rendered = c.canvas;
 		document.complete = true;
 		noLoop();
@@ -71,8 +96,8 @@ function INIT(seed) {
 	scl1 = random([0.001, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015]);
 	scl2 = scl1;
 
-	ang1 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
-	ang2 = int(random([1, 5, 10, 20, 40, 80, 160, 320, 640, 1280]));
+	ang1 = 100;
+	ang2 = 100;
 
 	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	yRandDivider = xRandDivider;
