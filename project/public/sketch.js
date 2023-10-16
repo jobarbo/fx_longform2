@@ -10,14 +10,17 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 120;
+let maxFrames = 60000;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
-
+let elapsedTime = 0;
+let particleNum = 500;
+let drawing = true;
+let bgCol;
 function setup() {
 	console.time('setup');
 	var ua = window.navigator.userAgent;
@@ -29,7 +32,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(2.0);
+		pixelDensity(3.0);
 	}
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
@@ -45,39 +48,60 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
-	INIT();
+	bgCol = color(random(30, 50), random([5, 10, 15]), 95, 100);
+	INIT(particleNum);
+
+	let sketch = drawGenerator();
+
+	// use requestAnimationFrame to call the generator function and pass it the sketch function
+	function animate() {
+		requestAnimationFrame(animate);
+		sketch.next();
+	}
+	animate();
+}
+
+function* drawGenerator() {
+	let count = 0;
+	let frameCount = 0;
+	let draw_every = 520;
+
+	// draw the particles and make them move until draw_every is reached then yield and wait for the next frame, also check if the maxFrames is reached and stop the sketch if it is and also show the loading bar
+	while (true) {
+		for (let i = 0; i < particleNum; i++) {
+			const mover = movers[i];
+			mover.show();
+			mover.move();
+		}
+		elapsedTime = frameCount - startTime;
+		showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
+		drawUI();
+		count++;
+		frameCount++;
+		if (count > draw_every) {
+			count = 0;
+			yield;
+		}
+
+		if (elapsedTime > maxFrames && drawing) {
+			drawing = false;
+			// close the generator
+			return;
+		}
+	}
 }
 
 function draw() {
-	// put drawing code here
-	for (let i = 0; i < movers.length; i++) {
-		for (let j = 0; j < 1; j++) {
-			movers[i].show();
-			movers[i].move();
-		}
-	}
-
-	let elapsedTime = frameCount - startTime;
-
-	// render a loading bar on the canvas to show the progress of the sketch, i want the bar to start on the xmin and end on the xmax
-	showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
-	drawUI();
-
-	if (elapsedTime > maxFrames) {
-		console.log('elapsedTime', elapsedTime);
-
-		noLoop();
-	}
+	noLoop();
 }
 
 ///////////////////////////////////////////////////////
 // -------------------- UTILS ------------------------
 //////////////////////////////////////////////////////
 
-function INIT() {
+function INIT(particleNum) {
 	console.log('INIT');
 	let hue = random(360);
-	let bgCol = color(random(30, 50), random([5, 10, 15]), 95, 100);
 
 	background(bgCol);
 
@@ -106,7 +130,7 @@ function INIT() {
 	yMin = -0.05;
 	yMax = 1.05; */
 
-	for (let i = 0; i < 250000; i++) {
+	for (let i = 0; i < particleNum; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
@@ -138,7 +162,7 @@ function INIT() {
 
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
-	console.log('drawTexture');
+
 	for (let i = 0; i < 400000; i++) {
 		let x = random(width);
 		let y = random(height);
@@ -155,7 +179,7 @@ function drawTexture(hue) {
 function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 	rectMode(CORNER);
 	let percent = (elapsedTime / maxFrames) * 100;
-	let barWidth = (percent / 100) * (xMax - xMin) * width - 10;
+	let barWidth = (percent / 100) * (xMax - xMin) * width;
 	noStroke();
 	fill(0, 0, 100, 50);
 	rect(xMin * width, height - 20, (xMax - xMin) * width, 10);
@@ -245,4 +269,45 @@ function drawUI() {
 	rect(xMax * width, yMin * height - sw, sw, sw);
 	rect(xMin * width - sw, yMax * height, sw, sw);
 	rect(xMax * width, yMax * height, sw, sw); */
+}
+
+function keyPressed() {
+	const particleNumMapping = {
+		49: 50000,
+		50: 75000,
+		51: 100000,
+		52: 150000,
+		53: 200000,
+		54: 250000,
+		55: 300000,
+		56: 400000,
+		57: 800000,
+	};
+
+	const maxFramesMapping = {
+		49: 120,
+		50: 120,
+		51: 120,
+		52: 120,
+		53: 100,
+		54: 100,
+		55: 60,
+		56: 60,
+		57: 60,
+	};
+
+	const keyCodeToParticleNum = particleNumMapping[keyCode];
+	const keyCodeToMaxFrames = maxFramesMapping[keyCode];
+
+	if (keyCodeToParticleNum !== undefined && keyCodeToMaxFrames !== undefined) {
+		movers = [];
+		frameCount = 0;
+		elapsedTime = 0;
+		particleNum = keyCodeToParticleNum;
+		maxFrames = keyCodeToMaxFrames;
+		drawing = true;
+		loop();
+		console.log('keyPressed');
+		INIT(particleNum);
+	}
 }
