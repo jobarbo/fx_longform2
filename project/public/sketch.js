@@ -52,7 +52,7 @@ function setup() {
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 600;
+	MULTIPLIER = C_WIDTH / 1000;
 	c = createCanvas(C_WIDTH, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
@@ -63,16 +63,14 @@ function setup() {
 	ayoff = random(1000000);
 	sxoff = random(1000000);
 	syoff = random(1000000);
-	scl1 = random(0.002, 0.0023);
+	scl1 = random(0.002, 0.0025);
 	scl2 = scl1;
-	ang1 = 100;
-	ang2 = 800;
+	ang1 = 500;
+	ang2 = 500;
 
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
 	INIT(rseed);
-	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
-	background(bgCol);
 }
 
 function draw() {
@@ -112,27 +110,33 @@ function draw() {
 function INIT(seed) {
 	let easing = radians(easeAng);
 	let xpff;
-	scl1 += map(noise(sxoff, syoff), 0, 1, -0.00001, 0.00001, true);
-	scl2 = scl1;
+	scl1 += map(noise(sxoff, syoff), 0, 0.95, -0.000015, 0.000015, true);
+	scl1 = constrain(scl1, 0, 0.1);
+	scl2 += map(noise(syoff, sxoff), 0, 0.95, -0.000015, 0.000015, true);
+	scl2 = constrain(scl2, 0, 0.1);
 
-	angle1 = int(map(noise(axoff, ayoff), 0, 1, 0, ang1 * 2, true));
-	angle2 = int(map(noise(ayoff, axoff), 0, 1, 0, ang2 * 2, true));
+	/* 	angle1 = int(map(noise(axoff, ayoff), 0, 1, 0, ang1 * 3, true));
+	angle2 = int(map(noise(ayoff, axoff), 0, 1, 0, ang2 * 3, true)); */
+	ang1 += int(map(noise(axoff, ayoff), 0, 1, -10, 10, true));
+	ang1 = constrain(ang1, 0, 2000);
+	ang2 += int(map(noise(ayoff, axoff), 0, 1, -10, 10, true));
+	ang2 = constrain(ang2, 0, 2000);
+	angle1 = ang1;
+	angle2 = ang2;
 	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
-	xi += map(noise(xoff), 0, 1, -50 * MULTIPLIER, 50 * MULTIPLIER, true);
-	yi += map(noise(yoff), 0, 1, -50 * MULTIPLIER, 50 * MULTIPLIER, true);
-	hue += map(noise(xoff, yoff), 0, 1, -2, 2, true);
-	hue < 0 ? hue + 360 : hue > 360 ? hue - 360 : hue;
+	xi += map(noise(xoff), 0, 1, -7 * MULTIPLIER, 7 * MULTIPLIER, true);
+	yi += map(noise(yoff), 0, 1, -7 * MULTIPLIER, 7 * MULTIPLIER, true);
 
 	console.log('xi: ' + xi);
 	console.log('yi: ' + yi);
 
-	easeAng += 10;
+	easeAng += 2;
 	xoff += 0.001;
 	yoff += 0.001;
 	axoff += 0.001;
 	ayoff += 0.001;
-	sxoff += 0.001;
-	syoff += 0.001;
+	sxoff += 0.01;
+	syoff += 0.01;
 
 	console.log('scl1: ' + scl1);
 	console.log('scl2: ' + scl2);
@@ -141,7 +145,7 @@ function INIT(seed) {
 
 	console.log('cos(easing): ' + cos(easing));
 
-	xRandDivider = random([0.07]);
+	xRandDivider = random([0.1]);
 	yRandDivider = xRandDivider;
 	xMin = -0.01;
 	xMax = 1.01;
@@ -175,6 +179,6 @@ function INIT(seed) {
 			)
 		);
 	}
-	let bgCol = spectral.mix('#000', '#deb887', 0.1);
+	bgCol = color(random(0, 360), random([0, 2]), features.theme == 'bright' ? 93 : 10, 100);
 	background(bgCol);
 }

@@ -30,7 +30,7 @@ class Mover {
 				: features.theme === 'bright' && features.colormode === 'monochrome'
 				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
 				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
-		this.initAlpha = 100;
+		this.initAlpha = 40;
 		this.initS = 0.45 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === 'monochrome' ? 0 : this.initSat;
@@ -123,7 +123,7 @@ class Mover {
 			abs(this.y - this.centerY - this.borderY)
 		);
 
-		this.a = map(distanceToEdge, 10, 60, 0, 30, true);
+		this.a = map(distanceToEdge, 10, 60, 0, 20, true);
 	}
 }
 
@@ -139,11 +139,6 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	dx = oct(nx, ny, scale1, 1, octave);
-	dy = oct(nx, ny, scale2, 3, octave);
 	nx += dx * a1;
 	ny += dy * a2;
 

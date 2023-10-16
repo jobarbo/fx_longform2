@@ -14,7 +14,8 @@
 						.fill(0)
 						.map((_) => alphabet[(Math.random() * alphabet.length) | 0])
 						.join('');
-			var fxhash = 'ooreTv19YF3YsgYfY8sNtVwvey6L17R9jPr2NBQyJCvejJKfWW7';
+			//var fxhash = 'ooYFREqWCPv4z4NahpBppXiSh7CPNAkqeEwW4ZtEvDaoxAu7DU7';
+			var fxhash = 'oojNpExMCLhRHUX2quVahVFMWYiJ3bBJ2UmEn5BqCYucJDiCXU4';
 			let b58dec = (str) => [...str].reduce((p, c) => (p * alphabet.length + alphabet.indexOf(c)) | 0, 0);
 			let fxhashTrunc = fxhash.slice(2);
 			let regex = new RegExp('.{' + ((fxhash.length / 4) | 0) + '}', 'g');
