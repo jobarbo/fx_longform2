@@ -88,7 +88,7 @@ function INIT() {
 	yMin = -0.05;
 	yMax = 1.05; */
 
-	for (let i = 0; i < 300000; i++) {
+	for (let i = 0; i < 200000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
