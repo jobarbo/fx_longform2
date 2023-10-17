@@ -91,11 +91,11 @@ function draw() {
 }
 
 function INIT(seed) {
-	scl1 = random([0.001, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015]);
+	scl1 = random([0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
 	scl2 = scl1;
 
-	ang1 = 100;
-	ang2 = 100;
+	ang1 = 500;
+	ang2 = 500;
 
 	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	yRandDivider = xRandDivider;

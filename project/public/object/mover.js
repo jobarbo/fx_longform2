@@ -89,10 +89,10 @@ class Mover {
 		this.uvalue[2] *= 1.013;
 		this.uvalue[3] *= 1.013;
 
-		this.nvalue[0] -= 0.005;
-		this.nvalue[1] -= 0.005;
-		this.nvalue[2] -= 0.005;
-		this.nvalue[3] -= 0.005;
+		this.nvalue[0] -= 0.0045;
+		this.nvalue[1] -= 0.0045;
+		this.nvalue[2] -= 0.0045;
+		this.nvalue[3] -= 0.0045;
 
 		//! Equilibrium CONFIGURATION
 		/* 		this.uvalue[0] *= 1.015;
