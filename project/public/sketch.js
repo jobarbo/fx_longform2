@@ -70,7 +70,7 @@ function setup() {
 }
 
 function draw() {
-	//blendMode(ADD);
+	blendMode(ADD);
 	elapsedTime = frameCount - startTime;
 	for (let i = 0; i < movers.length; i++) {
 		for (let j = 0; j < 1; j++) {
@@ -80,7 +80,7 @@ function draw() {
 			movers[i].move();
 		}
 	}
-	//blendMode(BLEND);
+	blendMode(BLEND);
 
 	if (frameCount % 100 == 0) {
 		let cosIndex = cos(radians(easeAng));
