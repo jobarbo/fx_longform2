@@ -44,7 +44,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(3.0);
+		pixelDensity(2.0);
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
@@ -53,7 +53,7 @@ function setup() {
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	xRandDivider = random([0.1]);
+	xRandDivider = random([0.08]);
 	yRandDivider = xRandDivider;
 	xoff = random(1000000);
 	yoff = random(1000000);
@@ -61,11 +61,11 @@ function setup() {
 	ayoff = random(1000000);
 	sxoff = random(1000000);
 	syoff = random(1000000);
-	scl1 = random([0.003]);
-	scl2 = scl1;
+	scl1 = random([0.0018]);
+	scl2 = random([0.0018]);
 
-	ang1 = 1;
-	ang2 = 1;
+	ang1 = 1200;
+	ang2 = 1200;
 
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
@@ -93,8 +93,7 @@ function draw() {
 		}
 		if (cycleCount < 1) {
 			movers = [];
-			console.log('screenshot');
-			saveArtwork();
+			//saveArtwork();
 			elapsedTime = 0;
 			frameCount = 0;
 			INIT(rseed);
@@ -108,33 +107,37 @@ function draw() {
 function INIT(seed) {
 	let easing = radians(easeAng);
 	let xpff;
-	scl1 += map(noise(sxoff, syoff), 0, 0.95, -0.000015, 0.000015, true);
+	/* 	scl1 += map(noise(sxoff, syoff), 0, 0.95, -0.000005, 0.000005, true);
 	scl1 = constrain(scl1, 0, 0.1);
-	scl2 += map(noise(syoff, sxoff), 0, 0.95, -0.000015, 0.000015, true);
-	scl2 = constrain(scl2, 0, 0.1);
-
-	/* 	angle1 = int(map(noise(axoff, ayoff), 0, 1, 0, ang1 * 3, true));
-	angle2 = int(map(noise(ayoff, axoff), 0, 1, 0, ang2 * 3, true)); */
-	ang1 += int(map(noise(axoff, ayoff), 0, 0.95, -20, 20, true));
+	scl2 += map(noise(syoff, sxoff), 0, 0.95, -0.000005, 0.000005, true);
+	scl2 = constrain(scl2, 0, 0.1); */
+	/* 	ang1 += int(map(noise(axoff, ayoff), 0, 0.95, -1, 1, true));
 	ang1 = constrain(ang1, 0, 2000);
-	ang2 += int(map(noise(ayoff, axoff), 0, 0.95, -20, 20, true));
+	ang2 += int(map(noise(ayoff, axoff), 0, 0.95, -1, 1, true));
 	ang2 = constrain(ang2, 0, 2000);
 	angle1 = ang1;
-	angle2 = ang2;
+	angle2 = ang2; */
+
+	scl1 = map(cos(easing), -1, 1, 0.0022, 0.0007, true);
+	scl2 = map(cos(easing), -1, 1, 0.0007, 0.0022, true);
+
+	angle1 = int(map(cos(easing), -1, 1, 500, 1600, true));
+	angle2 = int(map(cos(easing), -1, 1, 1600, 500, true));
+
 	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
-	/* 	xi += map(noise(xoff), 0, 0.95, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
-	yi += map(noise(yoff), 0, 0.95, -1 * MULTIPLIER, 1 * MULTIPLIER, true); */
+	/* 	xi += map(noise(xoff), 0, 0.9, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
+	yi += map(noise(yoff), 0, 0.9, -1 * MULTIPLIER, 1 * MULTIPLIER, true); */
 
 	console.log('xi: ' + xi);
 	console.log('yi: ' + yi);
 
-	easeAng += 0.6;
+	easeAng += 0.12;
 	xoff += 0.001;
 	yoff += 0.001;
-	axoff += 0.005;
-	ayoff += 0.005;
-	sxoff += 0.01;
-	syoff += 0.01;
+	axoff += 0.0025;
+	ayoff += 0.0025;
+	sxoff += 0.007;
+	syoff += 0.007;
 
 	console.log('scl1: ' + scl1);
 	console.log('scl2: ' + scl2);
@@ -148,7 +151,7 @@ function INIT(seed) {
 	yMin = -0.01;
 	yMax = 1.01;
 
-	for (let i = 0; i < 10000; i++) {
+	for (let i = 0; i < 50000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 		let initHue = hue + random(-1, 1);
