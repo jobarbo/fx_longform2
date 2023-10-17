@@ -1,8 +1,4 @@
 let movers = [];
-let scl1;
-let scl2;
-let ang1;
-let ang2;
 let rseed;
 let nseed;
 let xMin;
@@ -10,7 +6,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 120;
+let maxFrames = 64;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -18,9 +14,11 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 500;
+let particleNum = 50000;
 let drawing = true;
 let bgCol;
+
+let scl1, scl2, ang1, ang2, scl1Zone, scl2Zone, ang1Zone, ang2Zone;
 
 function setup() {
 	console.time('setup');
@@ -33,7 +31,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(2.0);
+		pixelDensity(6.0);
 	}
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
@@ -48,8 +46,18 @@ function setup() {
 	randomSeed(seed);
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
+
+	scl1 = random(0.0012, 0.0012);
+	scl2 = random(0.0012, 0.0012);
+	ang1 = int(random(1200, 1200));
+	ang2 = int(random(1200, 1200));
+	scl1Zone = random(300, 500);
+	scl2Zone = random(300, 600);
+	ang1Zone = random(300, 500);
+	ang2Zone = random(300, 600);
+
 	startTime = frameCount;
-	bgCol = color(random(30, 50), random([5, 10, 15]), 95, 100);
+	bgCol = color(random(30, 50), random([1, 5, 10]), 95, 100);
 	INIT();
 }
 
@@ -82,20 +90,11 @@ function draw() {
 function INIT() {
 	console.log('INIT');
 	let hue = random(360);
-	let bgCol = color(random(30, 50), random([5, 10, 15]), 95, 100);
 
 	background(bgCol);
 
 	drawTexture(hue);
 	movers = [];
-	scl1 = random(0.00042, 0.00042);
-	scl2 = random(0.00042, 0.00042);
-	ang1 = int(random(4200, 4200));
-	ang2 = int(random(4200, 4200));
-	scl1Zone = random(800, 1000);
-	scl2Zone = random(900, 1200);
-	ang1Zone = random(800, 1000);
-	ang2Zone = random(900, 1200);
 
 	console.log(scl1, scl2, ang1, ang2);
 
@@ -111,7 +110,7 @@ function INIT() {
 	yMin = -0.05;
 	yMax = 1.05; */
 
-	for (let i = 0; i < 250000; i++) {
+	for (let i = 0; i < particleNum; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
@@ -132,10 +131,10 @@ function INIT() {
 				yMax,
 				xRandDivider,
 				yRandDivider,
-				scl1Zone,
-				scl2Zone,
-				ang1Zone,
-				ang2Zone
+				scl1Zone * MULTIPLIER,
+				scl2Zone * MULTIPLIER,
+				ang1Zone * MULTIPLIER,
+				ang2Zone * MULTIPLIER
 			)
 		);
 	}
@@ -160,12 +159,12 @@ function drawTexture(hue) {
 function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 	rectMode(CORNER);
 	let percent = (elapsedTime / maxFrames) * 100;
-	let barWidth = (percent / 100) * (xMax - xMin) * width - 10;
+	let barWidth = (percent / 100) * (xMax - xMin) * width;
 	noStroke();
 	fill(0, 0, 100, 50);
-	rect(xMin * width, height - 20, (xMax - xMin) * width, 10);
+	rect(xMin * width, height - 50 * MULTIPLIER, (xMax - xMin) * width, 30 * MULTIPLIER);
 	fill(0, 0, 0, 100);
-	rect(xMin * width, height - 20, barWidth, 10);
+	rect(xMin * width, height - 50 * MULTIPLIER, barWidth, 30 * MULTIPLIER);
 	rectMode(CENTER);
 }
 
@@ -265,15 +264,15 @@ function keyPressed() {
 	};
 
 	const maxFramesMapping = {
-		49: 120,
-		50: 120,
-		51: 120,
-		52: 120,
-		53: 100,
-		54: 100,
-		55: 60,
-		56: 60,
-		57: 60,
+		49: 64,
+		50: 64,
+		51: 64,
+		52: 64,
+		53: 64,
+		54: 64,
+		55: 64,
+		56: 64,
+		57: 64,
 	};
 
 	const keyCodeToParticleNum = particleNumMapping[keyCode];

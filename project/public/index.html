@@ -15,6 +15,7 @@
 						.map((_) => alphabet[(Math.random() * alphabet.length) | 0])
 						.join('');
 			//var fxhash = 'oouxf9TNdju2hEVdKptdigXhaFtgudEFP2in2mskhZuDfcXCQao';
+			var fxhash = 'ooFnVz9pmp9BrnuG17MFwWwE8GQB5hhgsC17gqRcJzGLPyWp2cN';
 			let b58dec = (str) => [...str].reduce((p, c) => (p * alphabet.length + alphabet.indexOf(c)) | 0, 0);
 			let fxhashTrunc = fxhash.slice(2);
 			let regex = new RegExp('.{' + ((fxhash.length / 4) | 0) + '}', 'g');
