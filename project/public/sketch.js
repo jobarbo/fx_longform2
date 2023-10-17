@@ -17,6 +17,7 @@ let MULTIPLIER;
 let drawing = false;
 let hue = Math.random() * 360;
 let elapsedTime = 0;
+let xRandDivider, yRandDivider;
 let easeAng = 0,
 	easeScalar = 0.001,
 	easeScalar2 = 200,
@@ -47,22 +48,24 @@ function setup() {
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 600;
+	MULTIPLIER = C_WIDTH / 800;
 	c = createCanvas(C_WIDTH, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
+	xRandDivider = random([0.1]);
+	yRandDivider = xRandDivider;
 	xoff = random(1000000);
 	yoff = random(1000000);
 	axoff = random(1000000);
 	ayoff = random(1000000);
 	sxoff = random(1000000);
 	syoff = random(1000000);
-	scl1 = random([0.0021]);
+	scl1 = random([0.003]);
 	scl2 = scl1;
 
-	ang1 = 100;
-	ang2 = 800;
+	ang1 = 1;
+	ang2 = 1;
 
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
@@ -91,11 +94,10 @@ function draw() {
 		if (cycleCount < 1) {
 			movers = [];
 			console.log('screenshot');
-			//saveArtwork();
+			saveArtwork();
 			elapsedTime = 0;
 			frameCount = 0;
-
-			//INIT(rseed);
+			INIT(rseed);
 		} else {
 			noLoop();
 		}
@@ -113,24 +115,24 @@ function INIT(seed) {
 
 	/* 	angle1 = int(map(noise(axoff, ayoff), 0, 1, 0, ang1 * 3, true));
 	angle2 = int(map(noise(ayoff, axoff), 0, 1, 0, ang2 * 3, true)); */
-	ang1 += int(map(noise(axoff, ayoff), 0, 1, -10, 10, true));
+	ang1 += int(map(noise(axoff, ayoff), 0, 0.95, -20, 20, true));
 	ang1 = constrain(ang1, 0, 2000);
-	ang2 += int(map(noise(ayoff, axoff), 0, 1, -10, 10, true));
+	ang2 += int(map(noise(ayoff, axoff), 0, 0.95, -20, 20, true));
 	ang2 = constrain(ang2, 0, 2000);
 	angle1 = ang1;
 	angle2 = ang2;
 	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
-	xi += map(noise(xoff), 0, 1, -7 * MULTIPLIER, 7 * MULTIPLIER, true);
-	yi += map(noise(yoff), 0, 1, -7 * MULTIPLIER, 7 * MULTIPLIER, true);
+	/* 	xi += map(noise(xoff), 0, 0.95, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
+	yi += map(noise(yoff), 0, 0.95, -1 * MULTIPLIER, 1 * MULTIPLIER, true); */
 
 	console.log('xi: ' + xi);
 	console.log('yi: ' + yi);
 
-	easeAng += 2;
+	easeAng += 0.6;
 	xoff += 0.001;
 	yoff += 0.001;
-	axoff += 0.001;
-	ayoff += 0.001;
+	axoff += 0.005;
+	ayoff += 0.005;
 	sxoff += 0.01;
 	syoff += 0.01;
 
@@ -141,8 +143,6 @@ function INIT(seed) {
 
 	console.log('cos(easing): ' + cos(easing));
 
-	xRandDivider = random([0.07]);
-	yRandDivider = xRandDivider;
 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;

@@ -65,7 +65,7 @@ class Mover {
 		this.borderY = height / 3;
 
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
-		this.uvalue = 3;
+		this.uvalue = 5;
 	}
 
 	show() {
