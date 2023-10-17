@@ -58,10 +58,11 @@ function setup() {
 	ayoff = random(1000000);
 	sxoff = random(1000000);
 	syoff = random(1000000);
-	scl1 = random(0.002, 0.0025);
+	scl1 = random([0.0021]);
 	scl2 = scl1;
-	ang1 = 200;
-	ang2 = 200;
+
+	ang1 = 100;
+	ang2 = 800;
 
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
@@ -140,7 +141,7 @@ function INIT(seed) {
 
 	console.log('cos(easing): ' + cos(easing));
 
-	xRandDivider = random([0.1]);
+	xRandDivider = random([0.07]);
 	yRandDivider = xRandDivider;
 	xMin = -0.01;
 	xMax = 1.01;
