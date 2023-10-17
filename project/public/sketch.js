@@ -52,10 +52,10 @@ function setup() {
 	scl2 = random(0.0012, 0.0012);
 	ang1 = int(random(1200, 1200));
 	ang2 = int(random(1200, 1200));
-	scl1Zone = random(300, 500);
-	scl2Zone = random(300, 600);
-	ang1Zone = random(300, 500);
-	ang2Zone = random(300, 600);
+	scl1Zone = random(2000, 2200);
+	scl2Zone = random(2000, 2200);
+	ang1Zone = random(2000, 2200);
+	ang2Zone = random(2000, 2200);
 
 	startTime = frameCount;
 	bgCol = color(random(30, 50), random([1, 5, 10]), 95, 100);

@@ -24,7 +24,7 @@ class Mover {
 		this.initSat = random([0, 10, 10, 20, 20, 30]);
 		this.initBri = random([0, 10, 10, 20, 20, 30]);
 		this.initAlpha = 100;
-		this.initS = 0.45 * MULTIPLIER;
+		this.initS = 0.5 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.hueArr = [0, 20, 30, 120, 35, 45];
@@ -77,10 +77,10 @@ class Mover {
 	move() {
 		let distFromCenter = int(dist(this.x, this.y, this.centerX, (this.yMax / 1.5) * height));
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, this.ang1Init * 1, this.ang1Init / 2, true));
-		this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 1, this.ang2Init / 2, true));
-		this.scl1 = map(distFromCenter, 0, this.scl1Zone, this.scl1Init, this.scl1Init * 3, true);
-		this.scl2 = map(distFromCenter, 0, this.scl2Zone, this.scl2Init * 3, this.scl2Init, true);
+		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, this.ang1Init / 1000, this.ang1Init * 2, true));
+		this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init / 1000, this.ang2Init * 2, true));
+		this.scl1 = map(distFromCenter, 0, this.scl1Zone, this.scl1Init / 1000, this.scl1Init * 3, true);
+		this.scl2 = map(distFromCenter, 0, this.scl2Zone, this.scl2Init / 1000, this.scl2Init * 3, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 		this.xRandDivider = random(0.0000000000000000000001, 6);
@@ -137,8 +137,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.5, 0.5, -50, 1, true);
-	let v = map(vn, -0.5, 0.5, -1, 50, true);
+	let u = map(un, -0.0000000000015, 0.5, -1, 70, true);
+	let v = map(vn, -0.5, 0.0000000000015, -70, 1, true);
 
 	let p = createVector(u, v);
 	return p;
