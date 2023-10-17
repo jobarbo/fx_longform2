@@ -30,8 +30,8 @@ class Mover {
 				: features.theme === 'bright' && features.colormode === 'monochrome'
 				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
 				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
-		this.initAlpha = 40;
-		this.initS = 0.45 * MULTIPLIER;
+		this.initAlpha = 100;
+		this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === 'monochrome' ? 0 : this.initSat;
 		this.bri = this.initBri;
@@ -98,15 +98,15 @@ class Mover {
 
 		this.x =
 			this.x <= this.centerX - this.borderX
-				? this.centerX + this.borderX + random(-1 * MULTIPLIER, 0)
+				? this.centerX + this.borderX + random(-3 * MULTIPLIER, 0)
 				: this.x >= this.centerX + this.borderX
-				? this.centerX - this.borderX + random(0, 1 * MULTIPLIER)
+				? this.centerX - this.borderX + random(0, 3 * MULTIPLIER)
 				: this.x;
 		this.y =
 			this.y <= this.centerY - this.borderY
-				? this.centerY + this.borderY + random(-1 * MULTIPLIER, 0)
+				? this.centerY + this.borderY + random(-3 * MULTIPLIER, 0)
 				: this.y >= this.centerY + this.borderY
-				? this.centerY - this.borderY + random(0, 1 * MULTIPLIER)
+				? this.centerY - this.borderY + random(0, 3 * MULTIPLIER)
 				: this.y;
 
 		let pxy = p.x - p.y;

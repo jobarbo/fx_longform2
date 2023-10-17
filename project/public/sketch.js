@@ -32,11 +32,6 @@ let easeAng = 0,
 TAU = PI * 2;
 F = (N, f) => [...Array(N)].map((_, i) => f(i));
 
-P5Capture.setDefaultOptions({
-	format: 'mp4',
-	framerate: 5,
-});
-
 function setup() {
 	features = $fx.getFeatures();
 	console.log(features);
@@ -65,8 +60,8 @@ function setup() {
 	syoff = random(1000000);
 	scl1 = random(0.002, 0.0025);
 	scl2 = scl1;
-	ang1 = 500;
-	ang2 = 500;
+	ang1 = 200;
+	ang2 = 200;
 
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
@@ -74,7 +69,7 @@ function setup() {
 }
 
 function draw() {
-	blendMode(ADD);
+	//blendMode(ADD);
 	elapsedTime = frameCount - startTime;
 	for (let i = 0; i < movers.length; i++) {
 		for (let j = 0; j < 1; j++) {
@@ -84,7 +79,7 @@ function draw() {
 			movers[i].move();
 		}
 	}
-	blendMode(BLEND);
+	//blendMode(BLEND);
 
 	if (frameCount % 100 == 0) {
 		let cosIndex = cos(radians(easeAng));
@@ -95,11 +90,11 @@ function draw() {
 		if (cycleCount < 1) {
 			movers = [];
 			console.log('screenshot');
-			saveArtwork();
+			//saveArtwork();
 			elapsedTime = 0;
 			frameCount = 0;
 
-			INIT(rseed);
+			//INIT(rseed);
 		} else {
 			noLoop();
 		}

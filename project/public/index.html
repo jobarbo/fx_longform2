@@ -15,7 +15,8 @@
 						.map((_) => alphabet[(Math.random() * alphabet.length) | 0])
 						.join('');
 			//var fxhash = 'ooYFREqWCPv4z4NahpBppXiSh7CPNAkqeEwW4ZtEvDaoxAu7DU7';
-			var fxhash = 'oojNpExMCLhRHUX2quVahVFMWYiJ3bBJ2UmEn5BqCYucJDiCXU4';
+			//var fxhash = 'oojNpExMCLhRHUX2quVahVFMWYiJ3bBJ2UmEn5BqCYucJDiCXU4';
+			var fxhash = 'oorcX3SHzohkWGnpGZUyQijY3QnicBBx476hufEo1r2qWq5M6j4';
 			let b58dec = (str) => [...str].reduce((p, c) => (p * alphabet.length + alphabet.indexOf(c)) | 0, 0);
 			let fxhashTrunc = fxhash.slice(2);
 			let regex = new RegExp('.{' + ((fxhash.length / 4) | 0) + '}', 'g');
@@ -338,7 +339,6 @@
 		<link rel="stylesheet" href="./style.css" />
 		<script src="./library/p5/p5.min.js"></script>
 		<script src="./library/p5/spectral.js"></script>
-		<script src="./library/p5/p5.capture.min.js"></script>
 		<script src="./library/utils/logs.js"></script>
 		<script src="./library/utils/piterNoise.js"></script>
 		<script src="./library/utils/saveCanvas.js"></script>
