@@ -162,7 +162,7 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 	if (percent > 100) percent = 100;
 
 	// put the percent in the title of the page
-	document.title = 'mode ' + renderMode + ' : ' + percent.toFixed(2) + '%';
+	document.title = percent.toFixed(0) + '%' + ' (mode ' + renderMode + ')';
 }
 
 function drawUI() {
