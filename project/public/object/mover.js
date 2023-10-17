@@ -24,7 +24,7 @@ class Mover {
 		this.initSat = random([0, 10, 10, 20, 20, 30]);
 		this.initBri = random([0, 10, 10, 20, 20, 30]);
 		this.initAlpha = 100;
-		this.initS = 0.5 * MULTIPLIER;
+		this.initS = 0.45 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.hueArr = [0, 20, 30, 120, 35, 45];
