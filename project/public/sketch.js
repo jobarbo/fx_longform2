@@ -10,7 +10,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 60000;
+let maxFrames = 64;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -18,7 +18,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 50;
+let particleNum = 250000;
 let drawing = true;
 let bgCol;
 function setup() {
@@ -64,7 +64,7 @@ function setup() {
 function* drawGenerator() {
 	let count = 0;
 	let frameCount = 0;
-	let draw_every = 520;
+	let draw_every = 20000;
 
 	// draw the particles and make them move until draw_every is reached then yield and wait for the next frame, also check if the maxFrames is reached and stop the sketch if it is and also show the loading bar
 	while (true) {
@@ -72,16 +72,17 @@ function* drawGenerator() {
 			const mover = movers[i];
 			mover.show();
 			mover.move();
+			count++;
+			if (count > draw_every) {
+				count = 0;
+				yield;
+			}
 		}
 		elapsedTime = frameCount - startTime;
 		showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
 		drawUI();
-		count++;
+
 		frameCount++;
-		if (count > draw_every) {
-			count = 0;
-			yield;
-		}
 
 		if (elapsedTime > maxFrames && drawing) {
 			drawing = false;
@@ -107,15 +108,14 @@ function INIT(particleNum) {
 
 	drawTexture(hue);
 	movers = [];
-	scl1 = random(0.00042, 0.00042);
-	scl2 = random(0.00042, 0.00042);
-	ang1 = int(random(4200, 4200));
-	ang2 = int(random(4200, 4200));
-	scl1Zone = random(800, 1000);
-	scl2Zone = random(900, 1200);
-	ang1Zone = random(800, 1000);
-	ang2Zone = random(900, 1200);
-
+	scl1 = random(0.0012, 0.0012);
+	scl2 = random(0.0012, 0.0012);
+	ang1 = int(random(1200, 1200));
+	ang2 = int(random(1200, 1200));
+	scl1Zone = random(300, 500);
+	scl2Zone = random(300, 600);
+	ang1Zone = random(300, 500);
+	ang2Zone = random(300, 600);
 	console.log(scl1, scl2, ang1, ang2);
 
 	let xRandDivider = 0.1;
