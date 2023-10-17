@@ -42,8 +42,8 @@ class Mover {
 		this.ang2Init = ang2;
 		this.ang1 = ang1;
 		this.ang2 = ang2;
-		this.xRandDivider = random(0.0000000000000000000001, 10);
-		this.yRandDivider = random(0.0000000000000000000001, 10);
+		this.xRandDivider = xRandDivider;
+		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperVal = 0.1;
@@ -85,26 +85,9 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 		this.xRandDivider = random(0.0000000000000000000001, 6);
 		this.yRandDivider = random(0.0000000000000000000001, 6);
-		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
-		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
+
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
-
-		let pxy = p.x - p.y;
-
-		/*
-		let hueIndex = int(map(pxy, -80, 0, this.hueArr.length - 1, 0, true));
-		this.hue = this.hueArr[hueIndex];
-		*/
-		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, this.hueStep, -this.hueStep, true);
-		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
-		this.sat += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.satStep, this.satStep, true);
-		this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
-		this.bri += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, this.briStep, -this.briStep, true);
-		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri;
-
-		/* 		this.x = this.x <= 0 ? width - 2 : this.x >= width ? 0 : this.x;
-		this.y = this.y <= 0 ? height - 2 : this.y >= height ? 0 : this.y; */
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - this.xLimit) * width) {
@@ -154,8 +137,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.0000005, 0.5, -5, 5, true);
-	let v = map(vn, -0.5, 0.0000005, -5, 5, true);
+	let u = map(un, -0.5, 0.5, -50, 1, true);
+	let v = map(vn, -0.5, 0.5, -1, 50, true);
 
 	let p = createVector(u, v);
 	return p;

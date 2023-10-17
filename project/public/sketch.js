@@ -17,6 +17,7 @@ let elapsedTime = 0;
 let particleNum = 50000;
 let drawing = true;
 let bgCol;
+let renderMode = 1;
 
 let scl1, scl2, ang1, ang2, scl1Zone, scl2Zone, ang1Zone, ang2Zone;
 
@@ -31,7 +32,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(6.0);
+		pixelDensity(3.0);
 	}
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
@@ -157,15 +158,11 @@ function drawTexture(hue) {
 }
 
 function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
-	rectMode(CORNER);
 	let percent = (elapsedTime / maxFrames) * 100;
-	let barWidth = (percent / 100) * (xMax - xMin) * width;
-	noStroke();
-	fill(0, 0, 100, 50);
-	rect(xMin * width, height - 50 * MULTIPLIER, (xMax - xMin) * width, 30 * MULTIPLIER);
-	fill(0, 0, 0, 100);
-	rect(xMin * width, height - 50 * MULTIPLIER, barWidth, 30 * MULTIPLIER);
-	rectMode(CENTER);
+	if (percent > 100) percent = 100;
+
+	// put the percent in the title of the page
+	document.title = 'mode ' + renderMode + ' : ' + percent.toFixed(2) + '%';
 }
 
 function drawUI() {
@@ -280,6 +277,8 @@ function keyPressed() {
 
 	if (keyCodeToParticleNum !== undefined && keyCodeToMaxFrames !== undefined) {
 		movers = [];
+		// update the renderMode according to the key pressed
+		renderMode = keyCode - 48;
 		frameCount = 0;
 		elapsedTime = 0;
 		particleNum = keyCodeToParticleNum;
