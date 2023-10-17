@@ -71,10 +71,10 @@ function setup() {
 function draw() {
 	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
-		for (let j = 0; j < 1; j++) {
-			movers[i].show();
-			movers[i].move();
-		}
+		//if (frameCount > 20 || frameCount < 2) {
+		movers[i].show();
+		//}
+		movers[i].move();
 	}
 	blendMode(BLEND);
 	noFill();
@@ -91,11 +91,12 @@ function draw() {
 }
 
 function INIT(seed) {
-	scl1 = random([0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
+	scl1 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
+
 	scl2 = scl1;
 
-	ang1 = 500;
-	ang2 = 500;
+	ang1 = random(1200);
+	ang2 = random(1200);
 
 	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	yRandDivider = xRandDivider;

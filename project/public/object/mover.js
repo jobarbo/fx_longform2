@@ -10,7 +10,7 @@ class Mover {
 				: features.theme === 'bright' && features.colormode === 'monochrome'
 				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
 				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
-		this.initAlpha = 30;
+		this.initAlpha = 20;
 		this.initS = 0.45 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === 'monochrome' ? 0 : this.initSat;
@@ -89,10 +89,10 @@ class Mover {
 		this.uvalue[2] *= 1.013;
 		this.uvalue[3] *= 1.013;
 
-		this.nvalue[0] -= 0.0045;
-		this.nvalue[1] -= 0.0045;
-		this.nvalue[2] -= 0.0045;
-		this.nvalue[3] -= 0.0045;
+		this.nvalue[0] -= 0.005;
+		this.nvalue[1] -= 0.005;
+		this.nvalue[2] -= 0.005;
+		this.nvalue[3] -= 0.005;
 
 		//! Equilibrium CONFIGURATION
 		/* 		this.uvalue[0] *= 1.015;
