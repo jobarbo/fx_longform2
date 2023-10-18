@@ -89,6 +89,13 @@ class Mover {
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
+		this.hue += map(pxy, -this.uvalue * 2, this.uvalue * 2, this.hueStep, -this.hueStep, true);
+		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
+		this.sat += map(pxy, -this.uvalue * 2, this.uvalue * 2, -this.satStep, this.satStep, true);
+		this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
+		this.bri += map(pxy, -this.uvalue * 2, this.uvalue * 2, this.briStep, -this.briStep, true);
+		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri;
+
 		if (this.isBordered) {
 			if (this.x < (this.xMin - this.xLimit) * width) {
 				this.x = (this.xMax + this.xLimit) * width;
