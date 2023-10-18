@@ -18,7 +18,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 250000;
+let particleNum = 50000;
 let drawing = true;
 let bgCol;
 function setup() {
@@ -86,6 +86,7 @@ function* drawGenerator() {
 
 		if (elapsedTime > maxFrames && drawing) {
 			drawing = false;
+			console.timeEnd('setup');
 			// close the generator
 			return;
 		}
@@ -98,7 +99,7 @@ function draw() {
 
 ///////////////////////////////////////////////////////
 // -------------------- UTILS ------------------------
-//////////////////////////////////////////////////////
+//////////////////// //////////////////////////////////
 
 function INIT(particleNum) {
 	console.log('INIT');
@@ -189,7 +190,6 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 }
 
 function drawUI() {
-	console.log('drawUI');
 	stroke(0);
 	strokeWeight(2 * MULTIPLIER);
 	line(xMin * width, yMin * height, xMax * width, yMin * height);
@@ -285,12 +285,12 @@ function keyPressed() {
 	};
 
 	const maxFramesMapping = {
-		49: 120,
-		50: 120,
-		51: 120,
-		52: 120,
-		53: 100,
-		54: 100,
+		49: 64,
+		50: 64,
+		51: 64,
+		52: 64,
+		53: 64,
+		54: 64,
 		55: 60,
 		56: 60,
 		57: 60,
@@ -306,7 +306,7 @@ function keyPressed() {
 		particleNum = keyCodeToParticleNum;
 		maxFrames = keyCodeToMaxFrames;
 		drawing = true;
-		loop();
+		animate();
 		console.log('keyPressed');
 		INIT(particleNum);
 	}
