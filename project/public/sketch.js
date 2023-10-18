@@ -6,7 +6,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 64;
+let maxFrames = 64 * 500000;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -14,7 +14,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 50000;
+let particleNum = 1;
 let drawing = true;
 let bgCol;
 let renderMode = 1;
@@ -37,6 +37,7 @@ function setup() {
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM);
+	frameRate(120);
 
 	/*
 		window.addEventListener('resize', onResize);
@@ -48,14 +49,14 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 
-	scl1 = random(0.0012, 0.0012);
-	scl2 = random(0.0012, 0.0012);
-	ang1 = int(random(1200, 1200));
-	ang2 = int(random(1200, 1200));
-	scl1Zone = random(2000, 2200);
-	scl2Zone = random(2000, 2200);
-	ang1Zone = random(2000, 2200);
-	ang2Zone = random(2000, 2200);
+	scl1 = fxrand() * (0.0012 - 0.001) + 0.001;
+	scl2 = fxrand() * (0.0012 - 0.001) + 0.001;
+	ang1 = int(fxrand() * (500, 1200) + 500);
+	ang2 = int(fxrand() * (500, 1200) + 500);
+	scl1Zone = 600;
+	scl2Zone = 600;
+	ang1Zone = 600;
+	ang2Zone = 600;
 
 	startTime = frameCount;
 	bgCol = color(random(30, 50), random([1, 5, 10]), 95, 100);
@@ -66,12 +67,14 @@ function draw() {
 	// put drawing code here
 
 	for (let i = 0; i < movers.length; i++) {
-		movers[i].show();
-		movers[i].move();
+		for (let j = 0; j < 1000000; j++) {
+			movers[i].show();
+			movers[i].move();
+		}
 	}
+	frameCount += 1000000;
 
 	let elapsedTime = frameCount - startTime;
-
 	// render a loading bar on the canvas to show the progress of the sketch, i want the bar to start on the xmin and end on the xmax
 	showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
 	drawUI();
@@ -89,7 +92,7 @@ function draw() {
 
 function INIT() {
 	console.log('INIT');
-	let hue = random(360);
+	let hue = fxrand() * 360;
 
 	background(bgCol);
 
@@ -143,7 +146,7 @@ function INIT() {
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
 	console.log('drawTexture');
-	for (let i = 0; i < 400000; i++) {
+	for (let i = 0; i < 1; i++) {
 		let x = random(width);
 		let y = random(height);
 		let sw = 1 * MULTIPLIER;
@@ -247,7 +250,7 @@ function drawUI() {
 }
 function keyPressed() {
 	const particleNumMapping = {
-		49: 5000,
+		49: 1,
 		50: 75000,
 		51: 100000,
 		52: 150000,

@@ -24,7 +24,7 @@ class Mover {
 		this.initSat = random([0, 10, 10, 20, 20, 30]);
 		this.initBri = random([0, 10, 10, 20, 20, 30]);
 		this.initAlpha = 100;
-		this.initS = 0.45 * MULTIPLIER;
+		this.initS = 0.5 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.hueArr = [0, 20, 30, 120, 35, 45];
@@ -69,14 +69,9 @@ class Mover {
 	}
 
 	show() {
-		fill(this.hue, this.sat, this.bri, this.a);
-		noStroke();
-		rect(this.x, this.y, this.s, this.s);
 		// draw a pixel
-		/* 		drawingContext.fillStyle = `hsl(${this.hue} ${this.sat}% ${this.bri}%)`;
-		drawingContext.fillRect(this.x, this.y, this.s, this.s); */
-		// fill(light * 255);
-		// rect(i, j, 1, 1);
+		drawingContext.fillStyle = `hsl(${this.hue} ${this.sat}% ${this.bri}%)`;
+		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
 
 	move() {
