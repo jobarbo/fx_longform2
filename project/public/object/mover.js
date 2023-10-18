@@ -72,6 +72,11 @@ class Mover {
 		fill(this.hue, this.sat, this.bri, this.a);
 		noStroke();
 		rect(this.x, this.y, this.s, this.s);
+		// draw a pixel
+		/* 		drawingContext.fillStyle = `hsl(${this.hue} ${this.sat}% ${this.bri}%)`;
+		drawingContext.fillRect(this.x, this.y, this.s, this.s); */
+		// fill(light * 255);
+		// rect(i, j, 1, 1);
 	}
 
 	move() {
@@ -83,8 +88,8 @@ class Mover {
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, this.scl2Init / 1000, this.scl2Init * 3, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		this.xRandDivider = random(0.0000000000000000000001, 6);
-		this.yRandDivider = random(0.0000000000000000000001, 6);
+		this.xRandDivider = fxrand() * 6;
+		this.yRandDivider = fxrand() * 6;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
@@ -137,9 +142,12 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.0000000000015, 0.5, -20, 1, true);
-	let v = map(vn, -0.5, 0.0000000000015, -1, 20, true);
+	let u = clamp(un + 0.5, 0, 1) * 21 - 20;
+	let v = clamp(vn + 0.5, 0, 1) * 21 - 1;
 
-	let p = createVector(u, v);
-	return p;
+	/* 	let u = map(un, -0.5, 0.5, -20, 1, true);
+	let v = map(vn, -0.5, 0.5, -1, 20, true); */
+
+	//let p = createVector(u, v);
+	return {x: u, y: v};
 }

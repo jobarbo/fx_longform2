@@ -64,11 +64,10 @@ function setup() {
 
 function draw() {
 	// put drawing code here
+
 	for (let i = 0; i < movers.length; i++) {
-		for (let j = 0; j < 1; j++) {
-			movers[i].show();
-			movers[i].move();
-		}
+		movers[i].show();
+		movers[i].move();
 	}
 
 	let elapsedTime = frameCount - startTime;
@@ -79,7 +78,7 @@ function draw() {
 
 	if (elapsedTime > maxFrames) {
 		console.log('elapsedTime', elapsedTime);
-
+		console.timeEnd('setup');
 		noLoop();
 	}
 }
@@ -166,7 +165,6 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 }
 
 function drawUI() {
-	console.log('drawUI');
 	stroke(0);
 	strokeWeight(2 * MULTIPLIER);
 	line(xMin * width, yMin * height, xMax * width, yMin * height);
@@ -249,7 +247,7 @@ function drawUI() {
 }
 function keyPressed() {
 	const particleNumMapping = {
-		49: 50000,
+		49: 5000,
 		50: 75000,
 		51: 100000,
 		52: 150000,
@@ -261,7 +259,7 @@ function keyPressed() {
 	};
 
 	const maxFramesMapping = {
-		49: 64,
+		49: 64 * 160,
 		50: 64,
 		51: 64,
 		52: 64,
