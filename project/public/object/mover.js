@@ -78,8 +78,18 @@ class Mover {
 	}
 
 	move() {
-		/* 		let distFromCenter = int(dist(this.x, this.y, this.centerX, (this.yMax / 1.5) * height));
+		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
+		// the sdf_box function returns the distance from the particle to the chosen location.
+		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
+		let distFromCenter = sdf_box(
+			[this.x, this.y],
+			[this.centerX, this.centerY],
+			[this.centerX - 200, this.borderY - 200]
+		);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
+		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, this.ang1Init / 10000, this.ang1Init * 20, true));
+		//this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
+		/*
 		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, this.ang1Init / 1000, this.ang1Init * 2, true));
 		this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init / 1000, this.ang2Init * 2, true));
 		this.scl1 = map(distFromCenter, 0, this.scl1Zone, this.scl1Init / 1000, this.scl1Init * 3, true);
@@ -156,4 +166,12 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
+}
+let R = (a = 1) => Math.random() * a;
+let L = (x, y) => (x * x + y * y) ** 0.5; // Elements by Euclid 300 BC
+let k = (a, b) => (a > 0 && b > 0 ? L(a, b) : a > b ? a : b);
+function sdf_box([x, y], [cx, cy], [w, h]) {
+	x -= cx;
+	y -= cy;
+	return k(abs(x) - w, abs(y) - h);
 }

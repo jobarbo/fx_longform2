@@ -7,7 +7,7 @@ let yMin;
 let yMax;
 let startTime;
 //let maxFrames = 64 * 500000;
-let maxFrames = 64 * 3200;
+let maxFrames = 64 * 32;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -15,7 +15,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 250;
+let particleNum = 10250;
 let drawing = true;
 let bgCol;
 let renderMode = 1;
@@ -67,12 +67,12 @@ function draw() {
 	// put drawing code here
 
 	for (let i = 0; i < movers.length; i++) {
-		for (let j = 0; j < 50; j++) {
-			movers[i].show();
-			movers[i].move();
-		}
+		//for (let j = 0; j < 50; j++) {
+		movers[i].show();
+		movers[i].move();
+		//}
 	}
-	frameCount += 50;
+	//frameCount += 50;
 
 	let elapsedTime = frameCount - startTime;
 	// render a loading bar on the canvas to show the progress of the sketch, i want the bar to start on the xmin and end on the xmax
