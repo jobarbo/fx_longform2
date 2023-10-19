@@ -81,9 +81,12 @@ class Mover {
 		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
 		// the sdf_box function returns the distance from the particle to the chosen location.
 		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
-		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [1000, 1]);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [1000, 10]);
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, height - 500], 200);
+		// smoothstep the distance from the particle to the chosen location.
+
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, -10000, 3500, true));
+		this.ang1 = int(map(distCircle, 0, this.ang1Zone, -300, 3500, true));
 		//this.ang2 = 2;
 		//this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
 		/*
@@ -167,8 +170,15 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 let R = (a = 1) => Math.random() * a;
 let L = (x, y) => (x * x + y * y) ** 0.5; // Elements by Euclid 300 BC
 let k = (a, b) => (a > 0 && b > 0 ? L(a, b) : a > b ? a : b);
+
 function sdf_box([x, y], [cx, cy], [w, h]) {
 	x -= cx;
 	y -= cy;
 	return k(abs(x) - w, abs(y) - h);
+}
+
+function sdf_circle([x, y], [cx, cy], r) {
+	x -= cx;
+	y -= cy;
+	return L(x, y) - r;
 }

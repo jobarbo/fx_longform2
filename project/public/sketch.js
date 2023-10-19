@@ -57,8 +57,8 @@ function setup() {
 	// change how drastically it changes with the SDF
 	scl1Zone = 600;
 	scl2Zone = 600;
-	ang1Zone = 1000;
-	ang2Zone = 1000;
+	ang1Zone = 800;
+	ang2Zone = 800;
 
 	startTime = frameCount;
 	bgCol = color(random(30, 50), random([1, 5, 10]), 95, 100);
