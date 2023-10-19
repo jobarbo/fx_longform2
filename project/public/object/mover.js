@@ -81,9 +81,9 @@ class Mover {
 		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
 		// the sdf_box function returns the distance from the particle to the chosen location.
 		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
-		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [1000, 200]);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [1000, 1]);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, 400, 4000, true));
+		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, -10000, 3500, true));
 		//this.ang2 = 2;
 		//this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
 		/*
