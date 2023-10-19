@@ -49,14 +49,16 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 
-	scl1 = fxrand() * (0.0022 - 0.002) + 0.002;
-	scl2 = fxrand() * (0.0022 - 0.002) + 0.002;
+	scl1 = fxrand() * (0.0012 - 0.001) + 0.001;
+	scl2 = fxrand() * (0.0012 - 0.001) + 0.001;
 	ang1 = int(fxrand() * (500, 1200) + 500);
-	ang2 = int(fxrand() * (500, 1200) + 500);
+	ang2 = int(fxrand() * (1000, 1200) + 1000);
+
+	// change how drastically it changes with the SDF
 	scl1Zone = 600;
 	scl2Zone = 600;
-	ang1Zone = 600;
-	ang2Zone = 600;
+	ang1Zone = 200;
+	ang2Zone = 200;
 
 	startTime = frameCount;
 	bgCol = color(random(30, 50), random([1, 5, 10]), 95, 100);

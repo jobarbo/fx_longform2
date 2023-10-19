@@ -81,13 +81,10 @@ class Mover {
 		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
 		// the sdf_box function returns the distance from the particle to the chosen location.
 		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
-		let distFromCenter = sdf_box(
-			[this.x, this.y],
-			[this.centerX, this.centerY],
-			[this.centerX - 200, this.borderY - 200]
-		);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [1000, 200]);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, this.ang1Init / 10000, this.ang1Init * 20, true));
+		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, 400, 4000, true));
+		//this.ang2 = 2;
 		//this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
 		/*
 		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, this.ang1Init / 1000, this.ang1Init * 2, true));
@@ -159,7 +156,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let vn = oct(nx, ny, scale2, 2, octave);
 
 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
-	let v = clamp(vn + 0.5, 0, 1) * 21 - 1;
+	let v = clamp(vn + 0.5, 0, 1) * 21 - 20;
 
 	/* 	let u = map(un, -0.5, 0.5, -20, 1, true);
 	let v = map(vn, -0.5, 0.5, -1, 20, true); */
