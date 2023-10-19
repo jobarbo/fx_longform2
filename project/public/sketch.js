@@ -6,7 +6,8 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 64 * 500000;
+//let maxFrames = 64 * 500000;
+let maxFrames = 64 * 3200;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -14,7 +15,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 1;
+let particleNum = 250;
 let drawing = true;
 let bgCol;
 let renderMode = 1;
@@ -37,7 +38,6 @@ function setup() {
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM);
-	frameRate(120);
 
 	/*
 		window.addEventListener('resize', onResize);
@@ -49,8 +49,8 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 
-	scl1 = fxrand() * (0.0012 - 0.001) + 0.001;
-	scl2 = fxrand() * (0.0012 - 0.001) + 0.001;
+	scl1 = fxrand() * (0.0022 - 0.002) + 0.002;
+	scl2 = fxrand() * (0.0022 - 0.002) + 0.002;
 	ang1 = int(fxrand() * (500, 1200) + 500);
 	ang2 = int(fxrand() * (500, 1200) + 500);
 	scl1Zone = 600;
@@ -67,12 +67,12 @@ function draw() {
 	// put drawing code here
 
 	for (let i = 0; i < movers.length; i++) {
-		for (let j = 0; j < 1000000; j++) {
+		for (let j = 0; j < 50; j++) {
 			movers[i].show();
 			movers[i].move();
 		}
 	}
-	frameCount += 1000000;
+	frameCount += 50;
 
 	let elapsedTime = frameCount - startTime;
 	// render a loading bar on the canvas to show the progress of the sketch, i want the bar to start on the xmin and end on the xmax
@@ -82,6 +82,8 @@ function draw() {
 	if (elapsedTime > maxFrames) {
 		console.log('elapsedTime', elapsedTime);
 		console.timeEnd('setup');
+		let timeToRender = (elapsedTime / 60).toFixed(2);
+		console.log('timeToRender', timeToRender);
 		noLoop();
 	}
 }
@@ -250,7 +252,7 @@ function drawUI() {
 }
 function keyPressed() {
 	const particleNumMapping = {
-		49: 1,
+		49: 3500,
 		50: 75000,
 		51: 100000,
 		52: 150000,

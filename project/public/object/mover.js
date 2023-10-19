@@ -20,20 +20,19 @@ class Mover {
 	) {
 		this.x = x;
 		this.y = y;
-		this.initHue = hue;
-		this.initSat = random([0, 10, 10, 20, 20, 30]);
-		this.initBri = random([0, 10, 10, 20, 20, 30]);
+		this.initHue = int(hue);
+		this.initSat = random([0, 0, 10, 20]);
+		this.initBri = random([0, 0, 10, 20]);
 		this.initAlpha = 100;
 		this.initS = 0.5 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
-		this.hueArr = [0, 20, 30, 120, 35, 45];
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = 0;
-		this.satStep = 0;
-		this.briStep = 0;
+		this.hueStep = 0.0001;
+		this.satStep = 0.0001;
+		this.briStep = 0.0001;
 		this.scl1Init = scl1;
 		this.scl2Init = scl2;
 		this.scl1 = scl1;
@@ -70,8 +69,12 @@ class Mover {
 
 	show() {
 		// draw a pixel
-		drawingContext.fillStyle = `hsl(${this.hue} ${this.sat}% ${this.bri}%)`;
+		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
+
+		/* 		noStroke();
+		fill(this.hue, this.sat, this.bri, this.a);
+		rect(this.x, this.y, this.s, this.s); */
 	}
 
 	move() {
@@ -89,12 +92,13 @@ class Mover {
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
+		/* 		let pxy = p.x - p.y;
 		this.hue += map(pxy, -this.uvalue * 2, this.uvalue * 2, this.hueStep, -this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
 		this.sat += map(pxy, -this.uvalue * 2, this.uvalue * 2, -this.satStep, this.satStep, true);
 		this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
 		this.bri += map(pxy, -this.uvalue * 2, this.uvalue * 2, this.briStep, -this.briStep, true);
-		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri;
+		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri; */
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - this.xLimit) * width) {
@@ -144,7 +148,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = clamp(un + 0.5, 0, 1) * 21 - 20;
+	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
 	let v = clamp(vn + 0.5, 0, 1) * 21 - 1;
 
 	/* 	let u = map(un, -0.5, 0.5, -20, 1, true);
