@@ -80,8 +80,8 @@ class Mover {
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		this.ang1 = int(map(distCircle, -300, -2, 700, 8000, true));
 		this.ang2 = 500;
-		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
-		this.scl2 = 0.002;
+		/* 		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
+		this.scl2 = 0.002; */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 		this.xRandDivider = fxrand() * 7;
