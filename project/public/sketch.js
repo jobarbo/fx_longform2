@@ -15,7 +15,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 50250;
+let particleNum = 50251;
 let drawing = true;
 let bgCol;
 let renderMode = 1;
