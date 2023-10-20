@@ -54,12 +54,12 @@ class Mover {
 		this.yMax = yMax;
 		this.xLimit = 0.00015;
 		this.yLimit = 0.00015;
-		this.oct = 6;
+		this.oct = 4;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX = width / 2;
 		this.borderY = height / 2.75;
-		this.uvalue = 15;
+		this.uvalue = 20;
 		this.isBordered = true;
 
 		this.ang1Zone = ang1Zone;
@@ -69,41 +69,23 @@ class Mover {
 	}
 
 	show() {
-		// draw a pixel
 		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
-
-		/* 		noStroke();
-		fill(this.hue, this.sat, this.bri, this.a);
-		rect(this.x, this.y, this.s, this.s); */
 	}
 
 	move() {
-		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
-		// the sdf_box function returns the distance from the particle to the chosen location.
-		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
-		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, this.centerY], [1000, 10]);
+		/* 		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, this.centerY], [1000, 10]); */
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 300);
-		// smoothstep the distance from the particle to the chosen location.
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distCircle, -300, -2, 700, 4000, true));
-
+		this.ang1 = int(map(distCircle, -300, -2, 700, 8000, true));
 		this.ang2 = 500;
-
 		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
-		//this.scl2 = 0.002;
-
-		//this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
-		/*
-		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, this.ang1Init / 1000, this.ang1Init * 2, true));
-		this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init / 1000, this.ang2Init * 2, true));
-		this.scl1 = map(distFromCenter, 0, this.scl1Zone, this.scl1Init / 1000, this.scl1Init * 3, true);
-		this.scl2 = map(distFromCenter, 0, this.scl2Zone, this.scl2Init / 1000, this.scl2Init * 3, true); */
+		this.scl2 = 0.002;
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		this.xRandDivider = fxrand() * 6 + 0.000001;
-		this.yRandDivider = fxrand() * 6 + 0.000001;
+		this.xRandDivider = fxrand() * 7;
+		this.yRandDivider = fxrand() * 7;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
@@ -118,31 +100,12 @@ class Mover {
 
 		this.a = map(distCircle, 0, 3, 100, 0, true);
 
-		// check where the mouse is according to distCircle and console log the distCircle value according to the mouse position.
-
 		if (this.isBordered) {
-			if (distCircle > random(-4, 4)) {
-				// put the particle back inside the circle if it's outside the circle using a random position on the circle. PUT THE ON THE OPPSITE SIDE OF THE CIRCLE FROM WHERE IT WENT OUT.
-				let r = random(0, 2 * PI);
+			if (distCircle > fxrand() * 8 - 4) {
+				let r = fxrand() * 2 * PI;
 				this.x = this.centerX + cos(r) * 298;
 				this.y = this.centerY + sin(r) * 298;
 			}
-			/* 			if (this.x < (this.xMin - this.xLimit) * width) {
-				this.x = (this.xMax + this.xLimit) * width;
-				//this.a = 0;
-			}
-			if (this.x > (this.xMax + this.xLimit) * width) {
-				this.x = (this.xMin - this.xLimit) * width;
-				//this.a = 0;
-			}
-			if (this.y < (this.yMin - this.yLimit) * height) {
-				this.y = (this.yMax + this.yLimit) * height;
-				//this.a = 0;
-			}
-			if (this.y > (this.yMax + this.yLimit) * height) {
-				this.y = (this.yMin - this.yLimit) * height;
-				//this.a = 0;
-			} */
 		}
 	}
 }
@@ -177,8 +140,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
 	let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
 
-	let u = map(un, -0.5, 0.5, -15, 1, true);
-	let v = map(vn, -0.5, 0.5, -1, 15, true);
+	let u = map(un, -0.5, 0.5, -20, 1, true);
+	let v = map(vn, -0.5, 0.5, -1, 20, true);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
