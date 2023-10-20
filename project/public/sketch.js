@@ -7,7 +7,7 @@ let yMin;
 let yMax;
 let startTime;
 //let maxFrames = 64 * 500000;
-let maxFrames = 64 * 32;
+let maxFrames = 72 * 1;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -15,7 +15,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 10250;
+let particleNum = 50250;
 let drawing = true;
 let bgCol;
 let renderMode = 1;
@@ -49,37 +49,37 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 
-	scl1 = fxrand() * (0.0012 - 0.001) + 0.001;
-	scl2 = fxrand() * (0.0012 - 0.001) + 0.001;
-	ang1 = int(fxrand() * (500, 1200) + 500);
+	scl1 = fxrand() * (0.0012 - 0.0016) + 0.0012;
+	scl2 = fxrand() * (0.0012 - 0.0016) + 0.0012;
+	ang1 = int(fxrand() * (1000, 1200) + 1000);
 	ang2 = int(fxrand() * (1000, 1200) + 1000);
 
 	// change how drastically it changes with the SDF
 	scl1Zone = 600;
 	scl2Zone = 600;
-	ang1Zone = 800;
-	ang2Zone = 800;
+	ang1Zone = 1;
+	ang2Zone = 1;
 
 	startTime = frameCount;
-	bgCol = color(random(30, 50), random([1, 5, 10]), 95, 100);
+	bgCol = color(random(30, 50), random([1, 5, 10]), 2, 100);
 	INIT();
 }
 
 function draw() {
 	// put drawing code here
-
+	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
 		//for (let j = 0; j < 50; j++) {
-		movers[i].show();
 		movers[i].move();
+		movers[i].show();
 		//}
 	}
 	//frameCount += 50;
-
+	blendMode(BLEND);
 	let elapsedTime = frameCount - startTime;
 	// render a loading bar on the canvas to show the progress of the sketch, i want the bar to start on the xmin and end on the xmax
 	showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
-	drawUI();
+	//drawUI();
 
 	if (elapsedTime > maxFrames) {
 		console.log('elapsedTime', elapsedTime);
@@ -118,8 +118,11 @@ function INIT() {
 	yMax = 1.05; */
 
 	for (let i = 0; i < particleNum; i++) {
-		let x = random(xMin, xMax) * width;
-		let y = random(yMin, yMax) * height;
+		let r = random(0, 2 * PI);
+		let x = width / 2 + cos(r) * 300;
+		let y = height / 2 + sin(r) * 300;
+		/* 		let x = random(xMin, xMax) * width;
+		let y = random(yMin, yMax) * height; */
 
 		let initHue = hue + random(-1, 1);
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
