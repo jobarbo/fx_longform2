@@ -65,6 +65,8 @@ class Mover {
 		this.ang2Zone = ang2Zone;
 		this.scl1Zone = scl1Zone;
 		this.scl2Zone = scl2Zone;
+
+		this.ns = 0.5;
 	}
 
 	show() {
@@ -86,8 +88,14 @@ class Mover {
 		// smoothstep the distance from the particle to the chosen location.
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distCircle, 0, this.ang1Zone, -300, 3500, true));
-		//this.ang2 = 2;
+		this.ang1 = int(map(distCircle, 0, 30, -2000, 3500, true));
+		this.ang2 = 2;
+		this.scl1 = map(distCircle, 0, 30, 0.006, 0.0012, true);
+		this.scl2 = map(distCircle, 0, 30, 0.006, 0.0012, true);
+
+		this.ns = map(distCircle, 0, 30, -0.000000001, -0.5, true);
+
+		//this.oct = map(distCircle, 0, 1, 1, 6, true);
 		//this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
 		/*
 		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, this.ang1Init / 1000, this.ang1Init * 2, true));
@@ -95,7 +103,7 @@ class Mover {
 		this.scl1 = map(distFromCenter, 0, this.scl1Zone, this.scl1Init / 1000, this.scl1Init * 3, true);
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, this.scl2Init / 1000, this.scl2Init * 3, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.ns);
 		this.xRandDivider = fxrand() * 6;
 		this.yRandDivider = fxrand() * 6;
 
@@ -130,13 +138,14 @@ class Mover {
 		}
 	}
 }
-function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
+function superCurve(x, y, scl1, scl2, ang1, ang2, octave, ns) {
 	let nx = x,
 		ny = y,
 		a1 = ang1,
 		a2 = ang2,
 		scale1 = scl1,
 		scale2 = scl2,
+		noiseSpeed = ns,
 		dx,
 		dy;
 
@@ -158,11 +167,11 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
-	let v = clamp(vn + 0.5, 0, 1) * 21 - 20;
+	/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
+	let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
 
-	/* 	let u = map(un, -0.5, 0.5, -20, 1, true);
-	let v = map(vn, -0.5, 0.5, -1, 20, true); */
+	let u = map(un, -noiseSpeed, noiseSpeed, -20, 1, true);
+	let v = map(vn, -noiseSpeed, noiseSpeed, -1, 20, true);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};

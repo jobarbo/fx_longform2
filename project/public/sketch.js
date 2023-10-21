@@ -69,12 +69,12 @@ function draw() {
 	// put drawing code here
 
 	for (let i = 0; i < movers.length; i++) {
-		//for (let j = 0; j < 50; j++) {
-		movers[i].show();
-		movers[i].move();
-		//}
+		for (let j = 0; j < 50; j++) {
+			movers[i].show();
+			movers[i].move();
+		}
 	}
-	//frameCount += 50;
+	frameCount += 50;
 
 	let elapsedTime = frameCount - startTime;
 	// render a loading bar on the canvas to show the progress of the sketch, i want the bar to start on the xmin and end on the xmax
