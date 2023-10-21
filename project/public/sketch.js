@@ -49,8 +49,8 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 
-	scl1 = fxrand() * (0.0012 - 0.001) + 0.001;
-	scl2 = fxrand() * (0.0012 - 0.001) + 0.001;
+	scl1 = fxrand() * (0.0022 - 0.002) + 0.002;
+	scl2 = fxrand() * (0.0022 - 0.002) + 0.002;
 	ang1 = int(fxrand() * (500, 1200) + 500);
 	ang2 = int(fxrand() * (1000, 1200) + 1000);
 
@@ -69,12 +69,12 @@ function draw() {
 	// put drawing code here
 
 	for (let i = 0; i < movers.length; i++) {
-		for (let j = 0; j < 50; j++) {
+		for (let j = 0; j < 1; j++) {
 			movers[i].show();
 			movers[i].move();
 		}
 	}
-	frameCount += 50;
+	frameCount += 1;
 
 	let elapsedTime = frameCount - startTime;
 	// render a loading bar on the canvas to show the progress of the sketch, i want the bar to start on the xmin and end on the xmax

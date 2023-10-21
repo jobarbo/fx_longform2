@@ -88,12 +88,12 @@ class Mover {
 		// smoothstep the distance from the particle to the chosen location.
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distCircle, 0, 30, -2000, 3500, true));
+		this.ang1 = int(map(distCircle, 0, 200, 100, 1200, true));
 		this.ang2 = 2;
-		this.scl1 = map(distCircle, 0, 30, 0.006, 0.0012, true);
+		/*this.scl1 = map(distCircle, 0, 30, 0.006, 0.0012, true);
 		this.scl2 = map(distCircle, 0, 30, 0.006, 0.0012, true);
 
-		this.ns = map(distCircle, 0, 30, -0.000000001, -0.5, true);
+		this.ns = map(distCircle, 0, 30, -0.000000001, -0.5, true); */
 
 		//this.oct = map(distCircle, 0, 1, 1, 6, true);
 		//this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
