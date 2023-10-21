@@ -21,9 +21,9 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([50, 60, 70, 80, 90, 100]);
+		this.initSat = random([20, 30, 40, 50, 60, 70, 80, 90, 100]);
 		//this.initBri = random([0, 0, 10, 20]);
-		this.initBri = random([0, 10, 20, 30, 40, 50, 60, 70, 70, 70, 80, 80, 80]);
+		this.initBri = random([0, 10, 20, 30, 40, 50, 60, 70, 70, 70, 80, 80, 90, 100]);
 		this.initAlpha = 100;
 		this.initS = 0.45 * MULTIPLIER;
 		this.s = this.initS;
@@ -31,9 +31,9 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = 6;
+		this.hueStep = 16;
 		this.satStep = 15;
-		this.briStep = 15;
+		this.briStep = 5;
 		this.scl1Init = scl1;
 		this.scl2Init = scl2;
 		this.scl1 = scl1;
@@ -79,7 +79,7 @@ class Mover {
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		this.ang1 = int(map(distCircle, -300, 0, 1, 8000, true));
-		this.ang2 = int(map(distCircle, -300, 0, 700, 1, true));
+		this.ang2 = int(map(distCircle, -300, 0, 3000, 1, true));
 		/* 		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
 		this.scl2 = 0.002; */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
