@@ -49,8 +49,8 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 
-	scl1 = fxrand() * (0.0012 - 0.0016) + 0.0012;
-	scl2 = fxrand() * (0.0012 - 0.0016) + 0.0012;
+	scl1 = fxrand() * (0.0005 - 0.00052) + 0.0005;
+	scl2 = fxrand() * (0.0005 - 0.00052) + 0.0005;
 	ang1 = int(fxrand() * (1000, 1200) + 1000);
 	ang2 = int(fxrand() * (1000, 1200) + 1000);
 

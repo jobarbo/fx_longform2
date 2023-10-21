@@ -31,9 +31,9 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = 16;
-		this.satStep = 15;
-		this.briStep = 5;
+		this.hueStep = 10;
+		this.satStep = 1;
+		this.briStep = 0;
 		this.scl1Init = scl1;
 		this.scl2Init = scl2;
 		this.scl1 = scl1;
@@ -78,8 +78,8 @@ class Mover {
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 302);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distCircle, -300, 0, 1, 8000, true));
-		this.ang2 = int(map(distCircle, -300, 0, 3000, 1, true));
+		this.ang1 = int(map(distCircle, -300, 0, 2000, 8000, true));
+		this.ang2 = int(map(distCircle, -300, 0, 8000, 2000, true));
 		/* 		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
 		this.scl2 = 0.002; */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
