@@ -61,7 +61,7 @@ function setup() {
 	ang2Zone = 800;
 
 	startTime = frameCount;
-	bgCol = color(random(30, 50), random([1, 5, 10]), 95, 100);
+	bgCol = color(random(30, 50), random([1, 2, 5]), 95, 100);
 	INIT();
 }
 
