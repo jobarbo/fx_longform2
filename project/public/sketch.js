@@ -7,7 +7,7 @@ let yMin;
 let yMax;
 let startTime;
 //let maxFrames = 64 * 500000;
-let maxFrames = 72 * 1;
+let maxFrames = 64 * 1;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -98,7 +98,7 @@ function INIT() {
 
 	background(bgCol);
 
-	drawTexture(hue);
+	//drawTexture(hue);
 	movers = [];
 
 	console.log(scl1, scl2, ang1, ang2);
@@ -151,14 +151,14 @@ function INIT() {
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
 	console.log('drawTexture');
-	for (let i = 0; i < 1; i++) {
+	for (let i = 0; i < 40000; i++) {
 		let x = random(width);
 		let y = random(height);
-		let sw = 1 * MULTIPLIER;
-		let h = hue + random(-1, 1);
+		let sw = fxrand() * 2 * MULTIPLIER;
+		let h = 35 + random(75);
 		let s = random([0, 20, 40, 60, 80, 100]);
-		let b = random([0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100]);
-		fill(h, s, b, 50);
+		let b = random([100]);
+		fill(h, s, b, 100);
 		noStroke();
 		rect(x, y, sw);
 	}
