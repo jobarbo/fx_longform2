@@ -51,8 +51,8 @@ function setup() {
 
 	scl1 = fxrand() * (0.0005 - 0.00052) + 0.0005;
 	scl2 = fxrand() * (0.0005 - 0.00052) + 0.0005;
-	ang1 = int(fxrand() * (3000, 3200) + 3000);
-	ang2 = int(fxrand() * (3000, 3200) + 3000);
+	ang1 = int(fxrand() * (2000, 3200) + 2000);
+	ang2 = int(fxrand() * (2000, 3200) + 2000);
 	console.log(scl1, scl2, ang1, ang2);
 
 	// change how drastically it changes with the SDF
