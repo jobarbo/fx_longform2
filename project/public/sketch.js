@@ -120,7 +120,7 @@ function drawTexture(hue) {
 	for (let i = 0; i < 600000; i++) {
 		let x = random(width);
 		let y = random(height);
-		let sw = 0.45;
+		let sw = 0.45 * MULTIPLIER;
 		let h = hue + random(-1, 1);
 		let s = random([0, 20, 40, 60, 80, 100]);
 		let b = random([0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100]);
