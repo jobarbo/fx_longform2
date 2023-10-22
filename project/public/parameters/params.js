@@ -4,17 +4,77 @@
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
-const shapeArr = [
-	// name, probability(0-100)
-	['ellipse', 50],
-	['rectangle', 50],
+const complexityArr = [
+	['1', 20],
+	['2', 70],
+	['3', 5],
+	['4', 2],
+	['5', 2],
+	['6', 1],
+];
+
+const themeArr = [
+	['bright', 50],
+	['dark', 50],
+];
+
+const compositionArr = [
+	['semiconstrained', 33],
+	['constrained', 33],
+	['compresed', 33],
+];
+
+const colorModeArr = [
+	['monochrome', 25],
+	['fixed', 25],
+	['dynamic', 25],
+	['iridescent', 25],
+];
+
+const strokestyleArr = [
+	['thin', 33],
+	['regular', 33],
+	['bold', 33],
+];
+
+const clampvalueArr = [
+	['0.0000015,0.25,0.25,0.0000015', 50],
+	['0.0000015,0.025,0.025,0.0000015', 50],
+	['0.00015,0.015,0.015,0.00015', 50],
+	['0.15,0.00000015,0.15,0.0000015', 50],
+	['0.0015,0.000015,0.0015,0.000015', 50],
+	['0.05,0.05,0.05,0.05', 50],
+	['0.15,0.15,0.15,0.15', 50],
+	['0.015,0.015,0.015,0.015', 50],
+	['0.0015,0.0015,0.0015,0.0015', 50],
+	['0.0000015,0.0000015,0.0000015,0.0000015', 50],
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
-function generate_composition_params(shape_type) {
+function generate_composition_params(complexity, theme, composition, colormode, strokestyle, clampvalue) {
 	// SET DEFAULTS IF NOT PASSED IN
-	if (shape_type === undefined) {
-		shape_type = weighted_choice(shapeArr);
+	if (complexity === undefined) {
+		complexity = weighted_choice(complexityArr);
+	}
+
+	if (theme === undefined) {
+		theme = weighted_choice(themeArr);
+	}
+
+	if (composition === undefined) {
+		composition = weighted_choice(compositionArr);
+	}
+
+	if (colormode === undefined) {
+		colormode = weighted_choice(colorModeArr);
+	}
+
+	if (strokestyle === undefined) {
+		strokestyle = weighted_choice(strokestyleArr);
+	}
+
+	if (clampvalue === undefined) {
+		clampvalue = weighted_choice(clampvalueArr);
 	}
 
 	//* EXCEPTIONS AND OVER-RIDES *//
@@ -22,7 +82,12 @@ function generate_composition_params(shape_type) {
 
 	//* PACK PARAMETERS INTO OBJECT *//
 	var composition_params = {
-		shape_type: shape_type,
+		complexity: complexity,
+		theme: theme,
+		composition: composition,
+		colormode: colormode,
+		strokestyle: strokestyle,
+		clampvalue: clampvalue,
 	};
 
 	//* RETURN PARAMETERS *//
