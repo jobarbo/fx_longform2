@@ -5,8 +5,8 @@ class Mover {
 		hue,
 		scl1,
 		scl2,
-		ang1,
-		ang2,
+		amp1,
+		amp2,
 		xMin,
 		xMax,
 		yMin,
@@ -15,8 +15,8 @@ class Mover {
 		yRandDivider,
 		scl1Zone,
 		scl2Zone,
-		ang1Zone,
-		ang2Zone
+		amp1Zone,
+		amp2Zone
 	) {
 		this.x = x;
 		this.y = y;
@@ -38,10 +38,10 @@ class Mover {
 		this.scl2Init = scl2;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
-		this.ang1Init = ang1;
-		this.ang2Init = ang2;
-		this.ang1 = ang1;
-		this.ang2 = ang2;
+		this.amp1Init = amp1;
+		this.amp2Init = amp2;
+		this.amp1 = amp1;
+		this.amp2 = amp2;
 		this.xRandDivider = xRandDivider;
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
@@ -61,8 +61,8 @@ class Mover {
 		this.borderY = height / 2.75;
 		this.uvalue = 20;
 		this.isBordered = true;
-		this.ang1Zone = ang1Zone;
-		this.ang2Zone = ang2Zone;
+		this.amp1Zone = amp1Zone;
+		this.amp2Zone = amp2Zone;
 		this.scl1Zone = scl1Zone;
 		this.scl2Zone = scl2Zone;
 	}
@@ -77,12 +77,12 @@ class Mover {
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 1302 * MULTIPLIER);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distCircle, -1300 * MULTIPLIER, 1 * MULTIPLIER, this.ang1Init, this.ang1Init * 4, true));
-		this.ang2 = int(map(distCircle, -1300 * MULTIPLIER, 1 * MULTIPLIER, this.ang2Init, this.ang2Init * 4, true));
+		this.amp1 = int(map(distCircle, -1300 * MULTIPLIER, 1 * MULTIPLIER, this.amp1Init, this.amp1Init * 4, true));
+		this.amp2 = int(map(distCircle, -1300 * MULTIPLIER, 1 * MULTIPLIER, this.amp2Init, this.amp2Init * 4, true));
 		/* 		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
 		this.scl2 = 0.002; */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.amp1, this.amp2, this.oct);
 		this.xRandDivider = fxrand() * 6;
 		this.yRandDivider = fxrand() * 6;
 
@@ -108,11 +108,11 @@ class Mover {
 		}
 	}
 }
-function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
+function superCurve(x, y, scl1, scl2, amp1, amp2, octave) {
 	let nx = x,
 		ny = y,
-		a1 = ang1,
-		a2 = ang2,
+		a1 = amp1,
+		a2 = amp2,
 		scale1 = scl1,
 		scale2 = scl2,
 		dx,

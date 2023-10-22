@@ -20,7 +20,7 @@ let drawing = true;
 let bgCol;
 let renderMode = 1;
 
-let scl1, scl2, ang1, ang2, scl1Zone, scl2Zone, ang1Zone, ang2Zone;
+let scl1, scl2, amp1, amp2, scl1Zone, scl2Zone, amp1Zone, amp2Zone;
 
 function setup() {
 	console.time('setup');
@@ -51,15 +51,15 @@ function setup() {
 
 	scl1 = fxrand() * (0.0005 - 0.00052) + 0.0005;
 	scl2 = fxrand() * (0.0005 - 0.00052) + 0.0005;
-	ang1 = int(fxrand() * (2000, 3200) + 2000);
-	ang2 = int(fxrand() * (2000, 3200) + 2000);
-	console.log(scl1, scl2, ang1, ang2);
+	amp1 = int(fxrand() * (2000, 3200) + 2000);
+	amp2 = int(fxrand() * (2000, 3200) + 2000);
+	console.log(scl1, scl2, amp1, amp2);
 
-	// change how drastically it changes with the SDF
+	// champe how drastically it champes with the SDF
 	scl1Zone = 600;
 	scl2Zone = 600;
-	ang1Zone = 1;
-	ang2Zone = 1;
+	amp1Zone = 1;
+	amp2Zone = 1;
 
 	startTime = frameCount;
 	bgCol = color(random(30, 50), random([1, 5, 10]), 2, 100);
@@ -102,7 +102,7 @@ function INIT() {
 	//drawTexture(hue);
 	movers = [];
 
-	console.log(scl1, scl2, ang1, ang2);
+	console.log(scl1, scl2, amp1, amp2);
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
@@ -128,8 +128,8 @@ function INIT() {
 				initHue,
 				scl1 / MULTIPLIER,
 				scl2 / MULTIPLIER,
-				int(ang1 * MULTIPLIER),
-				int(ang2 * MULTIPLIER),
+				int(amp1 * MULTIPLIER),
+				int(amp2 * MULTIPLIER),
 				xMin,
 				xMax,
 				yMin,
@@ -138,8 +138,8 @@ function INIT() {
 				yRandDivider,
 				scl1Zone * MULTIPLIER,
 				scl2Zone * MULTIPLIER,
-				ang1Zone * MULTIPLIER,
-				ang2Zone * MULTIPLIER
+				amp1Zone * MULTIPLIER,
+				amp2Zone * MULTIPLIER
 			)
 		);
 	}
