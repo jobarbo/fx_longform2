@@ -61,7 +61,6 @@ class Mover {
 		this.borderY = height / 2.75;
 		this.uvalue = 20;
 		this.isBordered = true;
-
 		this.ang1Zone = ang1Zone;
 		this.ang2Zone = ang2Zone;
 		this.scl1Zone = scl1Zone;
@@ -75,11 +74,11 @@ class Mover {
 
 	move() {
 		/* 		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, this.centerY], [1000, 10]); */
-		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 302);
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 1302 * MULTIPLIER);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distCircle, -300, 0, 2000, 8000, true));
-		this.ang2 = int(map(distCircle, -300, 0, 8000, 2000, true));
+		this.ang1 = int(map(distCircle, -1300 * MULTIPLIER, 1 * MULTIPLIER, this.ang1Init, this.ang1Init * 4, true));
+		this.ang2 = int(map(distCircle, -1300 * MULTIPLIER, 1 * MULTIPLIER, this.ang2Init, this.ang2Init * 4, true));
 		/* 		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
 		this.scl2 = 0.002; */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
@@ -98,13 +97,13 @@ class Mover {
 		this.bri += map(p.y, -1, this.uvalue, this.briStep, -this.briStep, true);
 		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri;
 
-		this.a = map(distCircle, 0, 3, 100, 0, true);
+		this.a = map(distCircle, 0, 3 * MULTIPLIER, 100, 0, true);
 
 		if (this.isBordered) {
 			if (distCircle > fxrand() * 8 - 4) {
 				let r = fxrand() * 2 * PI;
-				this.x = this.centerX + cos(r) * random(298, 304);
-				this.y = this.centerY + sin(r) * random(298, 304);
+				this.x = this.centerX + cos(r) * random(1298 * MULTIPLIER, 1304 * MULTIPLIER);
+				this.y = this.centerY + sin(r) * random(1298 * MULTIPLIER, 1304 * MULTIPLIER);
 			}
 		}
 	}

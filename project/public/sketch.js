@@ -51,8 +51,9 @@ function setup() {
 
 	scl1 = fxrand() * (0.0005 - 0.00052) + 0.0005;
 	scl2 = fxrand() * (0.0005 - 0.00052) + 0.0005;
-	ang1 = int(fxrand() * (1000, 1200) + 1000);
-	ang2 = int(fxrand() * (1000, 1200) + 1000);
+	ang1 = int(fxrand() * (3000, 3200) + 3000);
+	ang2 = int(fxrand() * (3000, 3200) + 3000);
+	console.log(scl1, scl2, ang1, ang2);
 
 	// change how drastically it changes with the SDF
 	scl1Zone = 600;
@@ -110,15 +111,11 @@ function INIT() {
 	xMax = 0.95;
 	yMin = 0.05;
 	yMax = 0.95;
-	/* 	xMin = -0.05;
-	xMax = 1.05;
-	yMin = -0.05;
-	yMax = 1.05; */
 
 	for (let i = 0; i < particleNum; i++) {
 		let r = random(0, 2 * PI);
-		let x = width / 2 + cos(r) * 300;
-		let y = height / 2 + sin(r) * 300;
+		let x = width / 2 + cos(r) * 1300 * MULTIPLIER;
+		let y = height / 2 + sin(r) * 1300 * MULTIPLIER;
 		/* 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height; */
 
@@ -131,8 +128,8 @@ function INIT() {
 				initHue,
 				scl1 / MULTIPLIER,
 				scl2 / MULTIPLIER,
-				ang1 * MULTIPLIER,
-				ang2 * MULTIPLIER,
+				int(ang1 * MULTIPLIER),
+				int(ang2 * MULTIPLIER),
 				xMin,
 				xMax,
 				yMin,
