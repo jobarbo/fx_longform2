@@ -82,17 +82,17 @@ class Mover {
 		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y;
 
 		if (this.isBordered) {
-			if (this.x < (this.xMin - 0.015) * width) {
-				this.x = (this.xMax + 0.015) * width;
+			if (this.x < (this.xMin - random(4)) * width) {
+				this.x = (this.xMax + random(4)) * width;
 			}
-			if (this.x > (this.xMax + 0.015) * width) {
-				this.x = (this.xMin - 0.015) * width;
+			if (this.x > (this.xMax + random(4)) * width) {
+				this.x = (this.xMin - random(4)) * width;
 			}
-			if (this.y < (this.yMin - 0.015) * height) {
-				this.y = (this.yMax + 0.015) * height;
+			if (this.y < (this.yMin - random(4)) * height) {
+				this.y = (this.yMax + random(4)) * height;
 			}
-			if (this.y > (this.yMax + 0.015) * height) {
-				this.y = (this.yMin - 0.015) * height;
+			if (this.y > (this.yMax + random(4)) * height) {
+				this.y = (this.yMin - random(4)) * height;
 			}
 		}
 	}
@@ -107,9 +107,6 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff1,
 		scaleOffset3 = sclOff2,
-		noiseScale1 = 0.05,
-		noiseScale2 = 0.05,
-		noiseScale3 = 0.05,
 		nseed = seed;
 	un =
 		sin(nx * (scale1 * scaleOffset1) + nseed) +
