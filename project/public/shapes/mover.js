@@ -34,8 +34,8 @@ class Mover {
 		this.sclOffset2 = sclOffset2;
 		this.sclOffset3 = sclOffset3;
 		this.seed = seed;
-		this.xRandDivider = 0.01;
-		this.yRandDivider = 0.01;
+		this.xRandDivider = 0.02;
+		this.yRandDivider = 0.02;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xMin = xMin;
@@ -161,7 +161,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	); */
 
 	//! Wobbly noise square and stuff
-	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
+	/* let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
 	let minU = map(noise(ny * (scale2 * scaleOffset3) + nseed), 0, 1, -3, 0, true);
 	let minV = map(noise(nx * (scale3 * scaleOffset1) + nseed), 0, 1, -3, 0, true); */
@@ -173,18 +173,18 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = random(-4, -0.001); */
 
 	//! Standard Mode
-	let maxU = 3;
-	let maxV = 3;
-	let minU = -3;
-	let minV = -3;
+	let maxU = 1;
+	let maxV = 1;
+	let minU = -1;
+	let minV = -1;
 
 	//! Introverted
-	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -4, -0.001), map(ny, 0, height, 0.001, 4), minV, maxV, true);
+	let u = map(vn, map(nx, 0, width, -4, -0.1), map(nx, 0, width, 0.1, 4), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -4, -0.1), map(ny, 0, height, 0.1, 4), minV, maxV, true);
 
 	//! Extroverted
-	/* 	let u = map(vn, map(ny, 0, width, -4, -0.001), map(ny, 0, width, 0.001, 4), minU, maxU, true);
-	let v = map(un, map(nx, 0, height, -4, -0.001), map(nx, 0, height, 0.001, 4), minV, maxV, true); */
+	/* 	let u = map(vn, map(ny, 0, width, -4, -0.1), map(ny, 0, width, 0.1, 4), minU, maxU, true);
+	let v = map(un, map(nx, 0, height, -4, -0.1), map(nx, 0, height, 0.1, 4), minV, maxV, true); */
 
 	//! Equilibrium
 	/* 	let u = map(vn, -3, 3, minU, maxU, true);

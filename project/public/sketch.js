@@ -59,9 +59,9 @@ function INIT(seed) {
 
 	let hue = random(360);
 
-	let sclOffset1 = 4;
-	let sclOffset2 = 4;
-	let sclOffset3 = 4;
+	let sclOffset1 = random([1]);
+	let sclOffset2 = random([3]);
+	let sclOffset3 = random([2]);
 
 	console.log('sclOffset1', sclOffset1);
 	console.log('sclOffset2', sclOffset2);
@@ -80,7 +80,7 @@ function INIT(seed) {
 	yMin = -0.01;
 	yMax = 1.01; */
 
-	for (let i = 0; i < 112000; i++) {
+	for (let i = 0; i < 52000; i++) {
 		// distribue the movers within a circle using polar coordinates
 		/* 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
