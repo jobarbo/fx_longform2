@@ -25,16 +25,15 @@ class Mover {
 		this.initHue = parseInt(hue);
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
-		this.initAlpha = 20;
-		this.initS = 1 * MULTIPLIER;
+		this.initAlpha = 100;
+		this.initS = 0.45 * MULTIPLIER;
+		this.initLineS = 0.25 * MULTIPLIER;
 		this.s = this.initS;
+		this.ls = this.initLineS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = 0.0001;
-		this.satStep = 0.0001;
-		this.briStep = 0.0001;
 		this.scl1Init = scl1;
 		this.scl2Init = scl2;
 		this.scl1 = scl1;
@@ -64,42 +63,39 @@ class Mover {
 		this.scl2Zone = scl2Zone;
 
 		this.ns = 0.5;
+
+		this.lw = this.initLineS;
+		this.lwl = width / 300;
+		this.lhl = height / 300;
 	}
 
 	show() {
 		// draw a pixel
-		/* 	drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
-		drawingContext.fillRect(this.x, this.y, this.s, this.s); */
+		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
+		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 
 		// draw a line from the previous position to the current position
-		if (this.px != this.x && this.py != this.y) {
+		/* 		if (this.px != this.x && this.py != this.y) {
 			// only show if the line is less than half the width of the canvas
-			if (abs(this.px - this.x) < width / 50 && abs(this.py - this.y) < height / 50) {
+			if (abs(this.px - this.x) < this.lwl && abs(this.py - this.y) < this.lhl) {
 				//make the weight of the stroke the same as the size of the particle and make the line as a bezier curve
 				drawingContext.strokeStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, 100%)`;
-				drawingContext.lineWidth = this.s / 10;
+				drawingContext.lineWidth = this.lw;
 				drawingContext.beginPath();
 				drawingContext.moveTo(this.px, this.py);
-				drawingContext.bezierCurveTo(this.px, this.py, this.px + 2, this.py + 2, this.x, this.y);
+				drawingContext.lineTo(this.x, this.y);
 				drawingContext.stroke();
 			}
-		}
-
-		/* 		noStroke();
-		fill(this.hue, this.sat, this.bri, this.a);
-		rect(this.x, this.y, this.s, this.s); */
+		} */
 	}
 
 	move() {
 		// store the previous position
 		this.px = this.x;
 		this.py = this.y;
-		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
-		// the sdf_box function returns the distance from the particle to the chosen location.
-		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
+
 		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [1000, 10]);
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, height - 500], 100);
-		// smoothstep the distance from the particle to the chosen location.
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		this.ang1 = parseInt(mapValue(distCircle, 0, 200, 100, 300));
@@ -118,19 +114,11 @@ class Mover {
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, this.scl2Init / 1000, this.scl2Init * 3, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.ns);
-		this.xRandDivider = fxrand() * 6;
-		this.yRandDivider = fxrand() * 6;
+		this.xRandDivider = fxrand() * 3;
+		this.yRandDivider = fxrand() * 3;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider;
-
-		/* 		let pxy = p.x - p.y;
-		this.hue += map(pxy, -this.uvalue * 2, this.uvalue * 2, this.hueStep, -this.hueStep, true);
-		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
-		this.sat += map(pxy, -this.uvalue * 2, this.uvalue * 2, -this.satStep, this.satStep, true);
-		this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
-		this.bri += map(pxy, -this.uvalue * 2, this.uvalue * 2, this.briStep, -this.briStep, true);
-		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri; */
 
 		if (this.x < (this.xMin - this.xLimit) * width) {
 			this.x = (this.xMax + this.xLimit) * width;

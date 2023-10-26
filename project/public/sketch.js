@@ -7,7 +7,7 @@ let yMin;
 let yMax;
 let startTime;
 //let maxFrames = 64 * 100000;
-let maxFrames = 64 * 7;
+let maxFrames = 64 * 6;
 let frameIterator = 0;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
@@ -16,7 +16,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 10000;
+let particleNum = 40000;
 let drawing = true;
 let bgCol;
 let renderMode = 1;
@@ -87,7 +87,7 @@ function setup() {
 function* drawGenerator() {
 	let count = 0;
 	let frameCount = 0;
-	let draw_every = 10000;
+	let draw_every = 50000;
 
 	// draw the particles and make them move until draw_every is reached then yield and wait for the next frame, also check if the maxFrames is reached and stop the sketch if it is and also show the loading bar
 	while (true) {
