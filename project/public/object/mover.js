@@ -25,8 +25,8 @@ class Mover {
 		this.initHue = parseInt(hue);
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
-		this.initAlpha = 100;
-		this.initS = 0.25 * MULTIPLIER;
+		this.initAlpha = 20;
+		this.initS = 1 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -73,16 +73,16 @@ class Mover {
 
 	show() {
 		// draw a pixel
-		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
-		drawingContext.fillRect(this.x, this.y, this.s, this.s);
+		/* 	drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
+		drawingContext.fillRect(this.x, this.y, this.s, this.s); */
 
 		// draw a line from the previous position to the current position
 		if (this.px != this.x && this.py != this.y) {
 			// only show if the line is less than half the width of the canvas
-			if (abs(this.px - this.x) < width / 100 && abs(this.py - this.y) < height / 100) {
+			if (abs(this.px - this.x) < width / 50 && abs(this.py - this.y) < height / 50) {
 				//make the weight of the stroke the same as the size of the particle and make the line as a bezier curve
-				drawingContext.strokeStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
-				drawingContext.lineWidth = this.s / 15;
+				drawingContext.strokeStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, 100%)`;
+				drawingContext.lineWidth = this.s / 10;
 				drawingContext.beginPath();
 				drawingContext.moveTo(this.px, this.py);
 				drawingContext.bezierCurveTo(this.px, this.py, this.px + 2, this.py + 2, this.x, this.y);
