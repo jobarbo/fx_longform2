@@ -53,8 +53,8 @@ function setup() {
 	frameIterator = maxFrames / maxFrames;
 	scl1 = fxrand() * (0.0022 - 0.002) + 0.002;
 	scl2 = fxrand() * (0.0022 - 0.002) + 0.002;
-	ang1 = int(fxrand() * (500, 1200) + 500);
-	ang2 = int(fxrand() * (1000, 1200) + 1000);
+	ang1 = parseInt(fxrand() * (500, 1200) + 500);
+	ang2 = parseInt(fxrand() * (1000, 1200) + 1000);
 
 	// change how drastically it changes with the SDF
 	scl1Zone = 600;
@@ -63,33 +63,61 @@ function setup() {
 	ang2Zone = 800;
 
 	startTime = frameCount;
-	bgCol = color(random(30, 50), random([1, 2, 5]), 95, 100);
+
+	// create a bghue variable that is a random number between 30 and 50
+	let bghue = parseInt(fxrand() * (50 - 30) + 30);
+	let bgsat = parseInt(fxrand() * (1 - 5) + 1);
+	let bgbri = 95;
+	let bga = 100;
+	bgCol = color(bghue, bgsat, bgbri, bga);
+
 	INIT();
+
+	let sketch = drawGenerator();
+
+	// use requestAnimationFrame to call the generator function and pass it the sketch function
+	function animate() {
+		//requestAnimationFrame(animate);
+		setTimeout(animate, 0);
+		sketch.next();
+	}
+	animate();
+}
+
+function* drawGenerator() {
+	let count = 0;
+	let frameCount = 0;
+	let draw_every = 1;
+
+	// draw the particles and make them move until draw_every is reached then yield and wait for the next frame, also check if the maxFrames is reached and stop the sketch if it is and also show the loading bar
+	while (true) {
+		for (let i = 0; i < particleNum; i++) {
+			const mover = movers[i];
+			mover.show();
+			mover.move();
+		}
+		count++;
+		if (count > draw_every) {
+			count = 0;
+			yield;
+		}
+		elapsedTime = frameCount - startTime;
+		showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
+		drawUI();
+
+		frameCount++;
+
+		if (elapsedTime > maxFrames && drawing) {
+			drawing = false;
+			// close the generator
+			console.timeEnd('setup');
+			return;
+		}
+	}
 }
 
 function draw() {
-	// put drawing code here
-
-	for (let i = 0; i < movers.length; i++) {
-		for (let j = 0; j < frameIterator; j++) {
-			movers[i].show();
-			movers[i].move();
-		}
-	}
-	frameCount += frameIterator;
-
-	let elapsedTime = frameCount - startTime;
-	// render a loading bar on the canvas to show the progress of the sketch, i want the bar to start on the xmin and end on the xmax
-	showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
-	drawUI();
-
-	if (elapsedTime > maxFrames) {
-		console.log('elapsedTime', elapsedTime);
-		console.timeEnd('setup');
-		let timeToRender = (elapsedTime / 60).toFixed(2);
-		console.log('timeToRender', timeToRender);
-		noLoop();
-	}
+	noLoop();
 }
 
 ///////////////////////////////////////////////////////
@@ -98,32 +126,22 @@ function draw() {
 
 function INIT() {
 	console.log('INIT');
-	let hue = fxrand() * 360;
-
 	background(bgCol);
-
-	drawTexture(hue);
 	movers = [];
-
-	console.log(scl1, scl2, ang1, ang2);
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
-
+	let hue = fxrand() * 360;
 	xMin = 0.05;
 	xMax = 0.95;
 	yMin = 0.05;
 	yMax = 0.95;
-	/* 	xMin = -0.05;
-	xMax = 1.05;
-	yMin = -0.05;
-	yMax = 1.05; */
 
 	for (let i = 0; i < particleNum; i++) {
-		let x = random(xMin, xMax) * width;
-		let y = random(yMin, yMax) * height;
+		let x = fxrand() * (xMax - xMin + xMin) * width;
+		let y = fxrand() * (yMax - yMin + yMin) * height;
 
-		let initHue = hue + random(-1, 1);
+		let initHue = hue + fxrand() * 2 - 1;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(
 			new Mover(
@@ -149,22 +167,6 @@ function INIT() {
 	}
 }
 
-function drawTexture(hue) {
-	// draw 200000 small rects to create a texture
-	console.log('drawTexture');
-	for (let i = 0; i < 1; i++) {
-		let x = random(width);
-		let y = random(height);
-		let sw = 1 * MULTIPLIER;
-		let h = hue + random(-1, 1);
-		let s = random([0, 20, 40, 60, 80, 100]);
-		let b = random([0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100]);
-		fill(h, s, b, 50);
-		noStroke();
-		rect(x, y, sw);
-	}
-}
-
 function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 	let percent = (elapsedTime / maxFrames) * 100;
 	if (percent > 100) percent = 100;
@@ -174,12 +176,25 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 }
 
 function drawUI() {
-	stroke(0);
-	strokeWeight(2 * MULTIPLIER);
-	line(xMin * width, yMin * height, xMax * width, yMin * height);
-	line(xMin * width, yMax * height, xMax * width, yMax * height);
-	line(xMin * width, yMin * height, xMin * width, yMax * height);
-	line(xMax * width, yMin * height, xMax * width, yMax * height);
+	// Define the stroke color and weight (line width)
+	drawingContext.strokeStyle = 'black';
+	drawingContext.lineWidth = 2 * MULTIPLIER;
+	drawingContext.beginPath();
+
+	drawingContext.moveTo(xMin * width, yMin * height);
+	drawingContext.lineTo(xMax * width, yMin * height);
+
+	drawingContext.moveTo(xMin * width, yMax * height);
+	drawingContext.lineTo(xMax * width, yMax * height);
+
+	drawingContext.moveTo(xMin * width, yMin * height);
+	drawingContext.lineTo(xMin * width, yMax * height);
+
+	drawingContext.moveTo(xMax * width, yMin * height);
+	drawingContext.lineTo(xMax * width, yMax * height);
+
+	// Stroke the lines
+	drawingContext.stroke();
 
 	/* 	stroke(0, 0, 0, 70);
 	strokeWeight(3 * MULTIPLIER);

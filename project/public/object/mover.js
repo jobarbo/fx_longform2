@@ -20,11 +20,11 @@ class Mover {
 	) {
 		this.x = x;
 		this.y = y;
-		this.initHue = int(hue);
-		this.initSat = random([0, 0, 10, 20]);
-		this.initBri = random([0, 0, 10, 20]);
+		this.initHue = parseInt(hue);
+		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
+		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initAlpha = 100;
-		this.initS = random([0.45]) * MULTIPLIER;
+		this.initS = 0.45 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -88,18 +88,18 @@ class Mover {
 		// smoothstep the distance from the particle to the chosen location.
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distCircle, 0, 200, 100, 300, true));
-		this.ang2 = int(map(distCircle, 0, 200, -500, 900, true));
+		this.ang1 = parseInt(mapValue(distCircle, 0, 200, 100, 300));
+		this.ang2 = parseInt(mapValue(distCircle, 0, 200, -500, 900));
 		/*this.scl1 = map(distCircle, 0, 30, 0.006, 0.0012, true);
 		this.scl2 = map(distCircle, 0, 30, 0.006, 0.0012, true);
 
 		this.ns = map(distCircle, 0, 30, -0.000000001, -0.5, true); */
 
 		//this.oct = map(distCircle, 0, 1, 1, 6, true);
-		//this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
+		//this.ang2 = parseInt(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
 		/*
-		this.ang1 = int(map(distFromCenter, 0, this.ang1Zone, this.ang1Init / 1000, this.ang1Init * 2, true));
-		this.ang2 = int(map(distFromCenter, 0, this.ang2Zone, this.ang2Init / 1000, this.ang2Init * 2, true));
+		this.ang1 = parseInt(map(distFromCenter, 0, this.ang1Zone, this.ang1Init / 1000, this.ang1Init * 2, true));
+		this.ang2 = parseInt(map(distFromCenter, 0, this.ang2Zone, this.ang2Init / 1000, this.ang2Init * 2, true));
 		this.scl1 = map(distFromCenter, 0, this.scl1Zone, this.scl1Init / 1000, this.scl1Init * 3, true);
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, this.scl2Init / 1000, this.scl2Init * 3, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
@@ -170,24 +170,15 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave, ns) {
 	/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
 	let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
 
-	let u = map(un, -noiseSpeed, noiseSpeed, -random([10, 15, 20]), random([1, 2, 3]), true);
-	let v = map(vn, -noiseSpeed, noiseSpeed, -random([1, 2, 3]), random([10, 15, 20]), true);
+	let rangeA = [10, 15, 20];
+	let rangeB = [1, 2, 3];
+
+	let aValue = rangeA[Math.floor(fxrand() * rangeA.length)];
+	let bValue = rangeB[Math.floor(fxrand() * rangeB.length)];
+
+	let u = mapValue(un, -noiseSpeed, noiseSpeed, -aValue, bValue);
+	let v = mapValue(vn, -noiseSpeed, noiseSpeed, -bValue, aValue);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
-}
-let R = (a = 1) => Math.random() * a;
-let L = (x, y) => (x * x + y * y) ** 0.5; // Elements by Euclid 300 BC
-let k = (a, b) => (a > 0 && b > 0 ? L(a, b) : a > b ? a : b);
-
-function sdf_box([x, y], [cx, cy], [w, h]) {
-	x -= cx;
-	y -= cy;
-	return k(abs(x) - w, abs(y) - h);
-}
-
-function sdf_circle([x, y], [cx, cy], r) {
-	x -= cx;
-	y -= cy;
-	return L(x, y) - r;
 }
