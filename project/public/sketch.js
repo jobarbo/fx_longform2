@@ -8,6 +8,7 @@ let yMax;
 let startTime;
 //let maxFrames = 64 * 500000;
 let maxFrames = 64 * 32;
+let frameIterator = 0;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -49,6 +50,7 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 
+	frameIterator = maxFrames / maxFrames;
 	scl1 = fxrand() * (0.0022 - 0.002) + 0.002;
 	scl2 = fxrand() * (0.0022 - 0.002) + 0.002;
 	ang1 = int(fxrand() * (500, 1200) + 500);
@@ -69,12 +71,12 @@ function draw() {
 	// put drawing code here
 
 	for (let i = 0; i < movers.length; i++) {
-		for (let j = 0; j < 1; j++) {
+		for (let j = 0; j < frameIterator; j++) {
 			movers[i].show();
 			movers[i].move();
 		}
 	}
-	frameCount += 1;
+	frameCount += frameIterator;
 
 	let elapsedTime = frameCount - startTime;
 	// render a loading bar on the canvas to show the progress of the sketch, i want the bar to start on the xmin and end on the xmax
@@ -274,7 +276,7 @@ function keyPressed() {
 		54: 64,
 		55: 64,
 		56: 64,
-		57: 64,
+		57: 64 * 10,
 	};
 
 	const keyCodeToParticleNum = particleNumMapping[keyCode];
