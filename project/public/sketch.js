@@ -87,7 +87,7 @@ function setup() {
 function* drawGenerator() {
 	let count = 0;
 	let frameCount = 0;
-	let draw_every = 50000;
+	let draw_every = 75000;
 
 	// draw the particles and make them move until draw_every is reached then yield and wait for the next frame, also check if the maxFrames is reached and stop the sketch if it is and also show the loading bar
 	while (true) {
