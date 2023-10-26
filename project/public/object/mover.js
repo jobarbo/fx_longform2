@@ -18,13 +18,15 @@ class Mover {
 		ang1Zone,
 		ang2Zone
 	) {
+		this.px = x;
+		this.py = y;
 		this.x = x;
 		this.y = y;
 		this.initHue = parseInt(hue);
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initAlpha = 100;
-		this.initS = 0.45 * MULTIPLIER;
+		this.initS = 0.25 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -45,8 +47,8 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = 0.1;
-		this.yRandSkipperVal = 0.1;
+		this.xRandSkipperVal = 0;
+		this.yRandSkipperVal = 0;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -74,12 +76,29 @@ class Mover {
 		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 
+		// draw a line from the previous position to the current position
+		if (this.px != this.x && this.py != this.y) {
+			// only show if the line is less than half the width of the canvas
+			if (abs(this.px - this.x) < width / 100 && abs(this.py - this.y) < height / 100) {
+				//make the weight of the stroke the same as the size of the particle and make the line as a bezier curve
+				drawingContext.strokeStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
+				drawingContext.lineWidth = this.s / 15;
+				drawingContext.beginPath();
+				drawingContext.moveTo(this.px, this.py);
+				drawingContext.bezierCurveTo(this.px, this.py, this.px + 2, this.py + 2, this.x, this.y);
+				drawingContext.stroke();
+			}
+		}
+
 		/* 		noStroke();
 		fill(this.hue, this.sat, this.bri, this.a);
 		rect(this.x, this.y, this.s, this.s); */
 	}
 
 	move() {
+		// store the previous position
+		this.px = this.x;
+		this.py = this.y;
 		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
 		// the sdf_box function returns the distance from the particle to the chosen location.
 		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
