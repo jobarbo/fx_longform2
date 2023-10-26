@@ -45,10 +45,6 @@ class Mover {
 		this.ang2 = ang2;
 		this.xRandDivider = xRandDivider;
 		this.yRandDivider = yRandDivider;
-		this.xRandSkipper = 0;
-		this.yRandSkipper = 0;
-		this.xRandSkipperVal = 0;
-		this.yRandSkipperVal = 0;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -61,7 +57,6 @@ class Mover {
 		this.borderX = width / 2;
 		this.borderY = height / 2.75;
 		this.uvalue = 4;
-		this.isBordered = true;
 
 		this.ang1Zone = ang1Zone;
 		this.ang2Zone = ang2Zone;
@@ -126,8 +121,8 @@ class Mover {
 		this.xRandDivider = fxrand() * 6;
 		this.yRandDivider = fxrand() * 6;
 
-		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
-		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
+		this.x += (p.x * MULTIPLIER) / this.xRandDivider;
+		this.y += (p.y * MULTIPLIER) / this.yRandDivider;
 
 		/* 		let pxy = p.x - p.y;
 		this.hue += map(pxy, -this.uvalue * 2, this.uvalue * 2, this.hueStep, -this.hueStep, true);
@@ -137,23 +132,17 @@ class Mover {
 		this.bri += map(pxy, -this.uvalue * 2, this.uvalue * 2, this.briStep, -this.briStep, true);
 		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri; */
 
-		if (this.isBordered) {
-			if (this.x < (this.xMin - this.xLimit) * width) {
-				this.x = (this.xMax + this.xLimit) * width;
-				//this.a = 0;
-			}
-			if (this.x > (this.xMax + this.xLimit) * width) {
-				this.x = (this.xMin - this.xLimit) * width;
-				//this.a = 0;
-			}
-			if (this.y < (this.yMin - this.yLimit) * height) {
-				this.y = (this.yMax + this.yLimit) * height;
-				//this.a = 0;
-			}
-			if (this.y > (this.yMax + this.yLimit) * height) {
-				this.y = (this.yMin - this.yLimit) * height;
-				//this.a = 0;
-			}
+		if (this.x < (this.xMin - this.xLimit) * width) {
+			this.x = (this.xMax + this.xLimit) * width;
+		}
+		if (this.x > (this.xMax + this.xLimit) * width) {
+			this.x = (this.xMin - this.xLimit) * width;
+		}
+		if (this.y < (this.yMin - this.yLimit) * height) {
+			this.y = (this.yMax + this.yLimit) * height;
+		}
+		if (this.y > (this.yMax + this.yLimit) * height) {
+			this.y = (this.yMin - this.yLimit) * height;
 		}
 	}
 }
