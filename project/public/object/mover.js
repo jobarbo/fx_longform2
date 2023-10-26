@@ -24,7 +24,7 @@ class Mover {
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initAlpha = 100;
-		this.initS = 0.45 * MULTIPLIER;
+		this.initS = 0.5 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -73,10 +73,6 @@ class Mover {
 		// draw a pixel
 		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
-
-		/* 		noStroke();
-		fill(this.hue, this.sat, this.bri, this.a);
-		rect(this.x, this.y, this.s, this.s); */
 	}
 
 	move() {
@@ -118,67 +114,17 @@ class Mover {
 		this.bri += map(pxy, -this.uvalue * 2, this.uvalue * 2, this.briStep, -this.briStep, true);
 		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri; */
 
-		if (this.isBordered) {
-			if (this.x < (this.xMin - this.xLimit) * width) {
-				this.x = (this.xMax + this.xLimit) * width;
-				//this.a = 0;
-			}
-			if (this.x > (this.xMax + this.xLimit) * width) {
-				this.x = (this.xMin - this.xLimit) * width;
-				//this.a = 0;
-			}
-			if (this.y < (this.yMin - this.yLimit) * height) {
-				this.y = (this.yMax + this.yLimit) * height;
-				//this.a = 0;
-			}
-			if (this.y > (this.yMax + this.yLimit) * height) {
-				this.y = (this.yMin - this.yLimit) * height;
-				//this.a = 0;
-			}
+		if (this.x < (this.xMin - this.xLimit) * width) {
+			this.x = (this.xMax + this.xLimit) * width;
+		}
+		if (this.x > (this.xMax + this.xLimit) * width) {
+			this.x = (this.xMin - this.xLimit) * width;
+		}
+		if (this.y < (this.yMin - this.yLimit) * height) {
+			this.y = (this.yMax + this.yLimit) * height;
+		}
+		if (this.y > (this.yMax + this.yLimit) * height) {
+			this.y = (this.yMin - this.yLimit) * height;
 		}
 	}
-}
-function superCurve(x, y, scl1, scl2, ang1, ang2, octave, ns) {
-	let nx = x,
-		ny = y,
-		a1 = ang1,
-		a2 = ang2,
-		scale1 = scl1,
-		scale2 = scl2,
-		noiseSpeed = ns,
-		dx,
-		dy;
-
-	dx = oct(nx, ny, scale1, 0, octave);
-	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	dx = oct(nx, ny, scale1, 1, octave);
-	dy = oct(nx, ny, scale2, 3, octave);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	dx = oct(nx, ny, scale1, 1, octave);
-	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	let un = oct(nx, ny, scale1, 3, octave);
-	let vn = oct(nx, ny, scale2, 2, octave);
-
-	/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
-	let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
-
-	let rangeA = [10, 15, 20];
-	let rangeB = [1, 2, 3];
-
-	let aValue = rangeA[Math.floor(fxrand() * rangeA.length)];
-	let bValue = rangeB[Math.floor(fxrand() * rangeB.length)];
-
-	let u = mapValue(un, -noiseSpeed, noiseSpeed, -aValue, bValue);
-	let v = mapValue(vn, -noiseSpeed, noiseSpeed, -bValue, aValue);
-
-	//let p = createVector(u, v);
-	return {x: u, y: v};
 }

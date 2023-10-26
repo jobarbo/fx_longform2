@@ -87,7 +87,7 @@ function setup() {
 function* drawGenerator() {
 	let count = 0;
 	let frameCount = 0;
-	let draw_every = 1;
+	let draw_every = 50000;
 
 	// draw the particles and make them move until draw_every is reached then yield and wait for the next frame, also check if the maxFrames is reached and stop the sketch if it is and also show the loading bar
 	while (true) {
@@ -95,12 +95,13 @@ function* drawGenerator() {
 			const mover = movers[i];
 			mover.show();
 			mover.move();
+			if (count > draw_every) {
+				count = 0;
+				yield;
+			}
+			count++;
 		}
-		count++;
-		if (count > draw_every) {
-			count = 0;
-			yield;
-		}
+
 		elapsedTime = frameCount - startTime;
 		showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
 		drawUI();
@@ -114,10 +115,6 @@ function* drawGenerator() {
 			return;
 		}
 	}
-}
-
-function draw() {
-	noLoop();
 }
 
 ///////////////////////////////////////////////////////
@@ -138,8 +135,8 @@ function INIT() {
 	yMax = 0.95;
 
 	for (let i = 0; i < particleNum; i++) {
-		let x = fxrand() * (xMax - xMin + xMin) * width;
-		let y = fxrand() * (yMax - yMin + yMin) * height;
+		let x = fxrand() * (xMax - xMin) * width + xMin * width;
+		let y = fxrand() * (yMax - yMin) * height + yMin * height;
 
 		let initHue = hue + fxrand() * 2 - 1;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
