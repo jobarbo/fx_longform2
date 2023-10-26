@@ -114,8 +114,8 @@ class Mover {
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, this.scl2Init / 1000, this.scl2Init * 3, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.ns);
-		this.xRandDivider = fxrand() * 3;
-		this.yRandDivider = fxrand() * 3;
+		this.xRandDivider = fxrand() * 6;
+		this.yRandDivider = fxrand() * 6;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider;
