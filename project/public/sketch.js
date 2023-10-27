@@ -38,7 +38,7 @@ function setup() {
 	}
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1.4);
+	c = createCanvas(DIM, DIM);
 
 	/*
 		window.addEventListener('resize', onResize);

@@ -84,18 +84,21 @@ class Mover {
 			[this.centerX, height - 2000 * MULTIPLIER],
 			[4000 * MULTIPLIER, 40 * MULTIPLIER]
 		);
-		let distCircle = sdf_circle([this.x, this.y], [this.centerX, height - 2000 * MULTIPLIER], 400 * MULTIPLIER);
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY + 1700 * MULTIPLIER], 2200 * MULTIPLIER);
 		// smoothstep the distance from the particle to the chosen location.
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = parseInt(mapValue(distCircle, 0, 800 * MULTIPLIER, this.ang1Init / 2, this.ang1Init * 2));
-		this.ang2 = parseInt(mapValue(distCircle, 0, 800 * MULTIPLIER, this.ang2Init / 2, this.ang2Init * 2));
-		/*this.scl1 = map(distCircle, 0, 30, 0.006, 0.0012, true);
-		this.scl2 = map(distCircle, 0, 30, 0.006, 0.0012, true);
+		this.ang1 = parseInt(
+			mapValue(distCircle, -100 * MULTIPLIER, 700 * MULTIPLIER, -this.ang1Init / 3, this.ang1Init * 4)
+		);
+		this.ang2 = parseInt(
+			mapValue(distCircle, -100 * MULTIPLIER, 700 * MULTIPLIER, -this.ang2Init / 3, this.ang2Init * 4)
+		);
+		this.scl1 = map(distCircle, -700 * MULTIPLIER, 200 * MULTIPLIER, -this.scl1Init * 3, this.scl1Init, true);
+		this.scl2 = map(distCircle, -700 * MULTIPLIER, 200 * MULTIPLIER, -this.scl2Init * 3, this.scl2Init, true);
 
-		this.ns = map(distCircle, 0, 30, -0.000000001, -0.5, true); */
+		//this.oct = parseInt(map(distCircle, 0, 1, 1, 6, true));
 
-		//this.oct = map(distCircle, 0, 1, 1, 6, true);
 		//this.ang2 = parseInt(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
 		/*
 		this.ang1 = parseInt(map(distFromCenter, 0, this.ang1Zone, this.ang1Init / 1000, this.ang1Init * 2, true));
@@ -110,14 +113,6 @@ class Mover {
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
-		/* 		let pxy = p.x - p.y;
-		this.hue += map(pxy, -this.uvalue * 2, this.uvalue * 2, this.hueStep, -this.hueStep, true);
-		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
-		this.sat += map(pxy, -this.uvalue * 2, this.uvalue * 2, -this.satStep, this.satStep, true);
-		this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
-		this.bri += map(pxy, -this.uvalue * 2, this.uvalue * 2, this.briStep, -this.briStep, true);
-		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri; */
-
 		if (this.x < (this.xMin - this.xLimit) * width) {
 			this.x = (this.xMax + this.xLimit) * width;
 		}
@@ -131,4 +126,49 @@ class Mover {
 			this.y = (this.yMin - this.yLimit) * height;
 		}
 	}
+}
+
+function superCurve(x, y, scl1, scl2, ang1, ang2, octave, ns) {
+	let nx = x,
+		ny = y,
+		a1 = ang1,
+		a2 = ang2,
+		scale1 = scl1,
+		scale2 = scl2,
+		noiseSpeed = ns,
+		dx,
+		dy;
+
+	dx = oct(nx, ny, scale1, 0, octave);
+	dy = oct(nx, ny, scale2, 2, octave);
+	nx += dx * a1;
+	ny += dy * a2;
+
+	dx = oct(nx, ny, scale1, 1, octave);
+	dy = oct(nx, ny, scale2, 3, octave);
+	nx += dx * a1;
+	ny += dy * a2;
+
+	dx = oct(nx, ny, scale1, 1, octave);
+	dy = oct(nx, ny, scale2, 2, octave);
+	nx += dx * a1;
+	ny += dy * a2;
+
+	let un = oct(nx, ny, scale1, 3, octave);
+	let vn = oct(nx, ny, scale2, 2, octave);
+
+	/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
+	let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
+
+	let rangeA = [10, 15, 20];
+	let rangeB = [1, 2, 3];
+
+	let aValue = rangeA[Math.floor(fxrand() * rangeA.length)];
+	let bValue = rangeB[Math.floor(fxrand() * rangeB.length)];
+
+	let u = mapValue(un, -noiseSpeed, noiseSpeed, -aValue, bValue);
+	let v = mapValue(vn, -noiseSpeed, noiseSpeed, -bValue, aValue);
+
+	//let p = createVector(u, v);
+	return {x: u, y: v};
 }
