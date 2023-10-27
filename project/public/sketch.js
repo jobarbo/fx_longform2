@@ -38,7 +38,7 @@ function setup() {
 	}
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM);
+	c = createCanvas(DIM, DIM * 1.4);
 
 	/*
 		window.addEventListener('resize', onResize);
@@ -51,8 +51,8 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 
 	frameIterator = maxFrames / maxFrames;
-	scl1 = fxrand() * (0.0022 - 0.002) + 0.002;
-	scl2 = fxrand() * (0.0022 - 0.002) + 0.002;
+	scl1 = fxrand() * (0.0022 - 0.001) + 0.001;
+	scl2 = fxrand() * (0.0022 - 0.001) + 0.001;
 	ang1 = parseInt(fxrand() * (500, 1200) + 500);
 	ang2 = parseInt(fxrand() * (1000, 1200) + 1000);
 

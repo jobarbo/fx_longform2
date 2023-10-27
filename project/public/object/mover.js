@@ -79,13 +79,17 @@ class Mover {
 		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
 		// the sdf_box function returns the distance from the particle to the chosen location.
 		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
-		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [1000, 10]);
-		let distCircle = sdf_circle([this.x, this.y], [this.centerX, height - 500], 100);
+		let distFromCenter = sdf_box(
+			[this.x, this.y],
+			[this.centerX, height - 2000 * MULTIPLIER],
+			[4000 * MULTIPLIER, 40 * MULTIPLIER]
+		);
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, height - 2000 * MULTIPLIER], 400 * MULTIPLIER);
 		// smoothstep the distance from the particle to the chosen location.
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = parseInt(mapValue(distCircle, 0, 200, 100, 300));
-		this.ang2 = parseInt(mapValue(distCircle, 0, 200, -500, 900));
+		this.ang1 = parseInt(mapValue(distCircle, 0, 800 * MULTIPLIER, this.ang1Init / 2, this.ang1Init * 2));
+		this.ang2 = parseInt(mapValue(distCircle, 0, 800 * MULTIPLIER, this.ang2Init / 2, this.ang2Init * 2));
 		/*this.scl1 = map(distCircle, 0, 30, 0.006, 0.0012, true);
 		this.scl2 = map(distCircle, 0, 30, 0.006, 0.0012, true);
 
