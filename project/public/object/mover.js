@@ -3,10 +3,11 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0, 10, 30, 40, 40, 60, 80, 80, 90, 100]);
-		this.initBri = random([0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100]);
-		this.initAlpha = 50;
+		this.initSat = [0, 10, 20, 30, 40, 40, 60, 80, 80, 90, 100][Math.floor(fxrand() * 11)];
+		this.initBri = [0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100][Math.floor(fxrand() * 11)];
+		this.initAlpha = 70;
 		this.initS = 1 * MULTIPLIER;
+		//this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
@@ -23,8 +24,8 @@ class Mover {
 		this.yRandDivider = 0.1;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = 0.1;
-		this.yRandSkipperVal = 0.1;
+		this.xRandSkipperVal = 0;
+		this.yRandSkipperVal = 0;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -39,16 +40,15 @@ class Mover {
 	}
 
 	show() {
-		fill(this.hue, this.sat, this.bri, this.a);
-		noStroke();
-		rect(this.x, this.y, this.s, this.s);
+		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
+		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
 
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 
-		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
-		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
+		this.xRandSkipper = fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) - this.xRandSkipperVal * MULTIPLIER;
+		this.yRandSkipper = fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) - this.xRandSkipperVal * MULTIPLIER;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
@@ -65,20 +65,20 @@ class Mover {
 		this.y = this.y <= 0 ? height - 2 : this.y >= height ? 0 : this.y;
 
 		if (this.isBordered) {
-			if (this.x < (this.xMin - 0.015) * width) {
-				this.x = (this.xMax + 0.015) * width;
+			if (this.x < this.xMin * width) {
+				this.x = this.xMax * width + fxrand() * (1 * MULTIPLIER);
 				//this.a = 0;
 			}
-			if (this.x > (this.xMax + 0.015) * width) {
-				this.x = (this.xMin - 0.015) * width;
+			if (this.x > this.xMax * width) {
+				this.x = this.xMin * width + fxrand() * (1 * MULTIPLIER);
 				//this.a = 0;
 			}
-			if (this.y < (this.yMin - 0.015) * height) {
-				this.y = (this.yMax + 0.015) * height;
+			if (this.y < this.yMin * height) {
+				this.y = this.yMax * height + fxrand() * (1 * MULTIPLIER);
 				//this.a = 0;
 			}
-			if (this.y > (this.yMax + 0.015) * height) {
-				this.y = (this.yMin - 0.015) * height;
+			if (this.y > this.yMax * height) {
+				this.y = this.yMin * height + fxrand() * (1 * MULTIPLIER);
 				//this.a = 0;
 			}
 		}
@@ -94,7 +94,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 		dx,
 		dy;
 
-	/* 	dx = oct(nx, ny, scale1, 0, octave);
+	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
 	ny += dy * a2;
@@ -107,14 +107,13 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
-	ny += dy * a2; */
+	ny += dy * a2;
 
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = map(un, -0.015, 0.015, -5, 5, true);
-	let v = map(vn, -0.0015, 0.0015, -15, 15, true);
+	let u = mapValue(un, -0.015, 0.015, -5, 5, true);
+	let v = mapValue(vn, -0.0015, 0.0015, -15, 15, true);
 
-	let p = createVector(u, v);
-	return p;
+	return {x: u, y: v};
 }
