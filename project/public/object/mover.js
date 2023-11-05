@@ -5,7 +5,7 @@ class Mover {
 		this.initHue = hue;
 		this.initSat = [0, 10, 20, 30, 40, 40, 60, 80, 80, 90, 100][Math.floor(fxrand() * 11)];
 		this.initBri = [0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100][Math.floor(fxrand() * 11)];
-		this.initAlpha = 70;
+		this.initAlpha = 60;
 		this.initS = 1 * MULTIPLIER;
 		//this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;

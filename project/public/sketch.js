@@ -10,7 +10,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 20;
+let maxFrames = 10;
 let frameIterator = 0;
 let currentFrame = 0;
 
@@ -23,7 +23,7 @@ let MULTIPLIER;
 
 // render time
 let elapsedTime = 0;
-let particleNum = 400000;
+let particleNum = 800000;
 //let particleNum = 400000;
 let drawing = true;
 let renderMode = 1;
@@ -107,8 +107,8 @@ function INIT() {
 	movers = [];
 	scl1 = random(0.0001, 0.002);
 	scl2 = random(0.0001, 0.002);
-	ang1 = Math.floor(fxrand() * 5);
-	ang2 = Math.floor(fxrand() * 5);
+	ang1 = Math.floor(fxrand() * 10);
+	ang2 = Math.floor(fxrand() * 10);
 
 	console.log(ang1, ang2);
 
