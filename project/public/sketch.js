@@ -31,7 +31,7 @@ let cycle = (maxFrames * particleNum) / 170;
 
 function setup() {
 	console.time('setup');
-	pixelDensity(dpi(3));
+	pixelDensity(dpi(1));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * 3);
