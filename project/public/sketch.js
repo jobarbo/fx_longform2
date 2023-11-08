@@ -1,3 +1,4 @@
+console.log($fx);
 let movers = [];
 let scl1;
 let scl2;
