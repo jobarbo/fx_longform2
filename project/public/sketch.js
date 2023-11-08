@@ -1,4 +1,7 @@
-console.log($fx);
+new Q5('global');
+
+console.log(fxrand);
+
 let movers = [];
 let scl1;
 let scl2;
@@ -32,7 +35,7 @@ let cycle = (maxFrames * particleNum) / 170;
 
 function setup() {
 	console.time('setup');
-	pixelDensity(dpi(1));
+	//pixelDensity(dpi(1));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * 3);
@@ -87,6 +90,7 @@ function* drawGenerator() {
 			drawing = false;
 			drawUI();
 			// close the generator
+			$fx.preview();
 			console.timeEnd('setup');
 			return;
 		}
@@ -159,8 +163,8 @@ function drawTexture(hue) {
 		let y = fxrand() * height;
 		let sw = 0.45 * MULTIPLIER;
 		let h = hue + fxrand() * 2 - 1;
-		let s = [0, 20, 40, 60, 80, 100][int(fxrand() * 6)];
-		let b = [0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100][int(fxrand() * 11)];
+		let s = [0, 20, 40, 60, 80, 100][parseInt(fxrand() * 6)];
+		let b = [0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100][parseInt(fxrand() * 11)];
 		drawingContext.fillStyle = `hsla(${h}, ${s}%, ${b}%, 100%)`;
 		drawingContext.fillRect(x, y, sw, sw);
 	}
