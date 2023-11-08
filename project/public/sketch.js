@@ -1,4 +1,8 @@
 let movers = [];
+let scl1;
+let scl2;
+let ang1;
+let ang2;
 let rseed;
 let nseed;
 let xMin;
@@ -6,39 +10,36 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-//let maxFrames = 64 * 500000;
-let maxFrames = 64 * 32;
 let frameIterator = 0;
 let currentFrame = 0;
+//let maxFrames = 20;
+let maxFrames = 64 * 32;
+//let maxFrames = 64 * 120;
+//let particleNum = 800000;
+let particleNum = 10250;
+//let particleNum = 2250;
+
+// viewport
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
-let elapsedTime = 0;
-let particleNum = 10250;
-let drawing = true;
-let bgCol;
-let renderMode = 1;
 
-let scl1, scl2, ang1, ang2, scl1Zone, scl2Zone, ang1Zone, ang2Zone;
+// render time
+let elapsedTime = 0;
+
+let drawing = true;
+let renderMode = 1;
+let cycle = (maxFrames * particleNum) / 600;
 
 function setup() {
 	console.time('setup');
-	var ua = window.navigator.userAgent;
-	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-	var webkit = !!ua.match(/WebKit/i);
-	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
-
-	// if safari mobile use pixelDensity(2.0) to make the canvas bigger else use pixelDensity(3.0)
-	if (iOSSafari) {
-		pixelDensity(1.0);
-	} else {
-		pixelDensity(3.0);
-	}
+	//pixelDensity(dpi(4));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM);
+	//A4 is 1.4142
 
 	/*
 		window.addEventListener('resize', onResize);
@@ -66,9 +67,10 @@ function setup() {
 
 	// create a bghue variable that is a random number between 30 and 50
 	let bghue = parseInt(fxrand() * (50 - 30) + 30);
-	let bgsat = parseInt(fxrand() * (1 - 5) + 1);
+	let bgsat = parseInt(fxrand() * (10 - 1) + 1);
 	let bgbri = 95;
 	let bga = 100;
+	console.log(bghue, bgsat, bgbri, bga);
 	bgCol = color(bghue, bgsat, bgbri, bga);
 
 	INIT();
@@ -87,7 +89,7 @@ function setup() {
 function* drawGenerator() {
 	let count = 0;
 	let frameCount = 0;
-	let draw_every = 50000;
+	let draw_every = cycle;
 
 	// draw the particles and make them move until draw_every is reached then yield and wait for the next frame, also check if the maxFrames is reached and stop the sketch if it is and also show the loading bar
 	while (true) {
