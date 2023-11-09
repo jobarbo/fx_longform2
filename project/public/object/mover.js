@@ -23,25 +23,15 @@ class Mover {
 		this.xi = xi;
 		this.yi = yi;
 		this.initHue = hue;
-		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
-		this.initBri =
-			features.theme === 'bright' && features.colormode !== 'monochrome'
-				? random([0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100])
-				: features.theme === 'bright' && features.colormode === 'monochrome'
-				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
-				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
-		this.initAlpha = 100;
-		this.initS = 0.45 * MULTIPLIER;
+		this.initSat = [0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90][Math.floor(fxrand() * 12)];
+		this.initBri = [40, 60, 70, 70, 80, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
+		this.initAlpha = 1;
+		this.initS = 0.8 * MULTIPLIER;
 		this.hue = this.initHue;
-		this.sat = features.colormode === 'monochrome' ? 0 : this.initSat;
-		this.bri = this.initBri;
+		this.sat = 0;
+		this.bri = 100;
 		this.a = this.initAlpha;
-		this.hueStep =
-			features.colormode === 'monochrome' || features.colormode === 'fixed'
-				? 1
-				: features.colormode === 'dynamic'
-				? 6
-				: 25;
+		this.hueStep = 0;
 		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -52,8 +42,8 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = features.strokestyle === 'thin' ? 0.1 : features.strokestyle === 'bold' ? 2 : 1;
-		this.yRandSkipperVal = features.strokestyle === 'thin' ? 0.1 : features.strokestyle === 'bold' ? 2 : 1;
+		this.xRandSkipperVal = 0.1;
+		this.yRandSkipperVal = 0.1;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -63,15 +53,14 @@ class Mover {
 		this.centerY = height / 2;
 		this.borderX = width / 3;
 		this.borderY = height / 3;
-
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
 		this.uvalue = 5;
 	}
 
 	show() {
-		fill(this.hue, this.sat, this.bri, this.a);
-		noStroke();
-		rect(this.x, this.y, this.s);
+		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
+		drawingContext.strokeStyle = 'transparent';
+		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
 
 	move() {
@@ -90,23 +79,28 @@ class Mover {
 			this.uvalue
 		);
 
-		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
-		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
+		this.xRandSkipper =
+			fxrand() * (-this.xRandSkipperVal * MULTIPLIER - this.xRandSkipperVal * MULTIPLIER) +
+			this.xRandSkipperVal * MULTIPLIER;
+		this.yRandSkipper =
+			fxrand() * (-this.xRandSkipperVal * MULTIPLIER - this.xRandSkipperVal * MULTIPLIER) +
+			this.xRandSkipperVal * MULTIPLIER;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
 		this.x =
 			this.x <= this.centerX - this.borderX
-				? this.centerX + this.borderX + random(-0.15 * MULTIPLIER, 0)
+				? this.centerX + this.borderX + fxrand() * -0.15 * MULTIPLIER
 				: this.x >= this.centerX + this.borderX
-				? this.centerX - this.borderX + random(0, 0.15 * MULTIPLIER)
+				? this.centerX - this.borderX + fxrand() * 0.15 * MULTIPLIER
 				: this.x;
+
 		this.y =
 			this.y <= this.centerY - this.borderY
-				? this.centerY + this.borderY + random(-0.15 * MULTIPLIER, 0)
+				? this.centerY + this.borderY + fxrand() * -0.15 * MULTIPLIER
 				: this.y >= this.centerY + this.borderY
-				? this.centerY - this.borderY + random(0, 0.15 * MULTIPLIER)
+				? this.centerY - this.borderY + fxrand() * 0.15 * MULTIPLIER
 				: this.y;
 
 		let pxy = p.x - p.y;
@@ -123,7 +117,7 @@ class Mover {
 			abs(this.y - this.centerY - this.borderY)
 		);
 
-		this.a = map(distanceToEdge, 10, 60, 0, 20, true);
+		this.a = map(distanceToEdge, 10, 60, 0, 0.2, true);
 	}
 }
 

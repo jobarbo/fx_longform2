@@ -16,7 +16,7 @@
 						.join('');
 			//var fxhash = 'ooYFREqWCPv4z4NahpBppXiSh7CPNAkqeEwW4ZtEvDaoxAu7DU7';
 			//var fxhash = 'oojNpExMCLhRHUX2quVahVFMWYiJ3bBJ2UmEn5BqCYucJDiCXU4';
-			var fxhash = 'ooQ3B3khN1HHneh4irzRRXKYEEvdYiSMWzM7iprii6oDQmeNwph';
+			//var fxhash = 'ooQ3B3khN1HHneh4irzRRXKYEEvdYiSMWzM7iprii6oDQmeNwph';
 			let b58dec = (str) => [...str].reduce((p, c) => (p * alphabet.length + alphabet.indexOf(c)) | 0, 0);
 			let fxhashTrunc = fxhash.slice(2);
 			let regex = new RegExp('.{' + ((fxhash.length / 4) | 0) + '}', 'g');
