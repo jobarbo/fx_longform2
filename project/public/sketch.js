@@ -27,7 +27,7 @@ let DIM;
 let MULTIPLIER;
 
 let startTime;
-let maxFrames = 100;
+let maxFrames = 60;
 
 // Easing animation variables
 let easeAng = 0,
@@ -36,12 +36,12 @@ let easeAng = 0,
 	cycleCount = 0,
 	xi = 0,
 	yi = 0,
-	xoff,
-	yoff,
-	axoff,
-	ayoff,
-	sxoff,
-	syoff;
+	xoff = fxrand() * 1000000,
+	yoff = fxrand() * 1000000,
+	axoff = fxrand() * 1000000,
+	ayoff = fxrand() * 1000000,
+	sxoff = fxrand() * 1000000,
+	syoff = fxrand() * 1000000;
 
 // render time
 let elapsedTime = 0;
@@ -52,7 +52,7 @@ let cycle = (maxFrames * particleNum) / 2;
 function setup() {
 	features = $fx.getFeatures();
 
-	pixelDensity(dpi());
+	pixelDensity(dpi(4));
 
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
@@ -60,16 +60,8 @@ function setup() {
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	xRandDivider = random([0.08]);
+	xRandDivider = random([0.1]);
 	yRandDivider = xRandDivider;
-	xoff = fxrand() * 1000000;
-	yoff = fxrand() * 1000000;
-	axoff = fxrand() * 1000000;
-	ayoff = fxrand() * 1000000;
-	sxoff = fxrand() * 1000000;
-	syoff = fxrand() * 1000000;
-	scl1 = 0.0018;
-	scl2 = 0.0018;
 
 	amp1 = 1200;
 	amp2 = 1200;
@@ -140,26 +132,26 @@ function* drawGenerator() {
 }
 
 function INIT(seed) {
-	bgCol = color(0, 0, 10, 50);
+	bgCol = color(0, 0, 10, 20);
 	background(bgCol);
 	let easing = radians(easeAng);
 
 	scl1 = mapValue(cos(easing), -1, 1, 0.0022, 0.0007, true);
 	scl2 = mapValue(cos(easing), -1, 1, 0.0007, 0.0022, true);
 
-	angle1 = parseInt(mapValue(cos(easing), -1, 1, 500, 1600, true));
-	angle2 = parseInt(mapValue(cos(easing), -1, 1, 1600, 500, true));
+	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 500, 1600, true));
+	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1600, 500, true));
 
-	/* 	xi += map(noise(xoff), 0, 0.9, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
-	yi += map(noise(yoff), 0, 0.9, -1 * MULTIPLIER, 1 * MULTIPLIER, true); */
+	/* 	xi += map(noise(xoff), 0, 0.9, -10 * MULTIPLIER, 0 * MULTIPLIER, true);
+	yi += map(noise(yoff), 0, 0.9, -0 * MULTIPLIER, 0 * MULTIPLIER, true); */
 
-	easeAng += 0.12;
+	easeAng += 0.1;
 	xoff += 0.001;
 	yoff += 0.001;
 	axoff += 0.0025;
 	ayoff += 0.0025;
-	sxoff += 0.007;
-	syoff += 0.007;
+	sxoff += 0.0025;
+	syoff += 0.0025;
 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
@@ -179,8 +171,8 @@ function INIT(seed) {
 				initHue,
 				scl1 / MULTIPLIER,
 				scl2 / MULTIPLIER,
-				angle1 * MULTIPLIER,
-				angle2 * MULTIPLIER,
+				amplitude1 * MULTIPLIER,
+				amplitude2 * MULTIPLIER,
 				xMin,
 				xMax,
 				yMin,

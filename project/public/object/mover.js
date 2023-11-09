@@ -26,7 +26,7 @@ class Mover {
 		this.initSat = [0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90][Math.floor(fxrand() * 12)];
 		this.initBri = [40, 60, 70, 70, 80, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
 		this.initAlpha = 1;
-		this.initS = 0.8 * MULTIPLIER;
+		this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = 0;
 		this.bri = 100;
@@ -42,8 +42,8 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = 0.1;
-		this.yRandSkipperVal = 0.1;
+		this.xRandSkipperVal = 0;
+		this.yRandSkipperVal = 0;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -51,8 +51,8 @@ class Mover {
 		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
-		this.borderX = width / 3;
-		this.borderY = height / 3;
+		this.borderX = width / 3.5;
+		this.borderY = height / 2.25;
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
 		this.uvalue = 5;
 	}
@@ -83,8 +83,8 @@ class Mover {
 			fxrand() * (-this.xRandSkipperVal * MULTIPLIER - this.xRandSkipperVal * MULTIPLIER) +
 			this.xRandSkipperVal * MULTIPLIER;
 		this.yRandSkipper =
-			fxrand() * (-this.xRandSkipperVal * MULTIPLIER - this.xRandSkipperVal * MULTIPLIER) +
-			this.xRandSkipperVal * MULTIPLIER;
+			fxrand() * (-this.yRandSkipperVal * MULTIPLIER - this.yRandSkipperVal * MULTIPLIER) +
+			this.yRandSkipperVal * MULTIPLIER;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
@@ -117,7 +117,7 @@ class Mover {
 			abs(this.y - this.centerY - this.borderY)
 		);
 
-		this.a = map(distanceToEdge, 10, 60, 0, 0.2, true);
+		this.a = map(distanceToEdge, 0, 200, 0, 0.1, true);
 	}
 }
 
