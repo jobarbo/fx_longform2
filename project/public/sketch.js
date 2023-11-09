@@ -132,7 +132,7 @@ function* drawGenerator() {
 }
 
 function INIT(seed) {
-	bgCol = color(0, 0, 2, 20);
+	bgCol = color(0, 0, 0, 30);
 	background(bgCol);
 	let easing = radians(easeAng);
 

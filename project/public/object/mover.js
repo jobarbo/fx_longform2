@@ -117,7 +117,7 @@ class Mover {
 			abs(this.y - this.centerY - this.borderY)
 		);
 
-		this.a = map(distanceToEdge, 0, 200, 0, 0.2, true);
+		this.a = map(distanceToEdge, 0, 20, 0, 0.2, true);
 	}
 }
 
@@ -148,8 +148,8 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
-	let u = mapValue(un, -0.5, 0.000000000000015, -1, 3, true);
-	let v = mapValue(vn, -0.000000000000015, 0.5, -3, 1, true);
+	let u = mapValue(un, -0.5, 0.000000000000015, -10, 3, true);
+	let v = mapValue(vn, -0.000000000000015, 0.5, -3, 10, true);
 
 	let p = createVector(u, v);
 	return p;
