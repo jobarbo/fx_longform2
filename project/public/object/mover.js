@@ -25,8 +25,8 @@ class Mover {
 		this.initHue = hue;
 		this.initSat = [0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90][Math.floor(fxrand() * 12)];
 		this.initBri = [40, 60, 70, 70, 80, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
-		this.initAlpha = 1;
-		this.initS = 0.8 * MULTIPLIER;
+		this.initAlpha = 0.2;
+		this.initS = 0.5 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = 0;
 		this.bri = 100;
@@ -91,16 +91,16 @@ class Mover {
 
 		this.x =
 			this.x <= this.centerX - this.borderX
-				? this.centerX + this.borderX + fxrand() * -0.15 * MULTIPLIER
+				? this.centerX + this.borderX
 				: this.x >= this.centerX + this.borderX
-				? this.centerX - this.borderX + fxrand() * 0.15 * MULTIPLIER
+				? this.centerX - this.borderX
 				: this.x;
 
 		this.y =
 			this.y <= this.centerY - this.borderY
-				? this.centerY + this.borderY + fxrand() * -0.15 * MULTIPLIER
+				? this.centerY + this.borderY
 				: this.y >= this.centerY + this.borderY
-				? this.centerY - this.borderY + fxrand() * 0.15 * MULTIPLIER
+				? this.centerY - this.borderY
 				: this.y;
 
 		let pxy = p.x - p.y;
@@ -117,7 +117,7 @@ class Mover {
 			abs(this.y - this.centerY - this.borderY)
 		);
 
-		this.a = map(distanceToEdge, 0, 20, 0, 0.2, true);
+		this.a = map(distanceToEdge, 5, 10, 0, 0.2, true);
 	}
 }
 
@@ -148,8 +148,8 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
-	let u = mapValue(un, -0.5, 0.000000000000015, -10, 3, true);
-	let v = mapValue(vn, -0.000000000000015, 0.5, -3, 10, true);
+	let u = mapValue(un, -0.5, 0.5, -5, 5, true);
+	let v = mapValue(vn, -0.5, 0.5, -5, 5, true);
 
 	let p = createVector(u, v);
 	return p;

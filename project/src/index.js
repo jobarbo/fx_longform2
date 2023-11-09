@@ -1,5 +1,5 @@
-/* console.log(fxhash);
-console.log(fxrand()); */
+console.log(fxhash);
+console.log(fxrand());
 
 const sp = new URLSearchParams(window.location.search);
 //console.log(sp);

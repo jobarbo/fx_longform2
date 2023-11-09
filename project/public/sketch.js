@@ -17,22 +17,21 @@ let yMin;
 let yMax;
 let bgCol;
 let xRandDivider, yRandDivider;
-let hue = Math.random() * 360;
+let hue = fxrand() * 360;
 
 // viewport
-let DEFAULT_SIZE = 800;
+let DEFAULT_SIZE = 600;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
 let startTime;
-let maxFrames = 60;
+let maxFrames = 30;
 
 // Easing animation variables
 let easeAng = 0,
-	easeScalar = 0.001,
-	easeScalar2 = 200,
+	easeScalar = 0.15,
 	cycleCount = 0,
 	xi = 0,
 	yi = 0,
@@ -45,14 +44,14 @@ let easeAng = 0,
 
 // render time
 let elapsedTime = 0;
-let particleNum = 300;
+let particleNum = 1300;
 let drawing = true;
-let cycle = (maxFrames * particleNum) / 1;
+let cycle = (maxFrames * particleNum) / 1.0001;
 
 function setup() {
 	features = $fx.getFeatures();
 
-	pixelDensity(dpi(4));
+	pixelDensity(dpi(5));
 
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
@@ -60,8 +59,8 @@ function setup() {
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	xRandDivider = random([0.1]);
-	yRandDivider = xRandDivider;
+	xRandDivider = random([0.05]);
+	yRandDivider = random([0.05]);
 
 	amp1 = 1200;
 	amp2 = 1200;
@@ -69,7 +68,7 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
 
-	bgCol = color(random(0, 360), 0, 2, 100);
+	bgCol = color(355, 10, 0, 100);
 	background(bgCol);
 
 	INIT(rseed);
@@ -77,8 +76,8 @@ function setup() {
 	// use requestAnimationFrame to call the generator function and pass it the sketch function
 	let sketch = drawGenerator();
 	function animate() {
-		//requestAnimationFrame(animate);
-		setTimeout(animate, 0);
+		requestAnimationFrame(animate);
+		//setTimeout(animate, 0);
 		sketch.next();
 	}
 	animate();
@@ -111,10 +110,11 @@ function* drawGenerator() {
 
 		if (frameCount % maxFrames == 0) {
 			let cosIndex = cos(radians(easeAng));
+
 			if (cosIndex >= 1) {
 				cycleCount += 1;
 			}
-			if (cycleCount < 1) {
+			if (cycleCount < 10) {
 				movers = [];
 				//saveArtwork();
 				elapsedTime = 0;
@@ -133,33 +133,44 @@ function* drawGenerator() {
 
 function INIT(seed) {
 	bgCol = color(0, 0, 0, 30);
+	//	bgCol = color(355, 10, 95, 60);
 	background(bgCol);
 	let easing = radians(easeAng);
 
 	scl1 = mapValue(cos(easing), -1, 1, 0.0022, 0.0007, true);
 	scl2 = mapValue(cos(easing), -1, 1, 0.0007, 0.0022, true);
-
 	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 500, 1600, true));
 	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1600, 500, true));
 
-	/* 	xi += map(noise(xoff), 0, 0.9, -10 * MULTIPLIER, 0 * MULTIPLIER, true);
-	yi += map(noise(yoff), 0, 0.9, -0 * MULTIPLIER, 0 * MULTIPLIER, true); */
+	/* 	scl1 = mapValue(sin(easing), -1, 1, 1, 0.00001, true);
+	scl2 = mapValue(sin(easing), -1, 1, 0.00001, 0.01, true);
 
-	easeAng += 0.07;
+	amplitude1 = parseInt(mapValue(sin(easing), -1, 1, 1, 1, true));
+	amplitude2 = parseInt(mapValue(sin(easing), -1, 1, 1, 1, true)); */
+
+	/* 	xi += mapValue(oct(xoff, yoff, scl1, 1), 0, 1, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
+	yi += mapValue(oct(yoff, xoff, scl2, 1), 0, 1, -1 * MULTIPLIER, 1 * MULTIPLIER, true); */
+
+	easeAng += easeScalar;
 	xoff += 0.001;
 	yoff += 0.001;
 	axoff += 0.0025;
 	ayoff += 0.0025;
 	sxoff += 0.0025;
 	syoff += 0.0025;
-	xMin = -0.01;
-	xMax = 1.01;
-	yMin = -0.01;
-	yMax = 1.01;
+	/* 	xMin = 0.27;
+	xMax = 0.73;
+	yMin = 0.07;
+	yMax = 0.93;
+ */
+	xMin = -0.1;
+	xMax = 1.1;
+	yMin = -0.1;
+	yMax = 1.1;
 
 	for (let i = 0; i < particleNum; i++) {
-		let x = fxrand() * (xMax - xMin) * width;
-		let y = fxrand() * (yMax - yMin) * height;
+		let x = (fxrand() * (xMax - xMin) + xMin) * width;
+		let y = (fxrand() * (yMax - yMin) + yMin) * height;
 		let initHue = hue + fxrand() * 2 - 1;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(
