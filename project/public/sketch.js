@@ -69,7 +69,7 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
 
-	bgCol = color(random(0, 360), 0, 10, 100);
+	bgCol = color(random(0, 360), 0, 2, 100);
 	background(bgCol);
 
 	INIT(rseed);
@@ -132,7 +132,7 @@ function* drawGenerator() {
 }
 
 function INIT(seed) {
-	bgCol = color(0, 0, 10, 20);
+	bgCol = color(0, 0, 2, 20);
 	background(bgCol);
 	let easing = radians(easeAng);
 
