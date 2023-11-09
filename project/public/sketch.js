@@ -47,7 +47,7 @@ let easeAng = 0,
 let elapsedTime = 0;
 let particleNum = 300;
 let drawing = true;
-let cycle = (maxFrames * particleNum) / 2;
+let cycle = (maxFrames * particleNum) / 1;
 
 function setup() {
 	features = $fx.getFeatures();
@@ -145,7 +145,7 @@ function INIT(seed) {
 	/* 	xi += map(noise(xoff), 0, 0.9, -10 * MULTIPLIER, 0 * MULTIPLIER, true);
 	yi += map(noise(yoff), 0, 0.9, -0 * MULTIPLIER, 0 * MULTIPLIER, true); */
 
-	easeAng += 0.1;
+	easeAng += 0.07;
 	xoff += 0.001;
 	yoff += 0.001;
 	axoff += 0.0025;
