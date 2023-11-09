@@ -27,11 +27,11 @@ let DIM;
 let MULTIPLIER;
 
 let startTime;
-let maxFrames = 30;
+let maxFrames = 40;
 
 // Easing animation variables
 let easeAng = 0,
-	easeScalar = 0.15,
+	easeScalar = 0.55,
 	cycleCount = 0,
 	xi = 0,
 	yi = 0,
@@ -59,8 +59,8 @@ function setup() {
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	xRandDivider = random([0.05]);
-	yRandDivider = random([0.05]);
+	xRandDivider = random([0.075]);
+	yRandDivider = random([0.075]);
 
 	amp1 = 1200;
 	amp2 = 1200;
@@ -132,7 +132,7 @@ function* drawGenerator() {
 }
 
 function INIT(seed) {
-	bgCol = color(0, 0, 0, 30);
+	bgCol = color(0, 0, 0, 70);
 	//	bgCol = color(355, 10, 95, 60);
 	background(bgCol);
 	let easing = radians(easeAng);
@@ -158,15 +158,15 @@ function INIT(seed) {
 	ayoff += 0.0025;
 	sxoff += 0.0025;
 	syoff += 0.0025;
-	/* 	xMin = 0.27;
+	xMin = 0.27;
 	xMax = 0.73;
 	yMin = 0.07;
 	yMax = 0.93;
- */
-	xMin = -0.1;
-	xMax = 1.1;
-	yMin = -0.1;
-	yMax = 1.1;
+
+	/* 	xMin = -2.1;
+	xMax = 2.1;
+	yMin = -2.1;
+	yMax = 2.1; */
 
 	for (let i = 0; i < particleNum; i++) {
 		let x = (fxrand() * (xMax - xMin) + xMin) * width;
