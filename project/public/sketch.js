@@ -18,6 +18,8 @@ let moon_radius = 2;
 let stroke_length = 0.15;
 let moon_multiplier = 1.1;
 
+let scl1, scl2, ang1, ang2, scl1Zone, scl2Zone, ang1Zone, ang2Zone;
+
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
@@ -32,7 +34,12 @@ function setup() {
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
 
-	background(160, 3, 95, 100);
+	background(160, 3, 95, 0);
+
+	scl1 = fxrand() * (0.0032 - 0.001) + 0.001;
+	scl2 = fxrand() * (0.0032 - 0.001) + 0.001;
+	ang1 = parseInt(fxrand() * (1500, 2200) + 1500);
+	ang2 = parseInt(fxrand() * (1000, 2200) + 1000);
 
 	origin = new Origin();
 	if (debug) {
@@ -83,11 +90,23 @@ class Moon {
 		this.r = r;
 		this.c = color(0, 0, 0, 100);
 		this.debug = false;
-		this.particleNum = 700;
 		this.graphics = createGraphics(this.r, this.r);
 		this.context = this.graphics.canvas.getContext('2d');
-
-		this.particle_size = 1;
+		this.startTime = frameCount;
+		this.maxFrames = 64 * 120;
+		this.particleNum = (1000 * r) / 10;
+		this.cycle = (this.maxFrames * this.particleNum) / 600;
+		this.drawing = true;
+		this.n_index = [
+			Math.floor(fxrand() * 4),
+			Math.floor(fxrand() * 4),
+			Math.floor(fxrand() * 4),
+			Math.floor(fxrand() * 4),
+			Math.floor(fxrand() * 4),
+			Math.floor(fxrand() * 4),
+			Math.floor(fxrand() * 4),
+			Math.floor(fxrand() * 4),
+		];
 		this.movers = [];
 		this.init();
 	}
@@ -95,7 +114,7 @@ class Moon {
 	init() {
 		console.log('INIT');
 		movers = [];
-
+		seed = random(10000);
 		let xRandDivider = 0.1;
 		let yRandDivider = xRandDivider;
 		let hue = fxrand() * 360;
@@ -105,13 +124,18 @@ class Moon {
 		let yMax = 0.95;
 
 		for (let i = 0; i < this.particleNum; i++) {
-			let x = fxrand() * (xMax - xMin) * width + xMin * width;
-			let y = fxrand() * (yMax - yMin) * height + yMin * height;
+			/* 			let x = fxrand() * (xMax - xMin) * width + xMin * width;
+			let y = fxrand() * (yMax - yMin) * height + yMin * height; */
 
+			// position the particles inside the circle (this.graphics), this.r is the radius of the circle
+			let x = fxrand() * this.r;
+			let y = fxrand() * this.r;
 			let initHue = hue + fxrand() * 2 - 1;
 			initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 			movers.push(
 				new Mover(
+					this.n_index,
+					this.graphics,
 					x,
 					y,
 					initHue,
@@ -135,7 +159,7 @@ class Moon {
 	}
 
 	display() {
-		fill(this.c);
+		noFill();
 		noStroke();
 		ellipse(this.pos.x, this.pos.y, this.r);
 
@@ -143,36 +167,65 @@ class Moon {
 			stroke(0, 0, 0, 100);
 			line(0, 0, this.pos.x, this.pos.y);
 		}
+
 		this.graphics.colorMode(HSB, 360, 100, 100, 100);
+		this.graphics.background(0, 0, 0, 0);
 		this.graphics.noStroke();
+		this.graphics.fill(0, 0, 0, 1);
 		this.graphics.circle(this.r / 2, this.r / 2, this.r);
 		this.context.clip();
-		this.graphics.background(0, 0, 85, 100);
 
-		let h = 50;
-		let s = 0;
-		let b = 50;
-		let vary = 120;
-		for (let i = 0; i < this.particleNum; i++) {
-			let x = random(this.graphics.width);
-			let y = random(this.graphics.height);
+		let sketch = this.drawGenerator();
 
-			/* this.graphics.fill(h + random(-vary, vary), s, b + random(-vary, vary), 2);
+		// use requestAnimationFrame to call the generator function and pass it the sketch function
+		function animate() {
+			//requestAnimationFrame(animate);
+			setTimeout(animate, 0);
+			sketch.next();
 
-			// make particle size relative to the size of the moon (r)
-			this.particle_size = map(this.r, 5, 60, 1, 24);
-			this.graphics.circle(x, y, this.particle_size); */
-
-			const mover = movers[i];
-			mover.show();
-			mover.move();
+			//if done drawing, stop the animation
 		}
+		animate();
+
+		// draw the image to the canvas
 		image(this.graphics, this.pos.x - this.r / 2, this.pos.y - this.r / 2);
+	}
+
+	*drawGenerator() {
+		let count = 0;
+		let frameCount = 0;
+		let draw_every = this.cycle;
+
+		// draw the particles and make them move until draw_every is reached then yield and wait for the next frame, also check if the maxFrames is reached and stop the sketch if it is and also show the loading bar
+		while (true) {
+			for (let i = 0; i < this.particleNum; i++) {
+				const mover = movers[i];
+				mover.show();
+				mover.move();
+				if (count > draw_every) {
+					count = 0;
+					yield;
+				}
+				count++;
+			}
+
+			let elapsedTime = frameCount - this.startTime;
+
+			frameCount++;
+
+			if (elapsedTime > this.maxFrames && this.drawing) {
+				this.drawing = false;
+				// close the generator
+				return;
+			}
+		}
 	}
 }
 
 class Mover {
 	constructor(
+		n_index,
+		graphic,
 		x,
 		y,
 		hue,
@@ -191,13 +244,16 @@ class Mover {
 		ang1Zone,
 		ang2Zone
 	) {
+		this.graphics = graphic;
+		this.ctx = this.graphics.canvas.getContext('2d');
+		this.n_index = n_index;
 		this.x = x;
 		this.y = y;
 		this.initHue = parseInt(hue);
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
-		this.initAlpha = 100;
-		this.initS = 0.5 * MULTIPLIER;
+		this.initAlpha = 0;
+		this.initS = 1 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -218,8 +274,8 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = 0.1;
-		this.yRandSkipperVal = 0.1;
+		this.xRandSkipperVal = 0;
+		this.yRandSkipperVal = 0;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -227,10 +283,10 @@ class Mover {
 		this.xLimit = 0.00015;
 		this.yLimit = 0.00015;
 		this.oct = 6;
-		this.centerX = width / 2;
-		this.centerY = height / 2;
-		this.borderX = width / 2;
-		this.borderY = height / 2.75;
+		this.centerX = this.graphics.width / 2;
+		this.centerY = this.graphics.height / 2;
+		this.borderX = this.graphics.width / 2;
+		this.borderY = this.graphics.height / 2.75;
 		this.uvalue = 4;
 		this.isBordered = true;
 
@@ -239,36 +295,39 @@ class Mover {
 		this.scl1Zone = scl1Zone;
 		this.scl2Zone = scl2Zone;
 
+		// make the limit relative to the radius of the circle
+		this.distLimit = this.graphics.width * 2;
+
 		this.ns = 0.5;
 	}
 
 	show() {
-		// draw a pixel
-		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
-		drawingContext.fillRect(this.x, this.y, this.s, this.s);
+		// draw a pixel using drawingContext but it need to be inside this.graphics
+
+		/* 		this.graphics.noStroke();
+		this.graphics.circle(this.graphics.width / 2 - 2, this.graphics.height / 2, 10); */
+		this.graphics.fill(this.hue, this.sat, this.bri, this.a);
+
+		this.graphics.rect(this.x, this.y, this.s, this.s);
 	}
 
 	move() {
 		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
 		// the sdf_box function returns the distance from the particle to the chosen location.
 		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
-		let distFromCenter = sdf_box(
-			[this.x, this.y],
-			[this.centerX, height - 2000 * MULTIPLIER],
-			[4000 * MULTIPLIER, 40 * MULTIPLIER]
-		);
-		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY + 1700 * MULTIPLIER], 2200 * MULTIPLIER);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, this.centerY], [10 * MULTIPLIER, 1 * MULTIPLIER]);
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], this.distLimit * MULTIPLIER);
 		// smoothstep the distance from the particle to the chosen location.
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = parseInt(
+		/* 		this.ang1 = parseInt(
 			mapValue(distCircle, -100 * MULTIPLIER, 700 * MULTIPLIER, -this.ang1Init / 3, this.ang1Init * 4)
 		);
 		this.ang2 = parseInt(
 			mapValue(distCircle, -100 * MULTIPLIER, 700 * MULTIPLIER, -this.ang2Init / 3, this.ang2Init * 4)
 		);
 		this.scl1 = map(distCircle, -700 * MULTIPLIER, 200 * MULTIPLIER, -this.scl1Init * 3, this.scl1Init, true);
-		this.scl2 = map(distCircle, -700 * MULTIPLIER, 200 * MULTIPLIER, -this.scl2Init * 3, this.scl2Init, true);
+		this.scl2 = map(distCircle, -700 * MULTIPLIER, 200 * MULTIPLIER, -this.scl2Init * 3, this.scl2Init, true); */
 
 		//this.oct = parseInt(map(distCircle, 0, 1, 1, 6, true));
 
@@ -279,29 +338,27 @@ class Mover {
 		this.scl1 = map(distFromCenter, 0, this.scl1Zone, this.scl1Init / 1000, this.scl1Init * 3, true);
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, this.scl2Init / 1000, this.scl2Init * 3, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.ns);
-		this.xRandDivider = fxrand() * 6;
-		this.yRandDivider = fxrand() * 6;
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.ns, this.n_index);
+		this.xRandDivider = fxrand() * 2;
+		this.yRandDivider = fxrand() * 2;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
+
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
-		if (this.x < (this.xMin - this.xLimit) * width) {
-			this.x = (this.xMax + this.xLimit) * width;
-		}
-		if (this.x > (this.xMax + this.xLimit) * width) {
-			this.x = (this.xMin - this.xLimit) * width;
-		}
-		if (this.y < (this.yMin - this.yLimit) * height) {
-			this.y = (this.yMax + this.yLimit) * height;
-		}
-		if (this.y > (this.yMax + this.yLimit) * height) {
-			this.y = (this.yMin - this.yLimit) * height;
-		}
+		this.a = map(distCircle, -this.distLimit / 2, -this.distLimit / 35, 100, 0, true);
+
+		/* 		if (this.isBordered) {
+			if (distCircle > fxrand() * 8 - 4) {
+				let r = fxrand() * 2 * PI;
+				this.x = this.centerX + cos(r) * random(this.distLimit - 4, this.distLimit + 4);
+				this.y = this.centerY + sin(r) * random(this.distLimit - 4, this.distLimit + 4);
+			}
+		} */
 	}
 }
 
-function superCurve(x, y, scl1, scl2, ang1, ang2, octave, ns) {
+function superCurve(x, y, scl1, scl2, ang1, ang2, octave, ns, ni) {
 	let nx = x,
 		ny = y,
 		a1 = ang1,
@@ -309,26 +366,27 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave, ns) {
 		scale1 = scl1,
 		scale2 = scl2,
 		noiseSpeed = ns,
+		noise_index = ni,
 		dx,
 		dy;
 
-	dx = oct(nx, ny, scale1, 0, octave);
-	dy = oct(nx, ny, scale2, 2, octave);
+	dx = oct(nx, ny, scale1, noise_index[0], octave);
+	dy = oct(nx, ny, scale2, noise_index[1], octave);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 1, octave);
-	dy = oct(nx, ny, scale2, 3, octave);
+	dx = oct(nx, ny, scale1, noise_index[2], octave);
+	dy = oct(nx, ny, scale2, noise_index[3], octave);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 1, octave);
-	dy = oct(nx, ny, scale2, 2, octave);
+	dx = oct(nx, ny, scale1, noise_index[4], octave);
+	dy = oct(nx, ny, scale2, noise_index[5], octave);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 3, octave);
-	let vn = oct(nx, ny, scale2, 2, octave);
+	let un = oct(nx, ny, scale1, noise_index[6], octave);
+	let vn = oct(nx, ny, scale2, noise_index[7], octave);
 
 	/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
 	let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
