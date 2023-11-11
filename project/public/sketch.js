@@ -63,17 +63,25 @@ function draw() {
  */
 function INIT(seed) {
 	movers = [];
-	/* 	scl1 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
+	scl1 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
 	scl2 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
-	scl3 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]); */
+	scl3 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
 
-	scl1 = 0.001;
-	scl2 = 0.001;
-	scl3 = 0.001;
+	console.log('scl1', scl1);
+	console.log('scl2', scl2);
+	console.log('scl3', scl3);
+
+	/* 	scl1 = 0.01;
+	scl2 = 0.005;
+	scl3 = 0.01; */
+
+	/* 	scl1 = 0.0025;
+	scl2 = 0.0005;
+	scl3 = 0.0075; */
 
 	let hue = random(360);
 
-	let sclOffset1 = 10;
+	let sclOffset1 = 1;
 	let sclOffset2 = 1;
 	let sclOffset3 = 1;
 
@@ -89,10 +97,10 @@ function INIT(seed) {
 	xMax = 1;
 	yMin = 0.000001;
 	yMax = 1;
-	xMin = 0.4;
+	/* 	xMin = 0.4;
 	xMax = 0.6;
-	yMin = 0.1;
-	yMax = 0.9;
+	yMin = 0.4;
+	yMax = 0.6; */
 
 	for (let i = 0; i < 300000; i++) {
 		// distribue the movers within a circle using polar coordinates
