@@ -34,7 +34,7 @@ class Mover {
 		this.sclOffset2 = sclOffset2;
 		this.sclOffset3 = sclOffset3;
 		this.seed = seed;
-		this.xRandDivider = 0.001;
+		this.xRandDivider = 0.01;
 		this.yRandDivider = 0.01;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
