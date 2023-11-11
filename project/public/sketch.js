@@ -89,10 +89,10 @@ function INIT(seed) {
 	xMax = 1;
 	yMin = 0.000001;
 	yMax = 1;
-	/* 	xMin = 0.000001;
-	xMax = 1;
+	xMin = 0.4;
+	xMax = 0.6;
 	yMin = 0.1;
-	yMax = 0.9; */
+	yMax = 0.9;
 
 	for (let i = 0; i < 300000; i++) {
 		// distribue the movers within a circle using polar coordinates
