@@ -6,7 +6,7 @@ class Mover {
 		this.sat = 50;
 		this.bri = random(0, 30);
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 1;
+		this.s = 0.3;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.seed = seed;
@@ -29,7 +29,7 @@ class Mover {
 
 		this.x += p.x / 0.01 + random(-0.1, 0.1);
 		this.y += p.y / 0.15 + random(-0.1, 0.1);
-		this.s += map(p.x, -4, 4, -0.01, 0.01);
+		//this.s += map(p.x, -4, 4, -0.01, 0.01);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
@@ -46,19 +46,19 @@ class Mover {
 		} else if (this.bri < 0) {
 			this.bri = 0;
 		} */
-		if (this.s < 1) {
+		/* 		if (this.s < 1) {
 			this.s = 1;
 		}
 		if (this.s > 10) {
 			this.s = 10;
-		}
+		} */
 	}
 }
 
 function superCurve(x, y, scl1, scl2, seed) {
-	noiseDetail(2);
-	let u = map(noise(x * scl1, y * scl2, seed), 0, 0.8, -10, 15);
-	let v = map(noise(x * scl1, y * scl2, seed), 0.2, 1, -15, 13);
+	noiseDetail(1);
+	let u = map(noise(x * scl1, y * scl1, seed), 0, 0.8, -10, 15, true);
+	let v = map(noise(y * scl2, x * scl2, seed), 0.2, 1, -15, 13, true);
 	//let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
 	//let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) - sin(x * scl2 * 0.2 + seed);
 	let p = createVector(u, v);

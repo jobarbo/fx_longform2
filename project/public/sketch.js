@@ -18,9 +18,9 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(1.0);
+		pixelDensity(3.0);
 	}
-	createCanvas(16 * 200, 22 * 200);
+	createCanvas(8 * 200, 11 * 200);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -49,10 +49,10 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = 0.0012;
+	scl1 = 0.0022;
 	scl2 = scl1;
 	let hue = random(360);
-	for (let i = 0; i < 300000; i++) {
+	for (let i = 0; i < 800000; i++) {
 		let x = random(-0.1, 1.1) * width;
 		let y = random(-0.1, 1.1) * height;
 		movers.push(new Mover(x, y, hue, scl1, scl2, seed));
