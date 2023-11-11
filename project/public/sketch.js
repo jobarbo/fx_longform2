@@ -43,12 +43,14 @@ function setup() {
 }
 
 function draw() {
+	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
-		for (let t = 0; t < 1; t++) {
+		if (frameCount > 1) {
 			movers[i].show();
-			movers[i].move();
 		}
+		movers[i].move();
 	}
+	blendMode(BLEND);
 	if (frameCount > 1500) {
 		console.log('done');
 		noLoop();
@@ -67,9 +69,9 @@ function INIT(seed) {
 
 	let hue = random(360);
 
-	let sclOffset1 = 4;
-	let sclOffset2 = 4;
-	let sclOffset3 = 4;
+	let sclOffset1 = 1;
+	let sclOffset2 = 1;
+	let sclOffset3 = 1;
 
 	console.log('sclOffset1', sclOffset1);
 	console.log('sclOffset2', sclOffset2);
@@ -79,16 +81,16 @@ function INIT(seed) {
 	console.log('scl2', scl2);
 	console.log('scl3', scl3);
 
-	xMin = 0.05;
-	xMax = 0.95;
-	yMin = 0.05;
-	yMax = 0.95;
-	/* 	xMin = -0.01;
-	xMax = 1.01;
-	yMin = -0.01;
-	yMax = 1.01; */
+	/* 	xMin = 0.000001;
+	xMax = 1;
+	yMin = 0.000001;
+	yMax = 1; */
+	xMin = 0.000001;
+	xMax = 1;
+	yMin = 0.1;
+	yMax = 0.9;
 
-	for (let i = 0; i < 152000; i++) {
+	for (let i = 0; i < 300000; i++) {
 		// distribue the movers within a circle using polar coordinates
 		/* 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
@@ -122,6 +124,6 @@ function INIT(seed) {
 			)
 		);
 	}
-	let bgCol = spectral.mix('#000', '#fff', 0.038);
+	let bgCol = spectral.mix('#000', '#fff', 0.08);
 	background(bgCol);
 }

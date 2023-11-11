@@ -20,13 +20,13 @@ class Mover {
 		this.y = y;
 		this.initHue = hue;
 		this.initSat = random([0, 0, 5, 10]);
-		this.initBri = random([70, 80, 90, 100]);
+		this.initBri = random([0, 10, 20, 30, 40]);
 		this.initAlpha = random(60, 100);
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
-		this.a = 60;
-		this.s = random([0.5]);
+		this.a = 100;
+		this.s = random([0.55]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -34,7 +34,7 @@ class Mover {
 		this.sclOffset2 = sclOffset2;
 		this.sclOffset3 = sclOffset3;
 		this.seed = seed;
-		this.xRandDivider = 0.01;
+		this.xRandDivider = 0.001;
 		this.yRandDivider = 0.01;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
@@ -179,16 +179,16 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = -1;
 
 	//! Introverted
-	/* 	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true); */
-	/* 	let v = map(un, map(ny, 0, height, -4, -0.001), map(ny, 0, height, 0.001, 4), minV, maxV, true); */
+	let u = map(vn, map(nx, 0, width, -5.4, -0.0001), map(nx, 0, width, 0.0001, 5.4), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -5.4, -0.0001), map(ny, 0, height, 0.0001, 5.4), minV, maxV, true);
 
 	//! Extroverted
-	/* 	let u = map(vn, map(ny, 0, width, -4, -0.001), map(ny, 0, width, 0.001, 4), minU, maxU, true);
-	let v = map(un, map(nx, 0, height, -4, -0.001), map(nx, 0, height, 0.001, 4), minV, maxV, true); */
+	/* 	let u = map(vn, map(ny, 0, width, -5.4, -0.0001), map(ny, 0, width, 0.0001, 5.4), minU, maxU, true);
+	let v = map(un, map(nx, 0, height, -5.4, -0.0001), map(nx, 0, height, 0.0001, 5.4), minV, maxV, true); */
 
 	//! Equilibrium
-	let u = map(vn, -0.0001, 0.0001, minU, maxU, true);
-	let v = map(un, -0.0001, 0.0001, minV, maxV, true);
+	/* 	let u = map(vn, -0.5, 0.5, minU, maxU, true);
+	let v = map(un, -0.5, 0.5, minV, maxV, true); */
 
 	let p = createVector(u, v);
 	return p;
