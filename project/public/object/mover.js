@@ -119,9 +119,9 @@ class Mover {
 		this.x += this.speedX;
 		this.y += this.speedY;
 
-		//!complexion standard
-		this.s = mapValue(this.speed, 0, 2.01, this.initS * 2, this.initS, true);
-		this.a = mapValue(this.speed, 2, 2.01, 70, 100, true);
+		//!complexion standard (vegetation variant)
+		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
+		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true);
 
 		//!complexion inverser (goldenfold variant)
 		/* 	this.s = mapValue(this.speed, 0, 2.01, this.initS / 2, this.initS * 2, true);
@@ -137,6 +137,17 @@ class Mover {
 			this.sat = this.initSat;
 			this.bri = this.initBri;
 		} */
+
+		//!vegetation variant
+		if (this.speed < 1) {
+			this.hue = random(25, 125);
+			this.sat = this.initSat + random(50, 80);
+			this.bri = this.initBri + random(-30, 10);
+		} else {
+			this.hue = this.initHue;
+			this.sat = this.initSat;
+			this.bri = this.initBri;
+		}
 
 		//!black variant
 		/* 		this.sat = map(this.speed, 1, 1.01, this.initSat + 80, this.initSat, true);
