@@ -5,14 +5,14 @@ class Mover {
 		this.initHue = hue;
 		this.initSat = [0, 10, 20, 30, 40, 40, 60, 80, 80, 90, 100][Math.floor(fxrand() * 11)];
 		this.initBri = [0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100][Math.floor(fxrand() * 11)];
-		this.initAlpha = 60;
-		this.initS = 1 * MULTIPLIER;
+		this.initAlpha = 100;
+		this.initS = 0.75 * MULTIPLIER;
 		//this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = 20;
+		this.hueStep = 10;
 		this.satStep = 1;
 		this.briStep = 1;
 		this.s = this.initS;
@@ -30,7 +30,7 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.oct = 1;
+		this.oct = features.complexity;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX = width / 2;

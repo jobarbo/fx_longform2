@@ -1,6 +1,6 @@
-new Q5('global');
+//new Q5('global');
 
-console.log(fxrand);
+let features;
 
 let movers = [];
 let scl1;
@@ -34,8 +34,11 @@ let renderMode = 1;
 let cycle = (maxFrames * particleNum) / 170;
 
 function setup() {
+	features = $fx.getFeatures();
+	console.log(features);
+
 	console.time('setup');
-	//pixelDensity(dpi(1));
+	pixelDensity(dpi(1));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * 3);
@@ -50,7 +53,6 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
-	console.log(cycle);
 	INIT();
 	let sketch = drawGenerator();
 
@@ -102,7 +104,6 @@ function* drawGenerator() {
 //////////////////////////////////////////////////////
 
 function INIT() {
-	console.log('INIT');
 	let hue = random(360);
 	let bgCol = color(random(0, 360), random([0, 2, 5]), 95, 100);
 
@@ -114,8 +115,6 @@ function INIT() {
 	scl2 = random(0.0001, 0.002);
 	ang1 = Math.floor(fxrand() * 10);
 	ang2 = Math.floor(fxrand() * 10);
-
-	console.log(ang1, ang2);
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
@@ -157,7 +156,7 @@ function INIT() {
 
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
-	console.log('drawTexture');
+
 	for (let i = 0; i < 600000; i++) {
 		let x = fxrand() * width;
 		let y = fxrand() * height;
