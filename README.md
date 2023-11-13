@@ -21,7 +21,7 @@ A boilerplate to automate and ease the creation of Generative Tokens on fx(hash)
 - clone submodule: `git submodule update --recursive --remote`
 - Install dependencies and fx(lens): `npm install`
 
-## Start developing your token project
+## Start developing your project
 
 - `npm start`: Starts a local http server serving your project within fxlens and hot reloading enabled
 - Your browser should open automatically otherwise visit `http://localhost:3000/?target=http://localhost:3301/` to see your project in the browser
@@ -31,14 +31,13 @@ A boilerplate to automate and ease the creation of Generative Tokens on fx(hash)
 - `npm start`: Starts a local http server serving your project within fxlens and hot reloading enabled
 - Your browser should open automatically otherwise visit `http://localhost:3000/?target=http://localhost:3301/` to see your project in the browser
 
-## Start your project with fx(lens)
+## Start your project on a local environment
 
 The fx(lens) offers an interactive environment to tweak and develop your generative token project.
 
 - `npm start`: Starts two local http server
   - `localhost:3301` serves your project with live reloading
-  - `localhost:3300` serves fx(lens) you can connect to a token
-- Visìt `http://localhost:3300/?target=http://localhost:3301` to see your local project within fx(lens)
+- Visìt `http://localhost:3301` to see your local project within fx(lens)
 
 ## Publish your project
 
