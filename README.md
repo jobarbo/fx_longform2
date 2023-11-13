@@ -1,6 +1,6 @@
-> **⚠️ Disclaimer**: For Pipemind
->
-> # fx(hash) boilerplate 2.0
+> **⚠️ Disclaimer**:This part is for Pipemind
+
+# fx(hash) boilerplate for generative project
 
 A boilerplate to automate and ease the creation of Generative Tokens on fx(hash) using fx(params).
 
@@ -48,7 +48,7 @@ Go to https://fxhash.xyz/sandbox/ and upload the project.zip file in there to se
 
 Finally, you can mint your token using the same `project.zip` file.
 
-> **⚠️ Disclaimer**: Here's the fx(hash part of the readme)
+> **⚠️ Disclaimer**: This part is for publishing on the fx(hash) platform
 
 # fx(hash) boilerplate 2.0
 
