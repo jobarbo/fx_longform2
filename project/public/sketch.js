@@ -89,7 +89,6 @@ function setup() {
 		// push to movers array
 		movers_pos.push({x, y});
 	}
-	console.log(movers_pos);
 
 	INIT(rseed);
 
