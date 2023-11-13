@@ -18,6 +18,8 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
+
+	background(0, 20, 100);
 }
 
 function draw() {
