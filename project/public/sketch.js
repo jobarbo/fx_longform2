@@ -65,6 +65,8 @@ function setup() {
 
 	amp1 = 1200;
 	amp2 = 1200;
+	scl1 = 0.0001;
+	scl2 = 0.0001;
 
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
@@ -169,14 +171,16 @@ function INIT(seed) {
 
 	xi += mapValue(oct(xoff, yoff, scl1, 1), 0, 1, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
 	yi += mapValue(oct(yoff, xoff, scl2, 1), 0, 1, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
+	/* 	scl1 += mapValue(oct(sxoff, syoff, scl1, 1), 0, 1, -0.00001 * MULTIPLIER, 0.00001 * MULTIPLIER, true);
+	scl2 += mapValue(oct(syoff, sxoff, scl2, 1), 0, 1, -0.00001 * MULTIPLIER, 0.00001 * MULTIPLIER, true); */
 
 	easeAng += easeScalar;
-	xoff += 0.001;
-	yoff += 0.001;
-	axoff += 0.0025;
-	ayoff += 0.0025;
-	sxoff += 0.0025;
-	syoff += 0.0025;
+	xoff += 0.0001;
+	yoff += 0.0001;
+	axoff += 0.00025;
+	ayoff += 0.00025;
+	sxoff += 0.00025;
+	syoff += 0.00025;
 
 	for (let i = 0; i < particleNum; i++) {
 		/* 		let x = (fxrand() * (xMax - xMin) + xMin) * width;
