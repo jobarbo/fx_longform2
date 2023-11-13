@@ -1,5 +1,5 @@
 //new Q5('global');
-
+console.log(fxhash);
 let features;
 
 let movers = [];
@@ -31,7 +31,8 @@ let particleNum = 800000;
 //let particleNum = 400000;
 let drawing = true;
 let renderMode = 1;
-let cycle = (maxFrames * particleNum) / 170;
+let cycle = parseInt((maxFrames * particleNum) / 170);
+console.log(cycle);
 
 function setup() {
 	features = $fx.getFeatures();
