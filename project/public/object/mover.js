@@ -22,6 +22,8 @@ class Mover {
 		this.y = y;
 		this.xi = xi;
 		this.yi = yi;
+		this.prevX = x;
+		this.prevY = y;
 		this.initHue = hue;
 		this.initSat = [0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90][Math.floor(fxrand() * 12)];
 		this.initBri = [40, 60, 70, 70, 80, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
@@ -40,6 +42,7 @@ class Mover {
 		this.seed = seed;
 		this.xRandDivider = xRandDivider;
 		this.yRandDivider = yRandDivider;
+
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperVal = 0;
@@ -61,9 +64,19 @@ class Mover {
 		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
 		drawingContext.strokeStyle = 'transparent';
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
+
+		// draw a line from the previous position to the current position
+		/* 		drawingContext.beginPath();
+		drawingContext.lineWidth = 1;
+		drawingContext.strokeStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
+		drawingContext.moveTo(this.prevX, this.prevY);
+		drawingContext.lineTo(this.x, this.y);
+		drawingContext.stroke(); */
 	}
 
 	move() {
+		this.prevX = this.x;
+		this.prevY = this.y;
 		let p = superCurve(
 			this.x,
 			this.y,
@@ -78,7 +91,8 @@ class Mover {
 			this.clampvaluearray,
 			this.uvalue
 		);
-
+		/* 		this.xRandDivider = fxrand() * 4 + 0.000000000001;
+		this.yRandDivider = fxrand() * 4 + 0.000000000001; */
 		this.xRandSkipper =
 			fxrand() * (-this.xRandSkipperVal * MULTIPLIER - this.xRandSkipperVal * MULTIPLIER) +
 			this.xRandSkipperVal * MULTIPLIER;
@@ -148,8 +162,8 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
-	let u = mapValue(un, -0.5, 0.5, -5, 5, true);
-	let v = mapValue(vn, -0.5, 0.5, -5, 5, true);
+	let u = mapValue(un, -0.0000000015, 0.5, -2, 1, true);
+	let v = mapValue(vn, -0.5, 0.0000000015, -1, 2, true);
 
 	let p = createVector(u, v);
 	return p;

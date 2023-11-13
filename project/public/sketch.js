@@ -5,6 +5,7 @@ F = (N, f) => [...Array(N)].map((_, i) => f(i));
 // particles variables setup
 let features = '';
 let movers = [];
+let movers_pos = [];
 let scl1;
 let scl2;
 let amp1;
@@ -71,6 +72,25 @@ function setup() {
 	bgCol = color(355, 10, 0, 100);
 	background(bgCol);
 
+	/* 	xMin = 0.22;
+	xMax = 0.78;
+	yMin = 0.06;
+	yMax = 0.94; */
+
+	/* 	xMin = -2.1;
+	xMax = 2.1;
+	yMin = -2.1;
+	yMax = 2.1; */
+	for (let i = 0; i < particleNum; i++) {
+		/* 		let x = (fxrand() * (xMax - xMin) + xMin) * width;
+		let y = (fxrand() * (yMax - yMin) + yMin) * height; */
+		let x = fxrand() * width;
+		let y = fxrand() * height;
+		// push to movers array
+		movers_pos.push({x, y});
+	}
+	console.log(movers_pos);
+
 	INIT(rseed);
 
 	// use requestAnimationFrame to call the generator function and pass it the sketch function
@@ -132,7 +152,7 @@ function* drawGenerator() {
 }
 
 function INIT(seed) {
-	bgCol = color(0, 0, 0, 70);
+	bgCol = color(0, 0, 0, 100);
 	//	bgCol = color(355, 10, 95, 60);
 	background(bgCol);
 	let easing = radians(easeAng);
@@ -148,8 +168,8 @@ function INIT(seed) {
 	amplitude1 = parseInt(mapValue(sin(easing), -1, 1, 1, 1, true));
 	amplitude2 = parseInt(mapValue(sin(easing), -1, 1, 1, 1, true)); */
 
-	/* 	xi += mapValue(oct(xoff, yoff, scl1, 1), 0, 1, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
-	yi += mapValue(oct(yoff, xoff, scl2, 1), 0, 1, -1 * MULTIPLIER, 1 * MULTIPLIER, true); */
+	xi += mapValue(oct(xoff, yoff, scl1, 1), 0, 1, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
+	yi += mapValue(oct(yoff, xoff, scl2, 1), 0, 1, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
 
 	easeAng += easeScalar;
 	xoff += 0.001;
@@ -158,19 +178,13 @@ function INIT(seed) {
 	ayoff += 0.0025;
 	sxoff += 0.0025;
 	syoff += 0.0025;
-	xMin = 0.27;
-	xMax = 0.73;
-	yMin = 0.07;
-	yMax = 0.93;
-
-	/* 	xMin = -2.1;
-	xMax = 2.1;
-	yMin = -2.1;
-	yMax = 2.1; */
 
 	for (let i = 0; i < particleNum; i++) {
-		let x = (fxrand() * (xMax - xMin) + xMin) * width;
-		let y = (fxrand() * (yMax - yMin) + yMin) * height;
+		/* 		let x = (fxrand() * (xMax - xMin) + xMin) * width;
+		let y = (fxrand() * (yMax - yMin) + yMin) * height; */
+
+		let x = movers_pos[i].x;
+		let y = movers_pos[i].y;
 		let initHue = hue + fxrand() * 2 - 1;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(
