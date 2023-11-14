@@ -1,3 +1,6 @@
+let config_type = parseInt(fxrand() * 3 + 1);
+console.log(config_type);
+
 let features = '';
 let movers = [];
 let scl1;

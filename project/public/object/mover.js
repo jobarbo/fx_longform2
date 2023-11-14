@@ -83,34 +83,35 @@ class Mover {
 			this.uvalue
 		);
 
-		//! STARMAP CONFIGURATION
-		this.uvalue[0] *= 1.013;
-		this.uvalue[1] *= 1.013;
-		this.uvalue[2] *= 1.013;
-		this.uvalue[3] *= 1.013;
+		if (config_type === 1) {
+			//! STARMAP CONFIGURATION
+			this.uvalue[0] *= 1.013;
+			this.uvalue[1] *= 1.013;
+			this.uvalue[2] *= 1.013;
+			this.uvalue[3] *= 1.013;
 
-		this.nvalue[0] -= 0.005;
-		this.nvalue[1] -= 0.005;
-		this.nvalue[2] -= 0.005;
-		this.nvalue[3] -= 0.005;
+			this.nvalue[0] -= 0.005;
+			this.nvalue[1] -= 0.005;
+			this.nvalue[2] -= 0.005;
+			this.nvalue[3] -= 0.005;
+		} else if (config_type === 2) {
+			//! Equilibrium CONFIGURATION
+			this.uvalue[0] *= 1.015;
+			this.uvalue[1] *= 1.015;
+			this.uvalue[2] *= 1.015;
+			this.uvalue[3] *= 1.015;
 
-		//! Equilibrium CONFIGURATION
-		/* 		this.uvalue[0] *= 1.015;
-		this.uvalue[1] *= 1.015;
-		this.uvalue[2] *= 1.015;
-		this.uvalue[3] *= 1.015;
-
-		this.nvalue[0] -= 0.015;
-		this.nvalue[1] -= 0.015;
-		this.nvalue[2] -= 0.015;
-		this.nvalue[3] -= 0.015; */
-
-		//! ORIGINAL CONFIGURATION
-		/* 		this.uvalue[0] += 1;
-		this.uvalue[1] += 1;
-		this.uvalue[2] += 1;
-		this.uvalue[3] += 1; */
-
+			this.nvalue[0] -= 0.015;
+			this.nvalue[1] -= 0.015;
+			this.nvalue[2] -= 0.015;
+			this.nvalue[3] -= 0.015;
+		} else if (config_type === 3) {
+			//! ORIGINAL CONFIGURATION
+			this.uvalue[0] += 1;
+			this.uvalue[1] += 1;
+			this.uvalue[2] += 1;
+			this.uvalue[3] += 1;
+		}
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 
@@ -176,8 +177,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, nvalue, uvalue) 
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
-	let u = mapValue(un, -nvalue[0], nvalue[1], -uvalue[0], uvalue[1], true);
-	let v = mapValue(vn, -nvalue[2], nvalue[3], -uvalue[2], uvalue[3], true);
+	let u = pmap(un, -nvalue[0], nvalue[1], -uvalue[0], uvalue[1], true);
+	let v = pmap(vn, -nvalue[2], nvalue[3], -uvalue[2], uvalue[3], true);
 
 	let p = createVector(u, v);
 	return p;
