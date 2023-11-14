@@ -67,7 +67,7 @@ function setup() {
 
 	// create a bghue variable that is a random number between 30 and 50
 	let bghue = parseInt(fxrand() * (50 - 30) + 30);
-	let bgsat = parseInt(fxrand() * (10 - 1) + 1);
+	let bgsat = parseInt(fxrand() * (15 - 5) + 5);
 	let bgbri = 95;
 	let bga = 100;
 	console.log(bghue, bgsat, bgbri, bga);

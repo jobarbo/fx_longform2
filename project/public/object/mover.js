@@ -120,15 +120,19 @@ class Mover {
 		this.y += this.speedY;
 
 		//!complexion standard (vegetation variant)
-		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
-		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true);
+		/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
+		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
 
 		//!complexion inverser (goldenfold variant)
-		/* 	this.s = mapValue(this.speed, 0, 2.01, this.initS / 2, this.initS * 2, true);
-		this.a = mapValue(this.speed, 2, 2.01, 100, 70, true); */
+		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
+		this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
+
+		//!complexion inverser (malachite variant)
+		/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
+		this.a = mapValue(this.speed, 2, 2.01, 100, 10, true); */
 
 		//!goldenfold variant
-		/* 		if (this.speed < 1) {
+		if (this.speed < 1) {
 			this.hue = 35;
 			this.sat = this.initSat + 80;
 			this.bri = this.initBri + 30;
@@ -136,10 +140,21 @@ class Mover {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
 			this.bri = this.initBri;
+		}
+
+		//!malachite variant
+		/* 		if (this.speed < 1) {
+			this.hue = random(100, 220);
+			this.sat = this.initSat + 80;
+			this.bri = this.initBri + random(-20, 30);
+		} else {
+			this.hue = this.initHue;
+			this.sat = this.initSat;
+			this.bri = this.initBri;
 		} */
 
 		//!vegetation variant
-		if (this.speed < 1) {
+		/* 		if (this.speed < 1) {
 			this.hue = random(25, 125);
 			this.sat = this.initSat + random(50, 80);
 			this.bri = this.initBri + random(-30, 10);
@@ -147,7 +162,7 @@ class Mover {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
 			this.bri = this.initBri;
-		}
+		} */
 
 		//!black variant
 		/* 		this.sat = map(this.speed, 1, 1.01, this.initSat + 80, this.initSat, true);
