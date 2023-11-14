@@ -63,7 +63,13 @@ class Mover {
 	show() {
 		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
 		drawingContext.strokeStyle = 'transparent';
-		drawingContext.fillRect(this.x, this.y, this.s, this.s);
+		//drawingContext.fillRect(this.x, this.y, this.s, this.s);
+
+		// make it a circle using vanilla js
+
+		drawingContext.beginPath();
+		drawingContext.arc(this.x, this.y, this.s / 2, 0, 2 * Math.PI);
+		drawingContext.fill();
 
 		// draw a line from the previous position to the current position
 		/* 		drawingContext.beginPath();
