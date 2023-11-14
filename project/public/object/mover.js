@@ -145,18 +145,3 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave) {
 	//let p = createVector(u, v);
 	return {x: u, y: v};
 }
-let R = (a = 1) => Math.random() * a;
-let L = (x, y) => (x * x + y * y) ** 0.5; // Elements by Euclid 300 BC
-let k = (a, b) => (a > 0 && b > 0 ? L(a, b) : a > b ? a : b);
-
-function sdf_box([x, y], [cx, cy], [w, h]) {
-	x -= cx;
-	y -= cy;
-	return k(abs(x) - w, abs(y) - h);
-}
-
-function sdf_circle([x, y], [cx, cy], r) {
-	x -= cx;
-	y -= cy;
-	return L(x, y) - r;
-}
