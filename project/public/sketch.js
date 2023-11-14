@@ -175,8 +175,8 @@ function INIT(seed) {
 
 	scl1 = mapValue(cos(easing), -1, 1, 0.0025, 0.005, true);
 	scl2 = mapValue(cos(easing), -1, 1, 0.005, 0.0025, true);
-	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 500, 100, true));
-	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 100, 500, true));
+	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 200, 1, true));
+	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1, 200, true));
 
 	/* 	scl1 = mapValue(sin(easing), -1, 1, 1, 0.00001, true);
 	scl2 = mapValue(sin(easing), -1, 1, 0.00001, 0.01, true);
