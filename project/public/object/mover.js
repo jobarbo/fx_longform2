@@ -22,11 +22,13 @@ class Mover {
 		this.y = y;
 		this.xi = xi;
 		this.yi = yi;
+		this.prevX = x;
+		this.prevY = y;
 		this.initHue = hue;
 		this.initSat = [0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90][Math.floor(fxrand() * 12)];
 		this.initBri = [40, 60, 70, 70, 80, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
-		this.initAlpha = 0.2;
-		this.initS = 0.7 * MULTIPLIER;
+		this.initAlpha = 100;
+		this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = 0;
 		this.bri = 100;
@@ -40,6 +42,7 @@ class Mover {
 		this.seed = seed;
 		this.xRandDivider = xRandDivider;
 		this.yRandDivider = yRandDivider;
+
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperVal = 0;
@@ -51,19 +54,37 @@ class Mover {
 		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
-		this.borderX = width / 3.5;
-		this.borderY = height / 2.25;
+		this.borderX = width / 1.75;
+		this.borderY = height / 1.75;
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
 		this.uvalue = 5;
 	}
 
 	show() {
-		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
+		/* 		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
 		drawingContext.strokeStyle = 'transparent';
-		drawingContext.fillRect(this.x, this.y, this.s, this.s);
+		drawingContext.fillRect(this.x, this.y, this.s, this.s); */
+
+		/* drawingContext.beginPath();
+		drawingContext.arc(this.x, this.y, this.s / 2, 0, 2 * Math.PI);
+		drawingContext.fill(); */
+
+		// draw a line from the previous position to the current position
+		/* 		drawingContext.beginPath();
+		drawingContext.lineWidth = this.s;
+		drawingContext.strokeStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
+		drawingContext.moveTo(this.prevX, this.prevY);
+		drawingContext.lineTo(this.x, this.y);
+		drawingContext.stroke(); */
+		strokeCap(SQUARE);
+		strokeWeight(this.s);
+		stroke(this.hue, this.sat, this.bri, this.a);
+		line(this.prevX, this.prevY, this.x, this.y);
 	}
 
-	move() {
+	move(frameCount, maxFrames) {
+		this.prevX = this.x;
+		this.prevY = this.y;
 		let p = superCurve(
 			this.x,
 			this.y,
@@ -78,7 +99,8 @@ class Mover {
 			this.clampvaluearray,
 			this.uvalue
 		);
-
+		/* 		this.xRandDivider = fxrand() * 4 + 0.000000000001;
+		this.yRandDivider = fxrand() * 4 + 0.000000000001; */
 		this.xRandSkipper =
 			fxrand() * (-this.xRandSkipperVal * MULTIPLIER - this.xRandSkipperVal * MULTIPLIER) +
 			this.xRandSkipperVal * MULTIPLIER;
@@ -103,6 +125,15 @@ class Mover {
 				? this.centerY - this.borderY
 				: this.y;
 
+		if (
+			this.x <= this.centerX - this.borderX ||
+			this.x >= this.centerX + this.borderX ||
+			this.y <= this.centerY - this.borderY ||
+			this.y >= this.centerY + this.borderY
+		) {
+			this.prevX = this.x;
+			this.prevY = this.y;
+		}
 		let pxy = p.x - p.y;
 		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
@@ -110,14 +141,16 @@ class Mover {
 		// make the alpha transition to zero when the particle are getting 100px closer to the edge of the borderX and borderY calculated from the center of the canvas
 
 		// Check if particle is approaching the edge of the canvas
-		let distanceToEdge = min(
+		/* 		let distanceToEdge = min(
 			abs(this.x - this.centerX + this.borderX),
 			abs(this.x - this.centerX - this.borderX),
 			abs(this.y - this.centerY + this.borderY),
 			abs(this.y - this.centerY - this.borderY)
-		);
+		); */
 
-		this.a = map(distanceToEdge, 5, 10, 0, 0.2, true);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, this.centerY], [150 * MULTIPLIER, 200 * MULTIPLIER]);
+
+		//this.a = map(distFromCenter, -40, 1, 10, 0, true);
 	}
 }
 
@@ -148,8 +181,8 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
-	let u = mapValue(un, -0.5, 0.5, -5, 5, true);
-	let v = mapValue(vn, -0.5, 0.5, -5, 5, true);
+	let u = mapValue(un, -0.5, 0.5, -1, 1, true);
+	let v = mapValue(vn, -0.5, 0.5, -1, 1, true);
 
 	let p = createVector(u, v);
 	return p;
