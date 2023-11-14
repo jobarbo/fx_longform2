@@ -32,7 +32,7 @@ let maxFrames = 40;
 
 // Easing animation variables
 let easeAng = 0,
-	easeScalar = 0.5,
+	easeScalar = 0.05,
 	cycleCount = 0,
 	xi = 0,
 	yi = 0,
@@ -52,7 +52,7 @@ let cycle = (maxFrames * particleNum) / 1.0001;
 function setup() {
 	features = $fx.getFeatures();
 
-	pixelDensity(dpi(3));
+	pixelDensity(dpi(1));
 
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
@@ -173,10 +173,10 @@ function INIT(seed) {
 	background(bgCol);
 	let easing = radians(easeAng);
 
-	scl1 = mapValue(cos(easing), -1, 1, 0.0022, 0.0007, true);
-	scl2 = mapValue(cos(easing), -1, 1, 0.0007, 0.0022, true);
-	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 1, 1600, true));
-	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1600, 1, true));
+	scl1 = mapValue(cos(easing), -1, 1, 0.0025, 0.005, true);
+	scl2 = mapValue(cos(easing), -1, 1, 0.005, 0.0025, true);
+	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 500, 100, true));
+	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 100, 500, true));
 
 	/* 	scl1 = mapValue(sin(easing), -1, 1, 1, 0.00001, true);
 	scl2 = mapValue(sin(easing), -1, 1, 0.00001, 0.01, true);
@@ -184,14 +184,14 @@ function INIT(seed) {
 	amplitude1 = parseInt(mapValue(sin(easing), -1, 1, 1, 1, true));
 	amplitude2 = parseInt(mapValue(sin(easing), -1, 1, 1, 1, true)); */
 
-	xi += mapValue(oct(xoff, yoff, scl1, 1), 0, 1, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
-	yi += mapValue(oct(yoff, xoff, scl2, 1), 0, 1, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
+	xi += mapValue(oct(xoff, yoff, 1, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true);
+	yi += mapValue(oct(yoff, xoff, 3, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true);
 	/* 	scl1 += mapValue(oct(sxoff, syoff, scl1, 1), 0, 1, -0.00001 * MULTIPLIER, 0.00001 * MULTIPLIER, true);
 	scl2 += mapValue(oct(syoff, sxoff, scl2, 1), 0, 1, -0.00001 * MULTIPLIER, 0.00001 * MULTIPLIER, true); */
 
 	easeAng += easeScalar;
-	xoff += 0.0001;
-	yoff += 0.0001;
+	xoff += 0.000001;
+	yoff += 0.000001;
 	axoff += 0.00025;
 	ayoff += 0.00025;
 	sxoff += 0.00025;
