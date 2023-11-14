@@ -28,11 +28,11 @@ let DIM;
 let MULTIPLIER;
 
 let startTime;
-let maxFrames = 40;
+let maxFrames = 140;
 
 // Easing animation variables
 let easeAng = 0,
-	easeScalar = 0.55,
+	easeScalar = 0.5,
 	cycleCount = 0,
 	xi = 0,
 	yi = 0,
@@ -45,7 +45,7 @@ let easeAng = 0,
 
 // render time
 let elapsedTime = 0;
-let particleNum = 1300;
+let particleNum = 300;
 let drawing = true;
 let cycle = (maxFrames * particleNum) / 1.0001;
 
@@ -60,8 +60,8 @@ function setup() {
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	xRandDivider = random([0.075]);
-	yRandDivider = random([0.075]);
+	xRandDivider = random([0.1]);
+	yRandDivider = random([0.1]);
 
 	amp1 = 1200;
 	amp2 = 1200;
@@ -74,21 +74,34 @@ function setup() {
 	bgCol = color(355, 10, 0, 100);
 	background(bgCol);
 
-	/* 	xMin = 0.22;
+	xMin = 0.22;
 	xMax = 0.78;
 	yMin = 0.06;
-	yMax = 0.94; */
+	yMax = 0.94;
 
-	/* 	xMin = -2.1;
-	xMax = 2.1;
-	yMin = -2.1;
-	yMax = 2.1; */
+	borderXMin = 0.22;
+	borderXMax = 0.78;
+	borderYMin = 0.06;
+	borderYMax = 0.94;
+
+	/* 	xMin = -0.1;
+	xMax = 0.1;
+	yMin = -0.1;
+	yMax = 0.1; */
+
+	xMinW = xMin * width;
+	xMaxW = xMax * width;
+	yMinH = yMin * height;
+	yMaxH = yMax * height;
 	for (let i = 0; i < particleNum; i++) {
-		/* 		let x = (fxrand() * (xMax - xMin) + xMin) * width;
-		let y = (fxrand() * (yMax - yMin) + yMin) * height; */
-		let x = fxrand() * width;
-		let y = fxrand() * height;
-		// push to movers array
+		//distribute the x and y values of the particles randomly inside the xMin, xMax, yMin, yMax range
+		/* 		let x = fxrand() * (xMaxW - xMinW) + xMinW;
+		let y = fxrand() * (yMaxH - yMinH) + yMinH; */
+
+		let x = random([random(xMinW - 30, xMinW - 10), random(xMaxW + 10, xMaxW + 30)]);
+		let y = random(height);
+
+		// push to movers arra
 		movers_pos.push({x, y});
 	}
 
@@ -98,6 +111,7 @@ function setup() {
 	let sketch = drawGenerator();
 	function animate() {
 		requestAnimationFrame(animate);
+
 		//setTimeout(animate, 0);
 		sketch.next();
 	}
@@ -114,12 +128,13 @@ function* drawGenerator() {
 		blendMode(ADD);
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
-			if (elapsedTime > 1) {
-				movers[i].show();
-			}
+			//if (elapsedTime > 1) {
+			movers[i].show();
+			//}
 			mover.move();
 			if (count > draw_every) {
 				count = 0;
+
 				yield;
 			}
 			count++;
@@ -160,8 +175,8 @@ function INIT(seed) {
 
 	scl1 = mapValue(cos(easing), -1, 1, 0.0022, 0.0007, true);
 	scl2 = mapValue(cos(easing), -1, 1, 0.0007, 0.0022, true);
-	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 500, 1600, true));
-	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1600, 500, true));
+	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 1, 1600, true));
+	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1600, 1, true));
 
 	/* 	scl1 = mapValue(sin(easing), -1, 1, 1, 0.00001, true);
 	scl2 = mapValue(sin(easing), -1, 1, 0.00001, 0.01, true);
@@ -185,7 +200,8 @@ function INIT(seed) {
 	for (let i = 0; i < particleNum; i++) {
 		/* 		let x = (fxrand() * (xMax - xMin) + xMin) * width;
 		let y = (fxrand() * (yMax - yMin) + yMin) * height; */
-
+		/* 		let x = random([random(xMinW - 30, xMinW - 10), random(xMaxW + 10, xMaxW + 30)]);
+		let y = random(height); */
 		let x = movers_pos[i].x;
 		let y = movers_pos[i].y;
 		let initHue = hue + fxrand() * 2 - 1;

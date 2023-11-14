@@ -61,23 +61,25 @@ class Mover {
 	}
 
 	show() {
-		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
+		/* 		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
 		drawingContext.strokeStyle = 'transparent';
-		//drawingContext.fillRect(this.x, this.y, this.s, this.s);
+		drawingContext.fillRect(this.x, this.y, this.s, this.s); */
 
-		// make it a circle using vanilla js
-
-		drawingContext.beginPath();
+		/* drawingContext.beginPath();
 		drawingContext.arc(this.x, this.y, this.s / 2, 0, 2 * Math.PI);
-		drawingContext.fill();
+		drawingContext.fill(); */
 
 		// draw a line from the previous position to the current position
 		/* 		drawingContext.beginPath();
-		drawingContext.lineWidth = 1;
+		drawingContext.lineWidth = this.s;
 		drawingContext.strokeStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
 		drawingContext.moveTo(this.prevX, this.prevY);
 		drawingContext.lineTo(this.x, this.y);
 		drawingContext.stroke(); */
+		strokeCap(SQUARE);
+		strokeWeight(this.s);
+		stroke(this.hue, this.sat, this.bri, this.a);
+		line(this.prevX, this.prevY, this.x, this.y);
 	}
 
 	move() {
@@ -122,7 +124,15 @@ class Mover {
 				: this.y >= this.centerY + this.borderY
 				? this.centerY - this.borderY
 				: this.y;
-
+		if (
+			this.x <= this.centerX - this.borderX ||
+			this.x >= this.centerX + this.borderX ||
+			this.y <= this.centerY - this.borderY ||
+			this.y >= this.centerY + this.borderY
+		) {
+			this.prevX = this.x;
+			this.prevY = this.y;
+		}
 		let pxy = p.x - p.y;
 		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
@@ -130,14 +140,16 @@ class Mover {
 		// make the alpha transition to zero when the particle are getting 100px closer to the edge of the borderX and borderY calculated from the center of the canvas
 
 		// Check if particle is approaching the edge of the canvas
-		let distanceToEdge = min(
+		/* 		let distanceToEdge = min(
 			abs(this.x - this.centerX + this.borderX),
 			abs(this.x - this.centerX - this.borderX),
 			abs(this.y - this.centerY + this.borderY),
 			abs(this.y - this.centerY - this.borderY)
-		);
+		); */
 
-		this.a = map(distanceToEdge, 5, 10, 0, 0.2, true);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, this.centerY], [200 * MULTIPLIER, 250 * MULTIPLIER]);
+
+		this.a = map(distFromCenter, -1, 10, 15, 0, true);
 	}
 }
 
@@ -168,8 +180,8 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
-	let u = mapValue(un, -0.0000000015, 0.5, -2, 1, true);
-	let v = mapValue(vn, -0.5, 0.0000000015, -1, 2, true);
+	let u = mapValue(un, -0.5, 0.5, -1, 1, true);
+	let v = mapValue(vn, -0.5, 0.5, -1, 1, true);
 
 	let p = createVector(u, v);
 	return p;
