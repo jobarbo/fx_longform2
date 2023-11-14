@@ -27,8 +27,8 @@ class Mover {
 		this.initHue = hue;
 		this.initSat = [0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90][Math.floor(fxrand() * 12)];
 		this.initBri = [40, 60, 70, 70, 80, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
-		this.initAlpha = 100;
-		this.initS = 1 * MULTIPLIER;
+		this.initAlpha = 30;
+		this.initS = 0.5 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = 0;
 		this.bri = 100;
@@ -111,7 +111,7 @@ class Mover {
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
-		this.x =
+		/* 		this.x =
 			this.x <= this.centerX - this.borderX
 				? this.centerX + this.borderX
 				: this.x >= this.centerX + this.borderX
@@ -123,7 +123,7 @@ class Mover {
 				? this.centerY + this.borderY
 				: this.y >= this.centerY + this.borderY
 				? this.centerY - this.borderY
-				: this.y;
+				: this.y; */
 
 		if (
 			this.x <= this.centerX - this.borderX ||

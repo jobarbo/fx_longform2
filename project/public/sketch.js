@@ -28,7 +28,7 @@ let DIM;
 let MULTIPLIER;
 
 let startTime;
-let maxFrames = 300;
+let maxFrames = 40;
 
 // Easing animation variables
 let easeAng = 0,
@@ -45,7 +45,7 @@ let easeAng = 0,
 
 // render time
 let elapsedTime = 0;
-let particleNum = 120;
+let particleNum = 1120;
 let drawing = true;
 let cycle = (maxFrames * particleNum) / 1.0001;
 
@@ -60,8 +60,8 @@ function setup() {
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	xRandDivider = random([0.1]);
-	yRandDivider = random([0.1]);
+	xRandDivider = random([0.01]);
+	yRandDivider = random([0.01]);
 
 	amp1 = 1200;
 	amp2 = 1200;
@@ -79,9 +79,9 @@ function setup() {
 	yMin = -0.1;
 	yMax = 1.1;
 
-	borderXMin = -1.1;
+	borderXMin = -0.1;
 	borderXMax = 1.1;
-	borderYMin = -1.1;
+	borderYMin = -0.1;
 	borderYMax = 1.1;
 
 	/* 	xMin = -0.1;
@@ -95,11 +95,11 @@ function setup() {
 	yMaxH = yMax * height;
 	for (let i = 0; i < particleNum; i++) {
 		//distribute the x and y values of the particles randomly inside the xMin, xMax, yMin, yMax range
-		/* 		let x = fxrand() * (xMaxW - xMinW) + xMinW;
-		let y = fxrand() * (yMaxH - yMinH) + yMinH; */
+		let x = fxrand() * (xMaxW - xMinW) + xMinW;
+		let y = fxrand() * (yMaxH - yMinH) + yMinH;
 
-		let x = random([random(xMinW + 30, xMinW + 10), random(xMaxW + 10, xMaxW + 30)]);
-		let y = random(height);
+		/* 		let x = random([random(xMinW + 30, xMinW + 10), random(xMaxW + 10, xMaxW + 30)]);
+		let y = random(height); */
 
 		// push to movers arra
 		movers_pos.push({x, y});
