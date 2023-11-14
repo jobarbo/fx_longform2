@@ -31,7 +31,7 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = 10;
+		this.hueStep = 20;
 		this.satStep = 1;
 		this.briStep = 0;
 		this.scl1Init = scl1;
@@ -92,7 +92,7 @@ class Mover {
 		let pxy = p.x - p.y;
 		this.hue += map(p.y, -1, this.uvalue, this.hueStep, -this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
-		this.sat += map(p.x, -this.uvalue, 1, -this.satStep, this.satStep, true);
+		this.sat += map(p.y, -this.uvalue, 1, -this.satStep, this.satStep, true);
 		this.sat = this.sat > 100 ? 100 : this.sat < 0 ? 0 : this.sat;
 		this.bri += map(p.y, -1, this.uvalue, this.briStep, -this.briStep, true);
 		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri;
