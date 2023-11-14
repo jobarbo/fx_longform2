@@ -135,7 +135,7 @@ function INIT(seed) {
 		);
 	}
 
-	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
+	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == 'bright' ? 93 : 5, 100);
 
 	background(bgCol);
 }
