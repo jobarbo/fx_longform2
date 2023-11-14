@@ -60,8 +60,8 @@ function setup() {
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	xRandDivider = random([0.01]);
-	yRandDivider = random([0.01]);
+	xRandDivider = random([0.025]);
+	yRandDivider = random([0.025]);
 
 	amp1 = 1200;
 	amp2 = 1200;
