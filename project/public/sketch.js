@@ -28,7 +28,7 @@ let DIM;
 let MULTIPLIER;
 
 let startTime;
-let maxFrames = 140;
+let maxFrames = 300;
 
 // Easing animation variables
 let easeAng = 0,
@@ -45,18 +45,18 @@ let easeAng = 0,
 
 // render time
 let elapsedTime = 0;
-let particleNum = 300;
+let particleNum = 120;
 let drawing = true;
 let cycle = (maxFrames * particleNum) / 1.0001;
 
 function setup() {
 	features = $fx.getFeatures();
 
-	pixelDensity(dpi(5));
+	pixelDensity(dpi(3));
 
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM);
+	c = createCanvas(DIM, DIM * 1.4);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -74,15 +74,15 @@ function setup() {
 	bgCol = color(355, 10, 0, 100);
 	background(bgCol);
 
-	xMin = 0.22;
-	xMax = 0.78;
-	yMin = 0.06;
-	yMax = 0.94;
+	xMin = -0.1;
+	xMax = 1.1;
+	yMin = -0.1;
+	yMax = 1.1;
 
-	borderXMin = 0.22;
-	borderXMax = 0.78;
-	borderYMin = 0.06;
-	borderYMax = 0.94;
+	borderXMin = -1.1;
+	borderXMax = 1.1;
+	borderYMin = -1.1;
+	borderYMax = 1.1;
 
 	/* 	xMin = -0.1;
 	xMax = 0.1;
@@ -98,7 +98,7 @@ function setup() {
 		/* 		let x = fxrand() * (xMaxW - xMinW) + xMinW;
 		let y = fxrand() * (yMaxH - yMinH) + yMinH; */
 
-		let x = random([random(xMinW - 30, xMinW - 10), random(xMaxW + 10, xMaxW + 30)]);
+		let x = random([random(xMinW + 30, xMinW + 10), random(xMaxW + 10, xMaxW + 30)]);
 		let y = random(height);
 
 		// push to movers arra

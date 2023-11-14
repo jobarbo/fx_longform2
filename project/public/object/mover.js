@@ -27,8 +27,8 @@ class Mover {
 		this.initHue = hue;
 		this.initSat = [0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90][Math.floor(fxrand() * 12)];
 		this.initBri = [40, 60, 70, 70, 80, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
-		this.initAlpha = 0.2;
-		this.initS = 0.7 * MULTIPLIER;
+		this.initAlpha = 100;
+		this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = 0;
 		this.bri = 100;
@@ -54,8 +54,8 @@ class Mover {
 		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
-		this.borderX = width / 3.5;
-		this.borderY = height / 2.25;
+		this.borderX = width / 1.75;
+		this.borderY = height / 1.75;
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
 		this.uvalue = 5;
 	}
@@ -82,7 +82,7 @@ class Mover {
 		line(this.prevX, this.prevY, this.x, this.y);
 	}
 
-	move() {
+	move(frameCount, maxFrames) {
 		this.prevX = this.x;
 		this.prevY = this.y;
 		let p = superCurve(
@@ -124,6 +124,7 @@ class Mover {
 				: this.y >= this.centerY + this.borderY
 				? this.centerY - this.borderY
 				: this.y;
+
 		if (
 			this.x <= this.centerX - this.borderX ||
 			this.x >= this.centerX + this.borderX ||
@@ -147,9 +148,9 @@ class Mover {
 			abs(this.y - this.centerY - this.borderY)
 		); */
 
-		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, this.centerY], [200 * MULTIPLIER, 250 * MULTIPLIER]);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, this.centerY], [150 * MULTIPLIER, 200 * MULTIPLIER]);
 
-		this.a = map(distFromCenter, -1, 10, 15, 0, true);
+		//this.a = map(distFromCenter, -40, 1, 10, 0, true);
 	}
 }
 
