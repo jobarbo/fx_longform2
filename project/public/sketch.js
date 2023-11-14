@@ -21,18 +21,18 @@ let xRandDivider, yRandDivider;
 let hue = fxrand() * 360;
 
 // viewport
-let DEFAULT_SIZE = 600;
+let DEFAULT_SIZE = 800;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
 let startTime;
-let maxFrames = 40;
+let maxFrames = 50;
 
 // Easing animation variables
 let easeAng = 0,
-	easeScalar = 0.05,
+	easeScalar = 0.6,
 	cycleCount = 0,
 	xi = 0,
 	yi = 0,
@@ -173,8 +173,8 @@ function INIT(seed) {
 	background(bgCol);
 	let easing = radians(easeAng);
 
-	scl1 = mapValue(cos(easing), -1, 1, 0.0025, 0.005, true);
-	scl2 = mapValue(cos(easing), -1, 1, 0.005, 0.0025, true);
+	scl1 = mapValue(cos(easing), -1, 1, 0.00071, 0.0025, true);
+	scl2 = mapValue(cos(easing), -1, 1, 0.0025, 0.00071, true);
 	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 200, 1, true));
 	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1, 200, true));
 
