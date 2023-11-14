@@ -18,7 +18,7 @@ class Mover {
 		this.a = this.initAlpha;
 		this.hueStep =
 			features.colormode === 'monochrome' || features.colormode === 'fixed'
-				? 1
+				? 25
 				: features.colormode === 'dynamic'
 				? 6
 				: 25;
@@ -120,15 +120,15 @@ class Mover {
 
 		this.x =
 			this.x <= this.centerX - this.borderX
-				? this.centerX + this.borderX + random(-1 * MULTIPLIER, 0)
+				? this.centerX + this.borderX
 				: this.x >= this.centerX + this.borderX
-				? this.centerX - this.borderX + random(0, 1 * MULTIPLIER)
+				? this.centerX - this.borderX
 				: this.x;
 		this.y =
 			this.y <= this.centerY - this.borderY
-				? this.centerY + this.borderY + random(-1 * MULTIPLIER, 0)
+				? this.centerY + this.borderY
 				: this.y >= this.centerY + this.borderY
-				? this.centerY - this.borderY + random(0, 1 * MULTIPLIER)
+				? this.centerY - this.borderY
 				: this.y;
 
 		let pxy = p.x - p.y;

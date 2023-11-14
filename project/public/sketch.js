@@ -81,7 +81,7 @@ function draw() {
 	}
 	blendMode(BLEND);
 	noFill();
-	strokeWeight(1 * MULTIPLIER);
+	strokeWeight(0.1 * MULTIPLIER);
 	stroke(0, 0, 100, 100);
 	// draw a rectangle the size of the composition with centerX, centerY as the center and borderX, borderY as the width and height
 	rect(centerX, centerY, borderX * 2, borderY * 2);
