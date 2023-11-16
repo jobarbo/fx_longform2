@@ -68,8 +68,6 @@ class Mover {
 		this.ang2Zone = ang2Zone;
 		this.scl1Zone = scl1Zone;
 		this.scl2Zone = scl2Zone;
-
-		this.ns = 1;
 	}
 
 	show() {
@@ -87,17 +85,13 @@ class Mover {
 			[this.centerX, height - 2000 * MULTIPLIER],
 			[400 * MULTIPLIER, 400 * MULTIPLIER]
 		);
-		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 500 * MULTIPLIER);
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY + 200], 600 * MULTIPLIER);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		/* 		this.ang1 = parseInt(
-			mapValue(distCircle, -100 * MULTIPLIER, 700 * MULTIPLIER, -this.ang1Init * 2, this.ang1Init * 4)
-		);
-		this.ang2 = parseInt(
-			mapValue(distCircle, -100 * MULTIPLIER, 700 * MULTIPLIER, -this.ang2Init * 4, this.ang1Init * 2)
-		); */
-		/* 		this.scl1 = map(distCircle, -700 * MULTIPLIER, 200 * MULTIPLIER, -this.scl1Init * 3, this.scl1Init, true);
-		this.scl2 = map(distCircle, -700 * MULTIPLIER, 200 * MULTIPLIER, -this.scl2Init * 3, this.scl2Init, true); */
+		/* 		this.ang1 = map(distCircle, -500 * MULTIPLIER, 200 * MULTIPLIER, -this.ang1Init * 8, this.ang1Init, true);
+		this.ang2 = map(distCircle, -500 * MULTIPLIER, 200 * MULTIPLIER, -this.ang2Init * 8, this.ang2Init, true); */
+		/* 		this.scl1 = map(distCircle, -100 * MULTIPLIER, 200 * MULTIPLIER, -this.scl1Init, this.scl1Init * 1, true);
+		this.scl2 = map(distCircle, -100 * MULTIPLIER, 200 * MULTIPLIER, -this.scl2Init, this.scl2Init * 1, true); */
 
 		//! oct variant, not sure yet if it's good
 		//this.oct = parseInt(map(distCircle, 0, 160, 6, 1, true));
@@ -108,7 +102,7 @@ class Mover {
 		this.scl1 = map(distFromCenter, 0, this.scl1Zone, -this.scl1Init * 2, this.scl1Init * 3, true);
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, -this.scl2Init * 2, this.scl2Init * 3, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.ns);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 		this.xRandDivider = fxrand() * 6;
 		this.yRandDivider = fxrand() * 6;
 
@@ -120,19 +114,28 @@ class Mover {
 		this.y += this.speedY;
 
 		//!complexion standard (vegetation variant)
-		/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
-		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
+		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
+		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true);
 
 		//!complexion inverser (goldenfold variant)
-		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
-		this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
+		/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
+		this.a = mapValue(this.speed, 2, 2.01, 100, 70, true); */
 
 		//!complexion inverser (malachite variant)
 		/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
-		this.a = mapValue(this.speed, 2, 2.01, 100, 10, true); */
+		this.a = mapValue(this.speed, 2, 2.01, 100, 40, true); */
+
+		if (
+			this.x < this.xMin * width ||
+			this.x > this.xMax * width ||
+			this.y < this.yMin * height ||
+			this.y > this.yMax * height
+		) {
+			this.a = 0;
+		}
 
 		//!goldenfold variant
-		if (this.speed < 1) {
+		/* 		if (this.speed < 1) {
 			this.hue = 35;
 			this.sat = this.initSat + 80;
 			this.bri = this.initBri + 30;
@@ -141,7 +144,7 @@ class Mover {
 			this.sat = this.initSat;
 			this.bri = this.initBri;
 		}
-
+ */
 		//!malachite variant
 		/* 		if (this.speed < 1) {
 			this.hue = random(100, 220);
@@ -169,29 +172,30 @@ class Mover {
 		this.bri = map(this.speed, 1, 6.01, this.initBri + 50, this.initBri, true);
 		this.hue = map(this.speed, 1, 1.01, 45, 130, true); */
 
-		if (this.x < (this.xMin - this.xLimit) * width) {
-			this.x = (this.xMax + this.xLimit) * width;
+		// if this.x is outside of xmin and xmax, set the alpha to 0;
+
+		if (this.x < (this.xMin - this.xLimit) * width - 50) {
+			this.x = (this.xMax + this.xLimit) * width + 50;
 		}
-		if (this.x > (this.xMax + this.xLimit) * width) {
-			this.x = (this.xMin - this.xLimit) * width;
+		if (this.x > (this.xMax + this.xLimit) * width + 50) {
+			this.x = (this.xMin - this.xLimit) * width - 50;
 		}
-		if (this.y < (this.yMin - this.yLimit) * height) {
-			this.y = (this.yMax + this.yLimit) * height;
+		if (this.y < (this.yMin - this.yLimit) * height - 50) {
+			this.y = (this.yMax + this.yLimit) * height + 50;
 		}
-		if (this.y > (this.yMax + this.yLimit) * height) {
-			this.y = (this.yMin - this.yLimit) * height;
+		if (this.y > (this.yMax + this.yLimit) * height + 50) {
+			this.y = (this.yMin - this.yLimit) * height - 50;
 		}
 	}
 }
 
-function superCurve(x, y, scl1, scl2, ang1, ang2, octave, ns) {
+function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let nx = x,
 		ny = y,
 		a1 = ang1,
 		a2 = ang2,
 		scale1 = scl1,
 		scale2 = scl2,
-		noiseSpeed = ns,
 		dx,
 		dy;
 
@@ -210,8 +214,11 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave, ns) {
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 3, octave) + 0.5;
-	let vn = oct(nx, ny, scale2, 2, octave) + 0.5;
+	let un = oct(nx, ny, scale1, 3, octave);
+	let vn = oct(nx, ny, scale2, 2, octave);
+
+	let sun = smoothstep(-0.5, 0.5, un);
+	let svn = smoothstep(-0.5, 0.5, vn);
 
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */
@@ -222,8 +229,11 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave, ns) {
 	let aValue = rangeA[Math.floor(fxrand() * rangeA.length)];
 	let bValue = rangeB[Math.floor(fxrand() * rangeB.length)];
 
-	let u = mapValue(un, 0, noiseSpeed, -aValue, bValue);
-	let v = mapValue(vn, 0, noiseSpeed, -bValue, aValue);
+	/* 	let u = mapValue(un, -0.5, 0.5, -aValue, bValue);
+	let v = mapValue(vn, -0.5, 0.5, -bValue, aValue); */
+
+	let u = mapValue(sun, 0, 1, -aValue, bValue);
+	let v = mapValue(svn, 0, 1, -bValue, aValue);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
