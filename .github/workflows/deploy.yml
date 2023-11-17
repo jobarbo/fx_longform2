@@ -8,21 +8,21 @@ on:
 jobs:
   Live-Vercel-Hook:
     runs-on: ubuntu-latest
-    if: ${{ github.base_ref == 'wip/sartoro-live'}}
+    if: ${{ github.ref == 'refs/heads/wip/sartoro-live'}}
     steps:
       - uses: muinmomin/webhook-action@v1.0.0
         with:
           url: https://api.vercel.com/v1/integrations/deploy/prj_buWhFri4fxlm4HbFJfNTheORCS7T/EUEdaROu7O
   Wisp-Vercel-Hook:
     runs-on: ubuntu-latest
-    if: ${{ github.base_ref == 'wip/sartoro-live-wisp'}}
+    if: ${{ github.ref == 'refs/heads/wip/sartoro-live-wisp'}}
     steps:
       - uses: muinmomin/webhook-action@v1.0.0
         with:
           url: https://api.vercel.com/v1/integrations/deploy/prj_buWhFri4fxlm4HbFJfNTheORCS7T/iGnOy5fhSM
   Wiggle-Vercel-Hook:
     runs-on: ubuntu-latest
-    if: ${{ github.base_ref == 'wip/sartoro-live-wiggle'}}
+    if: ${{ github.ref == 'refs/heads/wip/sartoro-live-wiggle'}}
     steps:
       - uses: muinmomin/webhook-action@v1.0.0
         with:
