@@ -19,7 +19,17 @@ let frameIterator = 0;
 let currentFrame = 0;
 
 // viewport
-let DEFAULT_SIZE = 1600;
+// if url params has ratio, use that, else use 3
+let ratio = 3;
+if (window.location.search.includes('ratio')) {
+	if (window.location.search.includes('ratio=a4')) {
+		ratio = 1.41;
+	} else {
+		ratio = parseInt(window.location.search.split('ratio=')[1]);
+	}
+}
+
+let DEFAULT_SIZE = 4800 / ratio;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
@@ -34,6 +44,9 @@ let renderMode = 1;
 let cycle = parseInt((maxFrames * particleNum) / 170);
 console.log(cycle);
 
+let hue;
+let bgCol;
+
 function setup() {
 	features = $fx.getFeatures();
 	console.log(features);
@@ -42,7 +55,7 @@ function setup() {
 	pixelDensity(dpi(1));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 3);
+	c = createCanvas(DIM, DIM * ratio);
 
 	/*
 		window.addEventListener('resize', onResize);
@@ -54,9 +67,12 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
+
+	hue = fxrand() * 360;
+	bgCol = color(hue, random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
+
 	INIT();
 	let sketch = drawGenerator();
-
 	// use requestAnimationFrame to call the generator function and pass it the sketch function
 	function animate() {
 		//requestAnimationFrame(animate);
@@ -94,6 +110,7 @@ function* drawGenerator() {
 			drawUI();
 			// close the generator
 			$fx.preview();
+			document.complete = true;
 			console.timeEnd('setup');
 			return;
 		}
@@ -105,17 +122,20 @@ function* drawGenerator() {
 //////////////////////////////////////////////////////
 
 function INIT() {
-	let hue = random(360);
-	let bgCol = color(random(0, 360), random([0, 2, 5]), 95, 100);
-
 	background(bgCol);
 
 	drawTexture(hue);
 	movers = [];
 	scl1 = random(0.0001, 0.002);
 	scl2 = random(0.0001, 0.002);
-	ang1 = Math.floor(fxrand() * 10);
-	ang2 = Math.floor(fxrand() * 10);
+	ang1 = Math.floor(fxrand() * 1000);
+	ang2 = Math.floor(fxrand() * 1000);
+
+	/* 	scl1 = random(0.0003, 0.006) / ratio;
+	scl2 = random(0.0003, 0.006) / ratio;
+
+	ang1 = Math.floor(fxrand() * 1000 * (ratio / 2));
+	ang2 = Math.floor(fxrand() * 1000 * (ratio / 2)); */
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
@@ -158,12 +178,12 @@ function INIT() {
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
 
-	for (let i = 0; i < 600000; i++) {
+	for (let i = 0; i < 800000; i++) {
 		let x = fxrand() * width;
 		let y = fxrand() * height;
-		let sw = 0.45 * MULTIPLIER;
+		let sw = 0.75 * MULTIPLIER;
 		let h = hue + fxrand() * 2 - 1;
-		let s = [0, 20, 40, 60, 80, 100][parseInt(fxrand() * 6)];
+		let s = features.colormode != 'monochrome' ? [0, 20, 40, 60, 80, 100][parseInt(fxrand() * 6)] : 0;
 		let b = [0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100][parseInt(fxrand() * 11)];
 		drawingContext.fillStyle = `hsla(${h}, ${s}%, ${b}%, 100%)`;
 		drawingContext.fillRect(x, y, sw, sw);
@@ -180,7 +200,11 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 
 function drawUI() {
 	// Define the stroke color and weight (line width)
-	drawingContext.strokeStyle = 'hsla(0, 0%, 0%, 100%)';
+	let uiSat = features.colormode == 'monochrome' ? 0 : 25;
+	let uiColor =
+		features.theme == 'bright' ? `hsla(${hue}, ${uiSat}%, 70%, 100%)` : `hsla(${hue}, ${uiSat}%, 40%, 100%)`;
+
+	drawingContext.strokeStyle = uiColor;
 	drawingContext.lineWidth = 3 * MULTIPLIER;
 	drawingContext.beginPath();
 

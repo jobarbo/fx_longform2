@@ -5,8 +5,8 @@
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
 const complexityArr = [
-	['1', 20],
-	['2', 70],
+	['1', 70],
+	['2', 20],
 	['3', 5],
 	['4', 2],
 	['5', 2],
@@ -14,21 +14,16 @@ const complexityArr = [
 ];
 
 const themeArr = [
-	['bright', 50],
-	['dark', 50],
-];
-
-const compositionArr = [
-	['semiconstrained', 33],
-	['constrained', 33],
-	['compresed', 33],
+	['bright', 75],
+	['dark', 25],
 ];
 
 const colorModeArr = [
-	['monochrome', 25],
-	['fixed', 25],
-	['dynamic', 25],
-	['iridescent', 25],
+	['monochrome', 4],
+	['duotone', 30],
+	['fixed', 5],
+	['dynamic', 30],
+	['iridescent', 30],
 ];
 
 const strokestyleArr = [
@@ -38,16 +33,17 @@ const strokestyleArr = [
 ];
 
 const clampvalueArr = [
-	['0.0000015,0.25,0.25,0.0000015', 50],
-	['0.0000015,0.025,0.025,0.0000015', 50],
-	['0.00015,0.015,0.015,0.00015', 50],
-	['0.15,0.00000015,0.15,0.0000015', 50],
-	['0.0015,0.000015,0.0015,0.000015', 50],
-	['0.05,0.05,0.05,0.05', 50],
-	['0.15,0.15,0.15,0.15', 50],
-	['0.015,0.015,0.015,0.015', 50],
-	['0.0015,0.0015,0.0015,0.0015', 50],
-	['0.0000015,0.0000015,0.0000015,0.0000015', 50],
+	['0.015,0.015,0.0015,0.0015', 500000],
+	['0.0000015,0.25,0.25,0.0000015', 0],
+	['0.0000015,0.025,0.025,0.0000015', 0],
+	['0.00015,0.015,0.015,0.00015', 0],
+	['0.15,0.00000015,0.15,0.0000015', 0],
+	['0.0015,0.000015,0.0015,0.000015', 0],
+	['0.05,0.05,0.05,0.05', 0],
+	['0.15,0.15,0.15,0.15', 0],
+	['0.015,0.015,0.015,0.015', 0],
+	['0.0015,0.0015,0.0015,0.0015', 0],
+	['0.0000015,0.0000015,0.0000015,0.0000015', 0],
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
@@ -59,10 +55,6 @@ function generate_composition_params(complexity, theme, composition, colormode, 
 
 	if (theme === undefined) {
 		theme = weighted_choice(themeArr);
-	}
-
-	if (composition === undefined) {
-		composition = weighted_choice(compositionArr);
 	}
 
 	if (colormode === undefined) {
@@ -84,7 +76,6 @@ function generate_composition_params(complexity, theme, composition, colormode, 
 	var composition_params = {
 		complexity: complexity,
 		theme: theme,
-		composition: composition,
 		colormode: colormode,
 		strokestyle: strokestyle,
 		clampvalue: clampvalue,
