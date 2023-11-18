@@ -126,10 +126,15 @@ function INIT() {
 
 	drawTexture(hue);
 	movers = [];
-	scl1 = random(0.0001, 0.002);
-	scl2 = random(0.0001, 0.002);
-	ang1 = Math.floor(fxrand() * 1000);
-	ang2 = Math.floor(fxrand() * 1000);
+
+	scl1 = random(0.0001, 0.005);
+	scl2 = random(0.0001, 0.005);
+	let ang1Max = pmap(scl1, 0.0001, 0.005, 1000, 1);
+	let ang2Max = pmap(scl2, 0.0001, 0.005, 1000, 1);
+	ang1 = Math.floor(fxrand() * ang1Max);
+	ang2 = Math.floor(fxrand() * ang2Max);
+	console.log(ang1Max, ang2Max);
+	console.log(scl1, scl2, ang1, ang2);
 
 	/* 	scl1 = random(0.0003, 0.006) / ratio;
 	scl2 = random(0.0003, 0.006) / ratio;
