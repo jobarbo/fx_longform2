@@ -20,7 +20,7 @@ class Mover {
 		this.hueStep =
 			features.colormode === 'monochrome' || features.colormode === 'fixed'
 				? 1
-				: features.colormode === 'dynamic'
+				: features.colormode === 'dynamic' || features.colormode === 'duotone'
 				? 6
 				: 25;
 		this.satStep = features.colorMode === 'duotone' ? 0.1 : 1;
@@ -68,8 +68,8 @@ class Mover {
 			this.uvalue
 		);
 
-		/* 		this.xRandSkipper = fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) - this.xRandSkipperVal * MULTIPLIER;
-		this.yRandSkipper = fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) - this.xRandSkipperVal * MULTIPLIER; */
+		this.xRandSkipper = fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) - this.xRandSkipperVal * MULTIPLIER;
+		this.yRandSkipper = fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) - this.xRandSkipperVal * MULTIPLIER;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;

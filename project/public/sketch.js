@@ -129,8 +129,8 @@ function INIT() {
 
 	scl1 = random(0.0001, 0.005);
 	scl2 = random(0.0001, 0.005);
-	let ang1Max = pmap(scl1, 0.0001, 0.005, 1000, 1);
-	let ang2Max = pmap(scl2, 0.0001, 0.005, 1000, 1);
+	let ang1Max = Math.floor(map(scl1, 0.0001, 0.001, 16000, 100, true));
+	let ang2Max = Math.floor(map(scl2, 0.0001, 0.001, 16000, 100, true));
 	ang1 = Math.floor(fxrand() * ang1Max);
 	ang2 = Math.floor(fxrand() * ang2Max);
 	console.log(ang1Max, ang2Max);
