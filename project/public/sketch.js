@@ -28,7 +28,7 @@ let DIM;
 let MULTIPLIER;
 
 let startTime;
-let maxFrames = 50;
+let maxFrames = 40;
 
 // Easing animation variables
 let easeAng = 0,
@@ -45,9 +45,9 @@ let easeAng = 0,
 
 // render time
 let elapsedTime = 0;
-let particleNum = 1120;
+let particleNum = 1000;
 let drawing = true;
-let cycle = (maxFrames * particleNum) / 1.0001;
+let cycle = (maxFrames * particleNum) / 1;
 
 function setup() {
 	features = $fx.getFeatures();
@@ -71,8 +71,7 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
 
-	bgCol = color(355, 10, 0, 100);
-	background(bgCol);
+	bgCol = color(329, 98, 35, 100);
 
 	xMin = -0.1;
 	xMax = 1.1;
@@ -110,12 +109,28 @@ function setup() {
 	// use requestAnimationFrame to call the generator function and pass it the sketch function
 	let sketch = drawGenerator();
 	function animate() {
-		requestAnimationFrame(animate);
+		background(bgCol);
 
-		//setTimeout(animate, 0);
-		sketch.next();
+		if (sketch.next().done) {
+			cancelAnimationFrame(animationFrameId);
+			for (let i = 0; i < particleNum; i++) {
+				const mover = movers[i];
+				mover.show();
+			}
+			drawing = false;
+			return;
+		}
+
+		animationFrameId = requestAnimationFrame(animate);
+
+		blendMode(BLEND);
 	}
-	animate();
+
+	if (drawing && cycleCount < 1) {
+		console.log('drawing');
+
+		animate();
+	}
 }
 
 function* drawGenerator() {
@@ -125,18 +140,24 @@ function* drawGenerator() {
 
 	// draw the particles and make them move until draw_every is reached then yield and wait for the next frame, also check if the maxFrames is reached and stop the sketch if it is and also show the loading bar
 	while (true) {
+		if (elapsedTime >= maxFrames && drawing) {
+			blendMode(BLEND);
+			drawing = false;
+			// close the generator
+			return;
+		}
 		blendMode(ADD);
 		for (let i = 0; i < particleNum; i++) {
-			const mover = movers[i];
-			//if (elapsedTime > 1) {
-			movers[i].show();
-			//}
-			mover.move();
-			if (count > draw_every) {
+			if (count > draw_every && drawing) {
 				count = 0;
-
 				yield;
 			}
+			const mover = movers[i];
+			if (drawing) {
+				mover.show();
+				mover.move();
+			}
+
 			count++;
 		}
 		blendMode(BLEND);
@@ -147,30 +168,23 @@ function* drawGenerator() {
 		if (frameCount % maxFrames == 0) {
 			let cosIndex = cos(radians(easeAng));
 
+			// when a full cycle is reached, add a cycle to the cycleCount
 			if (cosIndex >= 1) {
-				cycleCount += 1;
+				cycleCount++;
 			}
-			if (cycleCount < 10) {
-				movers = [];
-				//saveArtwork();
-				elapsedTime = 0;
-				frameCount = 0;
-				INIT(rseed);
-			} else {
-				if (elapsedTime > maxFrames && drawing) {
-					drawing = false;
-					// close the generator
-					return;
-				}
-			}
+			//if (cycleCount < 1) {
+			movers = [];
+			//saveArtwork();
+			elapsedTime = 0;
+			frameCount = 0;
+			INIT(rseed);
+			//}
 		}
 	}
 }
-
 function INIT(seed) {
-	bgCol = color(0, 0, 0, 100);
 	//	bgCol = color(355, 10, 95, 60);
-	background(bgCol);
+
 	let easing = radians(easeAng);
 
 	scl1 = mapValue(cos(easing), -1, 1, 0.00071, 0.0025, true);
@@ -184,8 +198,8 @@ function INIT(seed) {
 	amplitude1 = parseInt(mapValue(sin(easing), -1, 1, 1, 1, true));
 	amplitude2 = parseInt(mapValue(sin(easing), -1, 1, 1, 1, true)); */
 
-	xi += mapValue(oct(xoff, yoff, 1, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true);
-	yi += mapValue(oct(yoff, xoff, 3, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true);
+	/* 	xi += mapValue(oct(xoff, yoff, 1, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true);
+	yi += mapValue(oct(yoff, xoff, 3, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true); */
 	/* 	scl1 += mapValue(oct(sxoff, syoff, scl1, 1), 0, 1, -0.00001 * MULTIPLIER, 0.00001 * MULTIPLIER, true);
 	scl2 += mapValue(oct(syoff, sxoff, scl2, 1), 0, 1, -0.00001 * MULTIPLIER, 0.00001 * MULTIPLIER, true); */
 
