@@ -22,8 +22,8 @@ let hue = fxrand() * 360;
 
 // viewport
 let DEFAULT_SIZE = 800;
-let W = 400;
-let H = 400;
+let W = window.innerWidth;
+let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
@@ -52,12 +52,11 @@ let cycle = (maxFrames * particleNum) / 1;
 function setup() {
 	features = $fx.getFeatures();
 
-	pixelDensity(dpi(0.5));
+	pixelDensity(dpi(1));
 
 	DIM = min(W, H);
-	console.log(DIM);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM);
+	c = createCanvas(DIM, DIM * 1.4);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
