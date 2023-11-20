@@ -121,17 +121,9 @@ class Mover {
 			this.clampvaluearray,
 			this.uvalue
 		);
-		/* 		this.xRandDivider = fxrand() * 4 + 0.000000000001;
-		this.yRandDivider = fxrand() * 4 + 0.000000000001; */
-		this.xRandSkipper =
-			fxrand() * (-this.xRandSkipperVal * MULTIPLIER - this.xRandSkipperVal * MULTIPLIER) +
-			this.xRandSkipperVal * MULTIPLIER;
-		this.yRandSkipper =
-			fxrand() * (-this.yRandSkipperVal * MULTIPLIER - this.yRandSkipperVal * MULTIPLIER) +
-			this.yRandSkipperVal * MULTIPLIER;
 
-		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
-		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
+		this.x += (p.x * MULTIPLIER) / this.xRandDivider;
+		this.y += (p.y * MULTIPLIER) / this.yRandDivider;
 
 		/* 		this.x =
 			this.x <= this.centerX - this.borderX
@@ -147,7 +139,7 @@ class Mover {
 				? this.centerY - this.borderY
 				: this.y; */
 
-		if (
+		/* 		if (
 			this.x <= this.centerX - this.borderX ||
 			this.x >= this.centerX + this.borderX ||
 			this.y <= this.centerY - this.borderY ||
@@ -155,22 +147,7 @@ class Mover {
 		) {
 			this.prevX = this.x;
 			this.prevY = this.y;
-		}
-		let pxy = p.x - p.y;
-		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
-		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-
-		// make the alpha transition to zero when the particle are getting 100px closer to the edge of the borderX and borderY calculated from the center of the canvas
-
-		// Check if particle is approaching the edge of the canvas
-		/* 		let distanceToEdge = min(
-			abs(this.x - this.centerX + this.borderX),
-			abs(this.x - this.centerX - this.borderX),
-			abs(this.y - this.centerY + this.borderY),
-			abs(this.y - this.centerY - this.borderY)
-		); */
-
-		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, this.centerY], [150 * MULTIPLIER, 200 * MULTIPLIER]);
+		} */
 
 		//this.a = map(distFromCenter, -40, 1, 10, 0, true);
 	}
@@ -191,7 +168,7 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 1, octave);
+	/* 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 3, octave);
 	nx += dx * a1;
 	ny += dy * a2;
@@ -199,9 +176,9 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
-	ny += dy * a2;
-	let un = oct(dx, dy, scale1, 0, octave);
-	let vn = oct(dy, dx, scale2, 1, octave);
+	ny += dy * a2; */
+	let un = oct(nx, ny, scale1, 0, octave);
+	let vn = oct(nx, ny, scale2, 1, octave);
 
 	let minU = -2;
 	let maxU = 2;
@@ -211,8 +188,8 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	let u = map(vn, map(nx, 0, width, -10.0001, -0.0000001), map(nx, 0, width, 0.0000001, 10.0001), minU, maxU, true);
 	let v = map(un, map(ny, 0, height, -10.0001, -0.0000001), map(ny, 0, height, 0.0000001, 10.0001), minV, maxV, true);
 
-	/* 	let u = mapValue(un, -0.5, 0.5, -1, 1, true);
-	let v = mapValue(vn, -0.5, 0.5, -1, 1, true); */
+	/* 	let u = mapValue(un, -0.5, 0.5, -5, 5, true);
+	let v = mapValue(vn, -0.5, 0.5, -5, 5, true); */
 	let p = createVector(u, v);
 	return p;
 }
