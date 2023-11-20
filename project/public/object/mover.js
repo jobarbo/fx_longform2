@@ -185,11 +185,10 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	let minV = -2;
 	let maxV = 2;
 
-	let u = map(vn, map(nx, 0, width, -10.0001, -0.0000001), map(nx, 0, width, 0.0000001, 10.0001), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -10.0001, -0.0000001), map(ny, 0, height, 0.0000001, 10.0001), minV, maxV, true);
+	let u = pmap(vn, pmap(nx, 0, width, -10.0001, -0.0000001), pmap(nx, 0, width, 0.0000001, 10.0001), minU, maxU);
+	let v = pmap(un, pmap(ny, 0, height, -10.0001, -0.0000001), pmap(ny, 0, height, 0.0000001, 10.0001), minV, maxV);
 
 	/* 	let u = mapValue(un, -0.5, 0.5, -5, 5, true);
 	let v = mapValue(vn, -0.5, 0.5, -5, 5, true); */
-	let p = createVector(u, v);
-	return p;
+	return {x: u, y: v};
 }
