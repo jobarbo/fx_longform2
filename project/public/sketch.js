@@ -45,9 +45,9 @@ let easeAng = 0,
 
 // render time
 let elapsedTime = 0;
-let particleNum = 20;
+let particleNum = 250;
 let drawing = true;
-let cycle = (maxFrames * particleNum) / 11111;
+let cycle = (maxFrames * particleNum) / 1;
 
 function setup() {
 	features = $fx.getFeatures();
