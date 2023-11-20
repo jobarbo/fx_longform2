@@ -177,7 +177,7 @@ function* drawGenerator() {
 			// close the generator
 			return;
 		}
-		blendMode(ADD);
+		//blendMode(ADD);
 		for (let i = 0; i < particleNum; i++) {
 			if (count > draw_every && drawing) {
 				count = 0;
