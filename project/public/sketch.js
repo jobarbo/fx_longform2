@@ -22,8 +22,8 @@ let hue = fxrand() * 360;
 
 // viewport
 let DEFAULT_SIZE = 800;
-let W = window.innerWidth;
-let H = window.innerHeight;
+let W = 400;
+let H = 400;
 let DIM;
 let MULTIPLIER;
 
@@ -54,9 +54,10 @@ function setup() {
 
 	pixelDensity(dpi(1));
 
-	DIM = min(windowWidth, windowHeight);
+	DIM = min(W, H);
+	console.log(DIM);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1.4);
+	c = createCanvas(DIM, DIM);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
