@@ -130,17 +130,30 @@ function setup() {
 	}
 
 	INIT(rseed);
-
+	let maxFps = 0;
+	let minFps = 1000;
 	// use requestAnimationFrame to call the generator function and pass it the sketch function
 	let sketch = drawGenerator();
 	function animate() {
 		background(bgCol);
 		// calculate frame rate
 		let fps = frameRate();
+
+		if (fps > maxFps) {
+			maxFps = fps;
+		}
+		if (fps < minFps) {
+			// wait 100 frames before setting the minFps to the current fps
+			if (elapsedTime > 1) {
+				minFps = fps;
+			}
+		}
 		fill(255);
 		stroke(0);
 		textSize(30);
 		text('FPS: ' + fps.toFixed(2), 10, height - 10);
+		text('Max FPS: ' + maxFps.toFixed(2), 10, height - 50);
+		text('Min FPS: ' + minFps.toFixed(2), 10, height - 90);
 
 		if (sketch.next().done) {
 			cancelAnimationFrame(animationFrameId);
