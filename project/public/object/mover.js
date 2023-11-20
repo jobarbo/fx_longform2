@@ -65,6 +65,7 @@ class Mover {
 	}
 
 	show() {
+		/*
 		drawingContext.strokeStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a / 100})`;
 		drawingContext.lineWidth = this.s;
 		drawingContext.beginPath();
@@ -77,6 +78,22 @@ class Mover {
 			drawingContext.bezierCurveTo(this.prevX, this.prevY, this.x, this.y, this.x, this.y);
 		}
 		drawingContext.stroke();
+		*/
+
+		strokeWeight(this.s);
+		stroke(this.hue, this.sat, this.bri, this.a);
+		noFill();
+		beginShape();
+		if (this.posArr.length >= this.maxFrames - 1) {
+			curveVertex(this.initX, this.initY);
+			curveVertex(this.initX, this.initY);
+			for (let i = 0; i < this.posArr.length; i++) {
+				curveVertex(this.posArr[i].x, this.posArr[i].y);
+			}
+			curveVertex(this.prevX, this.prevY);
+			curveVertex(this.x, this.y);
+		}
+		endShape();
 	}
 
 	move(frameCount, maxFrames) {
