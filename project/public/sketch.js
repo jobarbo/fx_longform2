@@ -28,7 +28,7 @@ let DIM;
 let MULTIPLIER;
 
 let startTime;
-let maxFrames = 40;
+let maxFrames = 50;
 
 // Easing animation variables
 let easeAng = 0,
@@ -45,7 +45,7 @@ let easeAng = 0,
 
 // render time
 let elapsedTime = 0;
-let particleNum = 1000;
+let particleNum = 250;
 let drawing = true;
 let cycle = (maxFrames * particleNum) / 1;
 
@@ -83,25 +83,50 @@ function setup() {
 	borderYMin = -0.1;
 	borderYMax = 1.1;
 
-	/* 	xMin = -0.1;
-	xMax = 0.1;
-	yMin = -0.1;
-	yMax = 0.1; */
-
 	xMinW = xMin * width;
 	xMaxW = xMax * width;
 	yMinH = yMin * height;
 	yMaxH = yMax * height;
-	for (let i = 0; i < particleNum; i++) {
-		//distribute the x and y values of the particles randomly inside the xMin, xMax, yMin, yMax range
-		let x = fxrand() * (xMaxW - xMinW) + xMinW;
-		let y = fxrand() * (yMaxH - yMinH) + yMinH;
+	const numEdges = 4; // Number of edges
+	let particlesPerEdge = Math.floor(particleNum / numEdges); // Calculate particles per edge
 
-		/* 		let x = random([random(xMinW + 30, xMinW + 10), random(xMaxW + 10, xMaxW + 30)]);
-		let y = random(height); */
+	const edgeOffset = -5; // Adjust this value to position particles exactly on the edge or outside it
 
-		// push to movers arra
-		movers_pos.push({x, y});
+	for (let edge = 0; edge < numEdges; edge++) {
+		if (edge === numEdges - 1) {
+			particlesPerEdge += particleNum % numEdges; // Distribute remaining particles
+		}
+
+		switch (edge) {
+			case 0: // Distribute particles along the top edge
+				for (let i = 0; i < particlesPerEdge; i++) {
+					let x = map(i, 0, particlesPerEdge - 1, xMinW - edgeOffset, xMaxW + edgeOffset);
+					let y = yMinH - edgeOffset;
+					movers_pos.push({x, y});
+				}
+				break;
+			case 1: // Distribute particles along the bottom edge
+				for (let i = 0; i < particlesPerEdge; i++) {
+					let x = map(i, 0, particlesPerEdge - 1, xMinW - edgeOffset, xMaxW + edgeOffset);
+					let y = yMaxH + edgeOffset;
+					movers_pos.push({x, y});
+				}
+				break;
+			case 2: // Distribute particles along the left edge
+				for (let i = 0; i < particlesPerEdge; i++) {
+					let x = xMinW - edgeOffset;
+					let y = map(i, 0, particlesPerEdge - 1, yMinH - edgeOffset, yMaxH + edgeOffset);
+					movers_pos.push({x, y});
+				}
+				break;
+			case 3: // Distribute particles along the right edge
+				for (let i = 0; i < particlesPerEdge; i++) {
+					let x = xMaxW + edgeOffset;
+					let y = map(i, 0, particlesPerEdge - 1, yMinH - edgeOffset, yMaxH + edgeOffset);
+					movers_pos.push({x, y});
+				}
+				break;
+		}
 	}
 
 	INIT(rseed);
@@ -189,8 +214,8 @@ function INIT(seed) {
 
 	scl1 = mapValue(cos(easing), -1, 1, 0.00071, 0.0025, true);
 	scl2 = mapValue(cos(easing), -1, 1, 0.0025, 0.00071, true);
-	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 200, 1, true));
-	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1, 200, true));
+	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 1200, 1, true));
+	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1, 1200, true));
 
 	/* 	scl1 = mapValue(sin(easing), -1, 1, 1, 0.00001, true);
 	scl2 = mapValue(sin(easing), -1, 1, 0.00001, 0.01, true);
@@ -238,6 +263,7 @@ function INIT(seed) {
 				xRandDivider,
 				yRandDivider,
 				seed,
+				maxFrames,
 				features
 			)
 		);

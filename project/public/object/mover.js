@@ -16,19 +16,23 @@ class Mover {
 		xRandDivider,
 		yRandDivider,
 		seed,
+		maxFrames,
 		features
 	) {
 		this.x = x;
 		this.y = y;
-		this.xi = xi;
-		this.yi = yi;
+		this.initX = x;
+		this.initY = y;
 		this.prevX = x;
 		this.prevY = y;
+		this.posArr = [];
+		this.xi = xi;
+		this.yi = yi;
 		this.initHue = hue;
 		this.initSat = [0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90][Math.floor(fxrand() * 12)];
 		this.initBri = [40, 60, 70, 70, 80, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
-		this.initAlpha = 100;
-		this.initS = 0.1 * MULTIPLIER;
+		this.initAlpha = 20;
+		this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = 0;
 		this.bri = 100;
@@ -42,7 +46,6 @@ class Mover {
 		this.seed = seed;
 		this.xRandDivider = xRandDivider;
 		this.yRandDivider = yRandDivider;
-
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperVal = 0;
@@ -57,6 +60,7 @@ class Mover {
 		this.borderX = width / 1.75;
 		this.borderY = height / 1.75;
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
+		this.maxFrames = maxFrames;
 		this.uvalue = 5;
 	}
 
@@ -76,15 +80,27 @@ class Mover {
 		drawingContext.moveTo(this.prevX, this.prevY);
 		drawingContext.lineTo(this.x, this.y);
 		drawingContext.stroke(); */
-		strokeCap(SQUARE);
 		strokeWeight(this.s);
 		stroke(this.hue, this.sat, this.bri, this.a);
-		line(this.prevX, this.prevY, this.x, this.y);
+		noFill();
+		beginShape();
+		if (this.posArr.length >= this.maxFrames - 1) {
+			curveVertex(this.initX, this.initY);
+			curveVertex(this.initX, this.initY);
+			for (let i = 0; i < this.posArr.length; i++) {
+				curveVertex(this.posArr[i].x, this.posArr[i].y);
+			}
+			curveVertex(this.prevX, this.prevY);
+			curveVertex(this.x, this.y);
+		}
+		endShape();
 	}
 
 	move(frameCount, maxFrames) {
 		this.prevX = this.x;
 		this.prevY = this.y;
+		// push and store the current position into an array
+		this.posArr.push(createVector(this.x, this.y));
 		let p = superCurve(
 			this.x,
 			this.y,
@@ -181,8 +197,13 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
-	let u = mapValue(un, -0.5, 0.5, -1, 1, true);
-	let v = mapValue(vn, -0.5, 0.5, -1, 1, true);
+	let minU = -2;
+	let maxU = 2;
+	let minV = -2;
+	let maxV = 2;
+
+	let u = map(vn, map(nx, 0, width, -10.0001, -0.0000001), map(nx, 0, width, 0.0000001, 10.0001), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -10.0001, -0.0000001), map(ny, 0, height, 0.0000001, 10.0001), minV, maxV, true);
 
 	let p = createVector(u, v);
 	return p;
