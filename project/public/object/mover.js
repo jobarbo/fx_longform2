@@ -68,11 +68,9 @@ class Mover {
 		/* drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
 		drawingContext.strokeStyle = 'transparent';
 		drawingContext.fillRect(this.x, this.y, this.s, this.s); */
-
 		/* drawingContext.beginPath();
 		drawingContext.arc(this.x, this.y, this.s / 2, 0, 2 * Math.PI);
 		drawingContext.fill(); */
-
 		// draw a line from the previous position to the current position
 		/* 		drawingContext.beginPath();
 		drawingContext.lineWidth = this.s;
@@ -80,13 +78,11 @@ class Mover {
 		drawingContext.moveTo(this.prevX, this.prevY);
 		drawingContext.lineTo(this.x, this.y);
 		drawingContext.stroke(); */
-
 		/* 		strokeCap(PROJECT);
 		strokeWeight(this.s);
 		stroke(this.hue, this.sat, this.bri, this.a);
 		line(this.prevX, this.prevY, this.x, this.y); */
-
-		strokeWeight(this.s);
+		/* 		strokeWeight(this.s);
 		stroke(this.hue, this.sat, this.bri, this.a);
 		noFill();
 		beginShape();
@@ -99,7 +95,7 @@ class Mover {
 			curveVertex(this.prevX, this.prevY);
 			curveVertex(this.x, this.y);
 		}
-		endShape();
+		endShape(); */
 	}
 
 	move(frameCount, maxFrames) {
