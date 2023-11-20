@@ -154,7 +154,7 @@ function setup() {
 
 		animationFrameId = requestAnimationFrame(animate);
 
-		blendMode(BLEND);
+		//blendMode(BLEND);
 	}
 
 	if (drawing && cycleCount < 1) {
@@ -172,7 +172,7 @@ function* drawGenerator() {
 	// draw the particles and make them move until draw_every is reached then yield and wait for the next frame, also check if the maxFrames is reached and stop the sketch if it is and also show the loading bar
 	while (true) {
 		if (elapsedTime >= maxFrames && drawing) {
-			blendMode(BLEND);
+			//blendMode(BLEND);
 			drawing = false;
 			// close the generator
 			return;
@@ -191,7 +191,6 @@ function* drawGenerator() {
 
 			count++;
 		}
-		blendMode(BLEND);
 
 		elapsedTime = frameCount - startTime;
 		frameCount++;
