@@ -81,12 +81,12 @@ class Mover {
 		drawingContext.lineTo(this.x, this.y);
 		drawingContext.stroke(); */
 
-		/* 		strokeCap(SQUARE);
+		strokeCap(PROJECT);
 		strokeWeight(this.s);
 		stroke(this.hue, this.sat, this.bri, this.a);
-		line(this.prevX, this.prevY, this.x, this.y); */
+		line(this.prevX, this.prevY, this.x, this.y);
 
-		strokeWeight(this.s);
+		/* 		strokeWeight(this.s);
 		stroke(this.hue, this.sat, this.bri, this.a);
 		noFill();
 		beginShape();
@@ -99,7 +99,7 @@ class Mover {
 			curveVertex(this.prevX, this.prevY);
 			curveVertex(this.x, this.y);
 		}
-		endShape();
+		endShape(); */
 	}
 
 	move(frameCount, maxFrames) {
@@ -200,8 +200,8 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
 	ny += dy * a2;
-	let un = oct(nx, ny, scale1, 0, octave);
-	let vn = oct(nx, ny, scale2, 1, octave);
+	let un = oct(dx, dy, scale1, 0, octave);
+	let vn = oct(dy, dx, scale2, 1, octave);
 
 	let minU = -2;
 	let maxU = 2;
