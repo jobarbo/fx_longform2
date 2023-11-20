@@ -32,7 +32,7 @@ class Mover {
 		this.initSat = [0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90][Math.floor(fxrand() * 12)];
 		this.initBri = [40, 60, 70, 70, 80, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
 		this.initAlpha = 20;
-		this.initS = 1 * MULTIPLIER;
+		this.initS = 2 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = 0;
 		this.bri = 100;
@@ -205,6 +205,8 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	let u = map(vn, map(nx, 0, width, -10.0001, -0.0000001), map(nx, 0, width, 0.0000001, 10.0001), minU, maxU, true);
 	let v = map(un, map(ny, 0, height, -10.0001, -0.0000001), map(ny, 0, height, 0.0000001, 10.0001), minV, maxV, true);
 
+	/* 	let u = mapValue(un, -0.5, 0.5, -1, 1, true);
+	let v = mapValue(vn, -0.5, 0.5, -1, 1, true); */
 	let p = createVector(u, v);
 	return p;
 }

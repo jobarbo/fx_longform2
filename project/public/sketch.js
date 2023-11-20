@@ -32,7 +32,7 @@ let maxFrames = 50;
 
 // Easing animation variables
 let easeAng = 0,
-	easeScalar = 0.6,
+	easeScalar = 0.26,
 	cycleCount = 0,
 	xi = 0,
 	yi = 0,
@@ -135,6 +135,12 @@ function setup() {
 	let sketch = drawGenerator();
 	function animate() {
 		background(bgCol);
+		// calculate frame rate
+		let fps = frameRate();
+		fill(255);
+		stroke(0);
+		textSize(30);
+		text('FPS: ' + fps.toFixed(2), 10, height - 10);
 
 		if (sketch.next().done) {
 			cancelAnimationFrame(animationFrameId);
