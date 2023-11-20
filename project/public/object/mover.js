@@ -65,7 +65,7 @@ class Mover {
 	}
 
 	show() {
-		/* 		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
+		/* drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a})`;
 		drawingContext.strokeStyle = 'transparent';
 		drawingContext.fillRect(this.x, this.y, this.s, this.s); */
 
@@ -80,7 +80,13 @@ class Mover {
 		drawingContext.moveTo(this.prevX, this.prevY);
 		drawingContext.lineTo(this.x, this.y);
 		drawingContext.stroke(); */
-		/* 		strokeWeight(this.s);
+
+		/* 		strokeCap(SQUARE);
+		strokeWeight(this.s);
+		stroke(this.hue, this.sat, this.bri, this.a);
+		line(this.prevX, this.prevY, this.x, this.y); */
+
+		strokeWeight(this.s);
 		stroke(this.hue, this.sat, this.bri, this.a);
 		noFill();
 		beginShape();
@@ -93,12 +99,7 @@ class Mover {
 			curveVertex(this.prevX, this.prevY);
 			curveVertex(this.x, this.y);
 		}
-		endShape(); */
-
-		strokeCap(SQUARE);
-		strokeWeight(this.s);
-		stroke(this.hue, this.sat, this.bri, this.a);
-		line(this.prevX, this.prevY, this.x, this.y);
+		endShape();
 	}
 
 	move(frameCount, maxFrames) {
