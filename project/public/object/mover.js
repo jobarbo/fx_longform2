@@ -80,7 +80,7 @@ class Mover {
 		drawingContext.moveTo(this.prevX, this.prevY);
 		drawingContext.lineTo(this.x, this.y);
 		drawingContext.stroke(); */
-		strokeWeight(this.s);
+		/* 		strokeWeight(this.s);
 		stroke(this.hue, this.sat, this.bri, this.a);
 		noFill();
 		beginShape();
@@ -93,7 +93,12 @@ class Mover {
 			curveVertex(this.prevX, this.prevY);
 			curveVertex(this.x, this.y);
 		}
-		endShape();
+		endShape(); */
+
+		strokeCap(SQUARE);
+		strokeWeight(this.s);
+		stroke(this.hue, this.sat, this.bri, this.a);
+		line(this.prevX, this.prevY, this.x, this.y);
 	}
 
 	move(frameCount, maxFrames) {
