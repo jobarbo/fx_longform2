@@ -185,9 +185,7 @@ function* drawGenerator() {
 			}
 			const mover = movers[i];
 			if (drawing) {
-				if (count % 15 === 0) {
-					mover.show();
-				}
+				mover.show();
 				mover.move();
 			}
 
