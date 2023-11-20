@@ -52,7 +52,7 @@ let cycle = (maxFrames * particleNum) / 1;
 function setup() {
 	features = $fx.getFeatures();
 
-	pixelDensity(dpi(1));
+	pixelDensity(dpi(0.5));
 
 	DIM = min(W, H);
 	console.log(DIM);
