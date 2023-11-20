@@ -158,11 +158,11 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 		scale2 = scl2,
 		dx,
 		dy;
-
+	/*
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
-	ny += dy * a2;
+	ny += dy * a2; */
 
 	/* 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 3, octave);
@@ -173,19 +173,19 @@ function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampval
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
 	ny += dy * a2; */
-	let un = oct(nx, ny, scale1, 0, octave);
+	/* 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
 	let minU = -2;
 	let maxU = 2;
 	let minV = -2;
-	let maxV = 2;
+	let maxV = 2; */
 
-	let u = map(vn, map(nx, 0, width, -10.0001, -0.0000001), map(nx, 0, width, 0.0000001, 10.0001), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -10.0001, -0.0000001), map(ny, 0, height, 0.0000001, 10.0001), minV, maxV, true);
+	/* 	let u = map(vn, map(nx, 0, width, -10.0001, -0.0000001), map(nx, 0, width, 0.0000001, 10.0001), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -10.0001, -0.0000001), map(ny, 0, height, 0.0000001, 10.0001), minV, maxV, true); */
 
 	/* 	let u = mapValue(un, -0.5, 0.5, -5, 5, true);
 	let v = mapValue(vn, -0.5, 0.5, -5, 5, true); */
-	let p = createVector(u, v);
+	let p = createVector(1, 1);
 	return p;
 }
