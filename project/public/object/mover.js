@@ -137,30 +137,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave, clampvalueArr, uvalue)
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	/* 	let u = mapValue(un, -clampvalueArr[0], clampvalueArr[1], -5, 5, true);
-	let v = mapValue(vn, -clampvalueArr[2], clampvalueArr[3], -15, 15, true); */
-
-	let minU = -5;
-	let maxU = 5;
-	let minV = -15;
-	let maxV = 15;
-
-	let u = map(
-		vn,
-		map(nx, 0, width, -clampvalueArr[0] * 30, -clampvalueArr[0]),
-		map(nx, 0, width, clampvalueArr[1], clampvalueArr[1] * 30),
-		minU,
-		maxU,
-		true
-	);
-	let v = map(
-		un,
-		map(ny, 0, height, -clampvalueArr[2] * 30, -clampvalueArr[2]),
-		map(ny, 0, height, clampvalueArr[3], clampvalueArr[3] * 30),
-		minV,
-		maxV,
-		true
-	);
+	let u = mapValue(un, -clampvalueArr[0], clampvalueArr[1], -5, 5, true);
+	let v = mapValue(vn, -clampvalueArr[2], clampvalueArr[3], -15, 15, true);
 
 	return {x: u, y: v};
 }

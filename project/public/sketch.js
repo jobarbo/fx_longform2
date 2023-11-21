@@ -1,6 +1,8 @@
 //new Q5('global');
 console.log(fxhash);
+
 let features;
+let fxfeatures;
 
 let movers = [];
 let scl1;
@@ -34,6 +36,7 @@ let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
+let MARGIN;
 
 // render time
 let elapsedTime = 0;
@@ -42,15 +45,15 @@ let particleNum = 800000;
 let drawing = true;
 let renderMode = 1;
 let cycle = parseInt((maxFrames * particleNum) / 170);
-console.log(cycle);
 
 let hue;
 let bgCol;
 
 function setup() {
-	features = $fx.getFeatures();
+	fxfeatures = $fx.getFeatures();
+	features = window.features;
 	console.log(features);
-
+	console.log(fxfeatures);
 	console.time('setup');
 	pixelDensity(dpi(1));
 	DIM = min(windowWidth, windowHeight);
@@ -67,6 +70,12 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
+
+	if (window.location.search.includes('ratio=skate')) {
+		MARGIN = 0;
+	} else {
+		MARGIN = width / 7;
+	}
 
 	hue = fxrand() * 360;
 	bgCol = color(hue, random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
@@ -127,8 +136,8 @@ function INIT() {
 	drawTexture(hue);
 	movers = [];
 
-	scl1 = random(0.0001, 0.005);
-	scl2 = random(0.0001, 0.005);
+	scl1 = random(0.0001, 0.01);
+	scl2 = random(0.0001, 0.01);
 	let ang1Max = Math.floor(map(scl1, 0.0001, 0.001, 16000, 100, true));
 	let ang2Max = Math.floor(map(scl2, 0.0001, 0.001, 16000, 100, true));
 	ang1 = Math.floor(fxrand() * ang1Max);
@@ -145,14 +154,14 @@ function INIT() {
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 
-	xMin = 0.15;
-	xMax = 0.85;
-	yMin = 0.06;
-	yMax = 0.94;
-	/* 	xMin = -0.05;
-	xMax = 1.05;
-	yMin = -0.05;
-	yMax = 1.05; */
+	// convert the margin to a percentage of the width
+	xMarg = MARGIN / width;
+	yMarg = MARGIN / height;
+
+	xMin = xMarg;
+	xMax = 1 - xMarg;
+	yMin = yMarg;
+	yMax = 1 - yMarg;
 
 	for (let i = 0; i < particleNum; i++) {
 		let x = random(xMin, xMax) * width;
