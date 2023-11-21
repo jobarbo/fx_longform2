@@ -26,7 +26,7 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = 100;
-		this.s = random([1]);
+		this.s = random([0.5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -179,16 +179,16 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = -1;
 
 	//! Introverted
-	/* 	let u = map(vn, map(nx, 0, width, -0.0001, -0.0000001), map(nx, 0, width, 0.0000001, 0.0001), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -0.0001, -0.0000001), map(ny, 0, height, 0.0000001, 0.0001), minV, maxV, true); */
+	let u = map(vn, map(nx, 0, width, -10.0001, -0.0000001), map(nx, 0, width, 0.0000001, 10.0001), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -10.0001, -0.0000001), map(ny, 0, height, 0.0000001, 10.0001), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, 0, width, -5.4, -0.0001), map(ny, 0, width, 0.0001, 5.4), minU, maxU, true);
 	let v = map(un, map(nx, 0, height, -5.4, -0.0001), map(nx, 0, height, 0.0001, 5.4), minV, maxV, true); */
 
 	//! Equilibrium
-	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
-	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true);
+	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
+	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 
 	let p = createVector(u, v);
 	return p;
