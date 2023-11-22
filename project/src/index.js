@@ -7,7 +7,6 @@ var {
 	complexity,
 	theme,
 	colormode,
-	strokestyle,
 	clampvalue,
 	clampvalueArr,
 	clampNameArr,
@@ -16,6 +15,10 @@ var {
 	scalevalue,
 	scaleValueArr,
 	scaleValueNameArr,
+	behaviorvalue,
+	behaviorValueArr,
+	behaviorNameArr,
+	behaviorname,
 } = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
 // decode window location search
@@ -37,13 +40,8 @@ if (urlParams) {
 		colormode = urlParams.colormode;
 	}
 
-	if (urlParams.strokestyle) {
-		strokestyle = urlParams.strokestyle;
-	}
-
 	if (urlParams.clampname) {
 		clampname = urlParams.clampname;
-		console.log('clampname', clampname);
 		// fetch clampvalue based on clampname from clampvalueArr
 		let index = -1;
 		for (let i = 0; i < clampNameArr.length; i++) {
@@ -62,7 +60,6 @@ if (urlParams) {
 
 	if (urlParams.scalename) {
 		scalename = urlParams.scalename;
-		console.log('scalename', scalename);
 		// fetch scalevalue based on scalename from scaleValueArr
 		let index = -1;
 		for (let i = 0; i < scaleValueNameArr.length; i++) {
@@ -78,6 +75,24 @@ if (urlParams) {
 			scalevalue = scaleValueArr[index][0];
 		}
 	}
+
+	if (urlParams.behaviorname) {
+		behaviorname = urlParams.behaviorname;
+		// fetch behaviorvalue based on behaviorname from behaviorValueArr
+		let index = -1;
+		for (let i = 0; i < behaviorNameArr.length; i++) {
+			if (JSON.stringify(behaviorNameArr[i][0]) === JSON.stringify(behaviorname)) {
+				index = i;
+				break;
+			}
+		}
+
+		// Assigning behaviorvalue based on the index found
+
+		if (index !== -1) {
+			behaviorvalue = behaviorValueArr[index][0];
+		}
+	}
 }
 
 // this is how features can be defined
@@ -86,16 +101,16 @@ $fx.features({
 	complexity: complexity,
 	theme: theme,
 	colormode: colormode,
-	strokestyle: strokestyle,
 	clampname: clampname,
 	scalename: scalename,
+	behaviorname: behaviorname,
 });
 
 window.features = {
 	complexity: complexity,
 	theme: theme,
 	colormode: colormode,
-	strokestyle: strokestyle,
 	clampvalue: clampvalue,
 	scalevalue: scalevalue,
+	behaviorvalue: behaviorvalue,
 };

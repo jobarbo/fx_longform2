@@ -81,7 +81,6 @@ function setup() {
 
 	hue = fxrand() * 360;
 	bgCol = color(hue, random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
-
 	INIT();
 	let sketch = drawGenerator();
 	// use requestAnimationFrame to call the generator function and pass it the sketch function
@@ -149,10 +148,7 @@ function INIT() {
 	let smallest = Math.min(ang1rnd, ang2rnd);
 	ang1 = smallest;
 	ang2 = smallest;
-	console.log(ang1Max, ang2Max);
-	console.log(scl1, scl2, ang1, ang2);
 
-	console.log(sclVal);
 	/* 	scl1 = random(0.0003, 0.006) / ratio;
 	scl2 = random(0.0003, 0.006) / ratio;
 
@@ -200,7 +196,7 @@ function INIT() {
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
 
-	for (let i = 0; i < 800000; i++) {
+	for (let i = 0; i < 280000; i++) {
 		let x = fxrand() * width;
 		let y = fxrand() * height;
 		let sw = 0.75 * MULTIPLIER;

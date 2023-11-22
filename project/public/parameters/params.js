@@ -23,12 +23,6 @@ const colorModeArr = [
 	['iridescent', 30],
 ];
 
-const strokestyleArr = [
-	['thin', 1000000],
-	['regular', 0],
-	['bold', 0],
-];
-
 const scaleValueArr = [
 	['0.0001, 0.002', 33],
 	['0.002, 0.005', 33],
@@ -36,9 +30,9 @@ const scaleValueArr = [
 ];
 
 const scaleValueNameArr = [
-	['Close', 33],
-	['Mid', 33],
-	['Far', 33],
+	['Close', 50],
+	['Mid', 35],
+	['Far', 15],
 ];
 
 const clampvalueArr = [
@@ -52,21 +46,85 @@ const clampvalueArr = [
 const clampNameArr = [
 	['Original', 30],
 	['Drift', 20],
-	['Orevert', 30],
-	['Drirevert', 20],
-	['Decimal', 10],
+	['Original-Revert', 30],
+	['Drift-Revert', 20],
+	['Stretch', 10],
 ];
 
+const particleBehaviorNameArr = [
+	['three-five', 3.57],
+	['three-ten', 3.57],
+	['three-fifteen', 3.57],
+	['three-twenty', 3.57],
+	['five-three', 3.57],
+	['five-five', 3.57],
+	['five-ten', 3.57],
+	['five-fifteen', 3.57],
+	['five-twenty', 3.57],
+	['seven-seven', 3.57],
+	['seven-ten DAB', 3.57],
+	['seven-fifteen', 3.57],
+	['seven-twenty', 3.57],
+	['ten-three', 3.57],
+	['ten-five', 3.57],
+	['ten-ten', 3.57],
+	['ten-fifteen', 3.57],
+	['ten-twenty', 3.57],
+	['fifteen-three', 3.57],
+	['fifteen-five', 3.57],
+	['fifteen-ten', 3.57],
+	['fifteen-fifteen', 3.57],
+	['fifteen-twenty', 3.57],
+	['twenty-three', 3.57],
+	['twenty-five', 3.57],
+	['twenty-ten', 3.57],
+	['twenty-fifteen', 3.57],
+	['twenty-twenty', 3.57],
+	['four-twenty BLAZE IT', 3.57],
+];
+
+const particleBehaviorArr = [
+	['3,3,5,5', 3.57],
+	['3,3,10,10', 3.57],
+	['3,3,15,15', 3.57],
+	['3,3,20,20', 3.57],
+	['5,5,3,3', 3.57],
+	['5,5,5,5', 3.57],
+	['5,5,10,10', 3.57],
+	['5,5,15,15', 3.57],
+	['5,5,20,20', 3.57],
+	['7,7,7,7', 3.57],
+	['7,7,10,10', 3.57],
+	['7,7,15,15', 3.57],
+	['7,7,20,20', 3.57],
+	['10,10,3,3', 3.57],
+	['10,10,5,5', 3.57],
+	['10,10,10,10', 3.57],
+	['10,10,15,15', 3.57],
+	['10,10,20,20', 3.57],
+	['15,15,3,3', 3.57],
+	['15,15,5,5', 3.57],
+	['15,15,10,10', 3.57],
+	['15,15,15,15', 3.57],
+	['15,15,20,20', 3.57],
+	['20,20,3,3', 3.57],
+	['20,20,5,5', 3.57],
+	['20,20,10,10', 3.57],
+	['20,20,15,15', 3.57],
+	['20,20,20,20', 3.57],
+	['4,4,20,20', 3.57],
+];
 // all input parameters are optional, they will be chosen at random if not passed into the function
 function generate_composition_params(
 	complexity,
 	theme,
 	colormode,
-	strokestyle,
 	clampvalue,
 	clampname,
 	scalevalue,
-	scalename
+	scalename,
+	behaviorname,
+	behaviorvalue
 ) {
 	// SET DEFAULTS IF NOT PASSED IN
 
@@ -76,10 +134,6 @@ function generate_composition_params(
 
 	if (colormode === undefined) {
 		colormode = weighted_choice(colorModeArr);
-	}
-
-	if (strokestyle === undefined) {
-		strokestyle = weighted_choice(strokestyleArr);
 	}
 
 	if (clampname === undefined) {
@@ -116,15 +170,24 @@ function generate_composition_params(
 		}
 	}
 
-	if (complexity === undefined) {
-		/* 		if (scalename === 'Close') {
-			complexityArr.push(['6', 50]);
-		} else if (scalename === 'Mid') {
-			complexityArr.push(['6', 50]);
-		} else if (scalename === 'Far') {
-			complexityArr.push(['6', 50]);
+	if (behaviorname === undefined) {
+		let behaviorContent = weighted_choice(particleBehaviorNameArr);
+		behaviorname = behaviorContent;
+		let index = -1;
+		for (let i = 0; i < particleBehaviorNameArr.length; i++) {
+			if (JSON.stringify(particleBehaviorNameArr[i][0]) === JSON.stringify(behaviorContent)) {
+				index = i;
+				break;
+			}
 		}
-		console.log(complexityArr); */
+
+		// Assigning clampvalue based on the index found
+		if (index !== -1) {
+			behaviorvalue = particleBehaviorArr[index][0];
+		}
+	}
+
+	if (complexity === undefined) {
 		complexity = weighted_choice(complexityArr);
 	}
 
@@ -136,7 +199,6 @@ function generate_composition_params(
 		complexity: complexity,
 		theme: theme,
 		colormode: colormode,
-		strokestyle: strokestyle,
 		clampvalue: clampvalue,
 		clampvalueArr: clampvalueArr,
 		clampNameArr: clampNameArr,
@@ -145,6 +207,10 @@ function generate_composition_params(
 		scalevalueArr: scaleValueArr,
 		scaleNameArr: scaleValueNameArr,
 		scalename: scalename,
+		behaviorvalue: behaviorvalue,
+		behaviorvalueArr: particleBehaviorArr,
+		behaviorNameArr: particleBehaviorNameArr,
+		behaviorname: behaviorname,
 	};
 
 	//* RETURN PARAMETERS *//

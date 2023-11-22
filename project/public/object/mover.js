@@ -46,7 +46,9 @@ class Mover {
 		this.borderX = width / 2;
 		this.borderY = height / 2.75;
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
-		this.uvalue = 4;
+		this.uvalueArr = features.behaviorvalue.split(',').map(Number);
+		// store the smallest value of the uvalueArr in this.uvalue
+		this.uvalue = Math.min(...this.uvalueArr);
 		this.isBordered = true;
 	}
 
@@ -65,7 +67,7 @@ class Mover {
 			this.ang2,
 			this.oct,
 			this.clampvaluearray,
-			this.uvalue
+			this.uvalueArr
 		);
 
 		this.xRandSkipper = fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) - this.xRandSkipperVal * MULTIPLIER;
@@ -109,7 +111,7 @@ class Mover {
 		}
 	}
 }
-function superCurve(x, y, scl1, scl2, ang1, ang2, octave, clampvalueArr, uvalue) {
+function superCurve(x, y, scl1, scl2, ang1, ang2, octave, clampvalueArr, uvalueArr) {
 	let nx = x,
 		ny = y,
 		a1 = ang1,
@@ -137,8 +139,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave, clampvalueArr, uvalue)
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = mapValue(un, -clampvalueArr[0], clampvalueArr[1], -5, 5, true);
-	let v = mapValue(vn, -clampvalueArr[2], clampvalueArr[3], -15, 15, true);
+	let u = mapValue(un, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], true);
+	let v = mapValue(vn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], true);
 
 	return {x: u, y: v};
 }
