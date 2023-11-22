@@ -57,7 +57,7 @@ function setup() {
 	console.log(features);
 	console.log(fxfeatures);
 	console.time('setup');
-	pixelDensity(dpi(2));
+	pixelDensity(dpi(1));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * ratio);
@@ -79,7 +79,7 @@ function setup() {
 		MARGIN = width / 7;
 	}
 
-	hue = fxrand() * 360;
+	hue = parseInt(fxrand() * 360);
 	bgCol = color(hue, random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
 	INIT();
 	let sketch = drawGenerator();
@@ -171,7 +171,7 @@ function INIT() {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
-		let initHue = hue + random(-1, 1);
+		let initHue = hue;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(
 			new Mover(

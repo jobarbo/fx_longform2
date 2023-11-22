@@ -21,7 +21,7 @@ class Mover {
 			features.colormode === 'monochrome' || features.colormode === 'fixed'
 				? 1
 				: features.colormode === 'dynamic' || features.colormode === 'duotone'
-				? 6
+				? 12
 				: 25;
 		this.satStep = features.colorMode === 'duotone' ? 0.1 : 1;
 		this.briStep = 1;
