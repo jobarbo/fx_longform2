@@ -26,6 +26,8 @@ let ratio = 3;
 if (window.location.search.includes('ratio')) {
 	if (window.location.search.includes('ratio=a4')) {
 		ratio = 1.41;
+	} else if (window.location.search.includes('ratio=skate')) {
+		ratio = 3.666;
 	} else {
 		ratio = parseInt(window.location.search.split('ratio=')[1]);
 	}
@@ -55,7 +57,7 @@ function setup() {
 	console.log(features);
 	console.log(fxfeatures);
 	console.time('setup');
-	pixelDensity(dpi(1));
+	pixelDensity(dpi(2));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * ratio);
@@ -135,16 +137,22 @@ function INIT() {
 
 	drawTexture(hue);
 	movers = [];
+	sclVal = features.scalevalue.split(',').map(Number);
 
-	scl1 = random(0.0001, 0.01);
-	scl2 = random(0.0001, 0.01);
-	let ang1Max = Math.floor(map(scl1, 0.0001, 0.001, 16000, 100, true));
-	let ang2Max = Math.floor(map(scl2, 0.0001, 0.001, 16000, 100, true));
-	ang1 = Math.floor(fxrand() * ang1Max);
-	ang2 = Math.floor(fxrand() * ang2Max);
+	scl1 = random(sclVal[0], sclVal[1]);
+	scl2 = random(sclVal[0], sclVal[1]);
+	let ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 150, true));
+	let ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 150, true));
+	ang1rnd = Math.floor(fxrand() * ang1Max);
+	ang2rnd = Math.floor(fxrand() * ang2Max);
+	// get the smallest value from both randoms
+	let smallest = Math.min(ang1rnd, ang2rnd);
+	ang1 = smallest;
+	ang2 = smallest;
 	console.log(ang1Max, ang2Max);
 	console.log(scl1, scl2, ang1, ang2);
 
+	console.log(sclVal);
 	/* 	scl1 = random(0.0003, 0.006) / ratio;
 	scl2 = random(0.0003, 0.006) / ratio;
 
