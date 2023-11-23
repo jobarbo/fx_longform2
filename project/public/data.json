@@ -1,3 +1,10 @@
 {
-	"seed": "347234623642634"
+	"seed": "347234623642634",
+	"max_scale": 0.0025,
+	"min_scale": 0.00071,
+	"max_amp": 1200,
+	"min_amp": 1,
+	"x_rand_divider": 0.025,
+	"y_rand_divider": 0.025,
+	"ease_scalar": 0.25
 }

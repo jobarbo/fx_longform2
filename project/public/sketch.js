@@ -68,8 +68,8 @@ function INIT(seed) {
 
 	// if there is an animation running, cancel it
 
-	rseed = randomSeed(fxrand() * 1000000);
-	nseed = noiseSeed(fxrand() * 1000000);
+	randomSeed(fxrand() * 1000000);
+	noiseSeed(fxrand() * 1000000);
 
 	bgCol = color(329, 98, 35, 100);
 
