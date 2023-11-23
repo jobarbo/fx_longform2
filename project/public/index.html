@@ -8,14 +8,21 @@
 		<script src="./library/p5/p5.min.js"></script>
 
 		<script>
-			console.log(p5);
+			async function loadScript(src) {
+				return new Promise((resolve, reject) => {
+					const script = document.createElement('script');
+					script.src = src;
+					script.onload = resolve;
+					script.onerror = reject;
+					document.head.appendChild(script);
+				});
+			}
+
 			async function fetchDataAndRunScript() {
 				try {
 					const response = await fetch('./data.json');
 					const data = await response.json();
 					console.log(data);
-
-					// Now that the data is loaded, proceed with the rest of the script
 
 					fx = $fx;
 					fxhash = data.seed;
@@ -28,34 +35,25 @@
 					fxrand = $fx.rand;
 					rand = fxrand;
 					features = $fx.getFeatures();
-					seed = data.seed;
+					seed = parseInt(fxrand() * 10000000);
 					console.log(seed);
 
-					// Load other scripts after obtaining the data if needed but load them in or
-
-					loadScript('./library/utils/utils.js');
-					loadScript('./library/utils/piterNoise.js');
-					loadScript('./library/utils/saveCanvas.js');
-					loadScript('./parameters/params.js');
-					loadScript('./object/mover.js');
-					loadScript('./sketch.js');
-					// Add other script paths as needed
+					// Load scripts sequentially after obtaining the data
+					await loadScript('./library/utils/utils.js');
+					await loadScript('./library/utils/piterNoise.js');
+					await loadScript('./library/utils/saveCanvas.js');
+					await loadScript('./parameters/params.js');
+					await loadScript('./object/mover.js');
+					await loadScript('./sketch.js'); // Load the sketch.js file at the end
 				} catch (error) {
 					console.error('Error fetching or processing data:', error);
 				}
 			}
 
-			function loadScript(src) {
-				const script = document.createElement('script');
-				script.src = src;
-				document.head.appendChild(script);
-			}
-
-			console.log('window.onload');
-			// Call the function to fetch data and run the script
-			fetchDataAndRunScript();
-
-			// Call the function to fetch data and run the script
+			document.addEventListener('DOMContentLoaded', function () {
+				console.log('Window loaded. Initiating script loading.');
+				fetchDataAndRunScript();
+			});
 		</script>
 	</head>
 	<body>

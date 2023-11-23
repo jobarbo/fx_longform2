@@ -93,3 +93,5 @@ function generate_composition_params(complexity, theme, composition, colormode, 
 	//* RETURN PARAMETERS *//
 	return composition_params;
 }
+
+console.log('params.js loaded');
