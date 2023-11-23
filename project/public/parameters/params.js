@@ -3,7 +3,7 @@
 
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
-
+console.log('params.js loaded');
 const complexityArr = [
 	['1', 20],
 	['2', 70],

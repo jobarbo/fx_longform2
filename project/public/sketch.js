@@ -29,8 +29,9 @@ let MULTIPLIER;
 
 let startTime;
 let maxFrames = 50;
-
+console.log('sketch');
 // Easing animation variables
+let animationFrameId;
 let easeAng = 0,
 	easeScalar = 0.26,
 	cycleCount = 0,
@@ -48,6 +49,9 @@ let elapsedTime = 0;
 let particleNum = 250;
 let drawing = true;
 let cycle = (maxFrames * particleNum) / 1;
+function preload() {
+	console.log('preload');
+}
 
 function setup() {
 	features = $fx.getFeatures();
@@ -58,18 +62,20 @@ function setup() {
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * 1.4);
 	rectMode(CENTER);
-	rseed = randomSeed(fxrand() * 10000);
-	nseed = noiseSeed(fxrand() * 10000);
-	xRandDivider = random([0.025]);
-	yRandDivider = random([0.025]);
-
-	amp1 = 1200;
-	amp2 = 1200;
-	scl1 = 0.0001;
-	scl2 = 0.0001;
-
+	console.log('setup');
 	colorMode(HSB, 360, 100, 100, 100);
+
+	INIT();
+}
+
+function INIT(seed) {
+	console.log(movers.length);
 	startTime = frameCount;
+
+	// if there is an animation running, cancel it
+
+	rseed = randomSeed(fxrand() * 1000000);
+	nseed = noiseSeed(fxrand() * 1000000);
 
 	bgCol = color(329, 98, 35, 100);
 
@@ -128,8 +134,66 @@ function setup() {
 				break;
 		}
 	}
+	FRAME(seed);
+	animationManager();
+}
 
-	INIT(rseed);
+function FRAME(seed) {
+	//	bgCol = color(355, 10, 95, 60);
+
+	let easing = radians(easeAng);
+
+	scl1 = mapValue(cos(easing), -1, 1, 0.00071, 0.0025, true);
+	scl2 = mapValue(cos(easing), -1, 1, 0.0025, 0.00071, true);
+	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 1200, 1, true));
+	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1, 1200, true));
+	xRandDivider = random([0.025]);
+	yRandDivider = random([0.025]);
+
+	/* 	xi += mapValue(oct(xoff, yoff, 1, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true);
+	yi += mapValue(oct(yoff, xoff, 3, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true); */
+	/* 	scl1 += mapValue(oct(sxoff, syoff, scl1, 1), 0, 1, -0.00001 * MULTIPLIER, 0.00001 * MULTIPLIER, true);
+	scl2 += mapValue(oct(syoff, sxoff, scl2, 1), 0, 1, -0.00001 * MULTIPLIER, 0.00001 * MULTIPLIER, true); */
+
+	easeAng += easeScalar;
+	xoff += 0.000001;
+	yoff += 0.000001;
+	axoff += 0.00025;
+	ayoff += 0.00025;
+	sxoff += 0.00025;
+	syoff += 0.00025;
+
+	for (let i = 0; i < particleNum; i++) {
+		let x = movers_pos[i].x;
+		let y = movers_pos[i].y;
+		let initHue = hue + fxrand() * 2 - 1;
+		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
+		movers.push(
+			new Mover(
+				x,
+				y,
+				xi,
+				yi,
+				initHue,
+				scl1 / MULTIPLIER,
+				scl2 / MULTIPLIER,
+				amplitude1 * MULTIPLIER,
+				amplitude2 * MULTIPLIER,
+				xMin,
+				xMax,
+				yMin,
+				yMax,
+				xRandDivider,
+				yRandDivider,
+				seed,
+				maxFrames,
+				features
+			)
+		);
+	}
+}
+
+function animationManager() {
 	let maxFps = 0;
 	let minFps = 1000;
 	// use requestAnimationFrame to call the generator function and pass it the sketch function
@@ -220,70 +284,8 @@ function* drawGenerator() {
 			//saveArtwork();
 			elapsedTime = 0;
 			frameCount = 0;
-			INIT(rseed);
+			FRAME(rseed);
 			//}
 		}
-	}
-}
-function INIT(seed) {
-	//	bgCol = color(355, 10, 95, 60);
-
-	let easing = radians(easeAng);
-
-	scl1 = mapValue(cos(easing), -1, 1, 0.00071, 0.0025, true);
-	scl2 = mapValue(cos(easing), -1, 1, 0.0025, 0.00071, true);
-	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 1200, 1, true));
-	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1, 1200, true));
-
-	/* 	scl1 = mapValue(sin(easing), -1, 1, 1, 0.00001, true);
-	scl2 = mapValue(sin(easing), -1, 1, 0.00001, 0.01, true);
-
-	amplitude1 = parseInt(mapValue(sin(easing), -1, 1, 1, 1, true));
-	amplitude2 = parseInt(mapValue(sin(easing), -1, 1, 1, 1, true)); */
-
-	/* 	xi += mapValue(oct(xoff, yoff, 1, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true);
-	yi += mapValue(oct(yoff, xoff, 3, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true); */
-	/* 	scl1 += mapValue(oct(sxoff, syoff, scl1, 1), 0, 1, -0.00001 * MULTIPLIER, 0.00001 * MULTIPLIER, true);
-	scl2 += mapValue(oct(syoff, sxoff, scl2, 1), 0, 1, -0.00001 * MULTIPLIER, 0.00001 * MULTIPLIER, true); */
-
-	easeAng += easeScalar;
-	xoff += 0.000001;
-	yoff += 0.000001;
-	axoff += 0.00025;
-	ayoff += 0.00025;
-	sxoff += 0.00025;
-	syoff += 0.00025;
-
-	for (let i = 0; i < particleNum; i++) {
-		/* 		let x = (fxrand() * (xMax - xMin) + xMin) * width;
-		let y = (fxrand() * (yMax - yMin) + yMin) * height; */
-		/* 		let x = random([random(xMinW - 30, xMinW - 10), random(xMaxW + 10, xMaxW + 30)]);
-		let y = random(height); */
-		let x = movers_pos[i].x;
-		let y = movers_pos[i].y;
-		let initHue = hue + fxrand() * 2 - 1;
-		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(
-			new Mover(
-				x,
-				y,
-				xi,
-				yi,
-				initHue,
-				scl1 / MULTIPLIER,
-				scl2 / MULTIPLIER,
-				amplitude1 * MULTIPLIER,
-				amplitude2 * MULTIPLIER,
-				xMin,
-				xMax,
-				yMin,
-				yMax,
-				xRandDivider,
-				yRandDivider,
-				seed,
-				maxFrames,
-				features
-			)
-		);
 	}
 }
