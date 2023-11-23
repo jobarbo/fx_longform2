@@ -14,10 +14,10 @@
 				.catch((error) => console.error('Error fetching data:', error));
 
 			//FXHASH random function for specific implimentation
-			fxrand = $fx.rand;
-			rand = fxrand;
 			fx = $fx;
 			fxhash = $fx.hash;
+			fxrand = $fx.rand;
+			rand = fxrand;
 			features = $fx.getFeatures();
 			seed = parseInt(fxrand() * 10000000);
 			console.log(seed);
