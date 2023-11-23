@@ -29,7 +29,6 @@ let MULTIPLIER;
 
 let startTime;
 let maxFrames = 50;
-console.log('sketch');
 // Easing animation variables
 let animationFrameId;
 let easeAng = 0,
@@ -49,9 +48,6 @@ let elapsedTime = 0;
 let particleNum = 250;
 let drawing = true;
 let cycle = (maxFrames * particleNum) / 1;
-function preload() {
-	console.log('preload');
-}
 
 function setup() {
 	features = $fx.getFeatures();
@@ -62,14 +58,12 @@ function setup() {
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * 1.4);
 	rectMode(CENTER);
-	console.log('setup');
 	colorMode(HSB, 360, 100, 100, 100);
 
 	INIT();
 }
 
 function INIT(seed) {
-	console.log(movers.length);
 	startTime = frameCount;
 
 	// if there is an animation running, cancel it
@@ -235,8 +229,6 @@ function animationManager() {
 	}
 
 	if (drawing && cycleCount < 1) {
-		console.log('drawing');
-
 		animate();
 	}
 }
