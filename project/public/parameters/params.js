@@ -23,6 +23,11 @@ const paramTable = {
 			[0.025, 50],
 			[0.027123, 50],
 		]),
+	background_color_hue: () =>
+		weighted_choice([
+			[0, 50],
+			[100, 50],
+		]),
 	// TODO add all parameters that need to be randomized
 };
 

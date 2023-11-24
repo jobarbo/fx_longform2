@@ -10,27 +10,28 @@ composition_params = generate_composition_params();
 
 var {seed} = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
+console.log('test');
 //console.log(shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode);
 // this is how to define parameters
 // this is how to define parameters
 //console.log(theme);
 // this is how features can be defined
-$fx.features(composition_params);
 
 $fx.params([
 	{
-		id: 'number_id',
-		name: 'A number/float64',
+		id: 'background_color_hue',
+		name: 'Background Color Hue',
 		type: 'number',
 		//default: Math.PI,
 		options: {
-			min: 1,
-			max: 10,
-			step: 0.0001,
+			min: 0,
+			max: 360,
+			step: 1,
 		},
 	},
 ]);
 
+$fx.features(composition_params);
 //FXHASH random function for specific implimentation
 fx = $fx;
 fxhash = $fx.hash;
@@ -47,4 +48,4 @@ setTimeout(() => {
 		location.reload();
 	}, 100);
 	//FIXME set this back to Hour for release
-}, 10_000 /* Hour */);
+}, 10_000_000 /* Hour */);

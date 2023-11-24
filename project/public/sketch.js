@@ -7,10 +7,10 @@ F = (N, f) => [...Array(N)].map((_, i) => f(i));
 
 // Added addtional transformation to the parameter for easier usage
 // e.g. color.hex.rgba, color.obj.rgba.r, color.arr.rgb[0]
-//console.log($fx.getParams());
 
 // particles variables setup
 let features = '';
+let params = '';
 let movers = [];
 let movers_pos = [];
 let scl1;
@@ -58,6 +58,9 @@ let cycle = (maxFrames * particleNum) / 1;
 
 function setup() {
 	features = $fx.getFeatures();
+	params = $fx.getParams();
+
+	console.log(params);
 
 	pixelDensity(dpi(1));
 
@@ -80,7 +83,7 @@ function INIT(seed) {
 	randomSeed(fxrand() * 1_000_000);
 	noiseSeed(fxrand() * 1_000_000);
 
-	bgCol = color(329, 98, 35, 100);
+	bgCol = color(params.background_color_hue, 98, 35, 100);
 
 	xMin = -0.1;
 	xMax = 1.1;
