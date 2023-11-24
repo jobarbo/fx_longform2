@@ -20,12 +20,13 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
+	background(random(360), 50, 100);
 	console.log(features);
 }
 
 function draw() {
 	// put drawing code here
-	background(255);
+
 	noStroke();
 	fill(0, 100, 100);
 
