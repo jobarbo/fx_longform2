@@ -10,7 +10,10 @@ seed = parseInt(fxrand() * 10000000);
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
-const seedArr = [['-1', 100]];
+const seedArr = [
+	['-1', 100],
+	['ooEyaG5QTXgfkTVUHdMxCCoj6VDMGCrgS23bGdii8mBr7HBQmPn', 100],
+];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
 function generate_composition_params(seed) {

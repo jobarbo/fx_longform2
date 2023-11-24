@@ -1,39 +1,52 @@
 console.log(fxhash);
-console.log(fxrand());
 
 const sp = new URLSearchParams(window.location.search);
-console.log(sp);
+//console.log(sp);
 
 let composition_params;
 
 composition_params = generate_composition_params();
 //console.log(composition_params);
 
-var {shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode} =
-	composition_params; // unpacking parameters we need in main.js and turning them into globals
+var {seed} = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
 //console.log(shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode);
 // this is how to define parameters
+// this is how to define parameters
+//console.log(theme);
+// this is how features can be defined
+$fx.features(composition_params);
+
 $fx.params([
 	{
-		id: 'shape_type',
-		name: 'Type of',
-		type: 'select',
+		id: 'number_id',
+		name: 'A number/float64',
+		type: 'number',
 		//default: Math.PI,
 		options: {
-			options: ['ellipse', 'rectangle'],
+			min: 1,
+			max: 10,
+			step: 0.0001,
 		},
 	},
 ]);
-console.log($fx.getParam('shape_type'));
-// this is how features can be defined
-$fx.features({
-	shape_type: $fx.getParam('shape_type'),
-});
 
-// log the parameters, for debugging purposes, artists won't have to do that
-console.log('Current param values:');
+console.log($fx.getFeatures());
+//FXHASH random function for specific implimentation
+fx = $fx;
+fxhash = $fx.hash;
+fxrand = $fx.rand;
+rand = fxrand;
 
-// Added addtional transformation to the parameter for easier usage
-// e.g. color.hex.rgba, color.obj.rgba.r, color.arr.rgb[0]
-console.log($fx.getParams());
+const Hour = 3_600_000;
+// set timeout to restart the animation after 10 seconds
+setTimeout(() => {
+	console.log('Trigger a reload');
+	document.querySelector('canvas').classList.add('unload');
+	document.querySelector('canvas').classList.remove('load');
+	setTimeout(() => {
+		location.reload();
+	}, 100);
+	//FIXME set this back to Hour for release
+}, 10_000 /* Hour */);
+console.log(seed);
