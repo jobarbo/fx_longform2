@@ -31,7 +31,6 @@ $fx.params([
 	},
 ]);
 
-console.log($fx.getFeatures());
 //FXHASH random function for specific implimentation
 fx = $fx;
 fxhash = $fx.hash;
@@ -49,4 +48,3 @@ setTimeout(() => {
 	}, 100);
 	//FIXME set this back to Hour for release
 }, 10_000 /* Hour */);
-console.log(seed);
