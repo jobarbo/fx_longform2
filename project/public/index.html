@@ -6,57 +6,15 @@
 		<link rel="stylesheet" href="./style.css" />
 		<script src="./library/utils/fxhash.js"></script>
 		<script src="./library/p5/p5.min.js"></script>
+		<script src="./parameters/params.js"></script>
+		<script src="./library/utils/utils.js"></script>
+		<script src="index.js"></script>
+		<script src="./library/utils/piterNoise.js"></script>
+		<script src="./library/utils/saveCanvas.js"></script>
+		<script src="./object/mover.js"></script>
+		<script src="sketch.js"></script>
 
-		<script>
-			console.log(p5);
-			async function fetchDataAndRunScript() {
-				try {
-					const response = await fetch('./data.json');
-					const data = await response.json();
-					console.log(data);
-
-					// Now that the data is loaded, proceed with the rest of the script
-
-					fx = $fx;
-					fxhash = data.seed;
-					if (data.seed) {
-						fxhash = data.seed;
-					} else {
-						fxhash = $fx.hash;
-					}
-					console.log(fxhash);
-					fxrand = $fx.rand;
-					rand = fxrand;
-					features = $fx.getFeatures();
-					seed = data.seed;
-					console.log(seed);
-
-					// Load other scripts after obtaining the data if needed but load them in or
-
-					loadScript('./library/utils/utils.js');
-					loadScript('./library/utils/piterNoise.js');
-					loadScript('./library/utils/saveCanvas.js');
-					loadScript('./parameters/params.js');
-					loadScript('./object/mover.js');
-					loadScript('./sketch.js');
-					// Add other script paths as needed
-				} catch (error) {
-					console.error('Error fetching or processing data:', error);
-				}
-			}
-
-			function loadScript(src) {
-				const script = document.createElement('script');
-				script.src = src;
-				document.head.appendChild(script);
-			}
-
-			console.log('window.onload');
-			// Call the function to fetch data and run the script
-			fetchDataAndRunScript();
-
-			// Call the function to fetch data and run the script
-		</script>
+		<!-- if you need to import js scripts do it here -->
 	</head>
 	<body>
 		<!-- WEBPACK will inject the bundle.js here -->
