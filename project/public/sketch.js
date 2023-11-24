@@ -2,32 +2,6 @@
 TAU = PI * 2;
 F = (N, f) => [...Array(N)].map((_, i) => f(i));
 
-console.log(fxhash);
-
-const sp = new URLSearchParams(window.location.search);
-//console.log(sp);
-
-let composition_params;
-
-composition_params = generate_composition_params();
-//console.log(composition_params);
-
-var {complexity, theme, composition, colormode, strokestyle, clampvalue} = composition_params; // unpacking parameters we need in main.js and turning them into globals
-
-//console.log(shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode);
-// this is how to define parameters
-// this is how to define parameters
-//console.log(theme);
-// this is how features can be defined
-$fx.features({
-	complexity: complexity,
-	theme: theme,
-	composition: composition,
-	colormode: colormode,
-	strokestyle: strokestyle,
-	clampvalue: clampvalue,
-});
-
 // log the parameters, for debugging purposes, artists won't have to do that
 //console.log('Current param values:');
 
@@ -69,12 +43,12 @@ let easeAng = 0,
 	cycleCount = 0,
 	xi = 0,
 	yi = 0,
-	xoff = fxrand() * 1000000,
-	yoff = fxrand() * 1000000,
-	axoff = fxrand() * 1000000,
-	ayoff = fxrand() * 1000000,
-	sxoff = fxrand() * 1000000,
-	syoff = fxrand() * 1000000;
+	xoff = fxrand() * 1_000_000,
+	yoff = fxrand() * 1_000_000,
+	axoff = fxrand() * 1_000_000,
+	ayoff = fxrand() * 1_000_000,
+	sxoff = fxrand() * 1_000_000,
+	syoff = fxrand() * 1_000_000;
 
 // render time
 let elapsedTime = 0;
@@ -103,8 +77,8 @@ function INIT(seed) {
 
 	// if there is an animation running, cancel it
 
-	randomSeed(fxrand() * 1000000);
-	noiseSeed(fxrand() * 1000000);
+	randomSeed(fxrand() * 1_000_000);
+	noiseSeed(fxrand() * 1_000_000);
 
 	bgCol = color(329, 98, 35, 100);
 
@@ -185,12 +159,12 @@ function FRAME(seed) {
 	scl2 += mapValue(oct(syoff, sxoff, scl2, 1), 0, 1, -0.00001 * MULTIPLIER, 0.00001 * MULTIPLIER, true); */
 
 	easeAng += easeScalar;
-	xoff += 0.000001;
-	yoff += 0.000001;
-	axoff += 0.00025;
-	ayoff += 0.00025;
-	sxoff += 0.00025;
-	syoff += 0.00025;
+	xoff += 0.000_001;
+	yoff += 0.000_001;
+	axoff += 0.000_25;
+	ayoff += 0.000_25;
+	sxoff += 0.000_25;
+	syoff += 0.000_25;
 
 	for (let i = 0; i < particleNum; i++) {
 		let x = movers_pos[i].x;

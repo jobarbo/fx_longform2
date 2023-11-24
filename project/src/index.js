@@ -1,60 +1,39 @@
 console.log(fxhash);
+console.log(fxrand());
 
 const sp = new URLSearchParams(window.location.search);
-//console.log(sp);
+console.log(sp);
 
 let composition_params;
 
 composition_params = generate_composition_params();
 //console.log(composition_params);
 
-var {seed} = composition_params; // unpacking parameters we need in main.js and turning them into globals
+var {shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode} =
+	composition_params; // unpacking parameters we need in main.js and turning them into globals
 
 //console.log(shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode);
 // this is how to define parameters
-// this is how to define parameters
-//console.log(theme);
+$fx.params([
+	{
+		id: 'shape_type',
+		name: 'Type of',
+		type: 'select',
+		//default: Math.PI,
+		options: {
+			options: ['ellipse', 'rectangle'],
+		},
+	},
+]);
+console.log($fx.getParam('shape_type'));
 // this is how features can be defined
 $fx.features({
-	seed: seed,
+	shape_type: $fx.getParam('shape_type'),
 });
 
-console.log($fx.getFeatures());
-//FXHASH random function for specific implimentation
-fx = $fx;
-fxhash = $fx.hash;
-fxrand = $fx.rand;
-rand = fxrand;
+// log the parameters, for debugging purposes, artists won't have to do that
+console.log('Current param values:');
 
-// check current date and time and at each hour change the seed
-let date = new Date();
-let hour = date.getHours();
-let minute = date.getMinutes();
-let day = date.getDay();
-let month = date.getMonth();
-let year = date.getFullYear();
-
-// when the hour changes, change the seed
-
-// set timeout to restart the animation after 10 seconds
-setTimeout(() => {
-	// fade in the canvas by adding the class 'unload' to the canvas element
-	// this class has a transition in the css file
-	let new_hour = new Date().getHours();
-	if (new_hour != hour) {
-		hour = new_hour;
-		document.querySelector('canvas').classList.add('unload');
-		document.querySelector('canvas').classList.remove('load');
-		setTimeout(() => {
-			location.reload();
-		}, 100);
-	}
-
-	//document.querySelector('canvas').classList.add('unload');
-	// reload the page
-	//location.reload();
-}, 3600000);
-if (seed == -1) {
-	seed = parseInt(fxrand() * 10000000);
-}
-console.log(seed);
+// Added addtional transformation to the parameter for easier usage
+// e.g. color.hex.rgba, color.obj.rgba.r, color.arr.rgb[0]
+console.log($fx.getParams());
