@@ -83,7 +83,7 @@ function INIT(seed) {
 	randomSeed(fxrand() * 1_000_000);
 	noiseSeed(fxrand() * 1_000_000);
 
-	bgCol = color(params.background_color_hue, 98, 35, 100);
+	bgCol = color(329, 98, 35, 100);
 
 	xMin = -0.1;
 	xMax = 1.1;
