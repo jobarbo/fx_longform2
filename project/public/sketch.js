@@ -3,6 +3,7 @@ console.log(fxhash);
 
 let features;
 let fxfeatures;
+let dpi_val = 1;
 
 let movers = [];
 let scl1;
@@ -22,23 +23,33 @@ let currentFrame = 0;
 
 // viewport
 // if url params has ratio, use that, else use 3
+let MARGIN;
 let ratio = 3;
 if (window.location.search.includes('ratio')) {
 	if (window.location.search.includes('ratio=a4')) {
 		ratio = 1.41;
 	} else if (window.location.search.includes('ratio=skate')) {
 		ratio = 3.666;
+		MARGIN = 0;
+	} else if (window.location.search.includes('ratio=landscape')) {
+		ratio = 0.6;
+		MARGIN = window.innerWidth / 13;
 	} else {
 		ratio = parseInt(window.location.search.split('ratio=')[1]);
+		MARGIN = width / 7;
 	}
 }
 
-let DEFAULT_SIZE = 4800 / ratio;
+if (window.location.search.includes('dpi')) {
+	dpi_val = parseInt(window.location.search.split('dpi=')[1]);
+}
+
+let DEFAULT_SIZE = 4800 / (ratio + 1);
+console.log(DEFAULT_SIZE);
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
-let MARGIN;
 
 // render time
 let elapsedTime = 0;
@@ -57,7 +68,7 @@ function setup() {
 	console.log(features);
 	console.log(fxfeatures);
 	console.time('setup');
-	pixelDensity(dpi(1));
+	pixelDensity(dpi(dpi_val));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * ratio);
@@ -72,12 +83,6 @@ function setup() {
 	noiseSeed(seed);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
-
-	if (window.location.search.includes('ratio=skate')) {
-		MARGIN = 0;
-	} else {
-		MARGIN = width / 7;
-	}
 
 	hue = parseInt(fxrand() * 360);
 	bgCol = color(hue, random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
