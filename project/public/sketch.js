@@ -23,7 +23,7 @@ let currentFrame = 0;
 
 // viewport
 // if url params has ratio, use that, else use 3
-let MARGIN;
+MARGIN = window.innerWidth / 7;
 let ratio = 3;
 if (window.location.search.includes('ratio')) {
 	if (window.location.search.includes('ratio=a4')) {
@@ -36,7 +36,6 @@ if (window.location.search.includes('ratio')) {
 		MARGIN = window.innerWidth / 13;
 	} else {
 		ratio = parseInt(window.location.search.split('ratio=')[1]);
-		MARGIN = width / 7;
 	}
 }
 
