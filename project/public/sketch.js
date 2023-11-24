@@ -60,6 +60,8 @@ function setup() {
 	rectMode(CENTER);
 	colorMode(HSB, 360, 100, 100, 100);
 
+	document.querySelector('canvas').classList.add('load');
+
 	INIT();
 }
 

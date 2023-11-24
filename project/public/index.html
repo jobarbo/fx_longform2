@@ -7,26 +7,11 @@
 		<link rel="stylesheet" href="./style.css" />
 		<script src="./library/utils/fxhash.js"></script>
 		<script src="./library/p5/p5.min.js"></script>
-		<script id="fxhash-snippet">
-			let data = fetch('./data.json')
-				.then((response) => response.json())
-				.then((data) => console.log(data))
-				.catch((error) => console.error('Error fetching data:', error));
-
-			//FXHASH random function for specific implimentation
-			fx = $fx;
-			fxhash = $fx.hash;
-			fxrand = $fx.rand;
-			rand = fxrand;
-			features = $fx.getFeatures();
-			seed = parseInt(fxrand() * 10000000);
-			console.log(seed);
-		</script>
-
+		<script src="./parameters/params.js"></script>
 		<script src="./library/utils/utils.js"></script>
+		<script src="index.js"></script>
 		<script src="./library/utils/piterNoise.js"></script>
 		<script src="./library/utils/saveCanvas.js"></script>
-		<script src="./parameters/params.js"></script>
 		<script src="./object/mover.js"></script>
 		<script src="sketch.js"></script>
 

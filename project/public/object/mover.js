@@ -59,7 +59,6 @@ class Mover {
 		this.centerY = height / 2;
 		this.borderX = width / 1.75;
 		this.borderY = height / 1.75;
-		this.clampvaluearray = features.clampvalue.split(',').map(Number);
 		this.maxFrames = maxFrames;
 		this.uvalue = 5;
 	}
