@@ -34,6 +34,9 @@ if (window.location.search.includes('ratio')) {
 	} else if (window.location.search.includes('ratio=landscape')) {
 		ratio = 0.6;
 		MARGIN = window.innerWidth / 13;
+	} else if (window.location.search.includes('ratio=square') || window.location.search.includes('ratio=1')) {
+		ratio = 1;
+		MARGIN = window.innerWidth / 16;
 	} else {
 		ratio = parseInt(window.location.search.split('ratio=')[1]);
 	}
@@ -53,6 +56,9 @@ let MULTIPLIER;
 // render time
 let elapsedTime = 0;
 let particleNum = 800000;
+window.location.search.includes('particleNum')
+	? (particleNum = parseInt(window.location.search.split('particleNum=')[1]))
+	: 800000;
 //let particleNum = 400000;
 let drawing = true;
 let renderMode = 1;
@@ -64,6 +70,7 @@ let bgCol;
 function setup() {
 	fxfeatures = $fx.getFeatures();
 	features = window.features;
+	console.log(features);
 	console.log(features);
 	console.log(fxfeatures);
 	console.time('setup');
