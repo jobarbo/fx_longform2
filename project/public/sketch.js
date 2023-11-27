@@ -23,24 +23,8 @@ let currentFrame = 0;
 
 // viewport
 // if url params has ratio, use that, else use 3
-MARGIN = window.innerWidth / 7;
+let MARGIN;
 let ratio = 3;
-if (window.location.search.includes('ratio')) {
-	if (window.location.search.includes('ratio=a4')) {
-		ratio = 1.41;
-	} else if (window.location.search.includes('ratio=skate')) {
-		ratio = 3.666;
-		MARGIN = 0;
-	} else if (window.location.search.includes('ratio=landscape')) {
-		ratio = 0.6;
-		MARGIN = window.innerWidth / 13;
-	} else if (window.location.search.includes('ratio=square') || window.location.search.includes('ratio=1')) {
-		ratio = 1;
-		MARGIN = window.innerWidth / 16;
-	} else {
-		ratio = parseInt(window.location.search.split('ratio=')[1]);
-	}
-}
 
 if (window.location.search.includes('dpi')) {
 	dpi_val = parseInt(window.location.search.split('dpi=')[1]);
@@ -83,6 +67,27 @@ function setup() {
 		window.addEventListener('resize', onResize);
 		onResize();
 		*/
+	MARGIN = width / 7;
+	console.log(MARGIN);
+
+	if (window.location.search.includes('ratio')) {
+		if (window.location.search.includes('ratio=a4')) {
+			ratio = 1.41;
+		} else if (window.location.search.includes('ratio=skate')) {
+			ratio = 3.666;
+			MARGIN = 0;
+		} else if (window.location.search.includes('ratio=landscape')) {
+			ratio = 0.6;
+			MARGIN = width / 13;
+		} else if (window.location.search.includes('ratio=square') || window.location.search.includes('ratio=1')) {
+			ratio = 1;
+			MARGIN = width / 16;
+		} else {
+			ratio = parseInt(window.location.search.split('ratio=')[1]);
+		}
+	}
+	console.log(ratio);
+	console.log(MARGIN);
 
 	rectMode(CENTER);
 	randomSeed(seed);
@@ -159,6 +164,8 @@ function INIT() {
 	let smallest = Math.min(ang1rnd, ang2rnd);
 	ang1 = smallest;
 	ang2 = smallest;
+
+	console.log(scl1, scl2, ang1, ang2);
 
 	/* 	scl1 = random(0.0003, 0.006) / ratio;
 	scl2 = random(0.0003, 0.006) / ratio;
