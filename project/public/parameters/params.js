@@ -1,6 +1,10 @@
 //* PARAMS *//
 // put global settings here if needed
-
+fx = $fx;
+fxrand = $fx.rand;
+rand = fxrand;
+fxhash = $fx.hash;
+seed = fxrand() * 1000000;
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 

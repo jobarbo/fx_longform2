@@ -10,7 +10,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 60;
+let maxFrames = 30;
 let C_WIDTH;
 let MULTIPLIER;
 
@@ -54,6 +54,8 @@ function draw() {
 	}
 	let elapsedTime = frameCount - startTime;
 	if (elapsedTime > maxFrames) {
+		document.complete = true;
+		console.log('complete');
 		noLoop();
 	}
 }
