@@ -1,5 +1,10 @@
 //* PARAMS *//
-// put global settings here if needed
+fx = $fx;
+fxhash = $fx.hash;
+fxrand = $fx.rand;
+rand = fxrand;
+features = $fx.getFeatures();
+seed = parseInt(fxrand() * 10000000);
 
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
