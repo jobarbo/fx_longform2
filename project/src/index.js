@@ -24,10 +24,10 @@ var {
 // decode window location search
 let urlParams = new URLSearchParams(window.location.search).get('parameters');
 // objectify urlParams
-console.log(urlParams);
-urlParams = JSON.parse(urlParams);
 
 if (urlParams) {
+	urlParams = JSON.parse(urlParams);
+	console.log(urlParams);
 	if (urlParams.complexity) {
 		complexity = urlParams.complexity;
 	}

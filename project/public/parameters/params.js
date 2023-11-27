@@ -35,9 +35,9 @@ const scaleValueArr = [
 ];
 
 const scaleValueNameArr = [
-	['Close', 50],
+	['Close', 40],
 	['Mid', 35],
-	['Far', 15],
+	['Far', 25],
 ];
 
 const clampvalueArr = [
