@@ -9,9 +9,9 @@ class Mover {
 				? [0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100][Math.floor(fxrand() * 11)]
 				: features.theme === 'bright' && features.colormode === 'monochrome'
 				? [0, 0, 10, 20, 20, 30, 40, 60, 80][Math.floor(fxrand() * 9)]
-				: [40, 60, 70, 70, 80, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
-		this.initAlpha = 100;
-		this.initS = 0.75 * MULTIPLIER;
+				: [40, 40, 60, 70, 70, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
+		this.initAlpha = 50;
+		this.initS = 1 * MULTIPLIER;
 		//this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === 'monochrome' || features.colormode === 'duotone' ? 0 : this.initSat;

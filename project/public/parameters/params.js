@@ -119,6 +119,12 @@ const particleBehaviorArr = [
 	['20,20,20,20', 3.57],
 	['4,4,20,20', 3.57],
 ];
+
+const amplitudeModeArr = [
+	['none', 50],
+	['low', 40],
+	['high', 10],
+];
 // all input parameters are optional, they will be chosen at random if not passed into the function
 function generate_composition_params(
 	complexity,
@@ -129,7 +135,8 @@ function generate_composition_params(
 	scalevalue,
 	scalename,
 	behaviorname,
-	behaviorvalue
+	behaviorvalue,
+	amplitudemode
 ) {
 	// SET DEFAULTS IF NOT PASSED IN
 
@@ -196,6 +203,10 @@ function generate_composition_params(
 		complexity = weighted_choice(complexityArr);
 	}
 
+	if (amplitudemode === undefined) {
+		amplitudemode = weighted_choice(amplitudeModeArr);
+	}
+
 	//* EXCEPTIONS AND OVER-RIDES *//
 	// if necessary, add exceptions and over-rides here
 
@@ -209,13 +220,14 @@ function generate_composition_params(
 		clampNameArr: clampNameArr,
 		clampname: clampname,
 		scalevalue: scalevalue,
-		scalevalueArr: scaleValueArr,
-		scaleNameArr: scaleValueNameArr,
+		scaleValueArr: scaleValueArr,
+		scaleValueNameArr: scaleValueNameArr,
 		scalename: scalename,
 		behaviorvalue: behaviorvalue,
-		behaviorvalueArr: particleBehaviorArr,
+		behaviorValueArr: particleBehaviorArr,
 		behaviorNameArr: particleBehaviorNameArr,
 		behaviorname: behaviorname,
+		amplitudemode: amplitudemode,
 	};
 
 	//* RETURN PARAMETERS *//

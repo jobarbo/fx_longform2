@@ -1,6 +1,7 @@
 //new Q5('global');
 console.log(fxhash);
-
+let urlParams = new URLSearchParams(window.location.search).get('parameters');
+urlParams = JSON.parse(urlParams);
 let features;
 let fxfeatures;
 let dpi_val = 1;
@@ -17,7 +18,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 10;
+let maxFrames = 20;
 let frameIterator = 0;
 let currentFrame = 0;
 
@@ -31,7 +32,6 @@ if (window.location.search.includes('dpi')) {
 }
 
 let DEFAULT_SIZE = 4800 / (RATIO + 1);
-console.log(DEFAULT_SIZE);
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
@@ -39,7 +39,7 @@ let MULTIPLIER;
 
 // render time
 let elapsedTime = 0;
-let particleNum = 800000;
+let particleNum = 300000;
 window.location.search.includes('particleNum')
 	? (particleNum = parseInt(window.location.search.split('particleNum=')[1]))
 	: 800000;
@@ -54,19 +54,27 @@ let bgCol;
 function setup() {
 	fxfeatures = $fx.getFeatures();
 	features = window.features;
+	console.log(fxfeatures);
 
-	MARGIN = height * 1.75;
+	MARGIN = 150;
 
 	if (window.location.search.includes('ratio')) {
-		if (window.location.search.includes('ratio=a4')) {
+		console.log(urlParams);
+		if (window.location.search.includes('ratio=a4') || urlParams.ratio == 'a4') {
+			console.log('ratio=a4');
 			RATIO = 1.41;
-		} else if (window.location.search.includes('ratio=skate')) {
+		} else if (window.location.search.includes('ratio=skate') || urlParams.ratio == 'skate') {
 			RATIO = 3.666;
 			MARGIN = 0;
-		} else if (window.location.search.includes('ratio=landscape')) {
+		} else if (window.location.search.includes('ratio=landscape') || urlParams.ratio == 'landscape') {
 			RATIO = 0.6;
 			MARGIN = height * 1;
-		} else if (window.location.search.includes('ratio=square') || window.location.search.includes('ratio=1')) {
+		} else if (
+			window.location.search.includes('ratio=square') ||
+			window.location.search.includes('ratio=1') ||
+			urlParams.ratio == 'square' ||
+			urlParams.ratio == '1'
+		) {
 			RATIO = 1;
 			MARGIN = height * 1.5;
 		} else {
@@ -74,13 +82,14 @@ function setup() {
 		}
 	}
 	DEFAULT_SIZE = 4800 / (RATIO + 1);
-	console.log(DEFAULT_SIZE);
 	console.time('setup');
 
-	DIM = min(windowWidth, windowHeight);
+	DIM = max(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * RATIO);
 	pixelDensity(dpi(dpi_val));
+
+	MARGIN = MARGIN * MULTIPLIER;
 	/*
 		window.addEventListener('resize', onResize);
 		onResize();
@@ -153,27 +162,31 @@ function INIT() {
 	movers = [];
 	sclVal = features.scalevalue.split(',').map(Number);
 
-	/* 	scl1 = random(sclVal[0], sclVal[1]);
-	scl2 = random(sclVal[0], sclVal[1]); */
+	scl1 = random(sclVal[0], sclVal[1]);
+	scl2 = random(sclVal[0], sclVal[1]);
 
-	scl1 = 0.0003;
-	scl2 = 0.0002;
+	/* 	scl1 = 0.0003;
+	scl2 = 0.0002; */
 	let ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 150, true));
 	let ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 150, true));
 	ang1rnd = Math.floor(fxrand() * ang1Max);
 	ang2rnd = Math.floor(fxrand() * ang2Max);
 	// get the smallest value from both randoms
 	let smallest = Math.min(ang1rnd, ang2rnd);
-	ang1 = smallest;
-	ang2 = smallest;
+	let largest = Math.max(ang1rnd, ang2rnd);
+
+	if (features.amplitudemode == 'none') {
+		ang1 = int(random(5));
+		ang2 = int(random(5));
+	} else if (features.amplitudemode == 'low') {
+		ang1 = smallest;
+		ang2 = smallest;
+	} else if (features.amplitudemode == 'high') {
+		ang1 = largest;
+		ang2 = largest;
+	}
 
 	console.log(scl1, scl2, ang1, ang2);
-
-	/* 	scl1 = random(0.0003, 0.006) / RATIO;
-	scl2 = random(0.0003, 0.006) / RATIO;
-
-	ang1 = Math.floor(fxrand() * 1000 * (RATIO / 2));
-	ang2 = Math.floor(fxrand() * 1000 * (RATIO / 2)); */
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
@@ -191,7 +204,7 @@ function INIT() {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
-		let initHue = hue;
+		let initHue = hue + int(random(-5, 5));
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(
 			new Mover(
@@ -216,10 +229,10 @@ function INIT() {
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
 
-	for (let i = 0; i < 280000; i++) {
+	for (let i = 0; i < 600000; i++) {
 		let x = fxrand() * width;
 		let y = fxrand() * height;
-		let sw = 0.75 * MULTIPLIER;
+		let sw = 0.45 * MULTIPLIER;
 		let h = hue + fxrand() * 2 - 1;
 		let s = features.colormode != 'monochrome' ? [0, 20, 40, 60, 80, 100][parseInt(fxrand() * 6)] : 0;
 		let b = [0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100][parseInt(fxrand() * 11)];
