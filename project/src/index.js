@@ -20,6 +20,7 @@ var {
 	behaviorNameArr,
 	behaviorname,
 	amplitudemode,
+	vibrancymode,
 } = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
 // decode window location search
@@ -98,6 +99,10 @@ if (urlParams) {
 	if (urlParams.amplitudemode) {
 		amplitudemode = urlParams.amplitudemode;
 	}
+
+	if (urlParams.vibrancymode) {
+		vibrancymode = urlParams.vibrancymode;
+	}
 }
 
 // this is how features can be defined
@@ -110,6 +115,7 @@ $fx.features({
 	scalename: scalename,
 	behaviorname: behaviorname,
 	amplitudemode: amplitudemode,
+	vibrancymode: vibrancymode,
 });
 
 window.features = {
@@ -120,4 +126,5 @@ window.features = {
 	scalevalue: scalevalue,
 	behaviorvalue: behaviorvalue,
 	amplitudemode: amplitudemode,
+	vibrancymode: vibrancymode,
 };

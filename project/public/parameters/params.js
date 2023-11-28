@@ -50,10 +50,10 @@ const clampvalueArr = [
 
 const clampNameArr = [
 	['Original', 30],
-	['Drift', 20],
+	['Drift', 5],
 	['Original-Revert', 30],
-	['Drift-Revert', 20],
-	['Stretch', 10],
+	['Drift-Revert', 5],
+	['Stretch', 30],
 ];
 
 const particleBehaviorNameArr = [
@@ -125,6 +125,12 @@ const amplitudeModeArr = [
 	['low', 40],
 	['high', 10],
 ];
+
+const vibrancyModeArr = [
+	['low', 20],
+	['high', 20],
+	['full', 60],
+];
 // all input parameters are optional, they will be chosen at random if not passed into the function
 function generate_composition_params(
 	complexity,
@@ -136,7 +142,8 @@ function generate_composition_params(
 	scalename,
 	behaviorname,
 	behaviorvalue,
-	amplitudemode
+	amplitudemode,
+	vibrancymode
 ) {
 	// SET DEFAULTS IF NOT PASSED IN
 
@@ -207,6 +214,10 @@ function generate_composition_params(
 		amplitudemode = weighted_choice(amplitudeModeArr);
 	}
 
+	if (vibrancymode === undefined) {
+		vibrancymode = weighted_choice(vibrancyModeArr);
+	}
+
 	//* EXCEPTIONS AND OVER-RIDES *//
 	// if necessary, add exceptions and over-rides here
 
@@ -228,6 +239,7 @@ function generate_composition_params(
 		behaviorNameArr: particleBehaviorNameArr,
 		behaviorname: behaviorname,
 		amplitudemode: amplitudemode,
+		vibrancymode: vibrancymode,
 	};
 
 	//* RETURN PARAMETERS *//

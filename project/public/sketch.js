@@ -167,8 +167,8 @@ function INIT() {
 
 	/* 	scl1 = 0.0003;
 	scl2 = 0.0002; */
-	let ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 150, true));
-	let ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 150, true));
+	let ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 100, true));
+	let ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 100, true));
 	ang1rnd = Math.floor(fxrand() * ang1Max);
 	ang2rnd = Math.floor(fxrand() * ang2Max);
 	// get the smallest value from both randoms
@@ -204,7 +204,7 @@ function INIT() {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
-		let initHue = hue + int(random(-5, 5));
+		let initHue = hue;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(
 			new Mover(
@@ -251,7 +251,7 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 
 function drawUI() {
 	// Define the stroke color and weight (line width)
-	let uiSat = features.colormode == 'monochrome' ? 0 : 25;
+	let uiSat = features.colormode == 'monochrome' ? 0 : 15;
 	let uiColor =
 		features.theme == 'bright' ? `hsla(${hue}, ${uiSat}%, 70%, 100%)` : `hsla(${hue}, ${uiSat}%, 40%, 100%)`;
 
