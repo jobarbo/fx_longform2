@@ -19,7 +19,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 20;
+let maxFrames = 10;
 let frameIterator = 0;
 let currentFrame = 0;
 
@@ -32,7 +32,7 @@ if (window.location.search.includes('dpi')) {
 	dpi_val = parseInt(window.location.search.split('dpi=')[1]);
 }
 
-let DEFAULT_SIZE = 4800 / (RATIO + 1);
+let DEFAULT_SIZE = 4000 / RATIO;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
@@ -40,7 +40,7 @@ let MULTIPLIER;
 
 // render time
 let elapsedTime = 0;
-let particleNum = 300000;
+let particleNum = 400000;
 window.location.search.includes('particleNum')
 	? (particleNum = parseInt(window.location.search.split('particleNum=')[1]))
 	: 800000;
@@ -62,6 +62,7 @@ function setup() {
 	if (window.location.search.includes('ratio')) {
 		if (window.location.search.includes('ratio=a4') || urlParams.ratio == 'a4') {
 			RATIO = 1.41;
+			MARGIN = 350;
 		} else if (window.location.search.includes('ratio=skate') || urlParams.ratio == 'skate') {
 			RATIO = 3.888;
 			MARGIN = 0;
@@ -79,12 +80,14 @@ function setup() {
 			urlParams.ratio == 'bookmark'
 		) {
 			RATIO = 3;
-			MARGIN = height * 1.5;
+			MARGIN = 150;
 		} else {
 			RATIO = parseInt(window.location.search.split('ratio=')[1]);
+			MARGIN = 150;
 		}
 	}
-	DEFAULT_SIZE = 4800 / RATIO;
+	DEFAULT_SIZE = 4000 / RATIO;
+	console.log('DEFAULT_SIZE', DEFAULT_SIZE);
 	console.time('setup');
 
 	DIM = max(windowWidth, windowHeight);
@@ -106,7 +109,13 @@ function setup() {
 
 	let hueArr = [0, 45, 90, 135, 180, 225, 270, 315];
 	hue = hueArr[parseInt(fxrand() * hueArr.length)];
-	bgCol = color(hue, random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
+	// make bg color a tertiary color of the hue
+
+	//!check if we keep complimentary colors background
+	let bgHue = (hue + 180) % 360;
+	console.log('bgHue', bgHue);
+	console.log('hue', hue);
+	bgCol = color(bgHue, random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
 
 	INIT();
 	let sketch = drawGenerator();
@@ -153,14 +162,10 @@ function* drawGenerator() {
 	}
 }
 
-///////////////////////////////////////////////////////
-// -------------------- UTILS ------------------------
-//////////////////////////////////////////////////////
-
 function INIT() {
 	background(bgCol);
 
-	drawTexture(hue);
+	//drawTexture(hue);
 	movers = [];
 	sclVal = features.scalevalue.split(',').map(Number);
 

@@ -57,6 +57,7 @@ class Mover {
 		this.uvalue = Math.min(...this.uvalueArr);
 		this.isBordered = true;
 		this.bgCol = bgColArr;
+		this.zombie = false;
 		this.lineWeight =
 			typeof features.lineModeValue === 'string'
 				? eval(features.lineModeValue) * MULTIPLIER
@@ -109,8 +110,9 @@ class Mover {
 			this.y > this.yMax * height
 		) {
 			this.a = 0;
+			this.zombie = true;
 		} else {
-			this.a = this.initAlpha;
+			this.a = this.zombie ? 100 : this.initAlpha;
 		}
 
 		if (this.isBordered) {
