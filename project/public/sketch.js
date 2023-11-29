@@ -2,6 +2,7 @@
 console.log(fxhash);
 let urlParams = new URLSearchParams(window.location.search).get('parameters');
 urlParams = JSON.parse(urlParams);
+if (!urlParams) urlParams = {};
 let features;
 let fxfeatures;
 let dpi_val = 1;
@@ -64,7 +65,7 @@ function setup() {
 			console.log('ratio=a4');
 			RATIO = 1.41;
 		} else if (window.location.search.includes('ratio=skate') || urlParams.ratio == 'skate') {
-			RATIO = 3.666;
+			RATIO = 3.888;
 			MARGIN = 0;
 		} else if (window.location.search.includes('ratio=landscape') || urlParams.ratio == 'landscape') {
 			RATIO = 0.6;
@@ -76,6 +77,13 @@ function setup() {
 			urlParams.ratio == '1'
 		) {
 			RATIO = 1;
+			MARGIN = height * 1.5;
+		} else if (
+			window.location.search.includes('ratio=3') ||
+			window.location.search.includes('ratio=bookmark') ||
+			urlParams.ratio == 'bookmark'
+		) {
+			RATIO = 3;
 			MARGIN = height * 1.5;
 		} else {
 			RATIO = parseInt(window.location.search.split('ratio=')[1]);
