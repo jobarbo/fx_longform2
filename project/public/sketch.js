@@ -40,7 +40,7 @@ let MULTIPLIER;
 
 // render time
 let elapsedTime = 0;
-let particleNum = 300000;
+let particleNum = 800000;
 window.location.search.includes('particleNum')
 	? (particleNum = parseInt(window.location.search.split('particleNum=')[1]))
 	: 800000;
@@ -65,9 +65,6 @@ function setup() {
 		} else if (window.location.search.includes('ratio=skate') || urlParams.ratio == 'skate') {
 			RATIO = 3.888;
 			MARGIN = 0;
-		} else if (window.location.search.includes('ratio=landscape') || urlParams.ratio == 'landscape') {
-			RATIO = 0.6;
-			MARGIN = height * 1;
 		} else if (
 			window.location.search.includes('ratio=square') ||
 			window.location.search.includes('ratio=1') ||
@@ -75,7 +72,7 @@ function setup() {
 			urlParams.ratio == '1'
 		) {
 			RATIO = 1;
-			MARGIN = height * 1.5;
+			MARGIN = 350;
 		} else if (
 			window.location.search.includes('ratio=3') ||
 			window.location.search.includes('ratio=bookmark') ||
@@ -87,7 +84,7 @@ function setup() {
 			RATIO = parseInt(window.location.search.split('ratio=')[1]);
 		}
 	}
-	DEFAULT_SIZE = 4800 / (RATIO + 1);
+	DEFAULT_SIZE = 4800 / RATIO;
 	console.time('setup');
 
 	DIM = max(windowWidth, windowHeight);
