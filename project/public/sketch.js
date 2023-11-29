@@ -32,7 +32,7 @@ if (window.location.search.includes('dpi')) {
 	dpi_val = parseInt(window.location.search.split('dpi=')[1]);
 }
 
-let DEFAULT_SIZE = 4000 / RATIO;
+let DEFAULT_SIZE = 4800 / RATIO;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
@@ -86,7 +86,7 @@ function setup() {
 			MARGIN = 150;
 		}
 	}
-	DEFAULT_SIZE = 4000 / RATIO;
+	DEFAULT_SIZE = 4800 / RATIO;
 	console.log('DEFAULT_SIZE', DEFAULT_SIZE);
 	console.time('setup');
 
