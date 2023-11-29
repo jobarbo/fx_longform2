@@ -19,7 +19,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 10;
+let maxFrames = 20;
 let frameIterator = 0;
 let currentFrame = 0;
 
@@ -40,7 +40,7 @@ let MULTIPLIER;
 
 // render time
 let elapsedTime = 0;
-let particleNum = 800000;
+let particleNum = 300000;
 window.location.search.includes('particleNum')
 	? (particleNum = parseInt(window.location.search.split('particleNum=')[1]))
 	: 800000;
