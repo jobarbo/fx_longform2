@@ -1,5 +1,5 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider) {
+	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, bgColArr) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
@@ -56,6 +56,11 @@ class Mover {
 		// store the smallest value of the uvalueArr in this.uvalue
 		this.uvalue = Math.min(...this.uvalueArr);
 		this.isBordered = true;
+		this.bgCol = bgColArr;
+		this.lineWeight =
+			typeof features.lineModeValue === 'string'
+				? eval(features.lineModeValue) * MULTIPLIER
+				: features.lineModeValue * MULTIPLIER;
 	}
 
 	show() {
@@ -94,25 +99,36 @@ class Mover {
 			this.sat = this.sat > this.initSat * 1.5 ? 0 : this.sat < 0 ? this.initSat * 1.5 : this.sat;
 		}
 
-		this.x = this.x <= 0 ? width - 2 : this.x >= width ? 0 : this.x;
-		this.y = this.y <= 0 ? height - 2 : this.y >= height ? 0 : this.y;
+		this.x = this.x <= 0 ? width + 2 : this.x >= width ? -2 : this.x;
+		this.y = this.y <= 0 ? height + 2 : this.y >= height ? -2 : this.y;
+
+		if (
+			this.x < this.xMin * width ||
+			this.x > this.xMax * width ||
+			this.y < this.yMin * height ||
+			this.y > this.yMax * height
+		) {
+			this.a = 0;
+		} else {
+			this.a = this.initAlpha;
+		}
 
 		if (this.isBordered) {
 			if (this.x < this.xMin * width) {
-				this.x = this.xMax * width + fxrand() * (1 * MULTIPLIER);
-				//this.a = 0;
+				this.x = this.xMax * width + fxrand() * this.lineWeight;
+				//this.a = 100;
 			}
 			if (this.x > this.xMax * width) {
-				this.x = this.xMin * width + fxrand() * (1 * MULTIPLIER);
-				//this.a = 0;
+				this.x = this.xMin * width + fxrand() * this.lineWeight;
+				//this.a = 100;
 			}
 			if (this.y < this.yMin * height) {
-				this.y = this.yMax * height + fxrand() * (1 * MULTIPLIER);
-				//this.a = 0;
+				this.y = this.yMax * height + fxrand() * this.lineWeight;
+				//this.a = 100;
 			}
 			if (this.y > this.yMax * height) {
-				this.y = this.yMin * height + fxrand() * (1 * MULTIPLIER);
-				//this.a = 0;
+				this.y = this.yMin * height + fxrand() * this.lineWeight;
+				//this.a = 100;
 			}
 		}
 	}

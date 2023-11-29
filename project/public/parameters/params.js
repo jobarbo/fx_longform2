@@ -115,6 +115,33 @@ const vibrancyModeArr = [
 	['high', 20],
 	['full', 60],
 ];
+
+const lineModeArr = [
+	['hairline', 10],
+	['thin', 10],
+	['fine', 10],
+	['medium', 10],
+	['thick', 10],
+	['pillar', 10],
+	['sixteenth', 10],
+	['eight', 10],
+	['quarter', 10],
+	['full', 10],
+];
+
+const lineModeValueArr = [
+	['1', 10],
+	['3', 10],
+	['5', 10],
+	['10', 10],
+	['25', 10],
+	['50', 10],
+	['width/16', 10],
+	['width/8', 10],
+	['width/4', 10],
+	['width', 10],
+];
+
 // all input parameters are optional, they will be chosen at random if not passed into the function
 function generate_composition_params(
 	complexity,
@@ -127,7 +154,9 @@ function generate_composition_params(
 	behaviorname,
 	behaviorvalue,
 	amplitudemode,
-	vibrancymode
+	vibrancymode,
+	linemodeName,
+	linemode
 ) {
 	// SET DEFAULTS IF NOT PASSED IN
 
@@ -202,6 +231,24 @@ function generate_composition_params(
 		vibrancymode = weighted_choice(vibrancyModeArr);
 	}
 
+	if (linemodeName === undefined) {
+		let lineContent = weighted_choice(lineModeArr);
+		linemodeName = lineContent;
+
+		let index = -1;
+		for (let i = 0; i < lineModeArr.length; i++) {
+			if (JSON.stringify(lineModeArr[i][0]) === JSON.stringify(lineContent)) {
+				index = i;
+				break;
+			}
+		}
+
+		// Assigning clampvalue based on the index found
+		if (index !== -1) {
+			linemode = lineModeValueArr[index][0];
+		}
+	}
+
 	//* EXCEPTIONS AND OVER-RIDES *//
 	// if necessary, add exceptions and over-rides here
 
@@ -224,6 +271,8 @@ function generate_composition_params(
 		behaviorname: behaviorname,
 		amplitudemode: amplitudemode,
 		vibrancymode: vibrancymode,
+		linemode: linemode,
+		linemodeName: linemodeName,
 	};
 
 	//* RETURN PARAMETERS *//

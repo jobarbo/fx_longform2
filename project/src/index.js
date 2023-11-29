@@ -21,15 +21,16 @@ var {
 	behaviorname,
 	amplitudemode,
 	vibrancymode,
+	linemode,
+	linemodeName,
 } = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
 // decode window location search
 let urlParams = new URLSearchParams(window.location.search).get('parameters');
 // objectify urlParams
-console.log(scaleValueNameArr);
 if (urlParams) {
 	urlParams = JSON.parse(urlParams);
-	console.log(urlParams);
+
 	if (urlParams.complexity) {
 		complexity = urlParams.complexity;
 	}
@@ -103,6 +104,25 @@ if (urlParams) {
 	if (urlParams.vibrancymode) {
 		vibrancymode = urlParams.vibrancymode;
 	}
+
+	if (urlParams.linemode) {
+		lineMode = urlParams.linemode;
+
+		// fetch lineMode based on lineModeName from lineModeArr
+		let index = -1;
+		for (let i = 0; i < lineModeName.length; i++) {
+			if (JSON.stringify(lineModeName[i][0]) === JSON.stringify(lineMode)) {
+				index = i;
+				break;
+			}
+		}
+
+		// Assigning lineMode based on the index found
+
+		if (index !== -1) {
+			lineMode = lineModeValueArr[index][0];
+		}
+	}
 }
 
 // this is how features can be defined
@@ -116,6 +136,7 @@ $fx.features({
 	behaviorname: behaviorname,
 	amplitudemode: amplitudemode,
 	vibrancymode: vibrancymode,
+	lineMode: linemodeName,
 });
 
 window.features = {
@@ -127,4 +148,5 @@ window.features = {
 	behaviorvalue: behaviorvalue,
 	amplitudemode: amplitudemode,
 	vibrancymode: vibrancymode,
+	lineModeValue: linemode,
 };

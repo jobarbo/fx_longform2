@@ -19,7 +19,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 20;
+let maxFrames = 10;
 let frameIterator = 0;
 let currentFrame = 0;
 
@@ -47,7 +47,7 @@ window.location.search.includes('particleNum')
 //let particleNum = 400000;
 let drawing = true;
 let renderMode = 1;
-let cycle = parseInt((maxFrames * particleNum) / 170);
+let cycle = parseInt((maxFrames * particleNum) / 1170);
 
 let hue;
 let bgCol;
@@ -60,9 +60,7 @@ function setup() {
 	MARGIN = 150;
 
 	if (window.location.search.includes('ratio')) {
-		console.log(urlParams);
 		if (window.location.search.includes('ratio=a4') || urlParams.ratio == 'a4') {
-			console.log('ratio=a4');
 			RATIO = 1.41;
 		} else if (window.location.search.includes('ratio=skate') || urlParams.ratio == 'skate') {
 			RATIO = 3.888;
@@ -149,7 +147,6 @@ function* drawGenerator() {
 
 		if (elapsedTime > maxFrames && drawing) {
 			drawing = false;
-			drawUI();
 			// close the generator
 			$fx.preview();
 			document.complete = true;
@@ -193,8 +190,6 @@ function INIT() {
 		ang1 = largest;
 		ang2 = largest;
 	}
-
-	console.log(scl1, scl2, ang1, ang2);
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
@@ -255,30 +250,4 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 
 	// put the percent in the title of the page
 	document.title = percent.toFixed(0) + '%' + ' (mode ' + renderMode + ')';
-}
-
-function drawUI() {
-	// Define the stroke color and weight (line width)
-	let uiSat = features.colormode == 'monochrome' ? 0 : 15;
-	let uiColor =
-		features.theme == 'bright' ? `hsla(${hue}, ${uiSat}%, 70%, 100%)` : `hsla(${hue}, ${uiSat}%, 40%, 100%)`;
-
-	drawingContext.strokeStyle = uiColor;
-	drawingContext.lineWidth = 3 * MULTIPLIER;
-	drawingContext.beginPath();
-
-	drawingContext.moveTo(xMin * width, yMin * height);
-	drawingContext.lineTo(xMax * width, yMin * height);
-
-	drawingContext.moveTo(xMin * width, yMax * height);
-	drawingContext.lineTo(xMax * width, yMax * height);
-
-	drawingContext.moveTo(xMin * width, yMin * height);
-	drawingContext.lineTo(xMin * width, yMax * height);
-
-	drawingContext.moveTo(xMax * width, yMin * height);
-	drawingContext.lineTo(xMax * width, yMax * height);
-
-	// Stroke the lines
-	drawingContext.stroke();
 }
