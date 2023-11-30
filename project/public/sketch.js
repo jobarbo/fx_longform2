@@ -86,6 +86,11 @@ function setup() {
 			MARGIN = 150;
 		}
 	}
+
+	if (window.location.search.includes('margin')) {
+		MARGIN = parseInt(window.location.search.split('margin=')[1]);
+	}
+
 	DEFAULT_SIZE = 4800 / RATIO;
 	console.log('DEFAULT_SIZE', DEFAULT_SIZE);
 	console.time('setup');
