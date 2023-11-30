@@ -189,7 +189,7 @@ function initSketch() {
 	pixelDensity(dpi(dpi_val));
 
 	frameMargin = MARGIN * MULTIPLIER;
-
+	console.log('size', 1 * MULTIPLIER)
 	rectMode(CENTER);
 	randomSeed(seed);
 	noiseSeed(seed);
