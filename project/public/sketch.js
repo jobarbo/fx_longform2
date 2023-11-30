@@ -35,7 +35,7 @@ function setup() {
 		window.addEventListener('resize', onResize);
 		onResize();
 		*/
-
+	console.log('size', 1 * MULTIPLIER)
 	rectMode(CENTER);
 	randomSeed(seed);
 	noiseSeed(seed);
