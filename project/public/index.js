@@ -3,6 +3,7 @@ console.log(fxhash);
 let urlParams = new URLSearchParams(window.location.search).get('parameters');
 urlParams = JSON.parse(urlParams);
 if (!urlParams) urlParams = {};
+
 let features;
 let fxfeatures;
 let dpi_val = 1;
@@ -25,26 +26,19 @@ let currentFrame = 0;
 
 // viewport
 // if url params has RATIO, use that, else use 3
-let MARGIN;
+let MARGIN = 150;
+let oldMARGIN = MARGIN;
+let frameMargin;
 let RATIO = 3;
-
-if (window.location.search.includes('dpi')) {
-	dpi_val = parseInt(window.location.search.split('dpi=')[1]);
-}
-
 let DEFAULT_SIZE = 4800 / RATIO;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
-// render time
 let elapsedTime = 0;
 let particleNum = 400000;
-window.location.search.includes('particleNum')
-	? (particleNum = parseInt(window.location.search.split('particleNum=')[1]))
-	: 800000;
-//let particleNum = 400000;
+
 let drawing = true;
 let renderMode = 1;
 let cycle = parseInt((maxFrames * particleNum) / 1170);
@@ -52,85 +46,90 @@ let cycle = parseInt((maxFrames * particleNum) / 1170);
 let hue;
 let bgCol;
 
+let animation;
+
+
+// event listeners
+
+// if d + any number is pressed, change the dpi for that number
+document.addEventListener('keydown', function(event) {
+  // Check if the pressed key is "d" and a number
+  if (event.key === 'm') {
+		// toggle margin on or off
+		if (MARGIN === 0) {
+			MARGIN = oldMARGIN;
+		} else {
+			MARGIN = 0;
+		}
+		initSketch();
+  }
+	if (event.key === 'r') {
+		// change the ratio
+		if (RATIO === 3) {
+			RATIO = 3.88;
+		} else if (RATIO === 3.88) {
+			RATIO = 1
+			MARGIN = 350;
+		} else if (RATIO === 1) {
+			RATIO = 1.41;
+			MARGIN = 350;
+		} else if (RATIO === 1.41) {
+			RATIO = 2;
+			MARGIN = 250;
+		} else if (RATIO === 2) {
+			RATIO = 3;
+			MARGIN = 150;
+		}
+		initSketch();
+	}
+
+	if(event.key === 'p') {
+		// change the particle number
+		if (particleNum === 400000) {
+			particleNum = 800000;
+		} else if (particleNum === 800000) {
+			particleNum = 200000;
+		} else if (particleNum === 200000) {
+			particleNum = 400000;
+		}
+
+		initSketch();
+	}
+
+	if(event.key === 'f'){
+		// change the frame number
+		if (maxFrames === 10) {
+			maxFrames = 20;
+		} else if (maxFrames === 20) {
+			maxFrames = 30;
+		} else if (maxFrames === 30) {
+			maxFrames = 10;
+		}
+
+		initSketch();
+	}
+
+	if(event.key === 'd'){
+		// change the dpi
+		if (dpi_val === 1) {
+			dpi_val = 2;
+		} else if (dpi_val === 2) {
+			dpi_val = 3;
+		} else if (dpi_val === 3) {
+			dpi_val = 1;
+		}
+
+		initSketch();
+	}
+
+
+});
+
 function setup() {
 	fxfeatures = $fx.getFeatures();
 	features = window.features;
-	console.log(fxfeatures);
 
-	MARGIN = 150;
-
-	if (window.location.search.includes('ratio')) {
-		if (window.location.search.includes('ratio=a4') || urlParams.ratio == 'a4') {
-			RATIO = 1.41;
-			MARGIN = 350;
-		} else if (window.location.search.includes('ratio=skate') || urlParams.ratio == 'skate') {
-			RATIO = 3.888;
-			MARGIN = 0;
-		} else if (
-			window.location.search.includes('ratio=square') ||
-			window.location.search.includes('ratio=1') ||
-			urlParams.ratio == 'square' ||
-			urlParams.ratio == '1'
-		) {
-			RATIO = 1;
-			MARGIN = 350;
-		} else if (
-			window.location.search.includes('ratio=3') ||
-			window.location.search.includes('ratio=bookmark') ||
-			urlParams.ratio == 'bookmark'
-		) {
-			RATIO = 3;
-			MARGIN = 150;
-		} else {
-			RATIO = parseInt(window.location.search.split('ratio=')[1]);
-			MARGIN = 150;
-		}
-	}
-
-	if (window.location.search.includes('margin')) {
-		MARGIN = parseInt(window.location.search.split('margin=')[1]);
-	}
-
-	DEFAULT_SIZE = 4800 / RATIO;
-	console.log('DEFAULT_SIZE', DEFAULT_SIZE);
-	console.time('setup');
-
-	DIM = max(windowWidth, windowHeight);
-	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * RATIO);
-	pixelDensity(dpi(dpi_val));
-
-	MARGIN = MARGIN * MULTIPLIER;
-	/*
-		window.addEventListener('resize', onResize);
-		onResize();
-		*/
-
-	rectMode(CENTER);
-	randomSeed(seed);
-	noiseSeed(seed);
-	colorMode(HSB, 360, 100, 100, 100);
-	startTime = frameCount;
-
-	let hueArr = [0, 45, 90, 135, 180, 225, 270, 315];
-	hue = hueArr[parseInt(fxrand() * hueArr.length)];
-	// make bg color a tertiary color of the hue
-
-	//!check if we keep complimentary colors background
-	let bgHue = (hue + 180) % 360;
-	console.log('bgHue', bgHue);
-	console.log('hue', hue);
-	bgCol = color(bgHue, random([0, 2, 5]), features.theme == 'bright' ? 93 : 10, 100);
-
-	INIT();
-	let sketch = drawGenerator();
-	// use requestAnimationFrame to call the generator function and pass it the sketch function
-	function animate() {
-		//requestAnimationFrame(animate);
-		setTimeout(animate, 0);
-		sketch.next();
-	}
-	animate();
+	initSketch();
 }
 
 function* drawGenerator() {
@@ -138,7 +137,6 @@ function* drawGenerator() {
 	let frameCount = 0;
 	let draw_every = cycle;
 
-	// draw the particles and make them move until draw_every is reached then yield and wait for the next frame, also check if the maxFrames is reached and stop the sketch if it is and also show the loading bar
 	while (true) {
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
@@ -155,30 +153,76 @@ function* drawGenerator() {
 		showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
 
 		frameCount++;
-
 		if (elapsedTime > maxFrames && drawing) {
 			drawing = false;
-			// close the generator
 			$fx.preview();
 			document.complete = true;
-			console.timeEnd('setup');
 			return;
 		}
 	}
 }
 
-function INIT() {
+function initSketch() {
+	console.log('dpi', dpi_val);
+	console.log('ratio', RATIO);
+	console.log('margin', MARGIN);
+	console.log('particleNum', particleNum);
+	console.log('frameNum', maxFrames);
+	console.table(features);
+	drawing=true;
+	$fx.rand.reset();
+	fx = $fx;
+	fxhash = $fx.hash;
+	fxrand = $fx.rand;
+	rand = fxrand;
+	if(animation) clearTimeout(animation);
+
+	movers = [];
+
+	loadURLParams();
+
+	DEFAULT_SIZE = 4800 / RATIO;
+
+	DIM = max(windowWidth, windowHeight);
+	MULTIPLIER = DIM / DEFAULT_SIZE;
+	c = createCanvas(DIM, DIM * RATIO);
+	pixelDensity(dpi(dpi_val));
+
+	frameMargin = MARGIN * MULTIPLIER;
+
+	rectMode(CENTER);
+	randomSeed(seed);
+	noiseSeed(seed);
+	colorMode(HSB, 360, 100, 100, 100);
+	startTime = frameCount;
+
+	let hueArr = [0, 45, 90, 135, 180, 225, 270, 315];
+	hue = hueArr[parseInt(fxrand() * hueArr.length)];
+
+	//!check if we keep complimentary colors background
+	let bgHue = (hue + 180) % 360;
+	let bgSat =random([0, 2, 5]);
+	bgCol = color(bgHue, bgSat, features.theme == 'bright' ? 93 : 10, 100);
+
+
+	INIT_MOVERS();
+	let sketch = drawGenerator();
+	function animate() {
+		animation = setTimeout(animate, 0);
+		sketch.next();
+	}
+	animate();
+}
+
+function INIT_MOVERS() {
+
+	movers = [];
 	background(bgCol);
 
-	//drawTexture(hue);
-	movers = [];
 	sclVal = features.scalevalue.split(',').map(Number);
-
 	scl1 = random(sclVal[0], sclVal[1]);
 	scl2 = random(sclVal[0], sclVal[1]);
 
-	/* 	scl1 = 0.0003;
-	scl2 = 0.0002; */
 	let ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 100, true));
 	let ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 100, true));
 	ang1rnd = Math.floor(fxrand() * ang1Max);
@@ -202,8 +246,8 @@ function INIT() {
 	let yRandDivider = xRandDivider;
 
 	// convert the margin to a percentage of the width
-	xMarg = MARGIN / width;
-	yMarg = MARGIN / height;
+	xMarg = frameMargin / width;
+	yMarg = frameMargin / height;
 
 	xMin = xMarg;
 	xMax = 1 - xMarg;
@@ -236,6 +280,48 @@ function INIT() {
 	}
 }
 
+function loadURLParams() {
+
+	window.location.search.includes('particleNum')
+	? (particleNum = parseInt(window.location.search.split('particleNum=')[1]))
+	: 800000;
+	if (window.location.search.includes('dpi')) {
+		dpi_val = parseInt(window.location.search.split('dpi=')[1]);
+	}
+	if (window.location.search.includes('ratio=')) {
+		if (window.location.search.includes('ratio=a4') || urlParams.ratio == 'a4') {
+			RATIO = 1.41;
+			MARGIN = 350;
+		} else if (window.location.search.includes('ratio=skate') || urlParams.ratio == 'skate') {
+			RATIO = 3.888;
+			MARGIN = 0;
+		} else if (
+			window.location.search.includes('ratio=square') ||
+			window.location.search.includes('ratio=1') ||
+			urlParams.ratio == 'square' ||
+			urlParams.ratio == '1'
+		) {
+			RATIO = 1;
+			MARGIN = 350;
+		} else if (
+			window.location.search.includes('ratio=3') ||
+			window.location.search.includes('ratio=bookmark') ||
+			urlParams.ratio == 'bookmark'
+		) {
+			RATIO = 3;
+			MARGIN = 150;
+		} else {
+			RATIO = parseInt(window.location.search.split('ratio=')[1]);
+			MARGIN = 150;
+		}
+	}
+
+	if (window.location.search.includes('margin')) {
+		MARGIN = parseInt(window.location.search.split('margin=')[1]);
+	}
+
+}
+
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
 
@@ -258,6 +344,7 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 	// put the percent in the title of the page
 	document.title = percent.toFixed(0) + '%' + ' (mode ' + renderMode + ')';
 }
+
 class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, bgColArr) {
 		this.x = x;
