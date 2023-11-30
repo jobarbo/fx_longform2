@@ -26,7 +26,7 @@ let currentFrame = 0;
 
 // viewport
 // if url params has RATIO, use that, else use 3
-let MARGIN = 150;
+let MARGIN = 200;
 let oldMARGIN = MARGIN;
 let frameMargin;
 let RATIO = 3;
@@ -168,7 +168,7 @@ function initSketch() {
 	console.log('margin', MARGIN);
 	console.log('particleNum', particleNum);
 	console.log('frameNum', maxFrames);
-	console.table(features);
+	console.table(fxfeatures);
 	drawing=true;
 	$fx.rand.reset();
 	fx = $fx;
