@@ -30,7 +30,7 @@ let MARGIN = 200;
 let oldMARGIN = MARGIN;
 let frameMargin;
 let RATIO = 3;
-let DEFAULT_SIZE = 4800 / RATIO;
+let DEFAULT_SIZE = 1600;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
@@ -181,9 +181,9 @@ function initSketch() {
 
 	loadURLParams();
 
-	DEFAULT_SIZE = 4800 / RATIO;
+	DEFAULT_SIZE = 1600;
 
-	DIM = max(windowWidth, windowHeight);
+	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * RATIO);
 	pixelDensity(dpi(dpi_val));
