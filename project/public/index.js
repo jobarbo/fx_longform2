@@ -71,7 +71,7 @@ document.addEventListener('keydown', function(event) {
 			RATIO = 3.88;
 		} else if (RATIO === 3.88) {
 			RATIO = 1
-			MARGIN = 150;
+			MARGIN = 250;
 		} else if (RATIO === 1) {
 			RATIO = 1.41;
 			MARGIN = 250;
@@ -80,7 +80,7 @@ document.addEventListener('keydown', function(event) {
 			MARGIN = 250;
 		} else if (RATIO === 2) {
 			RATIO = 3;
-			MARGIN = 150;
+			MARGIN = 200;
 		}
 		initSketch();
 	}
@@ -317,7 +317,7 @@ function loadURLParams() {
 			MARGIN = 200;
 		} else {
 			RATIO = parseInt(window.location.search.split('ratio=')[1]);
-			MARGIN = 150;
+			MARGIN = 200;
 		}
 	}
 
