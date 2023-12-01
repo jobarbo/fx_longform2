@@ -30,7 +30,7 @@ let MARGIN = 200;
 let oldMARGIN = MARGIN;
 let frameMargin;
 let RATIO = 3;
-let DEFAULT_SIZE = 1600;
+let DEFAULT_SIZE = 4800 / RATIO;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
@@ -71,10 +71,10 @@ document.addEventListener('keydown', function(event) {
 			RATIO = 3.88;
 		} else if (RATIO === 3.88) {
 			RATIO = 1
-			MARGIN = 350;
+			MARGIN = 150;
 		} else if (RATIO === 1) {
 			RATIO = 1.41;
-			MARGIN = 350;
+			MARGIN = 250;
 		} else if (RATIO === 1.41) {
 			RATIO = 2;
 			MARGIN = 250;
@@ -153,7 +153,7 @@ function initSketch() {
 
 	loadURLParams();
 
-	DEFAULT_SIZE = 1600;
+	DEFAULT_SIZE = 4800 / RATIO;
 
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
@@ -296,7 +296,7 @@ function loadURLParams() {
 	if (window.location.search.includes('ratio=')) {
 		if (window.location.search.includes('ratio=a4') || urlParams.ratio == 'a4') {
 			RATIO = 1.41;
-			MARGIN = 350;
+			MARGIN = 250;
 		} else if (window.location.search.includes('ratio=skate') || urlParams.ratio == 'skate') {
 			RATIO = 3.888;
 			MARGIN = 0;
@@ -307,7 +307,7 @@ function loadURLParams() {
 			urlParams.ratio == '1'
 		) {
 			RATIO = 1;
-			MARGIN = 350;
+			MARGIN = 250;
 		} else if (
 			window.location.search.includes('ratio=3') ||
 			window.location.search.includes('ratio=bookmark') ||
