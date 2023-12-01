@@ -161,7 +161,6 @@ function initSketch() {
 	pixelDensity(dpi(dpi_val));
 
 	frameMargin = MARGIN * MULTIPLIER;
-	console.log('size', 1 * MULTIPLIER)
 	rectMode(CENTER);
 	randomSeed(seed);
 	noiseSeed(seed);
@@ -228,7 +227,6 @@ function INIT_MOVERS() {
 	scl1 = random(sclVal[0], sclVal[1]);
 	scl2 = scl1;
 
-	console.log('scl1', scl1, 'scl2', scl2);
 
 	let ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 100, true));
 	let ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 100, true));
