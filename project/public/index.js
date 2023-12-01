@@ -71,7 +71,7 @@ document.addEventListener('keydown', function(event) {
 			RATIO = 3.88;
 		} else if (RATIO === 3.88) {
 			RATIO = 1
-			MARGIN = 250;
+			MARGIN = 300;
 		} else if (RATIO === 1) {
 			RATIO = 1.41;
 			MARGIN = 250;
@@ -307,7 +307,7 @@ function loadURLParams() {
 			urlParams.ratio == '1'
 		) {
 			RATIO = 1;
-			MARGIN = 250;
+			MARGIN = 300;
 		} else if (
 			window.location.search.includes('ratio=3') ||
 			window.location.search.includes('ratio=bookmark') ||
