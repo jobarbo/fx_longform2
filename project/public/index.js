@@ -314,7 +314,7 @@ function loadURLParams() {
 			urlParams.ratio == 'bookmark'
 		) {
 			RATIO = 3;
-			MARGIN = 150;
+			MARGIN = 200;
 		} else {
 			RATIO = parseInt(window.location.search.split('ratio=')[1]);
 			MARGIN = 150;
