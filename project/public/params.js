@@ -35,9 +35,9 @@ const scaleValueArr = [
 ];
 
 const scaleValueNameArr = [
-	['Close', 50],
-	['Mid', 25],
-	['Far', 15],
+	['close', 50],
+	['mid', 25],
+	['far', 15],
 ];
 
 const clampvalueArr = [
@@ -49,11 +49,11 @@ const clampvalueArr = [
 ];
 
 const clampNameArr = [
-	['Original', 30],
-	['Drift', 5],
-	['Original-Revert', 30],
-	['Drift-Revert', 5],
-	['Stretch', 30],
+	['original', 30],
+	['drift', 5],
+	['original-revert', 20],
+	['drift-revert', 5],
+	['stretch', 40],
 ];
 
 const particleBehaviorNameArr = [
@@ -62,7 +62,7 @@ const particleBehaviorNameArr = [
 	['five-fifteen', 5],
 	['five-twenty', 5],
 	['seven-seven', 5],
-	['seven-ten DAB', 5],
+	['seven-ten DAB IT', 5],
 	['seven-fifteen', 5],
 	['seven-twenty', 5],
 	['ten-five', 5],
@@ -122,11 +122,11 @@ const lineModeArr = [
 	['fine', 10],
 	['medium', 10],
 	['thick', 10],
+	['post', 10],
+	['column', 10],
 	['pillar', 10],
-	['sixteenth', 10],
-	['eight', 10],
-	['quarter', 10],
-	['full', 10],
+	['beam', 10],
+	['wall', 10],
 ];
 
 const lineModeValueArr = [
@@ -134,12 +134,24 @@ const lineModeValueArr = [
 	['3', 10],
 	['5', 10],
 	['10', 10],
+	['15', 10],
 	['25', 10],
 	['50', 10],
 	['75', 10],
 	['100', 10],
 	['125', 10],
-	['width', 10],
+];
+
+const jdlModeArr = [
+	['true', 85],
+	['false', 15]
+];
+
+const bgModeArr = [
+	['transparent',25],
+	['same',25],
+	['complementary',25],
+	['analogous',25]
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
@@ -156,7 +168,9 @@ function generate_composition_params(
 	amplitudemode,
 	vibrancymode,
 	linemodeName,
-	linemode
+	linemode,
+	jdlMode,
+	bgMode
 ) {
 	// SET DEFAULTS IF NOT PASSED IN
 
@@ -249,6 +263,14 @@ function generate_composition_params(
 		}
 	}
 
+	if(jdlMode === undefined) {
+		jdlMode = weighted_choice(jdlModeArr);
+	}
+
+	if(bgMode === undefined) {
+		bgMode = weighted_choice(bgModeArr);
+	}
+
 	//* EXCEPTIONS AND OVER-RIDES *//
 	// if necessary, add exceptions and over-rides here
 
@@ -273,6 +295,8 @@ function generate_composition_params(
 		vibrancymode: vibrancymode,
 		linemode: linemode,
 		linemodeName: linemodeName,
+		jdlmode: jdlMode,
+		bgmode: bgMode
 	};
 
 	//* RETURN PARAMETERS *//

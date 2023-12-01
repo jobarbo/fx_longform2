@@ -45,6 +45,8 @@ let cycle = parseInt((maxFrames * particleNum) / 1170);
 
 let hue;
 let bgCol;
+let bgHue;
+let bgSat;
 
 let animation;
 
@@ -132,36 +134,6 @@ function setup() {
 	initSketch();
 }
 
-function* drawGenerator() {
-	let count = 0;
-	let frameCount = 0;
-	let draw_every = cycle;
-
-	while (true) {
-		for (let i = 0; i < particleNum; i++) {
-			const mover = movers[i];
-			mover.show();
-			mover.move();
-			if (count > draw_every) {
-				count = 0;
-				yield;
-			}
-			count++;
-		}
-
-		elapsedTime = frameCount - startTime;
-		showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
-
-		frameCount++;
-		if (elapsedTime > maxFrames && drawing) {
-			drawing = false;
-			$fx.preview();
-			document.complete = true;
-			return;
-		}
-	}
-}
-
 function initSketch() {
 	console.log('dpi', dpi_val);
 	console.log('ratio', RATIO);
@@ -200,8 +172,9 @@ function initSketch() {
 	hue = hueArr[parseInt(fxrand() * hueArr.length)];
 
 	//!check if we keep complimentary colors background
-	let bgHue = (hue + 180) % 360;
-	let bgSat =random([0, 2, 5]);
+
+	bgHue = features.bgmode == 'complimentary' ? (hue + 180) % 360 : features.bgmode == 'analogous' ? (hue + 30) % 360 : hue;
+	bgSat = features.bgmode == 'transparent' ? 0 : random([2, 4, 6]);
 	bgCol = color(bgHue, bgSat, features.theme == 'bright' ? 93 : 10, 100);
 
 
@@ -214,14 +187,48 @@ function initSketch() {
 	animate();
 }
 
+
+function* drawGenerator() {
+	let count = 0;
+	let frameCount = 0;
+	let draw_every = cycle;
+
+	while (true) {
+		for (let i = 0; i < particleNum; i++) {
+			const mover = movers[i];
+			mover.show();
+			mover.move();
+			if (count > draw_every) {
+				count = 0;
+				yield;
+			}
+			count++;
+		}
+
+		elapsedTime = frameCount - startTime;
+		showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
+
+		frameCount++;
+		if (elapsedTime > maxFrames && drawing) {
+			drawing = false;
+			$fx.preview();
+			document.complete = true;
+			return;
+		}
+	}
+}
+
+
 function INIT_MOVERS() {
 
 	movers = [];
 	background(bgCol);
-
+	drawTexture(bgHue);
 	sclVal = features.scalevalue.split(',').map(Number);
 	scl1 = random(sclVal[0], sclVal[1]);
-	scl2 = random(sclVal[0], sclVal[1]);
+	scl2 = scl1;
+
+	console.log('scl1', scl1, 'scl2', scl2);
 
 	let ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 100, true));
 	let ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 100, true));
@@ -365,7 +372,6 @@ class Mover {
 				: [40, 40, 60, 70, 70, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
 		this.initAlpha = 50;
 		this.initS = 1 * MULTIPLIER;
-		//this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === 'monochrome' || features.colormode === 'duotone' ? 0 : this.initSat;
 		this.bri = this.initBri;
@@ -374,8 +380,8 @@ class Mover {
 			features.colormode === 'monochrome' || features.colormode === 'fixed'
 				? 1
 				: features.colormode === 'dynamic' || features.colormode === 'duotone'
-				? 12
-				: 25;
+				? 10
+				: 20;
 		this.satStep = features.colorMode === 'duotone' ? 0.1 : 1;
 		this.briStep = 1;
 		this.s = this.initS;
@@ -400,11 +406,11 @@ class Mover {
 		this.borderY = height / 2.75;
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
 		this.uvalueArr = features.behaviorvalue.split(',').map(Number);
-		// store the smallest value of the uvalueArr in this.uvalue
 		this.uvalue = Math.min(...this.uvalueArr);
 		this.isBordered = true;
 		this.bgCol = bgColArr;
 		this.zombie = false;
+		this.zombieAlpha = features.jdlmode === 'true' ? this.initAlpha : 0;
 		this.lineWeight =
 			typeof features.lineModeValue === 'string'
 				? eval(features.lineModeValue) * MULTIPLIER
@@ -459,24 +465,24 @@ class Mover {
 			this.a = 0;
 			this.zombie = true;
 		} else {
-			this.a = this.zombie ? 100 : this.initAlpha;
+			this.a = this.zombie ? this.zombieAlpha : this.initAlpha;
 		}
 
 		if (this.isBordered) {
-			if (this.x < this.xMin * width) {
-				this.x = this.xMax * width + fxrand() * this.lineWeight;
+			if (this.x < (this.xMin * width)-this.lineWeight) {
+				this.x = (this.xMax * width) + (fxrand() * this.lineWeight);
 				//this.a = 100;
 			}
-			if (this.x > this.xMax * width) {
-				this.x = this.xMin * width + fxrand() * this.lineWeight;
+			if (this.x > (this.xMax * width)+this.lineWeight) {
+				this.x = (this.xMin * width) - (fxrand() * this.lineWeight);
 				//this.a = 100;
 			}
-			if (this.y < this.yMin * height) {
-				this.y = this.yMax * height + fxrand() * this.lineWeight;
+			if (this.y < (this.yMin * height)-this.lineWeight) {
+				this.y = (this.yMax * height) + (fxrand() * this.lineWeight);
 				//this.a = 100;
 			}
-			if (this.y > this.yMax * height) {
-				this.y = this.yMin * height + fxrand() * this.lineWeight;
+			if (this.y > (this.yMax * height)+this.lineWeight) {
+				this.y = (this.yMin * height) - (fxrand() * this.lineWeight);
 				//this.a = 100;
 			}
 		}

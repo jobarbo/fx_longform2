@@ -23,6 +23,8 @@ var {
 	vibrancymode,
 	linemode,
 	linemodeName,
+	jdlmode,
+	bgmode
 } = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
 // decode window location search
@@ -123,6 +125,15 @@ if (urlParams) {
 			lineMode = lineModeValueArr[index][0];
 		}
 	}
+
+	if (urlParams.jdlmode) {
+		jdlmode = urlParams.jdlmode;
+	}
+
+	if (urlParams.bgmode) {
+		bgmode = urlParams.bgmode;
+	}
+
 }
 
 // this is how features can be defined
@@ -137,6 +148,8 @@ $fx.features({
 	amplitudemode: amplitudemode,
 	vibrancymode: vibrancymode,
 	lineMode: linemodeName,
+	jdlmode: jdlmode,
+	bgmode: bgmode,
 });
 
 window.features = {
@@ -149,4 +162,6 @@ window.features = {
 	amplitudemode: amplitudemode,
 	vibrancymode: vibrancymode,
 	lineModeValue: linemode,
+	jdlmode: jdlmode,
+	bgmode : bgmode
 };
