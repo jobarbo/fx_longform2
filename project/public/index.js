@@ -225,7 +225,7 @@ function INIT_MOVERS() {
 	drawTexture(bgHue);
 	sclVal = features.scalevalue.split(',').map(Number);
 	scl1 = random(sclVal[0], sclVal[1]);
-	scl2 = scl1;
+	scl2 = random(sclVal[0], sclVal[1]);
 
 
 	let ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 100, true));
