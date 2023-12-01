@@ -405,7 +405,6 @@ class Mover {
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
 		this.uvalueArr = features.behaviorvalue.split(',').map(Number);
 		this.uvalue = Math.min(...this.uvalueArr);
-		this.isBordered = true;
 		this.bgCol = bgColArr;
 		this.zombie = false;
 		this.zombieAlpha = features.jdlmode === 'true' ? this.initAlpha : 0;
@@ -451,9 +450,6 @@ class Mover {
 			this.sat = this.sat > this.initSat * 1.5 ? 0 : this.sat < 0 ? this.initSat * 1.5 : this.sat;
 		}
 
-		this.x = this.x <= 0 ? width + 2 : this.x >= width ? -2 : this.x;
-		this.y = this.y <= 0 ? height + 2 : this.y >= height ? -2 : this.y;
-
 		if (
 			this.x < this.xMin * width ||
 			this.x > this.xMax * width ||
@@ -466,24 +462,24 @@ class Mover {
 			this.a = this.zombie ? this.zombieAlpha : this.initAlpha;
 		}
 
-		if (this.isBordered) {
-			if (this.x < (this.xMin * width)-this.lineWeight) {
-				this.x = (this.xMax * width) + (fxrand() * this.lineWeight);
-				//this.a = 100;
-			}
-			if (this.x > (this.xMax * width)+this.lineWeight) {
-				this.x = (this.xMin * width) - (fxrand() * this.lineWeight);
-				//this.a = 100;
-			}
-			if (this.y < (this.yMin * height)-this.lineWeight) {
-				this.y = (this.yMax * height) + (fxrand() * this.lineWeight);
-				//this.a = 100;
-			}
-			if (this.y > (this.yMax * height)+this.lineWeight) {
-				this.y = (this.yMin * height) - (fxrand() * this.lineWeight);
-				//this.a = 100;
-			}
+
+		if (this.x < (this.xMin * width)-this.lineWeight) {
+			this.x = (this.xMax * width) + (fxrand() * this.lineWeight);
+			//this.a = 100;
 		}
+		if (this.x > (this.xMax * width)+this.lineWeight) {
+			this.x = (this.xMin * width) - (fxrand() * this.lineWeight);
+			//this.a = 100;
+		}
+		if (this.y < (this.yMin * height)-this.lineWeight) {
+			this.y = (this.yMax * height) + (fxrand() * this.lineWeight);
+			//this.a = 100;
+		}
+		if (this.y > (this.yMax * height)+this.lineWeight) {
+			this.y = (this.yMin * height) - (fxrand() * this.lineWeight);
+			//this.a = 100;
+		}
+
 	}
 }
 function superCurve(x, y, scl1, scl2, ang1, ang2, octave, clampvalueArr, uvalueArr) {
