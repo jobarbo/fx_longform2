@@ -7,7 +7,7 @@ class Mover {
 		this.sat = 50;
 		this.bri = 70;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 1 * MULTIPLIER;
+		this.s = 3 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.seed = seed;
@@ -22,7 +22,7 @@ class Mover {
 	show() {
 		//
 		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, 40);
+		fill(this.hue, this.sat, this.bri, 10);
 		//stroke(34, 40, 90,80);
 		noStroke();
 		ellipse(this.x, this.y, this.s);
@@ -33,15 +33,9 @@ class Mover {
 		this.hue = map(p.x, -4, 4, this.hue - 3, this.hue + 3, true);
 		this.sat = map(p.x, -4, 4, this.sat + 3, this.sat - 3, true);
 		this.bri = map(p.x, -4, 4, this.bri - 3, this.bri + 3, true);
-		this.x += p.x / random(0.0001, 2.01) + random(-3.1, 0.1) * MULTIPLIER;
-		this.y += p.y / random(0.0001, 2.01) + random(-0.1, 3.1) * MULTIPLIER;
-		this.s += map(
-			p.x,
-			-4 * MULTIPLIER,
-			4 * MULTIPLIER,
-			-0.1 * MULTIPLIER,
-			0.1 * MULTIPLIER
-		);
+		this.x += (p.x / random(0.0001, 2.01) + random(-3.1, 0.1)) * MULTIPLIER;
+		this.y += (p.y / random(0.0001, 2.01) + random(-0.1, 3.1)) * MULTIPLIER;
+		this.s += map(p.x, -4, 4, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		if (this.hue < 0) {
 			this.hue = 360;
@@ -51,20 +45,20 @@ class Mover {
 		}
 
 		if (this.sat < 20) {
-			this.sat = 100;
+			this.sat = random(20, 40);
 		} else if (this.sat > 100) {
-			this.sat = 20;
+			this.sat = random(80, 100);
 		}
 		if (this.bri < 20) {
-			this.bri = 100;
+			this.bri = random(20, 40);
 		} else if (this.bri > 100) {
-			this.bri = 20;
+			this.bri = random(80, 100);
 		}
-		if (this.s < 0.5 * MULTIPLIER) {
-			this.s = 0.5 * MULTIPLIER;
+		if (this.s < 1 * MULTIPLIER) {
+			this.s = 1 * MULTIPLIER;
 		}
-		if (this.s > 2 * MULTIPLIER) {
-			this.s = 2 * MULTIPLIER;
+		if (this.s > 5 * MULTIPLIER) {
+			this.s = 5 * MULTIPLIER;
 		}
 	}
 }
@@ -78,7 +72,7 @@ function superCurve(x, y, scl1, scl2, seed) {
 		scale2 = scl2,
 		dx,
 		dy,
-		octave = 1;
+		octave = 6;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
@@ -97,8 +91,11 @@ function superCurve(x, y, scl1, scl2, seed) {
 
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
-	let u = map(un, -0.5, 0.5, -4, 4);
-	let v = map(vn, -0.5, 0.5, -4, 4);
+	let u = map(un, -0.5, 0.5, -4, 4, true);
+	let v = map(vn, -0.5, 0.5, -4, 4, true);
+
+	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
+	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
 	//let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
 	//let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) - sin(x * scl2 * 0.2 + seed);
 	let p = createVector(u, v);

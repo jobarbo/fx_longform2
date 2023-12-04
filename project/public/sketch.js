@@ -1,6 +1,6 @@
 let features = "";
 
-let DEFAULT_SIZE = 1600;
+let DEFAULT_SIZE = 2600;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
@@ -13,7 +13,7 @@ function setup() {
 	// canvas setup
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1.375);
+	c = createCanvas(DIM, DIM);
 	dpi(3);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
