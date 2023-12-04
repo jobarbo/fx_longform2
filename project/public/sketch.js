@@ -1,6 +1,6 @@
-let features = '';
+let features = "";
 
-let DEFAULT_SIZE = 3600;
+let DEFAULT_SIZE = 1600;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
@@ -18,10 +18,38 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
-
-	background(0, 20, 100);
+	INIT();
 }
 
 function draw() {
-	noLoop();
+	for (let i = 0; i < movers.length; i++) {
+		for (let t = 0; t < 1; t++) {
+			movers[i].show();
+			movers[i].move();
+		}
+	}
+
+	exporting = true;
+	if (!exporting && bleed > 0) {
+		stroke(0, 100, 100);
+		noFill();
+		strokeWeight(10);
+		rect(bleed, bleed, trimWidth, trimHeight);
+	}
+}
+
+function INIT(seed) {
+	movers = [];
+	scl1 = random(0.0001, 0.005);
+	scl2 = random(0.0001, 0.005);
+	let hue = random(360);
+	for (let i = 0; i < 100000; i++) {
+		let x = random(-0.1, 1.1) * width;
+		let y = random(-0.1, 1.1) * height;
+		movers.push(
+			new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, seed)
+		);
+	}
+
+	background(35, 20, 10);
 }

@@ -1,13 +1,17 @@
 //* PARAMS *//
 // put global settings here if needed
-
+fx = $fx;
+fxrand = $fx.rand;
+rand = fxrand;
+fxhash = $fx.hash;
+seed = fxrand() * 1000000;
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
 const shapeArr = [
 	// name, probability(0-100)
-	['ellipse', 50],
-	['rectangle', 50],
+	["ellipse", 50],
+	["rectangle", 50],
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function

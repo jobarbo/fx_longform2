@@ -6,17 +6,22 @@
 		<script id="fxhash-snippet">
 			//---- do not edit the following code (you can indent as you wish)
 			let search = new URLSearchParams(window.location.search);
-			let alphabet = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+			let alphabet =
+				"123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 			var fxhash =
-				search.get('fxhash') ||
-				'oo' +
+				search.get("fxhash") ||
+				"oo" +
 					Array(49)
 						.fill(0)
 						.map((_) => alphabet[(Math.random() * alphabet.length) | 0])
-						.join('');
-			let b58dec = (str) => [...str].reduce((p, c) => (p * alphabet.length + alphabet.indexOf(c)) | 0, 0);
+						.join("");
+			let b58dec = (str) =>
+				[...str].reduce(
+					(p, c) => (p * alphabet.length + alphabet.indexOf(c)) | 0,
+					0
+				);
 			let fxhashTrunc = fxhash.slice(2);
-			let regex = new RegExp('.{' + ((fxhash.length / 4) | 0) + '}', 'g');
+			let regex = new RegExp(".{" + ((fxhash.length / 4) | 0) + "}", "g");
 			let hashes = fxhashTrunc.match(regex).map((h) => b58dec(h));
 			let sfc32 = (a, b, c, d) => {
 				return () => {
@@ -36,18 +41,18 @@
 			var fxrand = sfc32(...hashes);
 			// true if preview mode active, false otherwise
 			// you can append preview=1 to the URL to simulate preview active
-			var isFxpreview = search.get('preview') === '1';
+			var isFxpreview = search.get("preview") === "1";
 			// call this method to trigger the preview
 			function fxpreview() {
-				window.dispatchEvent(new Event('fxhash-preview'));
+				window.dispatchEvent(new Event("fxhash-preview"));
 				setTimeout(() => fxpreview(), 500);
 			}
 			//
 			// NEW: v2 of the fxhash SDK lol
 			//
 			// get the byte params from the URL
-			let fxparams = search.get('fxparams');
-			fxparams = fxparams ? fxparams.replace('0x', '') : fxparams;
+			let fxparams = search.get("fxparams");
+			fxparams = fxparams ? fxparams.replace("0x", "") : fxparams;
 
 			// the parameter processor, used to parse fxparams
 			const processors = {
@@ -62,9 +67,11 @@
 					bytesLength: () => 8,
 					constrain: (value, definition) => {
 						let min = Number.MIN_SAFE_INTEGER;
-						if (typeof definition.options?.min !== 'undefined') min = Number(definition.options.min);
+						if (typeof definition.options?.min !== "undefined")
+							min = Number(definition.options.min);
 						let max = Number.MAX_SAFE_INTEGER;
-						if (typeof definition.options?.max !== 'undefined') max = Number(definition.options.max);
+						if (typeof definition.options?.max !== "undefined")
+							max = Number(definition.options.max);
 						max = Math.min(max, Number.MAX_SAFE_INTEGER);
 						min = Math.max(min, Number.MIN_SAFE_INTEGER);
 						const v = Math.min(Math.max(value, min), max);
@@ -72,9 +79,11 @@
 					},
 					random: (definition) => {
 						let min = Number.MIN_SAFE_INTEGER;
-						if (typeof definition.options?.min !== 'undefined') min = Number(definition.options.min);
+						if (typeof definition.options?.min !== "undefined")
+							min = Number(definition.options.min);
 						let max = Number.MAX_SAFE_INTEGER;
-						if (typeof definition.options?.max !== 'undefined') max = Number(definition.options.max);
+						if (typeof definition.options?.max !== "undefined")
+							max = Number(definition.options.max);
 						max = Math.min(max, Number.MAX_SAFE_INTEGER);
 						min = Math.max(min, Number.MIN_SAFE_INTEGER);
 						const v = Math.random() * (max - min) + min;
@@ -99,17 +108,21 @@
 						const MAX_SAFE_INT64 = 9223372036854775807n;
 						let min = MIN_SAFE_INT64;
 						let max = MAX_SAFE_INT64;
-						if (typeof definition.options?.min !== 'undefined') min = BigInt(definition.options.min);
-						if (typeof definition.options?.max !== 'undefined') max = BigInt(definition.options.max);
+						if (typeof definition.options?.min !== "undefined")
+							min = BigInt(definition.options.min);
+						if (typeof definition.options?.max !== "undefined")
+							max = BigInt(definition.options.max);
 						const range = max - min;
 						const bits = range.toString(2).length;
 						let random;
 						do {
 							random = BigInt(
-								'0b' +
-									Array.from(crypto.getRandomValues(new Uint8Array(Math.ceil(bits / 8))))
-										.map((b) => b.toString(2).padStart(8, '0'))
-										.join('')
+								"0b" +
+									Array.from(
+										crypto.getRandomValues(new Uint8Array(Math.ceil(bits / 8)))
+									)
+										.map((b) => b.toString(2).padStart(8, "0"))
+										.join("")
 							);
 						} while (random > range);
 						return random + min;
@@ -118,7 +131,7 @@
 				boolean: {
 					// if value is "00" -> 0 -> false, otherwise we consider it's 1
 					deserialize: (input) => {
-						return input === '00' ? false : true;
+						return input === "00" ? false : true;
 					},
 					bytesLength: () => 1,
 					random: () => Math.random() < 0.5,
@@ -133,8 +146,8 @@
 						const a = parseInt(input.slice(6, 8), 16);
 						return {
 							hex: {
-								rgb: '#' + input.slice(0, 6),
-								rgba: '#' + input,
+								rgb: "#" + input.slice(0, 6),
+								rgba: "#" + input,
 							},
 							obj: {
 								rgb: {r, g, b},
@@ -147,14 +160,17 @@
 						};
 					},
 					constrain: (value, definition) => {
-						return value.slice(0, 8).padEnd(8, 'f');
+						return value.slice(0, 8).padEnd(8, "f");
 					},
-					random: () => `${[...Array(8)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`,
+					random: () =>
+						`${[...Array(8)]
+							.map(() => Math.floor(Math.random() * 16).toString(16))
+							.join("")}`,
 				},
 				string: {
 					deserialize: (input) => {
 						const hx = input.match(/.{1,4}/g) || [];
-						let rtn = '';
+						let rtn = "";
 						for (let i = 0; i < hx.length; i++) {
 							const int = parseInt(hx[i], 16);
 							if (int === 0) break;
@@ -165,9 +181,11 @@
 					bytesLength: () => 64 * 2,
 					constrain: (value, definition) => {
 						let min = 0;
-						if (typeof definition.options?.minLength !== 'undefined') min = definition.options.minLength;
+						if (typeof definition.options?.minLength !== "undefined")
+							min = definition.options.minLength;
 						let max = 64;
-						if (typeof definition.options?.maxLength !== 'undefined') max = definition.options.maxLength;
+						if (typeof definition.options?.maxLength !== "undefined")
+							max = definition.options.maxLength;
 						max = Math.min(max, 64);
 						let v = value.slice(0, max);
 						if (v.length < min) {
@@ -177,17 +195,24 @@
 					},
 					random: (definition) => {
 						let min = 0;
-						if (typeof definition.options?.minLength !== 'undefined') min = definition.options.minLength;
+						if (typeof definition.options?.minLength !== "undefined")
+							min = definition.options.minLength;
 						let max = 64;
-						if (typeof definition.options?.maxLength !== 'undefined') max = definition.options.maxLength;
+						if (typeof definition.options?.maxLength !== "undefined")
+							max = definition.options.maxLength;
 						max = Math.min(max, 64);
 						const length = Math.round(Math.random() * (max - min) + min);
-						return [...Array(length)].map((i) => (~~(Math.random() * 36)).toString(36)).join('');
+						return [...Array(length)]
+							.map((i) => (~~(Math.random() * 36)).toString(36))
+							.join("");
 					},
 				},
 				select: {
 					deserialize: (input, definition) => {
-						return definition.options.options[parseInt(input, 16)] || definition.default;
+						return (
+							definition.options.options[parseInt(input, 16)] ||
+							definition.default
+						);
 					},
 					bytesLength: () => 1,
 					constrain: (value, definition) => {
@@ -197,7 +222,9 @@
 						return definition.options.options[0];
 					},
 					random: (definition) => {
-						const index = Math.round(Math.random() * (definition?.options?.options?.length - 1) + 0);
+						const index = Math.round(
+							Math.random() * (definition?.options?.options?.length - 1) + 0
+						);
 						return definition?.options?.options[index];
 					},
 				},
@@ -213,7 +240,7 @@
 					// default value and move on
 					if (!bytes) {
 						let v;
-						if (typeof def.default === 'undefined') v = processor.random(def);
+						if (typeof def.default === "undefined") v = processor.random(def);
 						else v = def.default;
 						params[def.id] = processor.constrain?.(v, def) || v;
 						continue;
@@ -234,7 +261,9 @@
 					const processor = processors[def.type];
 					const value = values[def.id];
 					// deserialize the bytes into the params
-					paramValues[def.id] = processor.transform ? processor.transform(value) : value;
+					paramValues[def.id] = processor.transform
+						? processor.transform(value)
+						: value;
 				}
 				return paramValues;
 			};
@@ -286,44 +315,44 @@
 					return JSON.stringify(
 						params,
 						(key, value) => {
-							if (typeof value === 'bigint') return value.toString();
+							if (typeof value === "bigint") return value.toString();
 							return value;
 						},
 						2
 					);
 				},
 			};
-			window.addEventListener('message', (event) => {
-				if (event.data === 'fxhash_getHash') {
+			window.addEventListener("message", (event) => {
+				if (event.data === "fxhash_getHash") {
 					parent.postMessage(
 						{
-							id: 'fxhash_getHash',
+							id: "fxhash_getHash",
 							data: window.$fx.hash,
 						},
-						'*'
+						"*"
 					);
 				}
 
-				if (event.data === 'fxhash_getFeatures') {
+				if (event.data === "fxhash_getFeatures") {
 					parent.postMessage(
 						{
-							id: 'fxhash_getFeatures',
+							id: "fxhash_getFeatures",
 							data: window.$fx.getFeatures(),
 						},
-						'*'
+						"*"
 					);
 				}
 
-				if (event.data === 'fxhash_getParams') {
+				if (event.data === "fxhash_getParams") {
 					parent.postMessage(
 						{
-							id: 'fxhash_getParams',
+							id: "fxhash_getParams",
 							data: {
 								definitions: window.$fx.getDefinitions(),
 								values: window.$fx.getRawParams(),
 							},
 						},
-						'*'
+						"*"
 					);
 				}
 			});
@@ -335,12 +364,16 @@
 		<link rel="stylesheet" href="./style.css" />
 		<script src="./library/p5/p5.min.js"></script>
 		<script src="./library/p5/p5collide2d.min.js"></script>
+		<script src="./library/p5/spectral.js"></script>
+		<script src="./parameters/params.js"></script>
+		<script src="./library/utils/utils.js"></script>
 		<script src="./library/utils/logs.js"></script>
 		<script src="./library/utils/piterNoise.js"></script>
 		<script src="./library/utils/saveCanvas.js"></script>
-		<script src="./library/utils/utils.js"></script>
+
 		<script src="./library/utils/smudge.js"></script>
-		<script src="./parameters/params.js"></script>
+
+		<script src="./mover.js"></script>
 		<script src="sketch.js"></script>
 
 		<!-- if you need to import js scripts do it here -->
