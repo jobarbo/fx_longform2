@@ -136,6 +136,7 @@ function setup() {
 }
 
 function initSketch() {
+	elapsedTime = 0;
 	console.log("dpi", dpi_val);
 	console.log("ratio", RATIO);
 	console.log("margin", MARGIN);
@@ -199,7 +200,10 @@ function* drawGenerator() {
 	while (true) {
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
+			//if (elapsedTime > 1) {
 			mover.show();
+			//}
+
 			mover.move();
 			if (count > draw_every) {
 				count = 0;
@@ -229,8 +233,20 @@ function INIT_MOVERS() {
 	scl1 = random(sclVal[0], sclVal[1]);
 	scl2 = random(sclVal[0], sclVal[1]);
 
-	let ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 100, true));
-	let ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 100, true));
+	console.log("scl1", scl1);
+	console.log("scl2", scl2);
+
+	let ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 5000, true));
+	let ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 5000, true));
+	console.log(fxfeatures.scalename);
+	if (fxfeatures.scalename != "macro") {
+		ang1Max = 100;
+		ang2Max = 100;
+	}
+
+	console.log("ang1Max", ang1Max);
+	console.log("ang2Max", ang2Max);
+
 	ang1rnd = Math.floor(fxrand() * ang1Max);
 	ang2rnd = Math.floor(fxrand() * ang2Max);
 	// get the smallest value from both randoms
@@ -247,6 +263,8 @@ function INIT_MOVERS() {
 		ang1 = largest;
 		ang2 = largest;
 	}
+	console.log("ang1", ang1);
+	console.log("ang2", ang2);
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
@@ -288,7 +306,7 @@ function INIT_MOVERS() {
 }
 
 function loadURLParams() {
-	window.location.search.includes("particleNum")
+	window.location.search.includes(" v")
 		? (particleNum = parseInt(window.location.search.split("particleNum=")[1]))
 		: 800000;
 	if (window.location.search.includes("dpi")) {
@@ -414,7 +432,7 @@ class Mover {
 				? 10
 				: 20;
 		this.satStep = features.colorMode === "duotone" ? 0.1 : 1;
-		this.briStep = 1;
+		this.briStep = 0;
 		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;

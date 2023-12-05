@@ -10,148 +10,150 @@ seed = parseInt(fxrand() * 10000000);
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
 const complexityArr = [
-	['1', 40],
-	['2', 30],
-	['6', 30],
+	["1", 40],
+	["2", 30],
+	["6", 30],
 ];
 
 const themeArr = [
-	['bright', 75],
-	['dark', 25],
+	["bright", 50],
+	["dark", 50],
 ];
 
 const colorModeArr = [
-	['monochrome', 4],
-	['duotone', 30],
-	['fixed', 5],
-	['dynamic', 30],
-	['iridescent', 30],
+	["monochrome", 4],
+	["duotone", 30],
+	["fixed", 5],
+	["dynamic", 30],
+	["iridescent", 30],
 ];
 
 const scaleValueArr = [
-	['0.0001, 0.002', 33],
-	['0.002, 0.005', 33],
-	['0.005, 0.01', 33],
+	["0.0001, 0.0008", 25],
+	["0.0008, 0.002", 25],
+	["0.002, 0.005", 25],
+	["0.005, 0.01", 25],
 ];
 
 const scaleValueNameArr = [
-	['close', 50],
-	['mid', 25],
-	['far', 15],
+	["macro", 35],
+	["close", 25],
+	["mid", 25],
+	["far", 15],
 ];
 
 const clampvalueArr = [
-	['0.015,0.015,0.0015,0.0015', 30],
-	['0.025,0.025,0.0000015,0.0000015', 20],
-	['0.0015,0.0015,0.015,0.015', 30],
-	['0.0000015,0.0000015,0.025,0.025', 20],
-	['0.0000015,0.0000015,0.0000015,0.0000015', 10],
+	["0.015,0.015,0.0015,0.0015", 30],
+	["0.025,0.025,0.0000015,0.0000015", 20],
+	["0.0015,0.0015,0.015,0.015", 30],
+	["0.0000015,0.0000015,0.025,0.025", 20],
+	["0.0000015,0.0000015,0.0000015,0.0000015", 10],
 ];
 
 const clampNameArr = [
-	['original', 30],
-	['drift', 5],
-	['original-revert', 20],
-	['drift-revert', 5],
-	['stretch', 40],
+	["original", 30],
+	["drift", 5],
+	["original-revert", 20],
+	["drift-revert", 5],
+	["stretch", 40],
 ];
 
 const particleBehaviorNameArr = [
-	['five-five', 5],
-	['five-ten', 5],
-	['five-fifteen', 5],
-	['five-twenty', 5],
-	['seven-seven', 5],
-	['seven-ten DAB IT', 5],
-	['seven-fifteen', 5],
-	['seven-twenty', 5],
-	['ten-five', 5],
-	['ten-ten', 5],
-	['ten-fifteen', 5],
-	['ten-twenty', 5],
-	['fifteen-five', 5],
-	['fifteen-ten', 5],
-	['fifteen-fifteen', 5],
-	['fifteen-twenty', 5],
-	['twenty-five', 5],
-	['twenty-ten', 5],
-	['twenty-fifteen', 5],
-	['twenty-twenty', 5],
-	['four-twenty BLAZE IT', 5],
+	["five-five", 5],
+	["five-ten", 5],
+	["five-fifteen", 5],
+	["five-twenty", 5],
+	["seven-seven", 5],
+	["seven-ten DAB IT", 5],
+	["seven-fifteen", 5],
+	["seven-twenty", 5],
+	["ten-five", 5],
+	["ten-ten", 5],
+	["ten-fifteen", 5],
+	["ten-twenty", 5],
+	["fifteen-five", 5],
+	["fifteen-ten", 5],
+	["fifteen-fifteen", 5],
+	["fifteen-twenty", 5],
+	["twenty-five", 5],
+	["twenty-ten", 5],
+	["twenty-fifteen", 5],
+	["twenty-twenty", 5],
+	["four-twenty BLAZE IT", 5],
 ];
 
 const particleBehaviorArr = [
-	['5,5,5,5', 5],
-	['5,5,10,10', 5],
-	['5,5,15,15', 5],
-	['5,5,20,20', 5],
-	['7,7,7,7', 5],
-	['7,7,10,10', 5],
-	['7,7,15,15', 5],
-	['7,7,20,20', 5],
-	['10,10,5,5', 5],
-	['10,10,10,10', 5],
-	['10,10,15,15', 5],
-	['10,10,20,20', 5],
-	['15,15,5,5', 5],
-	['15,15,10,10', 5],
-	['15,15,15,15', 5],
-	['15,15,20,20', 5],
-	['20,20,5,5', 5],
-	['20,20,10,10', 5],
-	['20,20,15,15', 5],
-	['20,20,20,20', 5],
-	['4,4,20,20', 5],
+	["5,5,5,5", 5],
+	["5,5,10,10", 5],
+	["5,5,15,15", 5],
+	["5,5,20,20", 5],
+	["7,7,7,7", 5],
+	["7,7,10,10", 5],
+	["7,7,15,15", 5],
+	["7,7,20,20", 5],
+	["10,10,5,5", 5],
+	["10,10,10,10", 5],
+	["10,10,15,15", 5],
+	["10,10,20,20", 5],
+	["15,15,5,5", 5],
+	["15,15,10,10", 5],
+	["15,15,15,15", 5],
+	["15,15,20,20", 5],
+	["20,20,5,5", 5],
+	["20,20,10,10", 5],
+	["20,20,15,15", 5],
+	["20,20,20,20", 5],
+	["4,4,20,20", 5],
 ];
 
 const amplitudeModeArr = [
-	['none', 50],
-	['low', 40],
-	['high', 10],
+	["none", 50],
+	["low", 40],
+	["high", 560],
 ];
 
 const vibrancyModeArr = [
-	['low', 20],
-	['high', 20],
-	['full', 60],
+	["low", 20],
+	["high", 20],
+	["full", 60],
 ];
 
 const lineModeArr = [
-	['hairline', 10],
-	['thin', 10],
-	['fine', 10],
-	['medium', 10],
-	['thick', 10],
-	['post', 10],
-	['column', 10],
-	['pillar', 10],
-	['beam', 10],
-	['wall', 10],
+	["hairline", 10],
+	["thin", 10],
+	["fine", 10],
+	["medium", 10],
+	["thick", 10],
+	["post", 10],
+	["column", 10],
+	["pillar", 10],
+	["beam", 10],
+	["wall", 10],
 ];
 
 const lineModeValueArr = [
-	['1', 10],
-	['3', 10],
-	['5', 10],
-	['10', 10],
-	['15', 10],
-	['25', 10],
-	['50', 10],
-	['75', 10],
-	['100', 10],
-	['125', 10],
+	["1", 10],
+	["3", 10],
+	["5", 10],
+	["10", 10],
+	["15", 10],
+	["25", 10],
+	["50", 10],
+	["75", 10],
+	["100", 10],
+	["125", 10],
 ];
 
 const jdlModeArr = [
-	['true', 85],
-	['false', 15]
+	["true", 85],
+	["false", 15],
 ];
 
 const bgModeArr = [
-	['transparent',25],
-	['same',25],
-	['complementary',25],
-	['analogous',25]
+	["transparent", 25],
+	["same", 25],
+	["complementary", 25],
+	["analogous", 25],
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
@@ -204,7 +206,9 @@ function generate_composition_params(
 		scalename = scaleContent;
 		let index = -1;
 		for (let i = 0; i < scaleValueNameArr.length; i++) {
-			if (JSON.stringify(scaleValueNameArr[i][0]) === JSON.stringify(scaleContent)) {
+			if (
+				JSON.stringify(scaleValueNameArr[i][0]) === JSON.stringify(scaleContent)
+			) {
 				index = i;
 				break;
 			}
@@ -221,7 +225,10 @@ function generate_composition_params(
 		behaviorname = behaviorContent;
 		let index = -1;
 		for (let i = 0; i < particleBehaviorNameArr.length; i++) {
-			if (JSON.stringify(particleBehaviorNameArr[i][0]) === JSON.stringify(behaviorContent)) {
+			if (
+				JSON.stringify(particleBehaviorNameArr[i][0]) ===
+				JSON.stringify(behaviorContent)
+			) {
 				index = i;
 				break;
 			}
@@ -263,11 +270,11 @@ function generate_composition_params(
 		}
 	}
 
-	if(jdlMode === undefined) {
+	if (jdlMode === undefined) {
 		jdlMode = weighted_choice(jdlModeArr);
 	}
 
-	if(bgMode === undefined) {
+	if (bgMode === undefined) {
 		bgMode = weighted_choice(bgModeArr);
 	}
 
@@ -296,7 +303,7 @@ function generate_composition_params(
 		linemode: linemode,
 		linemodeName: linemodeName,
 		jdlmode: jdlMode,
-		bgmode: bgMode
+		bgmode: bgMode,
 	};
 
 	//* RETURN PARAMETERS *//
