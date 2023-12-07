@@ -11,13 +11,13 @@ seed = parseInt(fxrand() * 10000000);
 
 const complexityArr = [
 	["1", 40],
-	["2", 30],
-	["6", 30],
+	["2", 35],
+	["6", 25],
 ];
 
 const themeArr = [
-	["bright", 50],
-	["dark", 50],
+	["bright", 60],
+	["dark", 40],
 ];
 
 const colorModeArr = [
@@ -108,8 +108,8 @@ const particleBehaviorArr = [
 
 const amplitudeModeArr = [
 	["none", 50],
-	["low", 40],
-	["high", 560],
+	["low", 30],
+	["high", 20],
 ];
 
 const vibrancyModeArr = [

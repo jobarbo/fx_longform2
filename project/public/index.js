@@ -235,27 +235,33 @@ function INIT_MOVERS() {
 
 	console.log("scl1", scl1);
 	console.log("scl2", scl2);
-
-	let ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 5000, true));
-	let ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 5000, true));
-	console.log(fxfeatures.scalename);
-	if (fxfeatures.scalename != "macro") {
-		ang1Max = 100;
-		ang2Max = 100;
+	let ang1Max = 100;
+	let ang2Max = 100;
+	if (fxfeatures.scalename == "macro") {
+		ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 5000, true));
+		ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 5000, true));
+	} else if (fxfeatures.scalename == "close") {
+		ang1Max = Math.floor(map(scl1, 0.0008, 0.002, 5000, 1000, true));
+		ang2Max = Math.floor(map(scl2, 0.0008, 0.002, 5000, 1000, true));
+	} else if (fxfeatures.scalename == "mid") {
+		ang1Max = Math.floor(map(scl1, 0.002, 0.005, 1000, 500, true));
+		ang2Max = Math.floor(map(scl2, 0.002, 0.005, 1000, 500, true));
+	} else if (fxfeatures.scalename == "far") {
+		ang1Max = Math.floor(map(scl1, 0.005, 0.01, 500, 100, true));
+		ang2Max = Math.floor(map(scl2, 0.005, 0.01, 500, 100, true));
 	}
-
-	console.log("ang1Max", ang1Max);
-	console.log("ang2Max", ang2Max);
 
 	ang1rnd = Math.floor(fxrand() * ang1Max);
 	ang2rnd = Math.floor(fxrand() * ang2Max);
 	// get the smallest value from both randoms
+	/* 	let smallest = Math.min(ang1Max, ang2Max);
+	let largest = Math.max(ang1Max, ang2Max); */
 	let smallest = Math.min(ang1rnd, ang2rnd);
 	let largest = Math.max(ang1rnd, ang2rnd);
 
 	if (features.amplitudemode == "none") {
-		ang1 = int(random(5));
-		ang2 = int(random(5));
+		ang1 = int(random(1, 5));
+		ang2 = int(random(1, 5));
 	} else if (features.amplitudemode == "low") {
 		ang1 = smallest;
 		ang2 = smallest;
@@ -266,8 +272,8 @@ function INIT_MOVERS() {
 	console.log("ang1", ang1);
 	console.log("ang2", ang2);
 
-	let xRandDivider = 0.1;
-	let yRandDivider = xRandDivider;
+	let xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
+	let yRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 
 	// convert the margin to a percentage of the width
 	xMarg = frameMargin / width;
@@ -438,8 +444,8 @@ class Mover {
 		this.scl2 = scl2;
 		this.ang1 = ang1;
 		this.ang2 = ang2;
-		this.xRandDivider = 0.1;
-		this.yRandDivider = 0.1;
+		this.xRandDivider = xRandDivider;
+		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperVal = 0;
