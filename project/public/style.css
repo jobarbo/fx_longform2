@@ -39,6 +39,39 @@ canvas {
 	height: auto !important;
 	max-width: var(--wContent);
 	max-height: var(--hContent);
-	max-height: 100vh;
+	max-height: 90vh;
 	width: auto !important;
+	box-shadow: 2.8px 2.8px 2.2px rgba(0, 0, 0, 0.05),
+		6.7px 6.7px 5.3px rgba(0, 0, 0, 0.065),
+		12.5px 12.5px 10px rgba(0, 0, 0, 0.072),
+		22.3px 22.3px 17.9px rgba(0, 0, 0, 0.074),
+		41.8px 41.8px 33.4px rgba(0, 0, 0, 0.073),
+		100px 100px 80px rgba(0, 0, 0, 0.07);
+}
+
+.container {
+	position: absolute;
+	top: 40px;
+	left: 40px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+}
+
+.info-container {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	position: relative;
+	font-family: helvetica, arial, sans-serif;
+	font-weight: 600;
+	font-size: 20px;
+	margin: 0.25em 2em 0.25em 0;
+}
+
+hr {
+	margin: 0;
+	width: 100%;
+	border: 0.5px solid black;
 }

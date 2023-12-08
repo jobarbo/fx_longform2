@@ -11,8 +11,8 @@ let dpi_val = 1;
 let movers = [];
 let scl1;
 let scl2;
-let ang1;
-let ang2;
+let amp1;
+let amp2;
 let rseed;
 let nseed;
 let xMin;
@@ -49,6 +49,11 @@ let bgHue;
 let bgSat;
 
 let animation;
+let dom_margin;
+let dom_particleNum;
+let dom_frameNum;
+let dom_dpi;
+let dom_ratio;
 
 // event listeners
 
@@ -62,7 +67,11 @@ document.addEventListener("keydown", function (event) {
 		} else {
 			MARGIN = 0;
 		}
-		initSketch();
+
+		dom_margin.innerHTML = MARGIN;
+		setTimeout(() => {
+			initSketch();
+		}, 10);
 	}
 	if (event.key === "r") {
 		// change the ratio
@@ -81,7 +90,10 @@ document.addEventListener("keydown", function (event) {
 			RATIO = 3;
 			MARGIN = 200;
 		}
-		initSketch();
+		dom_ratio.innerHTML = RATIO;
+		setTimeout(() => {
+			initSketch();
+		}, 10);
 	}
 
 	if (event.key === "p") {
@@ -89,12 +101,16 @@ document.addEventListener("keydown", function (event) {
 		if (particleNum === 400000) {
 			particleNum = 800000;
 		} else if (particleNum === 800000) {
+			particleNum = 1200000;
+		} else if (particleNum === 1200000) {
 			particleNum = 200000;
 		} else if (particleNum === 200000) {
 			particleNum = 400000;
 		}
-
-		initSketch();
+		dom_particleNum.innerHTML = particleNum;
+		setTimeout(() => {
+			initSketch();
+		}, 10);
 	}
 
 	if (event.key === "f") {
@@ -106,8 +122,10 @@ document.addEventListener("keydown", function (event) {
 		} else if (maxFrames === 30) {
 			maxFrames = 10;
 		}
-
-		initSketch();
+		dom_frameNum.innerHTML = maxFrames;
+		setTimeout(() => {
+			initSketch();
+		}, 10);
 	}
 
 	if (event.key === "d") {
@@ -123,10 +141,20 @@ document.addEventListener("keydown", function (event) {
 		} else if (dpi_val === 5) {
 			dpi_val = 1;
 		}
-
-		initSketch();
+		dom_dpi.innerHTML = dpi_val;
+		setTimeout(() => {
+			initSketch();
+		}, 10);
 	}
 });
+
+function preload() {
+	dom_margin = document.querySelector(".kb-params.margin");
+	dom_particleNum = document.querySelector(".kb-params.population");
+	dom_frameNum = document.querySelector(".kb-params.exposure");
+	dom_dpi = document.querySelector(".kb-params.dpi");
+	dom_ratio = document.querySelector(".kb-params.ratio");
+}
 
 function setup() {
 	fxfeatures = $fx.getFeatures();
@@ -137,11 +165,6 @@ function setup() {
 
 function initSketch() {
 	elapsedTime = 0;
-	console.log("dpi", dpi_val);
-	console.log("ratio", RATIO);
-	console.log("margin", MARGIN);
-	console.log("particleNum", particleNum);
-	console.log("frameNum", maxFrames);
 	console.table(fxfeatures);
 	drawing = true;
 	$fx.rand.reset();
@@ -154,6 +177,11 @@ function initSketch() {
 	movers = [];
 
 	loadURLParams();
+	dom_margin.innerHTML = MARGIN;
+	dom_particleNum.innerHTML = particleNum;
+	dom_frameNum.innerHTML = maxFrames;
+	dom_dpi.innerHTML = dpi_val;
+	dom_ratio.innerHTML = RATIO;
 
 	DEFAULT_SIZE = 4800 / RATIO;
 
@@ -235,47 +263,60 @@ function INIT_MOVERS() {
 
 	console.log("scl1", scl1);
 	console.log("scl2", scl2);
-	let ang1Max = 100;
-	let ang2Max = 100;
+
+	let amp1Max = 100;
+	let amp2Max = 100;
+	let macroMax = features.amplitudemode == "high" ? 16000 : 5000;
+	let macroMin = features.amplitudemode == "high" ? 5000 : 1000;
+	let closeMax = features.amplitudemode == "high" ? 5000 : 1000;
+	let closeMin = features.amplitudemode == "high" ? 1000 : 500;
+	let midMax = features.amplitudemode == "high" ? 1000 : 500;
+	let midMin = features.amplitudemode == "high" ? 500 : 100;
+	let farMax = features.amplitudemode == "high" ? 500 : 100;
+	let farMin = features.amplitudemode == "high" ? 100 : 10;
+
+	console.log(farMax, farMin);
 	if (fxfeatures.scalename == "macro") {
-		ang1Max = Math.floor(map(scl1, 0.0001, 0.0008, 16000, 5000, true));
-		ang2Max = Math.floor(map(scl2, 0.0001, 0.0008, 16000, 5000, true));
+		amp1Max = Math.floor(map(scl1, 0.0001, 0.0008, macroMax, macroMin, true));
+		amp2Max = Math.floor(map(scl2, 0.0001, 0.0008, macroMax, macroMin, true));
 	} else if (fxfeatures.scalename == "close") {
-		ang1Max = Math.floor(map(scl1, 0.0008, 0.002, 5000, 1000, true));
-		ang2Max = Math.floor(map(scl2, 0.0008, 0.002, 5000, 1000, true));
+		amp1Max = Math.floor(map(scl1, 0.0008, 0.002, closeMax, closeMin, true));
+		amp2Max = Math.floor(map(scl2, 0.0008, 0.002, closeMax, closeMin, true));
 	} else if (fxfeatures.scalename == "mid") {
-		ang1Max = Math.floor(map(scl1, 0.002, 0.005, 1000, 500, true));
-		ang2Max = Math.floor(map(scl2, 0.002, 0.005, 1000, 500, true));
+		amp1Max = Math.floor(map(scl1, 0.002, 0.005, midMax, midMin, true));
+		amp2Max = Math.floor(map(scl2, 0.002, 0.005, midMax, midMin, true));
 	} else if (fxfeatures.scalename == "far") {
-		ang1Max = Math.floor(map(scl1, 0.005, 0.01, 500, 100, true));
-		ang2Max = Math.floor(map(scl2, 0.005, 0.01, 500, 100, true));
+		amp1Max = Math.floor(map(scl1, 0.005, 0.01, farMax, farMin, true));
+		amp2Max = Math.floor(map(scl2, 0.005, 0.01, farMax, farMin, true));
 	}
 
-	ang1rnd = Math.floor(fxrand() * ang1Max);
-	ang2rnd = Math.floor(fxrand() * ang2Max);
-	// get the smallest value from both randoms
-	/* 	let smallest = Math.min(ang1Max, ang2Max);
-	let largest = Math.max(ang1Max, ang2Max); */
-	let smallest = Math.min(ang1rnd, ang2rnd);
-	let largest = Math.max(ang1rnd, ang2rnd);
+	amp1rnd1 = Math.floor(fxrand() * amp1Max);
+	amp1rnd2 = Math.floor(fxrand() * amp1Max);
+	amp2rnd1 = Math.floor(fxrand() * amp2Max);
+	amp2rnd2 = Math.floor(fxrand() * amp2Max);
+	let smallest1 = Math.min(amp1rnd1, amp1rnd2);
+	let smallest2 = Math.min(amp2rnd1, amp2rnd2);
+	let largest1 = Math.max(amp1rnd1, amp1rnd2);
+	let largest2 = Math.max(amp2rnd1, amp2rnd2);
 
 	if (features.amplitudemode == "none") {
-		ang1 = int(random(1, 5));
-		ang2 = int(random(1, 5));
+		amp1 = int(random(1, 5));
+		amp2 = int(random(1, 5));
 	} else if (features.amplitudemode == "low") {
-		ang1 = smallest;
-		ang2 = smallest;
+		amp1 = smallest1;
+		amp2 = smallest2;
 	} else if (features.amplitudemode == "high") {
-		ang1 = largest;
-		ang2 = largest;
+		amp1 = largest1;
+		amp2 = largest2;
 	}
-	console.log("ang1", ang1);
-	console.log("ang2", ang2);
+	console.log("amp1", amp1);
+	console.log("amp2", amp2);
 
+	//* create a random dividing number to add a bit of randomness to the particle movement.
 	let xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	let yRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 
-	// convert the margin to a percentage of the width
+	//* convert the margin to a percentage of the width
 	xMarg = frameMargin / width;
 	yMarg = frameMargin / height;
 
@@ -291,6 +332,7 @@ function INIT_MOVERS() {
 		let initHue = hue;
 		initHue =
 			initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
+
 		movers.push(
 			new Mover(
 				x,
@@ -298,8 +340,8 @@ function INIT_MOVERS() {
 				initHue,
 				scl1 / MULTIPLIER,
 				scl2 / MULTIPLIER,
-				ang1 * MULTIPLIER,
-				ang2 * MULTIPLIER,
+				amp1 * MULTIPLIER,
+				amp2 * MULTIPLIER,
 				xMin,
 				xMax,
 				yMin,
@@ -312,7 +354,7 @@ function INIT_MOVERS() {
 }
 
 function loadURLParams() {
-	window.location.search.includes(" v")
+	window.location.search.includes("particleNum")
 		? (particleNum = parseInt(window.location.search.split("particleNum=")[1]))
 		: 800000;
 	if (window.location.search.includes("dpi")) {
@@ -392,8 +434,8 @@ class Mover {
 		hue,
 		scl1,
 		scl2,
-		ang1,
-		ang2,
+		amp1,
+		amp2,
 		xMin,
 		xMax,
 		yMin,
@@ -442,8 +484,8 @@ class Mover {
 		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
-		this.ang1 = ang1;
-		this.ang2 = ang2;
+		this.amp1 = amp1;
+		this.amp2 = amp2;
 		this.xRandDivider = xRandDivider;
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
@@ -482,8 +524,8 @@ class Mover {
 			this.y,
 			this.scl1,
 			this.scl2,
-			this.ang1,
-			this.ang2,
+			this.amp1,
+			this.amp2,
 			this.oct,
 			this.clampvaluearray,
 			this.uvalueArr
@@ -572,16 +614,16 @@ function superCurve(
 	y,
 	scl1,
 	scl2,
-	ang1,
-	ang2,
+	amp1,
+	amp2,
 	octave,
 	clampvalueArr,
 	uvalueArr
 ) {
 	let nx = x,
 		ny = y,
-		a1 = ang1,
-		a2 = ang2,
+		a1 = amp1,
+		a2 = amp2,
 		scale1 = scl1,
 		scale2 = scl2,
 		dx,

@@ -59,6 +59,7 @@ const clampNameArr = [
 ];
 
 const particleBehaviorNameArr = [
+	["four-twenty BLAZE-IT!", 5],
 	["five-five", 5],
 	["five-ten", 5],
 	["five-fifteen", 5],
@@ -79,10 +80,10 @@ const particleBehaviorNameArr = [
 	["twenty-ten", 5],
 	["twenty-fifteen", 5],
 	["twenty-twenty", 5],
-	["four-twenty BLAZE IT", 5],
 ];
 
 const particleBehaviorArr = [
+	["4,4,20,20", 5],
 	["5,5,5,5", 5],
 	["5,5,10,10", 5],
 	["5,5,15,15", 5],
@@ -103,7 +104,6 @@ const particleBehaviorArr = [
 	["20,20,10,10", 5],
 	["20,20,15,15", 5],
 	["20,20,20,20", 5],
-	["4,4,20,20", 5],
 ];
 
 const amplitudeModeArr = [
