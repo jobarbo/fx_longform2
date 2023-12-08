@@ -55,6 +55,9 @@ let dom_frameNum;
 let dom_dpi;
 let dom_ratio;
 
+let debug = false;
+let presentation = false;
+
 // event listeners
 
 // if d + any number is pressed, change the dpi for that number
@@ -177,11 +180,14 @@ function initSketch() {
 	movers = [];
 
 	loadURLParams();
-	dom_margin.innerHTML = MARGIN;
-	dom_particleNum.innerHTML = particleNum;
-	dom_frameNum.innerHTML = maxFrames;
-	dom_dpi.innerHTML = dpi_val;
-	dom_ratio.innerHTML = RATIO;
+
+	if (debug) {
+		dom_margin.innerHTML = MARGIN;
+		dom_particleNum.innerHTML = particleNum;
+		dom_frameNum.innerHTML = maxFrames;
+		dom_dpi.innerHTML = dpi_val;
+		dom_ratio.innerHTML = RATIO;
+	}
 
 	DEFAULT_SIZE = 4800 / RATIO;
 
