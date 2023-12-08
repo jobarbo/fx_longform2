@@ -55,7 +55,7 @@ let dom_frameNum;
 let dom_dpi;
 let dom_ratio;
 
-let debug = false;
+let dashboard_mode = true;
 let presentation = false;
 
 // event listeners
@@ -63,6 +63,27 @@ let presentation = false;
 // if d + any number is pressed, change the dpi for that number
 document.addEventListener("keydown", function (event) {
 	// Check if the pressed key is "d" and a number
+	if (event.key === "v") {
+		// toggle presentation mode on or off
+		if (presentation) {
+			presentation = false;
+			document.querySelector("canvas").classList.remove("presentation");
+		} else {
+			presentation = true;
+			document.querySelector("canvas").classList.add("presentation");
+		}
+	}
+
+	if (event.key === "i") {
+		if (dashboard_mode) {
+			dashboard_mode = false;
+			document.querySelector(".container").classList.remove("show");
+		} else {
+			dashboard_mode = true;
+			document.querySelector(".container").classList.add("show");
+		}
+	}
+
 	if (event.key === "m") {
 		// toggle margin on or off
 		if (MARGIN === 0) {
@@ -84,9 +105,9 @@ document.addEventListener("keydown", function (event) {
 			RATIO = 1;
 			MARGIN = 300;
 		} else if (RATIO === 1) {
-			RATIO = 1.41;
+			RATIO = 1.414;
 			MARGIN = 250;
-		} else if (RATIO === 1.41) {
+		} else if (RATIO === 1.414) {
 			RATIO = 2;
 			MARGIN = 250;
 		} else if (RATIO === 2) {
@@ -181,7 +202,7 @@ function initSketch() {
 
 	loadURLParams();
 
-	if (debug) {
+	if (dashboard_mode) {
 		dom_margin.innerHTML = MARGIN;
 		dom_particleNum.innerHTML = particleNum;
 		dom_frameNum.innerHTML = maxFrames;
@@ -360,8 +381,8 @@ function INIT_MOVERS() {
 }
 
 function loadURLParams() {
-	window.location.search.includes("particleNum")
-		? (particleNum = parseInt(window.location.search.split("particleNum=")[1]))
+	window.location.search.includes("population")
+		? (particleNum = parseInt(window.location.search.split("population=")[1]))
 		: 800000;
 	if (window.location.search.includes("dpi")) {
 		dpi_val = parseInt(window.location.search.split("dpi=")[1]);
@@ -371,7 +392,7 @@ function loadURLParams() {
 			window.location.search.includes("ratio=a4") ||
 			urlParams.ratio == "a4"
 		) {
-			RATIO = 1.41;
+			RATIO = 1.414;
 			MARGIN = 250;
 		} else if (
 			window.location.search.includes("ratio=skate") ||
