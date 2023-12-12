@@ -622,7 +622,7 @@ function handleEvent() {
 				document.querySelector(".info-wrapper").classList.remove("show");
 				document.querySelector(".save-wrapper").classList.remove("show");
 				document.querySelector(".button-wrapper").classList.remove("show");
-				document.querySelector(".icon").innerHTML = "?";
+				document.querySelector(".icon").innerHTML = "i";
 			} else {
 				dom_toggle.classList.add("active");
 				document.querySelector(".info-wrapper").classList.add("show");
