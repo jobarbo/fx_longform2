@@ -15,33 +15,67 @@
 		<!-- if you need to import js scripts do it here -->
 	</head>
 	<body>
+		<div class="info-toggle"><p class="icon">?</p></div>
 		<div class="container">
-			<hr />
-			<p class="info-container">
-				<span class="info">Margin : </span
-				><span class="kb-params margin"></span>
-			</p>
-			<hr />
-			<p class="info-container">
-				<span class="info">Population : </span
-				><span class="kb-params population"></span>
-			</p>
-			<hr />
-			<p class="info-container">
-				<span class="info">Ratio : </span><span class="kb-params ratio"></span>
-			</p>
-			<hr />
-			<p class="info-container">
-				<span class="info">Print DPI : </span
-				><span class="kb-params dpi"></span>
-			</p>
-			<hr />
-			<p class="info-container">
-				<span class="info">Exposure : </span
-				><span class="kb-params exposure"></span>
-			</p>
-			<hr />
-			<p class="info-container"><span class="info"></span></p>
+			<div class="info-wrapper">
+				<hr />
+				<p class="info-container">
+					<span class="info">[M] -> Margin : </span
+					><span class="kb-params margin"></span>
+				</p>
+				<hr />
+				<p class="info-container">
+					<span class="info">[P] -> Population : </span
+					><span class="kb-params population"></span>
+				</p>
+				<hr />
+				<p class="info-container">
+					<span class="info">[R] -> Ratio : </span
+					><span class="kb-params ratio"></span>
+				</p>
+				<hr />
+				<p class="info-container">
+					<span class="info">[D] -> Print DPI : </span
+					><span class="kb-params dpi"></span>
+				</p>
+				<hr />
+				<p class="info-container">
+					<span class="info">[F] -> Exposure : </span
+					><span class="kb-params exposure"></span>
+				</p>
+				<hr />
+				<p class="info-container">
+					<span class="info">[B] -> Border Radius : </span
+					><span class="kb-params radius"></span>
+				</p>
+				<hr />
+				<p class="info-container">
+					<span class="info">[T] -> Horizontal : </span
+					><span class="kb-params tilt"></span>
+				</p>
+				<hr />
+				<p class="info-container">
+					<span class="info">[V] -> Presentation : </span
+					><span class="kb-params presentation"></span>
+				</p>
+				<hr />
+				<p class="info-container">
+					<span class="info">[I] -> Toggle Info : </span
+					><span class="kb-params dashboard"></span>
+				</p>
+				<hr />
+				<p class="info-container"><span class="info"></span></p>
+			</div>
+			<div class="button-wrapper">
+				<button data-button class="btn-margin">Margin</button>
+				<button data-button class="btn-population">Population</button>
+				<button data-button class="btn-ratio">Ratio</button>
+				<button data-button class="btn-dpi">DPI</button>
+				<button data-button class="btn-exposure">Exposure</button>
+				<button data-button class="btn-radius">Border Radius</buttondata-button>
+				<button data-button class="btn-tilt">Horizontal</button>
+				<button data-button class="btn-presentation">Presentation</button>
+			</div>
 		</div>
 		<!-- WEBPACK will inject the bundle.js here -->
 	</body>

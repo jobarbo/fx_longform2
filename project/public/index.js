@@ -37,7 +37,7 @@ let DIM;
 let MULTIPLIER;
 
 let elapsedTime = 0;
-let particleNum = 400000;
+let particleNum = 40000;
 
 let drawing = true;
 let renderMode = 1;
@@ -48,142 +48,36 @@ let bgCol;
 let bgHue;
 let bgSat;
 
+// Dom text elements
 let animation;
 let dom_margin;
 let dom_particleNum;
 let dom_frameNum;
 let dom_dpi;
 let dom_ratio;
+let dom_tilt;
+let dom_presentation;
+let dom_radius;
+let dom_dashboard;
 
-let dashboard_mode = true;
+// Modes
+let dashboard_mode = false;
+let rotation_mode = false;
+let border_mode = 0;
 let presentation = false;
+let ratio_name = "Bookmark";
+let dom_toggle = "";
 
-// event listeners
-
-// if d + any number is pressed, change the dpi for that number
-document.addEventListener("keydown", function (event) {
-	// Check if the pressed key is "d" and a number
-	if (event.key === "v") {
-		// toggle presentation mode on or off
-		if (presentation) {
-			presentation = false;
-			document.querySelector("canvas").classList.remove("presentation");
-		} else {
-			presentation = true;
-			document.querySelector("canvas").classList.add("presentation");
-		}
-	}
-
-	if (event.key === "i") {
-		if (dashboard_mode) {
-			dashboard_mode = false;
-			document.querySelector(".container").classList.remove("show");
-		} else {
-			dashboard_mode = true;
-			document.querySelector(".container").classList.add("show");
-		}
-	}
-
-	if (event.key === "m") {
-		// toggle margin on or off
-		if (MARGIN === 0) {
-			MARGIN = oldMARGIN;
-		} else {
-			MARGIN = 0;
-		}
-
-		dom_margin.innerHTML = MARGIN;
-		setTimeout(() => {
-			initSketch();
-		}, 10);
-	}
-	if (event.key === "r") {
-		// change the ratio
-		if (RATIO === 3) {
-			RATIO = 3.88;
-		} else if (RATIO === 3.88) {
-			RATIO = 1;
-			MARGIN = 300;
-		} else if (RATIO === 1) {
-			RATIO = 1.414;
-			MARGIN = 250;
-		} else if (RATIO === 1.414) {
-			RATIO = 2;
-			MARGIN = 250;
-		} else if (RATIO === 2) {
-			RATIO = 3;
-			MARGIN = 200;
-		}
-		dom_ratio.innerHTML = RATIO;
-		setTimeout(() => {
-			initSketch();
-		}, 10);
-	}
-
-	if (event.key === "p") {
-		// change the particle number
-		if (particleNum === 400000) {
-			particleNum = 800000;
-		} else if (particleNum === 800000) {
-			particleNum = 1200000;
-		} else if (particleNum === 1200000) {
-			particleNum = 200000;
-		} else if (particleNum === 200000) {
-			particleNum = 400000;
-		}
-		dom_particleNum.innerHTML = particleNum;
-		setTimeout(() => {
-			initSketch();
-		}, 10);
-	}
-
-	if (event.key === "f") {
-		// change the frame number
-		if (maxFrames === 10) {
-			maxFrames = 20;
-		} else if (maxFrames === 20) {
-			maxFrames = 30;
-		} else if (maxFrames === 30) {
-			maxFrames = 10;
-		}
-		dom_frameNum.innerHTML = maxFrames;
-		setTimeout(() => {
-			initSketch();
-		}, 10);
-	}
-
-	if (event.key === "d") {
-		// change the dpi
-		if (dpi_val === 1) {
-			dpi_val = 2;
-		} else if (dpi_val === 2) {
-			dpi_val = 3;
-		} else if (dpi_val === 3) {
-			dpi_val = 4;
-		} else if (dpi_val === 4) {
-			dpi_val = 5;
-		} else if (dpi_val === 5) {
-			dpi_val = 1;
-		}
-		dom_dpi.innerHTML = dpi_val;
-		setTimeout(() => {
-			initSketch();
-		}, 10);
-	}
-});
+// buttons
+let buttons = [];
 
 function preload() {
-	dom_margin = document.querySelector(".kb-params.margin");
-	dom_particleNum = document.querySelector(".kb-params.population");
-	dom_frameNum = document.querySelector(".kb-params.exposure");
-	dom_dpi = document.querySelector(".kb-params.dpi");
-	dom_ratio = document.querySelector(".kb-params.ratio");
+	setupDomElements();
 }
 
 function setup() {
 	fxfeatures = $fx.getFeatures();
 	features = window.features;
-
 	initSketch();
 }
 
@@ -202,13 +96,22 @@ function initSketch() {
 
 	loadURLParams();
 
-	if (dashboard_mode) {
-		dom_margin.innerHTML = MARGIN;
-		dom_particleNum.innerHTML = particleNum;
-		dom_frameNum.innerHTML = maxFrames;
-		dom_dpi.innerHTML = dpi_val;
-		dom_ratio.innerHTML = RATIO;
+	if (RATIO === 3.88) {
+		MARGIN = 0;
+		border_mode = 500;
+		document.querySelector("canvas").style.borderRadius = `${border_mode}px`;
+	} else {
+		border_mode = 0;
+		document.querySelector("canvas").style.borderRadius = `${border_mode}px`;
 	}
+	dom_margin.innerHTML = `${MARGIN}px`;
+	dom_particleNum.innerHTML = particleNum;
+	dom_frameNum.innerHTML = `${maxFrames} Frames`;
+	dom_dpi.innerHTML = dpi_val;
+	dom_ratio.innerHTML = ratio_name;
+	dom_tilt.innerHTML = rotation_mode ? "ON" : "OFF";
+	dom_presentation.innerHTML = presentation ? "ON" : "OFF";
+	dom_radius.innerHTML = `${border_mode}px`;
 
 	DEFAULT_SIZE = 4800 / RATIO;
 
@@ -661,18 +564,18 @@ function superCurve(
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 1, octave);
+	dx = oct(nx, ny, scale1, 4, octave);
 	dy = oct(nx, ny, scale2, 3, octave);
-	nx += dx * a1;
-	ny += dy * a2;
+	nx += dx * a2;
+	ny += dy * a1;
 
 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 3, octave);
-	let vn = oct(nx, ny, scale2, 2, octave);
+	let un = oct(nx, ny, scale1, 5, octave);
+	let vn = oct(nx, ny, scale2, 6, octave);
 
 	let u = mapValue(
 		un,
@@ -692,4 +595,265 @@ function superCurve(
 	);
 
 	return {x: u, y: v};
+}
+
+function setupDomElements() {
+	dom_margin = document.querySelector(".kb-params.margin");
+	dom_particleNum = document.querySelector(".kb-params.population");
+	dom_frameNum = document.querySelector(".kb-params.exposure");
+	dom_dpi = document.querySelector(".kb-params.dpi");
+	dom_ratio = document.querySelector(".kb-params.ratio");
+	dom_tilt = document.querySelector(".kb-params.tilt");
+	dom_presentation = document.querySelector(".kb-params.presentation");
+	dom_radius = document.querySelector(".kb-params.radius");
+	dom_dashboard = document.querySelector(".kb-params.dashboard");
+	dom_toggle = document.querySelector(".info-toggle");
+
+	// buttons
+	buttons = document.querySelectorAll("[data-button]");
+	handleEvent();
+}
+
+function handleEvent() {
+	if (dom_toggle) {
+		dom_toggle.addEventListener("click", function (event) {
+			if (dom_toggle.classList.contains("active")) {
+				dom_toggle.classList.remove("active");
+				document.querySelector(".info-wrapper").classList.remove("show");
+				document.querySelector(".button-wrapper").classList.remove("show");
+				document.querySelector(".icon").innerHTML = "?";
+			} else {
+				dom_toggle.classList.add("active");
+				document.querySelector(".info-wrapper").classList.add("show");
+				document.querySelector(".button-wrapper").classList.add("show");
+				document.querySelector(".icon").innerHTML = "X";
+			}
+		});
+	}
+
+	// put an event listener on all the buttons
+
+	buttons.forEach((button) => {
+		console.log(button.classList);
+		button.addEventListener("click", function (event) {
+			console.log(button.classList);
+			if (button.classList.contains("btn-radius")) {
+				mod_border_radius();
+			}
+			if (button.classList.contains("btn-presentation")) {
+				mod_pres_mode();
+			}
+			if (button.classList.contains("btn-info")) {
+				mod_info_mode();
+			}
+			if (button.classList.contains("btn-tilt")) {
+				mod_tilt_mode();
+			}
+			if (button.classList.contains("btn-margin")) {
+				mod_margin_mode();
+			}
+			if (button.classList.contains("btn-ratio")) {
+				mod_ratio_mode();
+			}
+			if (button.classList.contains("btn-population")) {
+				mod_particle_mode();
+			}
+			if (button.classList.contains("btn-exposure")) {
+				mod_exposure_mode();
+			}
+			if (button.classList.contains("btn-dpi")) {
+				mod_dpi_mode();
+			}
+		});
+	});
+
+	// if d + any number is pressed, change the dpi for that number
+	document.addEventListener("keydown", function (event) {
+		if (event.key === "b") {
+			mod_border_radius();
+		}
+
+		// Check if the pressed key is "d" and a number
+		if (event.key === "v") {
+			// toggle presentation mode on or off
+			mod_pres_mode();
+		}
+
+		if (event.key === "i") {
+			// toggle info dashboard
+			mod_info_mode();
+		}
+
+		if (event.key === "t") {
+			mod_tilt_mode();
+		}
+
+		if (event.key === "m") {
+			// toggle margin on or off
+			mod_margin_mode();
+		}
+		if (event.key === "r") {
+			// change the ratio
+			mod_ratio_mode();
+		}
+
+		if (event.key === "p") {
+			// change the particle number
+			mod_particle_mode();
+		}
+
+		if (event.key === "f") {
+			// change the frame number
+			mod_exposure_mode();
+		}
+
+		if (event.key === "d") {
+			// change the dpi
+			mod_dpi_mode();
+		}
+	});
+}
+
+function mod_border_radius() {
+	// toggle border radius from 0, 5, 10, 20,50
+	if (border_mode === 0) {
+		border_mode = 5;
+		document.querySelector("canvas").style.borderRadius = "5px";
+	} else if (border_mode === 5) {
+		border_mode = 10;
+		document.querySelector("canvas").style.borderRadius = "10px";
+	} else if (border_mode === 10) {
+		border_mode = 20;
+		document.querySelector("canvas").style.borderRadius = "20px";
+	} else if (border_mode === 20) {
+		border_mode = 50;
+		document.querySelector("canvas").style.borderRadius = "50px";
+	} else if (border_mode === 50) {
+		border_mode = 500;
+		document.querySelector("canvas").style.borderRadius = "500px";
+	} else if (border_mode === 500) {
+		border_mode = 0;
+		document.querySelector("canvas").style.borderRadius = "0px";
+	}
+	dom_radius.innerHTML = `${border_mode}px`;
+}
+
+function mod_pres_mode() {
+	if (presentation) {
+		presentation = false;
+		document.querySelector("canvas").classList.remove("presentation");
+	} else {
+		presentation = true;
+		document.querySelector("canvas").classList.add("presentation");
+	}
+	dom_presentation.innerHTML = presentation ? "ON" : "OFF";
+}
+
+function mod_info_mode() {
+	if (dashboard_mode) {
+		dashboard_mode = false;
+		document.querySelector(".info-wrapper").classList.remove("show");
+	} else {
+		dashboard_mode = true;
+		document.querySelector(".info-wrapper").classList.add("show");
+	}
+	dom_dashboard.innerHTML = dashboard_mode ? "ON" : "OFF";
+}
+
+function mod_tilt_mode() {
+	if (rotation_mode) {
+		rotation_mode = false;
+		document.querySelector("canvas").classList.remove("horizontal");
+	} else {
+		rotation_mode = true;
+		document.querySelector("canvas").classList.add("horizontal");
+	}
+	dom_tilt.innerHTML = rotation_mode ? "ON" : "OFF";
+}
+
+function mod_margin_mode() {
+	MARGIN += 50;
+	if (MARGIN > 300) {
+		MARGIN = 0;
+	}
+
+	dom_margin.innerHTML = `${MARGIN}px`;
+	setTimeout(() => {
+		initSketch();
+	}, 10);
+}
+
+function mod_ratio_mode() {
+	if (RATIO === 3) {
+		RATIO = 3.88;
+		ratio_name = "Skateboard";
+	} else if (RATIO === 3.88) {
+		RATIO = 1;
+		MARGIN = 300;
+		ratio_name = "Square";
+	} else if (RATIO === 1) {
+		RATIO = 1.414;
+		MARGIN = 250;
+		ratio_name = "A4";
+	} else if (RATIO === 1.414) {
+		RATIO = 2;
+		MARGIN = 250;
+		ratio_name = "Univisium";
+	} else if (RATIO === 2) {
+		RATIO = 3;
+		MARGIN = 200;
+		ratio_name = "Bookmark";
+	}
+	dom_ratio.innerHTML = ratio_name;
+	setTimeout(() => {
+		initSketch();
+	}, 10);
+}
+
+function mod_particle_mode() {
+	if (particleNum === 400000) {
+		particleNum = 800000;
+	} else if (particleNum === 800000) {
+		particleNum = 1200000;
+	} else if (particleNum === 1200000) {
+		particleNum = 200000;
+	} else if (particleNum === 200000) {
+		particleNum = 400000;
+	}
+	dom_particleNum.innerHTML = particleNum;
+	setTimeout(() => {
+		initSketch();
+	}, 10);
+}
+
+function mod_exposure_mode() {
+	if (maxFrames === 10) {
+		maxFrames = 20;
+	} else if (maxFrames === 20) {
+		maxFrames = 30;
+	} else if (maxFrames === 30) {
+		maxFrames = 10;
+	}
+	dom_frameNum.innerHTML = `${maxFrames} Frames`;
+	setTimeout(() => {
+		initSketch();
+	}, 10);
+}
+
+function mod_dpi_mode() {
+	if (dpi_val === 1) {
+		dpi_val = 2;
+	} else if (dpi_val === 2) {
+		dpi_val = 3;
+	} else if (dpi_val === 3) {
+		dpi_val = 4;
+	} else if (dpi_val === 4) {
+		dpi_val = 5;
+	} else if (dpi_val === 5) {
+		dpi_val = 1;
+	}
+	dom_dpi.innerHTML = dpi_val;
+	setTimeout(() => {
+		initSketch();
+	}, 10);
 }

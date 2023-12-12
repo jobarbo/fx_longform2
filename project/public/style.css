@@ -42,7 +42,11 @@ canvas {
 	max-height: 100vh;
 	width: auto !important;
 }
-
+canvas.presentation.horizontal {
+	transform: rotate(90deg);
+	max-width: 85vh;
+	max-height: 85vw;
+}
 canvas.presentation {
 	/* presentation attributes */
 	max-height: 85vh;
@@ -53,17 +57,30 @@ canvas.presentation {
 		41.8px 41.8px 33.4px rgba(0, 0, 0, 0.073),
 		100px 100px 80px rgba(0, 0, 0, 0.07);
 }
+
+canvas.horizontal {
+	transform: rotate(90deg);
+	max-width: 100vh;
+	max-height: 100vw;
+}
 .container {
-	display: none;
 	position: absolute;
-	top: 20px;
-	left: 20px;
+	top: 0;
+	left: 0;
+	display: grid;
+	grid-template-columns: 1fr;
+	background-color: rgba(255, 255, 255, 0.5);
+}
+.info-wrapper {
+	display: none;
 	flex-direction: column;
 	justify-content: center;
 	align-items: flex-start;
+
+	padding: 2.5em;
 }
 
-.container.show {
+.info-wrapper.show {
 	display: flex;
 }
 
@@ -82,4 +99,44 @@ hr {
 	margin: 0;
 	width: 100%;
 	border: 0.5px solid black;
+}
+
+.info-toggle {
+	position: absolute;
+	top: 2.5em;
+	right: 2.5em;
+	width: 30px;
+	height: 30px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	color: white;
+	background-color: black;
+	border-radius: 50%;
+	font-family: helvetica, arial, sans-serif;
+}
+
+.button-wrapper {
+	display: none;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 1em;
+	position: relative;
+
+	padding: 2.5em;
+}
+
+.button-wrapper.show {
+	display: grid;
+}
+
+button {
+	background-color: black;
+	color: white;
+	border: none;
+	padding: 0.5em 1em;
+	font-family: helvetica, arial, sans-serif;
+	font-weight: 600;
+	font-size: 16px;
+	cursor: pointer;
 }
