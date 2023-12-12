@@ -37,7 +37,7 @@ let DIM;
 let MULTIPLIER;
 
 let elapsedTime = 0;
-let particleNum = 40000;
+let particleNum = 400000;
 
 let drawing = true;
 let renderMode = 1;
