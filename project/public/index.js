@@ -620,11 +620,13 @@ function handleEvent() {
 			if (dom_toggle.classList.contains("active")) {
 				dom_toggle.classList.remove("active");
 				document.querySelector(".info-wrapper").classList.remove("show");
+				document.querySelector(".save-wrapper").classList.remove("show");
 				document.querySelector(".button-wrapper").classList.remove("show");
 				document.querySelector(".icon").innerHTML = "?";
 			} else {
 				dom_toggle.classList.add("active");
 				document.querySelector(".info-wrapper").classList.add("show");
+				document.querySelector(".save-wrapper").classList.add("show");
 				document.querySelector(".button-wrapper").classList.add("show");
 				document.querySelector(".icon").innerHTML = "X";
 			}
@@ -663,6 +665,9 @@ function handleEvent() {
 			}
 			if (button.classList.contains("btn-dpi")) {
 				mod_dpi_mode();
+			}
+			if (button.classList.contains("btn-save")) {
+				saveArtwork();
 			}
 		});
 	});
