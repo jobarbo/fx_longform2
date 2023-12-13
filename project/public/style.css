@@ -119,9 +119,10 @@ hr {
 	color: white;
 	background-color: black;
 	border: white 2px solid;
+	z-index: 10;
 	border-radius: 50%;
 	font-family: helvetica, arial, sans-serif;
-	font-size: 30px;
+	font-size: 20px;
 	transform: scale(1);
 	transition: 0.2s ease-in-out;
 }
@@ -131,16 +132,6 @@ hr {
 }
 
 /* mobile breakpoint */
-
-@media (max-width: 600px) {
-	.info-toggle {
-		top: 1.5em;
-		right: 1.5em;
-		width: 70px;
-		height: 70px;
-		font-size: 20px;
-	}
-}
 
 .button-wrapper {
 	display: none;
@@ -180,4 +171,20 @@ button {
 	font-weight: 600;
 	font-size: 16px;
 	cursor: pointer;
+}
+
+@media (max-width: 600px) {
+	.container {
+		width: 100vw;
+	}
+	.info-wrapper {
+		padding-top: 5em;
+	}
+	.info-toggle {
+		top: 1em;
+		right: 1em;
+		width: 30px;
+		height: 30px;
+		font-size: 16px;
+	}
 }
