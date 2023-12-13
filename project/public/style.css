@@ -16,7 +16,7 @@ body {
 body {
 	background-color: transparent;
 	margin: 0;
-	height: 100vh;
+	height: 100dvh;
 	overflow: hidden;
 	display: flex;
 	align-items: center;
@@ -40,19 +40,19 @@ canvas {
 	height: auto !important;
 	max-width: var(--wContent);
 	max-height: var(--hContent);
-	max-height: 100vh;
+	max-height: 100dvh;
 	width: auto !important;
 }
 
 canvas.presentation.horizontal {
 	transform: rotate(90deg);
-	max-width: 85vh;
+	max-width: 85dvh;
 	max-height: 85vw;
 }
 
 canvas.presentation {
 	/* presentation attributes */
-	max-height: 85vh;
+	max-height: 85dvh;
 	box-shadow: 2.8px 2.8px 2.2px rgba(0, 0, 0, 0.05),
 		6.7px 6.7px 5.3px rgba(0, 0, 0, 0.065),
 		12.5px 12.5px 10px rgba(0, 0, 0, 0.072),
@@ -63,7 +63,7 @@ canvas.presentation {
 
 canvas.horizontal {
 	transform: rotate(90deg);
-	max-width: 100vh;
+	max-width: 100dvh;
 	max-height: 100vw;
 }
 
