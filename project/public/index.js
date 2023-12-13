@@ -112,6 +112,7 @@ function initSketch() {
 	dom_tilt.innerHTML = rotation_mode ? "ON" : "OFF";
 	dom_presentation.innerHTML = presentation ? "ON" : "OFF";
 	dom_radius.innerHTML = `${border_mode}px`;
+	dom_dashboard.innerHTML = "Rendering...";
 
 	DEFAULT_SIZE = 4800 / RATIO;
 
@@ -355,6 +356,12 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 
 	// put the percent in the title of the page
 	document.title = percent.toFixed(0) + "%" + " (mode " + renderMode + ")";
+	dom_dashboard.innerHTML =
+		percent.toFixed(0) + "%" + " (mode " + renderMode + ")";
+
+	if (percent.toFixed(0) >= 100) {
+		dom_dashboard.innerHTML = "Done!";
+	}
 }
 
 class Mover {
@@ -639,6 +646,7 @@ function handleEvent() {
 		console.log(button.classList);
 		button.addEventListener("click", function (event) {
 			console.log(button.classList);
+
 			if (button.classList.contains("btn-radius")) {
 				mod_border_radius();
 			}
@@ -652,18 +660,23 @@ function handleEvent() {
 				mod_tilt_mode();
 			}
 			if (button.classList.contains("btn-margin")) {
+				dom_dashboard.innerHTML = "Please wait...";
 				mod_margin_mode();
 			}
 			if (button.classList.contains("btn-ratio")) {
+				dom_dashboard.innerHTML = "Please wait...";
 				mod_ratio_mode();
 			}
 			if (button.classList.contains("btn-population")) {
+				dom_dashboard.innerHTML = "Please wait...";
 				mod_particle_mode();
 			}
 			if (button.classList.contains("btn-exposure")) {
+				dom_dashboard.innerHTML = "Please wait...";
 				mod_exposure_mode();
 			}
 			if (button.classList.contains("btn-dpi")) {
+				dom_dashboard.innerHTML = "Please wait...";
 				mod_dpi_mode();
 			}
 			if (button.classList.contains("btn-save")) {
@@ -781,7 +794,7 @@ function mod_margin_mode() {
 	if (MARGIN > 300) {
 		MARGIN = 0;
 	}
-
+	dom_dashboard.innerHTML = "Please wait...";
 	dom_margin.innerHTML = `${MARGIN}px`;
 	setTimeout(() => {
 		initSketch();
@@ -809,6 +822,7 @@ function mod_ratio_mode() {
 		MARGIN = 200;
 		ratio_name = "Bookmark";
 	}
+	dom_dashboard.innerHTML = "Please wait...";
 	dom_ratio.innerHTML = ratio_name;
 	setTimeout(() => {
 		initSketch();
@@ -825,6 +839,7 @@ function mod_particle_mode() {
 	} else if (particleNum === 200000) {
 		particleNum = 400000;
 	}
+	dom_dashboard.innerHTML = "Please wait...";
 	dom_particleNum.innerHTML = particleNum;
 	setTimeout(() => {
 		initSketch();
@@ -839,6 +854,7 @@ function mod_exposure_mode() {
 	} else if (maxFrames === 30) {
 		maxFrames = 10;
 	}
+	dom_dashboard.innerHTML = "Please wait...";
 	dom_frameNum.innerHTML = `${maxFrames} Frames`;
 	setTimeout(() => {
 		initSketch();
@@ -857,6 +873,7 @@ function mod_dpi_mode() {
 	} else if (dpi_val === 5) {
 		dpi_val = 1;
 	}
+	dom_dashboard.innerHTML = "Please wait...";
 	dom_dpi.innerHTML = dpi_val;
 	setTimeout(() => {
 		initSketch();
