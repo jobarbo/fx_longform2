@@ -160,7 +160,7 @@ hr {
 
 .button {
 	position: relative; /* Added position */
-	background-color: black;
+	background-color: transparent;
 	border: none;
 	padding: 0.5em 1em;
 	font-family: helvetica, arial, sans-serif;
@@ -195,20 +195,20 @@ hr {
 	z-index: 0;
 	border-radius: 50px;
 	will-change: transform;
-	background-color: #fefaf5;
+	background-color: black;
 	-webkit-perspective: 1;
 	perspective: 1;
 	-webkit-backface-visibility: none;
 	backface-visibility: none;
-	-webkit-transform: translateY(100%);
-	transform: translateY(100%);
+	-webkit-transform: translateY(0%);
+	transform: translateY(0%);
 	-webkit-transition: 0.2s ease-in-out 0.15s;
 	transition: 0.2s ease-in-out;
 }
 
 .button:hover::after {
-	-webkit-transform: translateY(0%);
-	transform: translateY(0%);
+	-webkit-transform: translateY(100%);
+	transform: translateY(100%);
 	opacity: 1;
 	-webkit-transition: 0.2s ease-in-out;
 	transition: 0.2s ease-in-out;
