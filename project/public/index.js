@@ -200,31 +200,56 @@ function INIT_MOVERS() {
 	scl1 = random(sclVal[0], sclVal[1]);
 	scl2 = random(sclVal[0], sclVal[1]);
 
-	let amp1Max = 100;
-	let amp2Max = 100;
-	let macroMax = features.amplitudemode == "high" ? 16000 : 5000;
-	let macroMin = features.amplitudemode == "high" ? 5000 : 1000;
-	let closeMax = features.amplitudemode == "high" ? 5000 : 1000;
-	let closeMin = features.amplitudemode == "high" ? 1000 : 500;
-	let midMax = features.amplitudemode == "high" ? 1000 : 500;
-	let midMin = features.amplitudemode == "high" ? 500 : 100;
-	let farMax = features.amplitudemode == "high" ? 500 : 100;
-	let farMin = features.amplitudemode == "high" ? 100 : 10;
+	let scale_mode = fxfeatures.scalename;
+	let thresholds = {
+		macro: [0.0001, 0.0008],
+		close: [0.0008, 0.002],
+		mid: [0.002, 0.005],
+		far: [0.005, 0.01],
+	};
 
-	console.log(farMax, farMin);
-	if (fxfeatures.scalename == "macro") {
-		amp1Max = Math.floor(map(scl1, 0.0001, 0.0008, macroMax, macroMin, true));
-		amp2Max = Math.floor(map(scl2, 0.0001, 0.0008, macroMax, macroMin, true));
-	} else if (fxfeatures.scalename == "close") {
-		amp1Max = Math.floor(map(scl1, 0.0008, 0.002, closeMax, closeMin, true));
-		amp2Max = Math.floor(map(scl2, 0.0008, 0.002, closeMax, closeMin, true));
-	} else if (fxfeatures.scalename == "mid") {
-		amp1Max = Math.floor(map(scl1, 0.002, 0.005, midMax, midMin, true));
-		amp2Max = Math.floor(map(scl2, 0.002, 0.005, midMax, midMin, true));
-	} else if (fxfeatures.scalename == "far") {
-		amp1Max = Math.floor(map(scl1, 0.005, 0.01, farMax, farMin, true));
-		amp2Max = Math.floor(map(scl2, 0.005, 0.01, farMax, farMin, true));
-	}
+	let values = {
+		macro: [
+			features.amplitudemode == "high" ? 16000 : 5000,
+			features.amplitudemode == "high" ? 5000 : 1000,
+		],
+		close: [
+			features.amplitudemode == "high" ? 5000 : 1000,
+			features.amplitudemode == "high" ? 1000 : 500,
+		],
+		mid: [
+			features.amplitudemode == "high" ? 1000 : 500,
+			features.amplitudemode == "high" ? 500 : 100,
+		],
+		far: [
+			features.amplitudemode == "high" ? 500 : 100,
+			features.amplitudemode == "high" ? 100 : 10,
+		],
+	};
+
+	let thresholdsArr = thresholds[scale_mode];
+	let valuesArr = values[scale_mode];
+
+	let amp1Max = Math.floor(
+		map(
+			scl1,
+			thresholdsArr[0],
+			thresholdsArr[1],
+			valuesArr[0],
+			valuesArr[1],
+			true
+		)
+	);
+	let amp2Max = Math.floor(
+		map(
+			scl2,
+			thresholdsArr[0],
+			thresholdsArr[1],
+			valuesArr[0],
+			valuesArr[1],
+			true
+		)
+	);
 
 	amp1rnd1 = Math.floor(fxrand() * amp1Max);
 	amp1rnd2 = Math.floor(fxrand() * amp1Max);
