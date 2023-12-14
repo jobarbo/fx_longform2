@@ -32,6 +32,5 @@ function saveArtwork() {
 	a.href = imageUrl;
 	a.setAttribute("download", fileName);
 	a.click();
-	//save(fileName);
 	console.log("saved " + fileName);
 }
