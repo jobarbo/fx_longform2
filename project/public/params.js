@@ -16,8 +16,8 @@ const complexityArr = [
 ];
 
 const themeArr = [
-	["bright", 60],
-	["dark", 40],
+	["bright", 55],
+	["dark", 45],
 ];
 
 const colorModeArr = [
@@ -145,8 +145,8 @@ const lineModeValueArr = [
 ];
 
 const jdlModeArr = [
-	["true", 75],
-	["false", 25],
+	["true", 85],
+	["false", 15],
 ];
 
 const bgModeArr = [
