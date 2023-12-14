@@ -113,8 +113,8 @@ const amplitudeModeArr = [
 ];
 
 const amplitudeLockModeArr = [
-	["true", 50],
-	["false", 50],
+	["true", 20],
+	["false", 80],
 ];
 
 const vibrancyModeArr = [
@@ -155,10 +155,10 @@ const jdlModeArr = [
 ];
 
 const bgModeArr = [
-	["transparent", 25],
-	["same", 25],
-	["complementary", 25],
-	["analogous", 25],
+	["transparent", 16],
+	["same", 16],
+	["complementary", 50],
+	["analogous", 16],
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
@@ -254,8 +254,8 @@ function generate_composition_params(
 		if (scalename === "macro") {
 			let ampArray = [
 				["none", 10],
-				["low", 30],
-				["high", 50],
+				["low", 50],
+				["high", 40],
 			];
 			amplitudemode = weighted_choice(ampArray);
 		} else if (scalename === "close") {
