@@ -50,12 +50,5 @@ let dpi = (maxDPI = 3.0) => {
 	var webkit = !!ua.match(/WebKit/i);
 	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
 
-	// if the device is a mobile device, return the maxDPI * 2
-	let isMobile =
-		/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-			navigator.userAgent
-		);
-	if (isMobile && maxDPI > 1) {
-		return maxDPI * 2;
-	}
+	return maxDPI;
 };
