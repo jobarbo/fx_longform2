@@ -200,25 +200,55 @@ function INIT_MOVERS() {
 	scl1 = random(sclVal[0], sclVal[1]);
 	scl2 = random(sclVal[0], sclVal[1]);
 
-	let scaleMode = fxfeatures.scalename;
-	let amplitudeMode = features.amplitudemode;
-
-	let modeMapping = {
-		macro: {max: [16000, 5000], min: [5000, 1000], range: [0.0001, 0.0008]},
-		close: {max: [5000, 1000], min: [1000, 500], range: [0.0008, 0.002]},
-		mid: {max: [1000, 500], min: [500, 100], range: [0.002, 0.005]},
-		far: {max: [500, 100], min: [100, 10], range: [0.005, 0.01]},
+	let scale_mode = fxfeatures.scalename;
+	let thresholds = {
+		macro: [0.0001, 0.0008],
+		close: [0.0008, 0.002],
+		mid: [0.002, 0.005],
+		far: [0.005, 0.01],
 	};
 
-	let mode = modeMapping[scaleMode];
-	console.log("scaleMode", scaleMode);
-	console.log("mode", mode);
+	let values = {
+		macro: [
+			features.amplitudemode == "high" ? 16000 : 5000,
+			features.amplitudemode == "high" ? 5000 : 1000,
+		],
+		close: [
+			features.amplitudemode == "high" ? 5000 : 1000,
+			features.amplitudemode == "high" ? 1000 : 500,
+		],
+		mid: [
+			features.amplitudemode == "high" ? 1000 : 500,
+			features.amplitudemode == "high" ? 500 : 100,
+		],
+		far: [
+			features.amplitudemode == "high" ? 500 : 100,
+			features.amplitudemode == "high" ? 100 : 10,
+		],
+	};
+
+	let thresholdsArr = thresholds[scale_mode];
+	let valuesArr = values[scale_mode];
 
 	let amp1Max = Math.floor(
-		map(scl1, mode.range[0], mode.range[1], mode.max[0], mode.min[0], true)
+		map(
+			scl1,
+			thresholdsArr[0],
+			thresholdsArr[1],
+			valuesArr[0],
+			valuesArr[1],
+			true
+		)
 	);
 	let amp2Max = Math.floor(
-		map(scl2, mode.range[0], mode.range[1], mode.max[1], mode.min[1], true)
+		map(
+			scl2,
+			thresholdsArr[0],
+			thresholdsArr[1],
+			valuesArr[0],
+			valuesArr[1],
+			true
+		)
 	);
 
 	amp1rnd1 = Math.floor(fxrand() * amp1Max);
