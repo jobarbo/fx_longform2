@@ -200,9 +200,6 @@ function INIT_MOVERS() {
 	scl1 = random(sclVal[0], sclVal[1]);
 	scl2 = random(sclVal[0], sclVal[1]);
 
-	console.log("scl1", scl1);
-	console.log("scl2", scl2);
-
 	let amp1Max = 100;
 	let amp2Max = 100;
 	let macroMax = features.amplitudemode == "high" ? 16000 : 5000;
@@ -663,10 +660,7 @@ function handleEvent() {
 	// put an event listener on all the buttons
 
 	buttons.forEach((button) => {
-		console.log(button.classList);
 		button.addEventListener("click", function (event) {
-			console.log(button.classList);
-
 			if (button.classList.contains("btn-radius")) {
 				mod_border_radius();
 			}
