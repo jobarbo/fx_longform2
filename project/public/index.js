@@ -120,7 +120,6 @@ function initSketch() {
 	dom_dashboard.innerHTML = "Rendering...";
 
 	DEFAULT_SIZE = 4800 / RATIO;
-
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * RATIO);
