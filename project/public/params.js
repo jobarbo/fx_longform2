@@ -245,7 +245,23 @@ function generate_composition_params(
 	}
 
 	if (amplitudemode === undefined) {
-		amplitudemode = weighted_choice(amplitudeModeArr);
+		if (scalename === "macro") {
+			let ampArray = [
+				["none", 20],
+				["low", 30],
+				["high", 50],
+			];
+			amplitudemode = weighted_choice(ampArray);
+		} else if (scalename === "close") {
+			let ampArray = [
+				["none", 33],
+				["low", 33],
+				["high", 33],
+			];
+			amplitudemode = weighted_choice(ampArray);
+		} else {
+			amplitudemode = weighted_choice(amplitudeModeArr);
+		}
 	}
 
 	if (vibrancymode === undefined) {

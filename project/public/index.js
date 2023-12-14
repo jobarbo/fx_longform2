@@ -200,31 +200,26 @@ function INIT_MOVERS() {
 	scl1 = random(sclVal[0], sclVal[1]);
 	scl2 = random(sclVal[0], sclVal[1]);
 
-	let amp1Max = 100;
-	let amp2Max = 100;
-	let macroMax = features.amplitudemode == "high" ? 16000 : 5000;
-	let macroMin = features.amplitudemode == "high" ? 5000 : 1000;
-	let closeMax = features.amplitudemode == "high" ? 5000 : 1000;
-	let closeMin = features.amplitudemode == "high" ? 1000 : 500;
-	let midMax = features.amplitudemode == "high" ? 1000 : 500;
-	let midMin = features.amplitudemode == "high" ? 500 : 100;
-	let farMax = features.amplitudemode == "high" ? 500 : 100;
-	let farMin = features.amplitudemode == "high" ? 100 : 10;
+	let scaleMode = features.scalename;
+	let amplitudeMode = features.amplitudemode;
 
-	console.log(farMax, farMin);
-	if (fxfeatures.scalename == "macro") {
-		amp1Max = Math.floor(map(scl1, 0.0001, 0.0008, macroMax, macroMin, true));
-		amp2Max = Math.floor(map(scl2, 0.0001, 0.0008, macroMax, macroMin, true));
-	} else if (fxfeatures.scalename == "close") {
-		amp1Max = Math.floor(map(scl1, 0.0008, 0.002, closeMax, closeMin, true));
-		amp2Max = Math.floor(map(scl2, 0.0008, 0.002, closeMax, closeMin, true));
-	} else if (fxfeatures.scalename == "mid") {
-		amp1Max = Math.floor(map(scl1, 0.002, 0.005, midMax, midMin, true));
-		amp2Max = Math.floor(map(scl2, 0.002, 0.005, midMax, midMin, true));
-	} else if (fxfeatures.scalename == "far") {
-		amp1Max = Math.floor(map(scl1, 0.005, 0.01, farMax, farMin, true));
-		amp2Max = Math.floor(map(scl2, 0.005, 0.01, farMax, farMin, true));
-	}
+	let modeMapping = {
+		macro: {max: [16000, 5000], min: [5000, 1000], range: [0.0001, 0.0008]},
+		close: {max: [5000, 1000], min: [1000, 500], range: [0.0008, 0.002]},
+		mid: {max: [1000, 500], min: [500, 100], range: [0.002, 0.005]},
+		far: {max: [500, 100], min: [100, 10], range: [0.005, 0.01]},
+	};
+
+	let mode = modeMapping[scaleMode];
+	console.log("scaleMode", scaleMode);
+	console.log("mode", mode);
+
+	let amp1Max = Math.floor(
+		map(scl1, mode.range[0], mode.range[1], mode.max[0], mode.min[0], true)
+	);
+	let amp2Max = Math.floor(
+		map(scl2, mode.range[0], mode.range[1], mode.max[1], mode.min[1], true)
+	);
 
 	amp1rnd1 = Math.floor(fxrand() * amp1Max);
 	amp1rnd2 = Math.floor(fxrand() * amp1Max);
@@ -235,13 +230,13 @@ function INIT_MOVERS() {
 	let largest1 = Math.max(amp1rnd1, amp1rnd2);
 	let largest2 = Math.max(amp2rnd1, amp2rnd2);
 
-	if (features.amplitudemode == "none") {
+	if (amplitudeMode == "none") {
 		amp1 = int(random(1, 5));
 		amp2 = int(random(1, 5));
-	} else if (features.amplitudemode == "low") {
+	} else if (amplitudeMode == "low") {
 		amp1 = smallest1;
 		amp2 = smallest2;
-	} else if (features.amplitudemode == "high") {
+	} else if (amplitudeMode == "high") {
 		amp1 = largest1;
 		amp2 = largest2;
 	}
