@@ -37,6 +37,10 @@ let DIM;
 let MULTIPLIER;
 
 let elapsedTime = 0;
+let renderStart = Date.now();
+let framesRendered = 0;
+let totalElapsedTime = 0;
+
 let particleNum = 400000;
 
 let drawing = true;
@@ -83,6 +87,7 @@ function setup() {
 
 function initSketch() {
 	elapsedTime = 0;
+	framesRendered = 0;
 	console.table(fxfeatures);
 	drawing = true;
 	$fx.rand.reset();
@@ -143,11 +148,13 @@ function initSketch() {
 	bgCol = color(bgHue, bgSat, features.theme == "bright" ? 93 : 10, 100);
 
 	INIT_MOVERS();
+	renderStart = Date.now();
 	let sketch = drawGenerator();
 	function animate() {
 		animation = setTimeout(animate, 0);
 		sketch.next();
 	}
+
 	animate();
 }
 
@@ -172,7 +179,8 @@ function* drawGenerator() {
 		}
 
 		elapsedTime = frameCount - startTime;
-		showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
+
+		showLoadingBar(elapsedTime, maxFrames, renderStart);
 
 		frameCount++;
 		if (elapsedTime > maxFrames && drawing) {
@@ -350,14 +358,26 @@ function drawTexture(hue) {
 	}
 }
 
-function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
+function showLoadingBar(elapsedTime, maxFrames, renderStart) {
+	framesRendered++;
+	let currentTime = Date.now();
+	totalElapsedTime = currentTime - renderStart;
+
 	let percent = (elapsedTime / maxFrames) * 100;
 	if (percent > 100) percent = 100;
 
+	let averageFrameTime = totalElapsedTime / framesRendered;
+
+	let remainingFrames = maxFrames - framesRendered;
+	let estimatedTimeRemaining = averageFrameTime * remainingFrames;
+
+	// Convert milliseconds to seconds
+	let timeLeftSec = Math.round(estimatedTimeRemaining / 1000);
+
 	// put the percent in the title of the page
-	document.title = percent.toFixed(0) + "%" + " (mode " + renderMode + ")";
+	document.title = percent.toFixed(0) + "%";
 	dom_dashboard.innerHTML =
-		percent.toFixed(0) + "%" + " (mode " + renderMode + ")";
+		percent.toFixed(0) + "%" + " - Time left : " + timeLeftSec + "s";
 
 	if (percent.toFixed(0) >= 100) {
 		dom_dashboard.innerHTML = "Done!";
