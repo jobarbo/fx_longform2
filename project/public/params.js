@@ -145,8 +145,8 @@ const lineModeValueArr = [
 ];
 
 const jdlModeArr = [
-	["true", 85],
-	["false", 15],
+	["true", 75],
+	["false", 25],
 ];
 
 const bgModeArr = [

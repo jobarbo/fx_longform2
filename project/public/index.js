@@ -588,18 +588,18 @@ function superCurve(
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 4, octave);
+	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 3, octave);
-	nx += dx * a2;
-	ny += dy * a1;
+	nx += dx * a1;
+	ny += dy * a2;
 
 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 5, octave);
-	let vn = oct(nx, ny, scale2, 6, octave);
+	let un = oct(nx, ny, scale1, 3, octave);
+	let vn = oct(nx, ny, scale2, 2, octave);
 
 	let u = mapValue(
 		un,
@@ -643,12 +643,14 @@ function handleEvent() {
 		dom_toggle.addEventListener("click", function (event) {
 			if (dom_toggle.classList.contains("active")) {
 				dom_toggle.classList.remove("active");
+				document.querySelector(".container").classList.remove("show");
 				document.querySelector(".info-wrapper").classList.remove("show");
 				document.querySelector(".save-wrapper").classList.remove("show");
 				document.querySelector(".button-wrapper").classList.remove("show");
 				document.querySelector(".icon").innerHTML = "i";
 			} else {
 				dom_toggle.classList.add("active");
+				document.querySelector(".container").classList.add("show");
 				document.querySelector(".info-wrapper").classList.add("show");
 				document.querySelector(".save-wrapper").classList.add("show");
 				document.querySelector(".button-wrapper").classList.add("show");
