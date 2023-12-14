@@ -200,7 +200,7 @@ function INIT_MOVERS() {
 	scl1 = random(sclVal[0], sclVal[1]);
 	scl2 = random(sclVal[0], sclVal[1]);
 
-	let scaleMode = features.scalename;
+	let scaleMode = fxfeatures.scalename;
 	let amplitudeMode = features.amplitudemode;
 
 	let modeMapping = {
