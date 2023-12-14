@@ -112,6 +112,11 @@ const amplitudeModeArr = [
 	["high", 20],
 ];
 
+const amplitudeLockModeArr = [
+	["true", 50],
+	["false", 50],
+];
+
 const vibrancyModeArr = [
 	["low", 20],
 	["high", 20],
@@ -168,6 +173,7 @@ function generate_composition_params(
 	behaviorname,
 	behaviorvalue,
 	amplitudemode,
+	amplitudelockmode,
 	vibrancymode,
 	linemodeName,
 	linemode,
@@ -247,7 +253,7 @@ function generate_composition_params(
 	if (amplitudemode === undefined) {
 		if (scalename === "macro") {
 			let ampArray = [
-				["none", 20],
+				["none", 10],
 				["low", 30],
 				["high", 50],
 			];
@@ -294,6 +300,10 @@ function generate_composition_params(
 		bgMode = weighted_choice(bgModeArr);
 	}
 
+	if (amplitudelockmode === undefined) {
+		amplitudelockmode = weighted_choice(amplitudeLockModeArr);
+	}
+
 	//* EXCEPTIONS AND OVER-RIDES *//
 	// if necessary, add exceptions and over-rides here
 
@@ -315,6 +325,7 @@ function generate_composition_params(
 		behaviorNameArr: particleBehaviorNameArr,
 		behaviorname: behaviorname,
 		amplitudemode: amplitudemode,
+		amplitudelockmode: amplitudelockmode,
 		vibrancymode: vibrancymode,
 		linemode: linemode,
 		linemodeName: linemodeName,

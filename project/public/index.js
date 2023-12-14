@@ -200,6 +200,8 @@ function INIT_MOVERS() {
 	scl1 = random(sclVal[0], sclVal[1]);
 	scl2 = random(sclVal[0], sclVal[1]);
 
+	let amplitudeLock = features.amplitudelockmode;
+	let amplitudeMode = features.amplitudemode;
 	let scale_mode = fxfeatures.scalename;
 	let thresholds = {
 		macro: [0.0001, 0.0008],
@@ -264,11 +266,21 @@ function INIT_MOVERS() {
 		amp1 = int(random(1, 5));
 		amp2 = int(random(1, 5));
 	} else if (amplitudeMode == "low") {
-		amp1 = smallest1;
-		amp2 = smallest2;
+		if (amplitudeLock == "true") {
+			amp1 = smallest1;
+			amp2 = amp1;
+		} else {
+			amp1 = smallest1;
+			amp2 = smallest2;
+		}
 	} else if (amplitudeMode == "high") {
-		amp1 = largest1;
-		amp2 = largest2;
+		if (amplitudeLock == "true") {
+			amp1 = largest1;
+			amp2 = amp1;
+		} else {
+			amp1 = largest1;
+			amp2 = largest2;
+		}
 	}
 	console.log("amp1", amp1);
 	console.log("amp2", amp2);

@@ -20,15 +20,16 @@ var {
 	behaviorNameArr,
 	behaviorname,
 	amplitudemode,
+	amplitudelockmode,
 	vibrancymode,
 	linemode,
 	linemodeName,
 	jdlmode,
-	bgmode
+	bgmode,
 } = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
 // decode window location search
-let urlParams = new URLSearchParams(window.location.search).get('parameters');
+let urlParams = new URLSearchParams(window.location.search).get("parameters");
 // objectify urlParams
 if (urlParams) {
 	urlParams = JSON.parse(urlParams);
@@ -68,7 +69,9 @@ if (urlParams) {
 		// fetch scalevalue based on scalename from scaleValueArr
 		let index = -1;
 		for (let i = 0; i < scaleValueNameArr.length; i++) {
-			if (JSON.stringify(scaleValueNameArr[i][0]) === JSON.stringify(scalename)) {
+			if (
+				JSON.stringify(scaleValueNameArr[i][0]) === JSON.stringify(scalename)
+			) {
 				index = i;
 				break;
 			}
@@ -86,7 +89,9 @@ if (urlParams) {
 		// fetch behaviorvalue based on behaviorname from behaviorValueArr
 		let index = -1;
 		for (let i = 0; i < behaviorNameArr.length; i++) {
-			if (JSON.stringify(behaviorNameArr[i][0]) === JSON.stringify(behaviorname)) {
+			if (
+				JSON.stringify(behaviorNameArr[i][0]) === JSON.stringify(behaviorname)
+			) {
 				index = i;
 				break;
 			}
@@ -101,6 +106,10 @@ if (urlParams) {
 
 	if (urlParams.amplitudemode) {
 		amplitudemode = urlParams.amplitudemode;
+	}
+
+	if (urlParams.amplitudelockmode) {
+		amplitudelockmode = urlParams.amplitudelockmode;
 	}
 
 	if (urlParams.vibrancymode) {
@@ -133,7 +142,6 @@ if (urlParams) {
 	if (urlParams.bgmode) {
 		bgmode = urlParams.bgmode;
 	}
-
 }
 
 // this is how features can be defined
@@ -146,6 +154,7 @@ $fx.features({
 	scalename: scalename,
 	behaviorname: behaviorname,
 	amplitudemode: amplitudemode,
+	amplitudelockmode: amplitudelockmode,
 	vibrancymode: vibrancymode,
 	lineMode: linemodeName,
 	jdlmode: jdlmode,
@@ -160,8 +169,9 @@ window.features = {
 	scalevalue: scalevalue,
 	behaviorvalue: behaviorvalue,
 	amplitudemode: amplitudemode,
+	amplitudelockmode: amplitudelockmode,
 	vibrancymode: vibrancymode,
 	lineModeValue: linemode,
 	jdlmode: jdlmode,
-	bgmode : bgmode
+	bgmode: bgmode,
 };
