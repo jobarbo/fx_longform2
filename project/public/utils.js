@@ -37,12 +37,8 @@ let dpi = (maxDPI = 3.0) => {
 	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
 	var webkit = !!ua.match(/WebKit/i);
 	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
-
-	let elwidth = document.documentElement.clientWidth;
-	let elheight = document.documentElement.clientHeight;
-
-	if (elwidth < 800 || elheight < 800) {
-		let mobileDPI = maxDPI * 2;
+	let mobileDPI = maxDPI * 2;
+	if (iOSSafari) {
 		if (mobileDPI > 6) {
 			mobileDPI = 6;
 		}

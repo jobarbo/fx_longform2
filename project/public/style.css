@@ -230,7 +230,7 @@ hr {
 	z-index: 10;
 	border-radius: 50%;
 	font-family: helvetica, arial, sans-serif;
-	font-size: 18px;
+	font-size: 14px;
 	transform: scale(1);
 	transition: 0.2s ease-in-out;
 }
