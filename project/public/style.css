@@ -1,3 +1,8 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
 html {
 	flex-direction: column;
 }
@@ -25,6 +30,24 @@ body {
 	--min: min(100vw);
 	--hContent: var(--min);
 	--wContent: var(--min);
+}
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: helvetica, arial, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: 600;
 }
 
 canvas {
@@ -75,23 +98,29 @@ canvas.horizontal {
 	position: absolute;
 	top: 0;
 	left: 0;
-	display: grid;
+	display: block;
 	grid-template-columns: 1fr;
+	max-width: 100dvw;
+	overflow: hidden;
 	background-color: rgba(255, 255, 255, 0.5);
 	transform: translateX(-100%);
 	transition: 0.2s ease-in-out;
+	padding: 2.5em 2.5em 0.5em 2.5em;
 }
 
 .container.show {
 	transform: translateX(0%);
 }
-
+.title-wrapper {
+	margin-bottom: 1em;
+}
 .info-wrapper {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: flex-start;
-	padding: 2.5em 2.5em 0.5em 2.5em;
+	max-width: 100%;
+	position: relative;
 }
 
 .info-container {
@@ -102,7 +131,81 @@ canvas.horizontal {
 	font-family: helvetica, arial, sans-serif;
 	font-weight: 600;
 	font-size: 16px;
+	gap: 0.5em;
 	margin: 0.25em 0.5em 0.25em 0;
+}
+.spec {
+	color: #1183a6;
+	font-weight: 400;
+}
+.title {
+	margin-bottom: -0.1em;
+}
+
+.subtitle {
+	font-weight: 400;
+}
+.info {
+	white-space: nowrap;
+}
+
+.hash {
+	font-size: 12px;
+	overflow-wrap: anywhere;
+	display: flex;
+	align-items: center;
+}
+
+.status {
+	display: flex;
+	padding: 0.5em 1em;
+	border: black 2px solid;
+	border-radius: 50px;
+	width: fit-content;
+	font-size: 14px;
+	margin-top: 1.5em;
+}
+@keyframes spin {
+	0% {
+		transform-origin: center center;
+		transform: rotate(0deg);
+	}
+	100% {
+		transform-origin: center center;
+		transform: rotate(360deg);
+	}
+}
+.spin {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 0;
+	margin: 0;
+	padding: 0;
+	width: 0;
+	height: 0;
+	font-size: 20px;
+	color: white;
+	margin-bottom: 5px;
+}
+.spin-container {
+	margin-left: 0.5em;
+	width: 1em;
+	height: 1em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transform-origin: center center;
+	background-color: rgb(39, 124, 26);
+	border-radius: 50%;
+	align-self: center;
+}
+
+.spin-container.active {
+	background-color: rgb(159, 118, 29);
+	animation: spin 1s linear infinite;
 }
 
 hr {
@@ -141,18 +244,18 @@ hr {
 .button-wrapper {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	grid-gap: 1em;
+	grid-gap: 0.3em;
 	position: relative;
-	padding: 0.5em 2.5em 0.5em 2.5em;
+	margin-top: 1em;
 }
 
 .save-wrapper {
 	display: flex;
 	position: relative;
-	padding: 0.5em 2.5em 2.5em 2.5em;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	margin-top: 1em;
 }
 
 .btn-save {
@@ -222,12 +325,12 @@ hr {
 	.container {
 		transform: translateY(-100%);
 		transition: 0.2s ease-in-out;
+		padding: 1.5em 1em 0.5em 1em;
 	}
 
 	.container.show {
 		transform: translateY(0%);
 	}
-
 	.info-toggle {
 		top: 1em;
 		right: 1em;

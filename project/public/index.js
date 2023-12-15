@@ -63,6 +63,8 @@ let dom_tilt;
 let dom_presentation;
 let dom_radius;
 let dom_dashboard;
+let dom_hash;
+let dom_spin;
 let edits = 0;
 
 // Modes
@@ -122,7 +124,8 @@ function initSketch() {
 	dom_presentation.innerHTML = presentation ? "ON" : "OFF";
 	dom_radius.innerHTML = `${border_mode}px`;
 	dom_dashboard.innerHTML = "Rendering...";
-
+	dom_hash.innerHTML = fxhash;
+	dom_spin.classList.add("active");
 	DEFAULT_SIZE = 4800 / RATIO;
 
 	DIM = min(windowWidth, windowHeight);
@@ -165,7 +168,7 @@ function* drawGenerator() {
 	let count = 0;
 	let frameCount = 0;
 	let draw_every = cycle;
-	let parsec = 0;
+	let looptime = 0;
 	while (true) {
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
@@ -420,6 +423,7 @@ function showLoadingBar(elapsedTime, maxFrames, renderStart) {
 
 	if (percent.toFixed(0) >= 100) {
 		dom_dashboard.innerHTML = "Done!";
+		dom_spin.classList.remove("active");
 	}
 }
 
@@ -674,7 +678,8 @@ function setupDomElements() {
 	dom_radius = document.querySelector(".kb-params.radius");
 	dom_dashboard = document.querySelector(".kb-params.dashboard");
 	dom_toggle = document.querySelector(".info-toggle");
-
+	dom_hash = document.querySelector(".hash");
+	dom_spin = document.querySelector(".spin-container");
 	// buttons
 	buttons = document.querySelectorAll("[data-button]");
 	handleEvent();
@@ -719,25 +724,31 @@ function handleEvent() {
 			}
 			if (button.classList.contains("btn-margin")) {
 				dom_dashboard.innerHTML = "Please wait...";
+				dom_spin.classList.add("active");
 				mod_margin_mode();
 			}
 			if (button.classList.contains("btn-ratio")) {
 				dom_dashboard.innerHTML = "Please wait...";
+				dom_spin.classList.add("active");
 				mod_ratio_mode();
 			}
 			if (button.classList.contains("btn-population")) {
 				dom_dashboard.innerHTML = "Please wait...";
+				dom_spin.classList.add("active");
 				mod_particle_mode();
 			}
 			if (button.classList.contains("btn-exposure")) {
 				dom_dashboard.innerHTML = "Please wait...";
+				dom_spin.classList.add("active");
 				mod_exposure_mode();
 			}
 			if (button.classList.contains("btn-dpi")) {
 				dom_dashboard.innerHTML = "Please wait...";
+				dom_spin.classList.add("active");
 				mod_dpi_mode();
 			}
 			if (button.classList.contains("btn-save")) {
+				dom_spin.classList.add("active");
 				saveArtwork();
 			}
 		});
