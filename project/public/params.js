@@ -162,8 +162,8 @@ const bgModeArr = [
 ];
 
 const lazyMorningArr = [
-	[true, 4534534534534345],
-	[false, 50],
+	[true, 10],
+	[false, 90],
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
