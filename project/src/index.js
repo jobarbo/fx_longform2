@@ -84,14 +84,12 @@ if (urlParams) {
 		}
 	}
 
-	if (urlParams.behaviorname) {
-		behaviorname = urlParams.behaviorname;
+	if (urlParams.location) {
+		location = urlParams.location;
 		// fetch behaviorvalue based on behaviorname from behaviorValueArr
 		let index = -1;
 		for (let i = 0; i < behaviorNameArr.length; i++) {
-			if (
-				JSON.stringify(behaviorNameArr[i][0]) === JSON.stringify(behaviorname)
-			) {
+			if (JSON.stringify(behaviorNameArr[i][0]) === JSON.stringify(location)) {
 				index = i;
 				break;
 			}
@@ -152,7 +150,7 @@ $fx.features({
 	colormode: colormode,
 	clampname: clampname,
 	scalename: scalename,
-	behaviorname: behaviorname,
+	location: behaviorname,
 	amplitudemode: amplitudemode,
 	amplitudelockmode: amplitudelockmode,
 	vibrancymode: vibrancymode,
