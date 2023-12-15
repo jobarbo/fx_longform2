@@ -42,7 +42,7 @@ let dpi = (maxDPI = 3.0) => {
 	// not just iOS, Android as well
 
 	if (window.screen.width < 800 || window.screen.height < 800) {
-		return maxDPI * 1.5;
+		return maxDPI * 1.3;
 	} else {
 		return maxDPI;
 	}
