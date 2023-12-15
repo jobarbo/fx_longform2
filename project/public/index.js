@@ -103,15 +103,12 @@ function initSketch() {
 	movers = [];
 
 	loadURLParams();
-	console.log(ratio_name);
 	if (ratio_name == "Skateboard" && edits == 0) {
 		MARGIN = 0;
 		border_mode = 500;
 		document.querySelector("canvas").style.borderRadius = `${border_mode}px`;
-		console.log("skateboard");
 		edits++;
 	} else if (ratio_name != "Skateboard") {
-		console.log("not skateboard");
 		border_mode = 0;
 		document.querySelector("canvas").style.borderRadius = `${border_mode}px`;
 	}
@@ -680,6 +677,16 @@ function setupDomElements() {
 	dom_toggle = document.querySelector(".info-toggle");
 	dom_hash = document.querySelector(".hash");
 	dom_spin = document.querySelector(".spin-container");
+
+	if ($fx.context === "standalone") {
+		if (!dom_toggle.classList.contains("show")) {
+			dom_toggle.classList.add("show");
+		}
+	} else {
+		if (dom_toggle.classList.contains("show")) {
+			dom_toggle.classList.remove("show");
+		}
+	}
 	// buttons
 	buttons = document.querySelectorAll("[data-button]");
 	handleEvent();

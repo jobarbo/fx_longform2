@@ -38,10 +38,10 @@ let dpi = (maxDPI = 3.0) => {
 	var webkit = !!ua.match(/WebKit/i);
 	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
 
-	// check if the page is loaded on a mobile device
-	// not just iOS, Android as well
+	let elwidth = document.documentElement.clientWidth;
+	let elheight = document.documentElement.clientHeight;
 
-	if (window.screen.width < 800 || window.screen.height < 800) {
+	if (elwidth < 800 || elheight < 800) {
 		let mobileDPI = maxDPI * 2;
 		if (mobileDPI > 6) {
 			mobileDPI = 6;

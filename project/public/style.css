@@ -216,11 +216,11 @@ hr {
 
 .info-toggle {
 	position: absolute;
-	top: 2.5em;
-	right: 2.5em;
-	width: 40px;
-	height: 40px;
-	display: flex;
+	top: 15px;
+	right: 15px;
+	width: 30px;
+	height: 30px;
+	display: none;
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
@@ -230,9 +230,14 @@ hr {
 	z-index: 10;
 	border-radius: 50%;
 	font-family: helvetica, arial, sans-serif;
-	font-size: 20px;
+	font-size: 18px;
 	transform: scale(1);
 	transition: 0.2s ease-in-out;
+}
+
+.info-toggle.show {
+	display: flex;
+	transform: scale(1.1);
 }
 
 .info-toggle:hover {
@@ -318,7 +323,7 @@ hr {
 	transition: 0.2s ease-in-out;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1000px) {
 	.container {
 		width: 100vw;
 	}
