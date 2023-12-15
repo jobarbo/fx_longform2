@@ -161,6 +161,11 @@ const bgModeArr = [
 	["analogous", 16],
 ];
 
+const lazyMorningArr = [
+	[true, 4534534534534345],
+	[false, 50],
+];
+
 // all input parameters are optional, they will be chosen at random if not passed into the function
 function generate_composition_params(
 	complexity,
@@ -178,7 +183,8 @@ function generate_composition_params(
 	linemodeName,
 	linemode,
 	jdlMode,
-	bgMode
+	bgMode,
+	lazymorning
 ) {
 	// SET DEFAULTS IF NOT PASSED IN
 
@@ -304,6 +310,10 @@ function generate_composition_params(
 		amplitudelockmode = weighted_choice(amplitudeLockModeArr);
 	}
 
+	if (lazymorning === undefined) {
+		lazymorning = weighted_choice(lazyMorningArr);
+	}
+
 	//* EXCEPTIONS AND OVER-RIDES *//
 	// if necessary, add exceptions and over-rides here
 
@@ -331,6 +341,7 @@ function generate_composition_params(
 		linemodeName: linemodeName,
 		jdlmode: jdlMode,
 		bgmode: bgMode,
+		lazymorning: lazymorning,
 	};
 
 	//* RETURN PARAMETERS *//

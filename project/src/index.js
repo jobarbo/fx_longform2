@@ -26,6 +26,7 @@ var {
 	linemodeName,
 	jdlmode,
 	bgmode,
+	lazymorning,
 } = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
 // decode window location search
@@ -140,6 +141,10 @@ if (urlParams) {
 	if (urlParams.bgmode) {
 		bgmode = urlParams.bgmode;
 	}
+
+	if (urlParams.lazymorning) {
+		lazymorning = urlParams.lazymorning;
+	}
 }
 
 // this is how features can be defined
@@ -157,6 +162,7 @@ $fx.features({
 	lineMode: linemodeName,
 	jdlmode: jdlmode,
 	bgmode: bgmode,
+	lazymorning: lazymorning,
 });
 
 window.features = {
@@ -172,4 +178,5 @@ window.features = {
 	lineModeValue: linemode,
 	jdlmode: jdlmode,
 	bgmode: bgmode,
+	lazymorning: lazymorning,
 };

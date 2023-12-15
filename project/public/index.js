@@ -26,7 +26,7 @@ let currentFrame = 0;
 
 // viewport
 // if url params has RATIO, use that, else use 3
-let MARGIN = 200;
+let MARGIN = 150;
 let oldMARGIN = MARGIN;
 let frameMargin;
 let RATIO = 3;
@@ -63,6 +63,7 @@ let dom_tilt;
 let dom_presentation;
 let dom_radius;
 let dom_dashboard;
+let edits = 0;
 
 // Modes
 let dashboard_mode = false;
@@ -100,12 +101,15 @@ function initSketch() {
 	movers = [];
 
 	loadURLParams();
-
-	if (RATIO === 3.88) {
+	console.log(ratio_name);
+	if (ratio_name == "Skateboard" && edits == 0) {
 		MARGIN = 0;
 		border_mode = 500;
 		document.querySelector("canvas").style.borderRadius = `${border_mode}px`;
-	} else {
+		console.log("skateboard");
+		edits++;
+	} else if (ratio_name != "Skateboard") {
+		console.log("not skateboard");
 		border_mode = 0;
 		document.querySelector("canvas").style.borderRadius = `${border_mode}px`;
 	}
@@ -145,7 +149,6 @@ function initSketch() {
 			: hue;
 	bgSat = features.bgmode == "transparent" ? 0 : random([2, 4, 6]);
 	bgCol = color(bgHue, bgSat, features.theme == "bright" ? 93 : 10, 100);
-
 	INIT_MOVERS();
 	renderStart = Date.now();
 	let sketch = drawGenerator();
@@ -161,13 +164,17 @@ function* drawGenerator() {
 	let count = 0;
 	let frameCount = 0;
 	let draw_every = cycle;
-
+	let parsec = 0;
 	while (true) {
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
-			//if (elapsedTime > 1) {
-			mover.show();
-			//}
+			if (features.lazymorning) {
+				if (elapsedTime > 1) {
+					mover.show();
+				}
+			} else {
+				mover.show();
+			}
 
 			mover.move();
 			if (count > draw_every) {
@@ -281,8 +288,6 @@ function INIT_MOVERS() {
 			amp2 = largest2;
 		}
 	}
-	console.log("amp1", amp1);
-	console.log("amp2", amp2);
 
 	//* create a random dividing number to add a bit of randomness to the particle movement.
 	let xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
@@ -359,7 +364,7 @@ function loadURLParams() {
 			urlParams.ratio == "bookmark"
 		) {
 			RATIO = 3;
-			MARGIN = 200;
+			MARGIN = 150;
 		} else {
 			RATIO = parseInt(window.location.search.split("ratio=")[1]);
 			MARGIN = 200;
@@ -871,7 +876,7 @@ function mod_ratio_mode() {
 		ratio_name = "Univisium";
 	} else if (RATIO === 2) {
 		RATIO = 3;
-		MARGIN = 200;
+		MARGIN = 150;
 		ratio_name = "Bookmark";
 	}
 	dom_dashboard.innerHTML = "Please wait...";
