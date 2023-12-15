@@ -38,5 +38,12 @@ let dpi = (maxDPI = 3.0) => {
 	var webkit = !!ua.match(/WebKit/i);
 	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
 
-	return maxDPI;
+	// check if the page is loaded on a mobile device
+	// not just iOS, Android as well
+
+	if (window.screen.width < 800 || window.screen.height < 800) {
+		return maxDPI * 1.5;
+	} else {
+		return maxDPI;
+	}
 };

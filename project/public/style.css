@@ -247,14 +247,21 @@ hr {
 	}
 
 	.button {
-		background-color: transparent;
+		background-color: black;
 		color: white;
 		padding: 0.5em 1em;
-		font-family: helvetica, arial, sans-serif;
-		font-weight: 600;
 		font-size: 14px;
-		cursor: pointer;
-		border: black 2px solid;
-		transition: 0.2s ease-in-out;
+	}
+
+	.button:hover {
+		background-color: black;
+	}
+
+	.button:hover span {
+		color: white;
+	}
+
+	.button::after {
+		display: none;
 	}
 }
