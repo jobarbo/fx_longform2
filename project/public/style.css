@@ -135,7 +135,7 @@ canvas.horizontal {
 	margin: 0.25em 0.5em 0.25em 0;
 }
 .spec {
-	color: #1183a6;
+	color: #043747;
 	font-weight: 400;
 }
 .title {
@@ -323,11 +323,9 @@ hr {
 	transition: 0.2s ease-in-out;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 801px) {
 	.container {
 		width: 100vw;
-	}
-	.container {
 		transform: translateY(-100%);
 		transition: 0.2s ease-in-out;
 		padding: 1.5em 1em 0.5em 1em;
@@ -336,12 +334,21 @@ hr {
 	.container.show {
 		transform: translateY(0%);
 	}
+	.title {
+		font-size: 1.5em;
+	}
+	.subtitle {
+		font-size: 1em;
+	}
+	.hash {
+		font-size: 8px;
+	}
 	.info-toggle {
 		top: 1em;
 		right: 1em;
 		width: 30px;
 		height: 30px;
-		font-size: 16px;
+		font-size: 14px;
 	}
 	.info-container {
 		width: 100%;
@@ -350,7 +357,7 @@ hr {
 		position: relative;
 		font-family: helvetica, arial, sans-serif;
 		font-weight: 600;
-		font-size: 14px;
+		font-size: 13px;
 		margin: 0.25em 0.5em 0.25em 0;
 	}
 
@@ -358,7 +365,7 @@ hr {
 		background-color: black;
 		color: white;
 		padding: 0.5em 1em;
-		font-size: 14px;
+		font-size: 13px;
 	}
 
 	.button:hover {
