@@ -612,9 +612,8 @@ function initSketch() {
 		(startTime = frameCount);
 	let e = [0, 45, 90, 135, 180, 225, 270, 315];
 	(hue = e[parseInt(fxrand() * e.length)]),
-		//!check if we keep complimentary colors background
 		(bgHue =
-			"complimentary" == features.bgmode
+			"complementary" == features.bgmode
 				? (hue + 180) % 360
 				: "analogous" == features.bgmode
 				? (hue + 30) % 360
