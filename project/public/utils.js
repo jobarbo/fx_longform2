@@ -21,7 +21,7 @@ const themeArr = [
 ];
 
 const colorModeArr = [
-	["monochrome", 4],
+	["monochrome", 5],
 	["duotone", 30],
 	["fixed", 5],
 	["dynamic", 30],
@@ -155,13 +155,13 @@ const jdlModeArr = [
 ];
 
 const bgModeArr = [
-	["transparent", 20],
-	["same", 20],
-	["complementary", 30],
-	["analogous", 30],
+	["transparent", 17],
+	["same", 16],
+	["complementary", 40],
+	["analogous", 25],
 ];
 
-const lazyMorningArr = [
+const skipBreakfastArr = [
 	[true, 10],
 	[false, 90],
 ];
@@ -184,7 +184,7 @@ function generate_composition_params(
 	linemode,
 	jdlMode,
 	bgMode,
-	lazymorning
+	skipbreakfast
 ) {
 	// SET DEFAULTS IF NOT PASSED IN
 
@@ -310,8 +310,8 @@ function generate_composition_params(
 		amplitudelockmode = weighted_choice(amplitudeLockModeArr);
 	}
 
-	if (lazymorning === undefined) {
-		lazymorning = weighted_choice(lazyMorningArr);
+	if (skipbreakfast === undefined) {
+		skipbreakfast = weighted_choice(skipBreakfastArr);
 	}
 
 	//* EXCEPTIONS AND OVER-RIDES *//
@@ -341,7 +341,7 @@ function generate_composition_params(
 		linemodeName: linemodeName,
 		jdlmode: jdlMode,
 		bgmode: bgMode,
-		lazymorning: lazymorning,
+		skipbreakfast: skipbreakfast,
 	};
 
 	//* RETURN PARAMETERS *//
