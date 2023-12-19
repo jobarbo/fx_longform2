@@ -1,5 +1,6 @@
 let features = '';
 
+let RATIO = 1;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
 let H = window.innerHeight;
@@ -13,7 +14,7 @@ function setup() {
 	// canvas setup
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1.375);
+	c = createCanvas(DIM, DIM * RATIO);
 	dpi(3);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -23,5 +24,6 @@ function setup() {
 }
 
 function draw() {
+	ellipse(width / 2, height / 2, 300*MULTIPLIER, 300*MULTIPLIER);
 	noLoop();
 }
