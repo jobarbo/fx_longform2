@@ -43,7 +43,7 @@ function setup() {
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1200;
-	c = createCanvas(C_WIDTH, C_WIDTH * 1.4);
+	c = createCanvas(C_WIDTH, C_WIDTH );
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -59,7 +59,7 @@ function setup() {
 			? width / 3
 			: features.composition === 'semiconstrained'
 			? width / 2.35
-			: width / 2.5;
+			: width / 1.9;
 	borderY =
 		features.composition === 'compressed'
 			? height / 2.75
@@ -67,7 +67,7 @@ function setup() {
 			? height / 2.5
 			: features.composition === 'semiconstrained'
 			? height / 2.25
-			: height / 2.5;
+			: height / 1.9;
 	INIT(rseed);
 }
 
@@ -84,7 +84,7 @@ function draw() {
 	strokeWeight(0.1 * MULTIPLIER);
 	stroke(0, 0, 100, 100);
 	// draw a rectangle the size of the composition with centerX, centerY as the center and borderX, borderY as the width and height
-	rect(centerX, centerY, borderX * 2, borderY * 2);
+	//rect(centerX, centerY, borderX * 2, borderY * 2);
 	let elapsedTime = frameCount - startTime;
 	if (elapsedTime > maxFrames) {
 		window.rendered = c.canvas;
@@ -95,7 +95,7 @@ function draw() {
 
 function INIT(seed) {
 	scl1 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
-	scl1 = 0.001;
+	scl1 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
 	scl2 = scl1;
 
 	ang1 = 1;

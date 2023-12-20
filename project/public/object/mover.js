@@ -11,7 +11,7 @@ class Mover {
 				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
 				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
 		this.initAlpha = 100;
-		this.initS = 0.15 * MULTIPLIER;
+		this.initS = 0.2 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === 'monochrome' ? 0 : this.initSat;
 		this.bri = this.initBri;
@@ -32,8 +32,8 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = features.strokestyle === 'thin' ? 0.1 : features.strokestyle === 'bold' ? 2 : 1;
-		this.yRandSkipperVal = features.strokestyle === 'thin' ? 0.1 : features.strokestyle === 'bold' ? 2 : 1;
+		this.xRandSkipperVal = random([0.01,random(1,100)])
+		this.yRandSkipperVal = random([0.01,random(1,100)])
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -41,25 +41,10 @@ class Mover {
 		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
-		this.borderX =
-			features.composition === 'compressed'
-				? width / 3.5
-				: features.composition === 'constrained'
-				? width / 3
-				: features.composition === 'semiconstrained'
-				? width / 2.35
-				: width / 2.5;
-		this.borderY =
-			features.composition === 'compressed'
-				? height / 2.75
-				: features.composition === 'constrained'
-				? height / 2.5
-				: features.composition === 'semiconstrained'
-				? height / 2.25
-				: height / 2.5;
-
+		this.zombie = false;
+		this.lineWeight = 0.1 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
-		this.uvalue = [5, 5, 5, 5];
+		this.uvalue = [25, 25, 25, 25];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
 	}
 
@@ -118,34 +103,39 @@ class Mover {
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
-		this.x =
-			this.x <= this.centerX - this.borderX
-				? this.centerX + this.borderX
-				: this.x >= this.centerX + this.borderX
-				? this.centerX - this.borderX
-				: this.x;
-		this.y =
-			this.y <= this.centerY - this.borderY
-				? this.centerY + this.borderY
-				: this.y >= this.centerY + this.borderY
-				? this.centerY - this.borderY
-				: this.y;
+		if (
+			this.x < this.xMin * width ||
+			this.x > this.xMax * width ||
+			this.y < this.yMin * height ||
+			this.y > this.yMax * height
+		) {
+			this.a = 0;
+			this.zombie = true;
+		} else {
+			this.a = this.zombie ? this.zombieAlpha : this.initAlpha;
+		}
+
+		if (this.x < this.xMin * width - this.lineWeight) {
+			this.x = this.xMax * width + fxrand() * this.lineWeight;
+			//this.a = 100;
+		}
+		if (this.x > this.xMax * width + this.lineWeight) {
+			this.x = this.xMin * width - fxrand() * this.lineWeight;
+			//this.a = 100;
+		}
+		if (this.y < this.yMin * height - this.lineWeight) {
+			this.y = this.yMax * height + fxrand() * this.lineWeight;
+			//this.a = 100;
+		}
+		if (this.y > this.yMax * height + this.lineWeight) {
+			this.y = this.yMin * height - fxrand() * this.lineWeight;
+			//this.a = 100;
+		}
 
 		let pxy = p.x - p.y;
 		this.hue += map(pxy, -this.uvalue[0] * 2, this.uvalue[0] * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		/* 		// Check if particle is approaching the edge of the canvas
-		let distanceToEdge = min(
-			abs(this.x - this.centerX + this.borderX),
-			abs(this.x - this.centerX - this.borderX),
-			abs(this.y - this.centerY + this.borderY),
-			abs(this.y - this.centerY - this.borderY)
-		);
 
-		this.a = map(distanceToEdge, 10, 60, 0, 40, true); */
-		/*
-		this.a *= 1.1;
-		this.a = this.a > 50 ? 1 : this.a; */
 	}
 }
 
