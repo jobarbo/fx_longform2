@@ -27,7 +27,7 @@ function setup() {
 	} else {
 		pixelDensity(3);
 	}
-	createCanvas(16 * 100, 22 * 100);
+	createCanvas(16 * 100, 16 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000);
 	randomSeed(seed);
