@@ -27,7 +27,7 @@ function setup() {
 	} else {
 		pixelDensity(3);
 	}
-	createCanvas(16 * 100, 16 * 100);
+	createCanvas(windowWidth, windowHeight);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000);
 	randomSeed(seed);
@@ -54,16 +54,16 @@ function draw() {
 function INIT(seed) {
 	movers = [];
 	scl1 = random([0.01, 0.03, 0.05, 0.075]);
-	scl2 = scl1 - 0.0015;
-	scl3 = scl2 - 0.0015;
+	scl2 = random([0.01, 0.03, 0.05, 0.075]);
+	scl3 = random([0.01, 0.03, 0.05, 0.075]);
 	/* 	scl1 = 0.05;
 	scl2 = 0.045;
 	scl3 = 0.04; */
 	let hue = random(360);
 
-	let sclOffset1 = int(random(10) + 1);
-	let sclOffset2 = int(random(10) + 1);
-	let sclOffset3 = int(random(10) + 1);
+	let sclOffset1 = int(random(1) + 1);
+	let sclOffset2 = int(random(1) + 1);
+	let sclOffset3 = int(random(1) + 1);
 
 	console.log('sclOffset1', sclOffset1);
 	console.log('sclOffset2', sclOffset2);
@@ -73,10 +73,10 @@ function INIT(seed) {
 	console.log('scl2', scl2);
 	console.log('scl3', scl3);
 
-	xMin = 0.1;
-	xMax = 0.9;
-	yMin = 0.05;
-	yMax = 0.95;
+	xMin = -0.01;
+	xMax = 1.01;
+	yMin = -0.01;
+	yMax = 1.01;
 	/* 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;

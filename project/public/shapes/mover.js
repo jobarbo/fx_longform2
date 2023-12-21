@@ -18,6 +18,8 @@ class Mover {
 	) {
 		this.x = x;
 		this.y = y;
+		this.px = x;
+		this.py = y;
 		this.initHue = hue;
 		this.initSat = random([0, 0, 5, 10, 10, 80, 90, 100, 100]);
 		this.initBri = random([10, 15, 20, 40, 50, 70, 90, 100]);
@@ -51,10 +53,17 @@ class Mover {
 		//blendMode(SCREEN);
 		fill(this.hue, this.sat, this.bri, this.a);
 		noStroke();
-		circle(this.x, this.y, this.s);
+		strokeCap(PROJECT)
+		if(abs(this.x - this.px) <5 && abs(this.y - this.py) <5) {
+			strokeWeight(this.s)
+			stroke(this.hue, this.sat, this.bri, 100);
+			line(this.x, this.y, this.px, this.py);
+		}
 	}
 
 	move() {
+		this.px = this.x;
+		this.py = this.y;
 		let p = superCurve(
 			this.x,
 			this.y,
@@ -74,8 +83,7 @@ class Mover {
 		/* 		this.xRandDivider = 0.1;
 		this.yRandDivider = 0.1; */
 
-		this.xRandSkipper = random(-0.01, 0.01);
-		this.yRandSkipper = random(-0.01, 0.01);
+
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
@@ -182,16 +190,16 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff1, sclOff1, seed) {
 	let minV = -3;
 
 	//! Introverted
-	/* let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
+/* 	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
 	let v = map(un, map(ny, 0, height, -4, -0.001), map(ny, 0, height, 0.001, 4), minV, maxV, true); */
 
 	//! Extroverted
-	/* 	let u = map(vn, map(ny, 0, width, -4, -0.001), map(ny, 0, width, 0.001, 4), minU, maxU, true);
-	let v = map(un, map(nx, 0, height, -4, -0.001), map(nx, 0, height, 0.001, 4), minV, maxV, true); */
+		let u = map(vn, map(ny, 0, width, -4, -0.001), map(ny, 0, width, 0.001, 4), minU, maxU, true);
+	let v = map(un, map(nx, 0, height, -4, -0.001), map(nx, 0, height, 0.001, 4), minV, maxV, true);
 
 	//! Equilibrium
-	let u = map(vn, -3, 3, minU, maxU, true);
-	let v = map(un, -3, 3, minV, maxV, true);
+/* 	let u = map(vn, -3, 3, minU, maxU, true);
+	let v = map(un, -3, 3, minV, maxV, true); */
 
 	let p = createVector(u, v);
 	return p;
