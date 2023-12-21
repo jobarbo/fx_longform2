@@ -1,5 +1,6 @@
 let features = '';
 
+let maxDPI = 3;
 let RATIO = 1;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -15,7 +16,7 @@ function setup() {
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * RATIO);
-	dpi(3);
+	pixelDensity(dpi(1));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
