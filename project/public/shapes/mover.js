@@ -16,6 +16,8 @@ class Mover {
 		isBordered,
 		seed
 	) {
+		this.startX = x;
+		this.startY = y;
 		this.x = x;
 		this.y = y;
 		this.px = x;
@@ -28,7 +30,8 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.s = random([0.5, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 5, 5]);
+		this.s = random([0.5, 1, 1, 1, 2, 2, 2, 2]);
+		//this.s = random([0.05, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2, 0.3, 0.3, 0.5, 0.5, 1,2]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -45,7 +48,10 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.isBordered = isBordered;
+		this.isBordered = true;
+		this.randBorderAlpha = 10;
+		this.zombie = false;
+		this.randRespawn = 10;
 	}
 
 	show() {
@@ -53,10 +59,10 @@ class Mover {
 		//blendMode(SCREEN);
 		fill(this.hue, this.sat, this.bri, this.a);
 		noStroke();
-		strokeCap(PROJECT)
-		if(abs(this.x - this.px) <5 && abs(this.y - this.py) <5) {
-			strokeWeight(this.s)
-			stroke(this.hue, this.sat, this.bri, 100);
+		strokeCap(PROJECT);
+		if (abs(this.x - this.px) < 5 && abs(this.y - this.py) < 5) {
+			strokeWeight(this.s);
+			stroke(this.hue, this.sat, this.bri, this.a);
 			line(this.x, this.y, this.px, this.py);
 		}
 	}
@@ -83,54 +89,62 @@ class Mover {
 		/* 		this.xRandDivider = 0.1;
 		this.yRandDivider = 0.1; */
 
-
-
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
 		//shortand for if this.x is less than 0, set this.x to width and vice versa
-		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
-		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y;
-
-		if (this.isBordered) {
-			if (this.x < (this.xMin - 0.015) * width) {
-				this.x = (this.xMax + 0.015) * width;
+		/* 		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
+		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y; */
+		this.randRespawn += random([-10, 10]);
+		if (this.s > 3) {
+			this.s = 0.1;
+		}
+		if (this.zombie) {
+			this.s += 0.1;
+			if (this.a < 100) {
+				this.a += 10;
+			} else {
+				this.a = 100;
+				this.zombie = false;
 			}
-			if (this.x > (this.xMax + 0.015) * width) {
-				this.x = (this.xMin - 0.015) * width;
-			}
-			if (this.y < (this.yMin - 0.015) * height) {
-				this.y = (this.yMax + 0.015) * height;
-			}
-			if (this.y > (this.yMax + 0.015) * height) {
-				this.y = (this.yMin - 0.015) * height;
+		} else if (
+			this.isBordered &&
+			(this.x < this.xMin * width ||
+				this.x > this.xMax * width ||
+				this.y < this.yMin * height ||
+				this.y > this.yMax * height)
+		) {
+			this.a -= this.randBorderAlpha;
+			if (this.a < 0) {
+				this.x = this.startX + random(-this.randRespawn, this.randRespawn);
+				this.y = this.startY + random(-this.randRespawn, this.randRespawn);
+				this.a = 0;
+				this.zombie = true;
 			}
 		}
 	}
 }
 
-function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff1, sclOff1, seed) {
+function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let nx = x,
 		ny = y,
 		scale1 = scl1,
 		scale2 = scl2,
 		scale3 = scl3,
-		scaleOffset1 = sclOff1,
-		scaleOffset2 = sclOff1,
-		scaleOffset3 = sclOff1,
+		scaleOffset1 = 1,
+		scaleOffset2 = 1,
+		scaleOffset3 = 1,
 		noiseScale1 = 0.05,
 		noiseScale2 = 0.05,
 		noiseScale3 = 0.05,
-		nseed = seed;
-	un =
-		sin(nx * (scale1 * scaleOffset1) + nseed) +
-		cos(nx * (scale2 * scaleOffset2) + nseed) -
-		sin(nx * (scale3 * scaleOffset3) + nseed);
-	vn =
-		cos(ny * (scale1 * scaleOffset1) + nseed) +
-		sin(ny * (scale2 * scaleOffset2) + nseed) -
-		cos(ny * (scale3 * scaleOffset3) + nseed);
-
+		un =
+			sin(nx * (scale1 * scaleOffset1)) +
+			cos(nx * (scale2 * scaleOffset2)) -
+			sin(nx * (scale3 * scaleOffset3)),
+		vn =
+			cos(ny * (scale1 * scaleOffset1)) +
+			sin(ny * (scale2 * scaleOffset2)) -
+			cos(ny * (scale3 * scaleOffset3));
 	//! center focused
 	/* 	let maxU = map(ny, 0, height, 3, -3, true);
 	let maxV = map(nx, 0, width, 3, -3, true);
@@ -190,15 +204,29 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff1, sclOff1, seed) {
 	let minV = -3;
 
 	//! Introverted
-/* 	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
+	/* 	let u = map(vn, map(nx, 0, width, -4, -0.001), map(nx, 0, width, 0.001, 4), minU, maxU, true);
 	let v = map(un, map(ny, 0, height, -4, -0.001), map(ny, 0, height, 0.001, 4), minV, maxV, true); */
 
 	//! Extroverted
-		let u = map(vn, map(ny, 0, width, -4, -0.001), map(ny, 0, width, 0.001, 4), minU, maxU, true);
-	let v = map(un, map(nx, 0, height, -4, -0.001), map(nx, 0, height, 0.001, 4), minV, maxV, true);
+	let u = map(
+		vn,
+		map(nx, 0, width, 4, 0.1),
+		map(nx, 0, width, -0.1, -4),
+		maxU,
+		minU,
+		true
+	);
+	let v = map(
+		un,
+		map(ny, 0, height, 4, 0.1),
+		map(ny, 0, height, -0.1, -4),
+		maxV,
+		minV,
+		true
+	);
 
 	//! Equilibrium
-/* 	let u = map(vn, -3, 3, minU, maxU, true);
+	/* 	let u = map(vn, -3, 3, minU, maxU, true);
 	let v = map(un, -3, 3, minV, maxV, true); */
 
 	let p = createVector(u, v);

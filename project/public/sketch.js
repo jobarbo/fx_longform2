@@ -1,4 +1,4 @@
-let features = '';
+let features = "";
 let movers = [];
 let scl1;
 let scl2;
@@ -22,12 +22,16 @@ function setup() {
 	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
 
 	// if Safari mobile or any smartphone browser, use pixelDensity(0.5) to make the canvas bigger, else use pixelDensity(3.0)
-	if (iOSSafari || (iOS && !iOSSafari) || (!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))) {
+	if (
+		iOSSafari ||
+		(iOS && !iOSSafari) ||
+		(!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))
+	) {
 		pixelDensity(2);
 	} else {
 		pixelDensity(3);
 	}
-	createCanvas(windowWidth, windowHeight);
+	createCanvas(1080, 1920);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000);
 	randomSeed(seed);
@@ -35,16 +39,21 @@ function setup() {
 }
 
 function draw() {
+	let bgCol = spectral.mix("#000", "#FAE8E0", 0.938);
+	background(40, 10, 100, 10);
 	for (let i = 0; i < movers.length; i++) {
 		for (let t = 0; t < 1; t++) {
+			movers[i].scl1 -= 0.0001;
+			movers[i].scl2 += 0.0001;
+			movers[i].scl3 += 0.0001;
 			movers[i].show();
 			movers[i].move();
 		}
 	}
-	if (frameCount > 1500) {
-		console.log('done');
+	/* 	if (frameCount > 1500) {
+		console.log("done");
 		noLoop();
-	}
+	} */
 }
 /* function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
@@ -53,34 +62,35 @@ function draw() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random([0.01, 0.03, 0.05, 0.075]);
+	/* 	scl1 = random([0.01, 0.03, 0.05, 0.075]);
 	scl2 = random([0.01, 0.03, 0.05, 0.075]);
-	scl3 = random([0.01, 0.03, 0.05, 0.075]);
-	/* 	scl1 = 0.05;
-	scl2 = 0.045;
-	scl3 = 0.04; */
+	scl3 = random([0.01, 0.03, 0.05, 0.075]); */
+	scl1 = 0.03;
+	scl2 = 0.05;
+	scl3 = 0.03;
+
 	let hue = random(360);
 
 	let sclOffset1 = int(random(1) + 1);
 	let sclOffset2 = int(random(1) + 1);
 	let sclOffset3 = int(random(1) + 1);
 
-	console.log('sclOffset1', sclOffset1);
-	console.log('sclOffset2', sclOffset2);
-	console.log('sclOffset3', sclOffset3);
+	console.log("sclOffset1", sclOffset1);
+	console.log("sclOffset2", sclOffset2);
+	console.log("sclOffset3", sclOffset3);
 
-	console.log('scl1', scl1);
-	console.log('scl2', scl2);
-	console.log('scl3', scl3);
+	console.log("scl1", scl1);
+	console.log("scl2", scl2);
+	console.log("scl3", scl3);
 
-	xMin = -0.01;
-	xMax = 1.01;
-	yMin = -0.01;
-	yMax = 1.01;
-	/* 	xMin = -0.01;
+	/* 		xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
 	yMax = 1.01; */
+	xMin = 0.48;
+	xMax = 0.52;
+	yMin = 0.38;
+	yMax = 0.62;
 
 	for (let i = 0; i < 20000; i++) {
 		// distribue the movers within a circle using polar coordinates
@@ -93,9 +103,10 @@ function INIT(seed) {
 		let y = random(yMin, yMax) * height;
 
 		//let hueOffset = map(x, xMin * width, xMax * width, -10, 10);
-		let hueOffset = random(-20, 20);
+		let hueOffset = random(-50, 50);
 		let initHue = hue + hueOffset;
-		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
+		initHue =
+			initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(
 			new Mover(
 				x,
@@ -116,6 +127,4 @@ function INIT(seed) {
 			)
 		);
 	}
-	let bgCol = spectral.mix('#000', '#FAE8E0', 0.938);
-	background(bgCol);
 }
