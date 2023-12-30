@@ -39,13 +39,8 @@ function setup() {
 }
 
 function draw() {
-	let bgCol = spectral.mix("#000", "#FAE8E0", 0.938);
-	background(40, 10, 100, 10);
 	for (let i = 0; i < movers.length; i++) {
 		for (let t = 0; t < 1; t++) {
-			movers[i].scl1 -= 0.0001;
-			movers[i].scl2 += 0.0001;
-			movers[i].scl3 += 0.0001;
 			movers[i].show();
 			movers[i].move();
 		}
@@ -62,12 +57,12 @@ function draw() {
 
 function INIT(seed) {
 	movers = [];
-	/* 	scl1 = random([0.01, 0.03, 0.05, 0.075]);
+	scl1 = random([0.01, 0.03, 0.05, 0.075]);
 	scl2 = random([0.01, 0.03, 0.05, 0.075]);
-	scl3 = random([0.01, 0.03, 0.05, 0.075]); */
-	scl1 = 0.03;
+	scl3 = random([0.01, 0.03, 0.05, 0.075]);
+	/* 	scl1 = 0.03;
 	scl2 = 0.05;
-	scl3 = 0.03;
+	scl3 = 0.03; */
 
 	let hue = random(360);
 
@@ -87,10 +82,10 @@ function INIT(seed) {
 	xMax = 1.01;
 	yMin = -0.01;
 	yMax = 1.01; */
-	xMin = 0.48;
-	xMax = 0.52;
-	yMin = 0.38;
-	yMax = 0.62;
+	xMin = 0.3;
+	xMax = 0.7;
+	yMin = 0.18;
+	yMax = 0.82;
 
 	for (let i = 0; i < 20000; i++) {
 		// distribue the movers within a circle using polar coordinates
@@ -127,4 +122,6 @@ function INIT(seed) {
 			)
 		);
 	}
+	let bgCol = spectral.mix("#000", "#FAE8E0", 0.938);
+	background(bgCol);
 }

@@ -30,7 +30,8 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.s = random([0.5, 1, 1, 1, 2, 2, 2, 2]);
+		//this.s = random([0.5, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 5, 5]);
+		this.s = random([0.5, 1, 1, 1, 2, 2, 2, 2, 3, 3]);
 		//this.s = random([0.05, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2, 0.3, 0.3, 0.5, 0.5, 1,2]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -51,12 +52,10 @@ class Mover {
 		this.isBordered = true;
 		this.randBorderAlpha = 10;
 		this.zombie = false;
-		this.randRespawn = 10;
+		this.randRespawn = 0;
 	}
 
 	show() {
-		//
-		//blendMode(SCREEN);
 		fill(this.hue, this.sat, this.bri, this.a);
 		noStroke();
 		strokeCap(PROJECT);
@@ -95,14 +94,13 @@ class Mover {
 		//shortand for if this.x is less than 0, set this.x to width and vice versa
 		/* 		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
 		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y; */
-		this.randRespawn += random([-10, 10]);
+		//this.randRespawn += random([-10, 10]);
 		if (this.s > 3) {
 			this.s = 0.1;
 		}
 		if (this.zombie) {
-			this.s += 0.1;
 			if (this.a < 100) {
-				this.a += 10;
+				this.a += random([0, 0.25, 0.5, 0.75, 1, 2, 3, 3]);
 			} else {
 				this.a = 100;
 				this.zombie = false;
@@ -131,9 +129,9 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		scale1 = scl1,
 		scale2 = scl2,
 		scale3 = scl3,
-		scaleOffset1 = 1,
-		scaleOffset2 = 1,
-		scaleOffset3 = 1,
+		scaleOffset1 = sclOff1,
+		scaleOffset2 = sclOff2,
+		scaleOffset3 = sclOff3,
 		noiseScale1 = 0.05,
 		noiseScale2 = 0.05,
 		noiseScale3 = 0.05,
@@ -153,7 +151,13 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 
 	//! pNoise x SineCos
 	/* 	let maxU = map(
-		oct6(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1),
+		oct(
+			ny * (scale1 * scaleOffset1),
+			ny * (scale2 * scaleOffset3),
+			noiseScale1,
+			1,
+			6
+		),
 		-0.5,
 		0.5,
 		0,
@@ -161,7 +165,13 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		true
 	);
 	let maxV = map(
-		oct6(nx * (scale2 * scaleOffset1) + nseed, nx * (scale1 * scaleOffset2) + nseed, noiseScale2, 2),
+		oct(
+			nx * (scale2 * scaleOffset1),
+			nx * (scale1 * scaleOffset2),
+			noiseScale2,
+			2,
+			6
+		),
 		-0.5,
 		0.5,
 		0,
@@ -169,15 +179,27 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		true
 	);
 	let minU = map(
-		oct6(ny * (scale3 * scaleOffset1) + nseed, ny * (scale1 * scaleOffset3) + nseed, noiseScale3, 0),
-		-0.5,
-		0.5,
+		oct(
+			ny * (scale3 * scaleOffset1),
+			ny * (scale1 * scaleOffset3),
+			noiseScale3,
+			0,
+			6
+		),
+		-0.000005,
+		0.0000005,
 		-4,
 		0,
 		true
 	);
 	let minV = map(
-		oct6(nx * (scale1 * scaleOffset2) + nseed, nx * (scale3 * scaleOffset3) + nseed, noiseScale2, 3),
+		oct(
+			nx * (scale1 * scaleOffset2),
+			nx * (scale3 * scaleOffset3),
+			noiseScale2,
+			3,
+			6
+		),
 		-0.5,
 		0.5,
 		-4,
