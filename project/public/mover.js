@@ -1,5 +1,5 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, seed) {
+	constructor(x, y, hue, scl1, scl2) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
@@ -8,9 +8,9 @@ class Mover {
 		this.bri = 70;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
 		this.s = 3 * MULTIPLIER;
+		this.a = 10;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
-		this.seed = seed;
 		this.xRandDivider = random(0.0001, 2.01) * MULTIPLIER;
 		this.yRandDivider = random(0.0001, 2.01) * MULTIPLIER;
 		this.xRandOffset = random(-3.1, 0.1) * MULTIPLIER;
@@ -20,19 +20,15 @@ class Mover {
 	}
 
 	show() {
-		//
-		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, 10);
-		//stroke(34, 40, 90,80);
-		noStroke();
-		ellipse(this.x, this.y, this.s);
+		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
+		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
 
 	move() {
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.seed);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2);
 		this.hue = map(p.x, -4, 4, this.hue - 3, this.hue + 3, true);
 		this.sat = map(p.x, -4, 4, this.sat + 3, this.sat - 3, true);
-		this.bri = map(p.x, -4, 4, this.bri - 3, this.bri + 3, true);
+		this.bri = map(p.x, -4, 4, this.bri + 3, this.bri - 3, true);
 		this.x += (p.x / random(0.0001, 2.01) + random(-3.1, 0.1)) * MULTIPLIER;
 		this.y += (p.y / random(0.0001, 2.01) + random(-0.1, 3.1)) * MULTIPLIER;
 		this.s += map(p.x, -4, 4, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
@@ -44,15 +40,15 @@ class Mover {
 			this.hue = 0;
 		}
 
-		if (this.sat < 20) {
-			this.sat = random(20, 40);
+		if (this.sat < 40) {
+			this.sat = random(40, 60);
 		} else if (this.sat > 100) {
 			this.sat = random(80, 100);
 		}
-		if (this.bri < 20) {
-			this.bri = random(20, 40);
-		} else if (this.bri > 100) {
-			this.bri = random(80, 100);
+		if (this.bri < 0) {
+			this.bri = random(10, 30);
+		} else if (this.bri > 50) {
+			this.bri = random(30, 40);
 		}
 		if (this.s < 1 * MULTIPLIER) {
 			this.s = 1 * MULTIPLIER;
@@ -63,7 +59,7 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, seed) {
+function superCurve(x, y, scl1, scl2) {
 	let nx = x,
 		ny = y,
 		a1 = 1,
