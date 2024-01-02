@@ -3,39 +3,60 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.hue = hue;
-		this.sat = 50;
-		this.bri = 70;
+
+		this.initSat = [40, 45, 50, 55][Math.floor(fxrand() * 4)];
+
+		this.initBri = [40, 45, 50, 55][Math.floor(fxrand() * 4)];
+		this.hue = this.initHue;
+		this.sat = this.initSat;
+		this.bri = this.initBri;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 3 * MULTIPLIER;
+		this.initS = 3 * MULTIPLIER;
+		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.seed = seed;
-		this.xRandDivider = random(0.0001, 2.01) * MULTIPLIER;
-		this.yRandDivider = random(0.0001, 2.01) * MULTIPLIER;
-		this.xRandOffset = random(-3.1, 0.1) * MULTIPLIER;
-		this.yRandOffset = random(-0.1, 3.1) * MULTIPLIER;
+		this.xRandDivider = 0.5;
+		this.yRandDivider = 0.5;
+		this.xRandSkipper = 0;
+		this.yRandSkipper = 0;
+		this.xRandSkipperVal = 0;
+		this.yRandSkipperVal = 0;
 		this.minSat = random(1, 20);
-		this.minBri = random(1, 20);
+		this.minBri = random(20, 30);
+		this.speedX = 0;
+		this.speedY = 0;
+		this.speed = 0;
 	}
 
 	show() {
-		//
-		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, 10);
-		//stroke(34, 40, 90,80);
-		noStroke();
-		ellipse(this.x, this.y, this.s);
+		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, 20%)`;
+		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
 
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.seed);
-		this.hue = map(p.x, -4, 4, this.hue - 3, this.hue + 3, true);
-		this.sat = map(p.x, -4, 4, this.sat + 3, this.sat - 3, true);
-		this.bri = map(p.x, -4, 4, this.bri - 3, this.bri + 3, true);
-		this.x += (p.x / random(0.0001, 2.01) + random(-3.1, 0.1)) * MULTIPLIER;
-		this.y += (p.y / random(0.0001, 2.01) + random(-0.1, 3.1)) * MULTIPLIER;
-		this.s += map(p.x, -4, 4, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
+
+		this.xRandDivider = random(0.000001, 2.01) * MULTIPLIER;
+		this.yRandDivider = random(0.000001, 2.01) * MULTIPLIER;
+		this.xRandSkipperVal =
+			random(-this.xRandSkipper, this.xRandSkipper) * MULTIPLIER;
+		this.yRandSkipperVal =
+			random(-this.yRandSkipper, this.yRandSkipper) * MULTIPLIER;
+
+		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
+		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
+
+		this.speed = Math.abs(this.speedX + this.speedY);
+
+		this.hue = map(this.speed, 0, 3, this.hue - 3, this.hue + 3, true);
+		this.sat = map(this.speed, 0, 3, this.sat - 3, this.sat + 3, true);
+		this.bri = map(this.speed, 0, 3, this.bri - 3, this.bri + 3, true);
+
+		this.x += this.speedX;
+		this.y += this.speedY;
+
+		this.a = mapValue(this.speed, 0, 2.01, 0, 100, true);
 
 		if (this.hue < 0) {
 			this.hue = 360;
@@ -44,15 +65,15 @@ class Mover {
 			this.hue = 0;
 		}
 
-		if (this.sat < 20) {
-			this.sat = random(20, 40);
-		} else if (this.sat > 100) {
-			this.sat = random(80, 100);
+		if (this.sat < this.minSat) {
+			this.sat = random(25, 35);
+		} else if (this.sat > random(80, 100)) {
+			this.sat = random(50, 70);
 		}
-		if (this.bri < 20) {
-			this.bri = random(20, 40);
+		if (this.bri < this.minBri) {
+			this.bri = random(35, 45);
 		} else if (this.bri > 100) {
-			this.bri = random(80, 100);
+			this.bri = random(70, 90);
 		}
 		if (this.s < 1 * MULTIPLIER) {
 			this.s = 1 * MULTIPLIER;
@@ -63,16 +84,16 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, seed) {
+function superCurve(x, y, scl1, scl2) {
 	let nx = x,
 		ny = y,
 		a1 = 1,
-		a2 = 1,
+		a2 = 1000,
 		scale1 = scl1,
 		scale2 = scl2,
+		octave = 6,
 		dx,
-		dy,
-		octave = 6;
+		dy;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
@@ -91,13 +112,13 @@ function superCurve(x, y, scl1, scl2, seed) {
 
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
-	let u = map(un, -0.5, 0.5, -4, 4, true);
-	let v = map(vn, -0.5, 0.5, -4, 4, true);
 
-	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
-	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
-	//let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
-	//let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) - sin(x * scl2 * 0.2 + seed);
-	let p = createVector(u, v);
-	return p;
+	let sun = smoothstep(-0.00000015, 0.00000015, un);
+	let svn = smoothstep(-0.00000015, 0.00000015, vn);
+
+	let u = mapValue(sun, 0, 1, -1, 1);
+	let v = mapValue(svn, 0, 1, -1, 1);
+
+	//let p = createVector(u, v);
+	return {x: u, y: v};
 }
