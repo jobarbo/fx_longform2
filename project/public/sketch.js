@@ -11,9 +11,6 @@ let DEFAULT_SIZE = window.innerWidth;
 let DIM;
 let MULTIPLIER;
 
-let rw = 400;
-let rh = 400;
-
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
@@ -29,18 +26,6 @@ function setup() {
 	rectMode(CENTER);
 
 	background(0, 20, 100);
-
-	rw = width;
-	rh = height;
-
-	strokeWeight(2 * MULTIPLIER);
 }
 
-function draw() {
-	if (rw < 1 * MULTIPLIER) {
-		noLoop();
-	}
-	rect(width / 2, height / 2, rw, rh);
-	rw -= 14 * MULTIPLIER;
-	rh -= 14 * MULTIPLIER;
-}
+function draw() {}
