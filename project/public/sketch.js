@@ -1,30 +1,46 @@
-let features = '';
+let features = "";
 
 let maxDPI = 3;
 let RATIO = 1;
-let DEFAULT_SIZE = 3600;
+
 let W = window.innerWidth;
 let H = window.innerHeight;
+
+let CM = 1;
+let DEFAULT_SIZE = window.innerWidth;
 let DIM;
 let MULTIPLIER;
+
+let rw = 400;
+let rh = 400;
 
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
 
 	// canvas setup
-	DIM = min(windowWidth, windowHeight);
+	DIM = min(windowWidth * CM, windowHeight * CM);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * RATIO);
-	pixelDensity(dpi(1));
+	pixelDensity(dpi(2));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
+	rectMode(CENTER);
 
 	background(0, 20, 100);
+
+	rw = width;
+	rh = height;
+
+	strokeWeight(2 * MULTIPLIER);
 }
 
 function draw() {
-	ellipse(width / 2, height / 2, 300*MULTIPLIER, 300*MULTIPLIER);
-	noLoop();
+	if (rw < 1 * MULTIPLIER) {
+		noLoop();
+	}
+	rect(width / 2, height / 2, rw, rh);
+	rw -= 14 * MULTIPLIER;
+	rh -= 14 * MULTIPLIER;
 }
