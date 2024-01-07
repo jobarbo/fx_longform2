@@ -31,10 +31,17 @@ function setup() {
 	} else {
 		pixelDensity(3);
 	}
-	createCanvas(1080, 1920);
+	createCanvas(1280, 1280);
+	noCursor();
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000);
 	randomSeed(seed);
+
+	let bgCol = spectral.mix("#000", "#FAE8E0", 0.938);
+	background(bgCol);
+}
+
+function mouseReleased(){
 	INIT(seed);
 }
 
@@ -78,14 +85,14 @@ function INIT(seed) {
 	console.log("scl2", scl2);
 	console.log("scl3", scl3);
 
-	/* 		xMin = -0.01;
-	xMax = 1.01;
-	yMin = -0.01;
-	yMax = 1.01; */
-	xMin = 0.3;
+			xMin = -0.1;
+	xMax = 1.1;
+	yMin = -0.1;
+	yMax = 1.1;
+/* 	xMin = 0.3;
 	xMax = 0.7;
 	yMin = 0.18;
-	yMax = 0.82;
+	yMax = 0.82; */
 
 	for (let i = 0; i < 20000; i++) {
 		// distribue the movers within a circle using polar coordinates
@@ -98,7 +105,7 @@ function INIT(seed) {
 		let y = random(yMin, yMax) * height;
 
 		//let hueOffset = map(x, xMin * width, xMax * width, -10, 10);
-		let hueOffset = random(-50, 50);
+		let hueOffset =0;
 		let initHue = hue + hueOffset;
 		initHue =
 			initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
@@ -122,6 +129,5 @@ function INIT(seed) {
 			)
 		);
 	}
-	let bgCol = spectral.mix("#000", "#FAE8E0", 0.938);
-	background(bgCol);
+
 }

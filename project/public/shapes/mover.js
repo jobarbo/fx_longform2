@@ -39,7 +39,6 @@ class Mover {
 		this.sclOffset1 = sclOffset1;
 		this.sclOffset2 = sclOffset2;
 		this.sclOffset3 = sclOffset3;
-
 		this.seed = seed;
 		this.xRandDivider = 1;
 		this.yRandDivider = 1;
@@ -50,9 +49,9 @@ class Mover {
 		this.yMin = yMin;
 		this.yMax = yMax;
 		this.isBordered = true;
-		this.randBorderAlpha = 10;
+		this.randBorderAlpha = 50;
 		this.zombie = false;
-		this.randRespawn = 0;
+		this.randRespawn = 20;
 	}
 
 	show() {
@@ -95,6 +94,9 @@ class Mover {
 		/* 		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
 		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y; */
 		//this.randRespawn += random([-10, 10]);
+
+
+
 		if (this.s > 3) {
 			this.s = 0.1;
 		}
@@ -114,10 +116,19 @@ class Mover {
 		) {
 			this.a -= this.randBorderAlpha;
 			if (this.a < 0) {
-				this.x = this.startX + random(-this.randRespawn, this.randRespawn);
-				this.y = this.startY + random(-this.randRespawn, this.randRespawn);
+/* 				this.x = this.startX + random(-this.randRespawn, this.randRespawn);
+				this.y = this.startY + random(-this.randRespawn, this.randRespawn); */
+				this.x = random(0.3 * width, 0.7 * width);
+				this.y = random(0.18 * height, 0.82 * height);
 				this.a = 0;
 				this.zombie = true;
+				this.hue += 25;
+				if (this.hue > 360) {
+					this.hue = 0;
+				} else if (this.hue < 0) {
+					this.hue = 360;
+				}
+				
 			}
 		}
 	}
@@ -248,7 +259,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	);
 
 	//! Equilibrium
-	/* 	let u = map(vn, -3, 3, minU, maxU, true);
+/* 		let u = map(vn, -3, 3, minU, maxU, true);
 	let v = map(un, -3, 3, minV, maxV, true); */
 
 	let p = createVector(u, v);
