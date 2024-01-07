@@ -29,9 +29,9 @@ class Mover {
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
-		this.a = this.initAlpha;
+		this.a = 0
 		//this.s = random([0.5, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 5, 5]);
-		this.s = random([0.5, 1, 1, 1, 2, 2, 2, 2, 3, 3]);
+		this.s = random([0.05, 0.1, 0.1, 0.1, 0.3, 0.3, 0.3, 0.4, 0.5, 0.5]);
 		//this.s = random([0.05, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2, 0.3, 0.3, 0.5, 0.5, 1,2]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -39,20 +39,19 @@ class Mover {
 		this.sclOffset1 = sclOffset1;
 		this.sclOffset2 = sclOffset2;
 		this.sclOffset3 = sclOffset3;
-
 		this.seed = seed;
 		this.xRandDivider = 1;
 		this.yRandDivider = 1;
-		this.xRandSkipper = 0;
-		this.yRandSkipper = 0;
+		this.xRandSkipper = 2;
+		this.yRandSkipper = 2;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
 		this.isBordered = true;
-		this.randBorderAlpha = 10;
+		this.randBorderAlpha = 100;
 		this.zombie = false;
-		this.randRespawn = 0;
+		this.randRespawn = 1;
 	}
 
 	show() {
@@ -88,18 +87,26 @@ class Mover {
 		/* 		this.xRandDivider = 0.1;
 		this.yRandDivider = 0.1; */
 
-		this.x += p.x / this.xRandDivider + this.xRandSkipper;
-		this.y += p.y / this.yRandDivider + this.yRandSkipper;
+		this.x += p.x / this.xRandDivider 
+		this.y += p.y / this.yRandDivider 
 
 		//shortand for if this.x is less than 0, set this.x to width and vice versa
 		/* 		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
 		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y; */
 		//this.randRespawn += random([-10, 10]);
+		this.randRespawn+=1;
+
+		this.a += 1;
+		if (this.a > this.initAlpha) {
+			this.a = this.initAlpha;
+		}
+
 		if (this.s > 3) {
 			this.s = 0.1;
 		}
+		
 		if (this.zombie) {
-			if (this.a < 100) {
+			if (this.a < this.initAlpha) {
 				this.a += random([0, 0.25, 0.5, 0.75, 1, 2, 3, 3]);
 			} else {
 				this.a = 100;
@@ -112,13 +119,17 @@ class Mover {
 				this.y < this.yMin * height ||
 				this.y > this.yMax * height)
 		) {
-			this.a -= this.randBorderAlpha;
+			this.a = 0
+			this.x = this.startX + random( this.randRespawn);
+			this.y = random(this.yMin * height, this.yMax * height);
+			//this.startX += 10;
 			if (this.a < 0) {
-				this.x = this.startX + random(-this.randRespawn, this.randRespawn);
-				this.y = this.startY + random(-this.randRespawn, this.randRespawn);
 				this.a = 0;
-				this.zombie = true;
+				this.zombie = false;
 			}
+		} else {
+			this.a =this.initAlpha;
+			this.zombie = false;
 		}
 	}
 }
@@ -222,7 +233,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	//! Standard Mode
 	let maxU = 3;
 	let maxV = 3;
-	let minU = -3;
+	let minU = 1;
 	let minV = -3;
 
 	//! Introverted
