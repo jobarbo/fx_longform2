@@ -79,7 +79,7 @@ function draw() {
 		//}
 		movers[i].move();
 	}
-	blendMode(BLEND);
+	
 	noFill();
 	strokeWeight(0.1 * MULTIPLIER);
 	stroke(0, 0, 100, 100);
@@ -95,8 +95,9 @@ function draw() {
 
 function INIT(seed) {
 	scl1 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
-	scl1 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
-	scl2 = scl1;
+	scl2 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
+	//scl1 = 0.0015;
+	//scl2 = scl1;
 
 	ang1 = 1;
 	ang2 = 1;

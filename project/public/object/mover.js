@@ -2,7 +2,7 @@ class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features) {
 		this.x = x;
 		this.y = y;
-		this.initHue = hue;
+		this.initHue = 42;
 		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
 		this.initBri =
 			features.theme === 'bright' && features.colormode !== 'monochrome'
@@ -13,8 +13,8 @@ class Mover {
 		this.initAlpha = 100;
 		this.initS = 0.2 * MULTIPLIER;
 		this.hue = this.initHue;
-		this.sat = features.colormode === 'monochrome' ? 0 : this.initSat;
-		this.bri = this.initBri;
+		this.sat = this.initSat;
+		this.bri = 100;
 		this.a = this.initAlpha;
 		this.hueStep =
 			features.colormode === 'monochrome' || features.colormode === 'fixed'
@@ -32,8 +32,8 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = random([0.01,random(1,100)])
-		this.yRandSkipperVal = random([0.01,random(1,100)])
+		this.xRandSkipperVal = random([0,0.01,0.01,0.01,random(1,100)])
+		this.yRandSkipperVal = random([0,0.01,0.01,0.01,random(1,100)])
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -44,7 +44,7 @@ class Mover {
 		this.zombie = false;
 		this.lineWeight = 0.1 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(',').map(Number);
-		this.uvalue = [25, 25, 25, 25];
+		this.uvalue = [5, 5, 5, 5];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
 	}
 
@@ -97,23 +97,14 @@ class Mover {
 			this.uvalue[2] += 1;
 			this.uvalue[3] += 1;
 		}
+		//! try with randomGaussian
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
-		if (
-			this.x < this.xMin * width ||
-			this.x > this.xMax * width ||
-			this.y < this.yMin * height ||
-			this.y > this.yMax * height
-		) {
-			this.a = 0;
-			this.zombie = true;
-		} else {
-			this.a = this.zombie ? this.zombieAlpha : this.initAlpha;
-		}
+
 
 		if (this.x < this.xMin * width - this.lineWeight) {
 			this.x = this.xMax * width + fxrand() * this.lineWeight;
@@ -133,8 +124,8 @@ class Mover {
 		}
 
 		let pxy = p.x - p.y;
-		this.hue += map(pxy, -this.uvalue[0] * 2, this.uvalue[0] * 2, -this.hueStep, this.hueStep, true);
-		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
+		//this.hue += map(pxy, -this.uvalue[0] * 2, this.uvalue[0] * 2, -this.hueStep, this.hueStep, true);
+		//this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
 
 	}
 }
