@@ -29,6 +29,7 @@ $fx.params([
 				'bluepink',
 				'hunt',
 				'france',
+				'ascii',
 			],
 		},
 	},

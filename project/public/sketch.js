@@ -3,8 +3,8 @@ let features = '';
 let bleed = 0;
 let inc = 0.02;
 let cells = [];
-let w = Math.floor(1080);
-let h = Math.floor(1920);
+let w = Math.floor(2080);
+let h = Math.floor(2080);
 noiseCanvasWidth = w;
 noiseCanvasHeight = h;
 let p_d = 3;
@@ -26,10 +26,7 @@ let easeAng = 0,
 	sxoff = Math.random() * 10000,
 	syoff = Math.random() * 10000;
 
-P5Capture.setDefaultOptions({
-	format: 'png',
-	quality: 1,
-});
+
 
 function setup() {
 	//console.log(features);
@@ -56,7 +53,7 @@ function setup() {
 	let palette = features.biomeColorList;
 
 	//let cellSize = features.cellSize;
-	let cellSize = 8;
+	let cellSize = 20;
 
 	// Calculate the number of cells that can fit in the screen according to cellSize
 	let cellCountX = floor(width / cellSize);
@@ -70,7 +67,7 @@ function setup() {
 
 	amp1 = random([1, 3, 5, 10]);
 	amp2 = random([1000, 1500, 2000]);
-	scale1Arr = [0.001, 0.0025, 0.005, 0.0075, 0.01];
+	scale1Arr = [0.001, 0.0025, ];
 	scale2Arr = [0.001, 0.0005, 0.0001, 0.00005, 0.00001];
 	yoff = random(100000);
 	xoff = random(100000);
@@ -85,6 +82,7 @@ function setup() {
 }
 
 function init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette) {
+
 	cells = [];
 	let framePassed = 0;
 	let grid = drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette);
@@ -93,31 +91,35 @@ function init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palett
 		let result = grid.next();
 		framePassed++;
 		if (result.done) {
+
 			clearInterval(interval);
 			let cosIndex = cos(radians(easeAng));
 			if (cosIndex >= 1) {
 				cycleCount += 1;
+				
 			}
 			if (cycleCount < 1) {
 				init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette);
+				
 			} else {
 				noLoop();
 			}
 			// stop the interval
 		}
+
 	}, 0);
 }
 
 function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette) {
 	let count = 0;
-	let draw_every = 600;
+	let draw_every = 1000;
 
 	let easing = radians(easeAng);
 
 	scale1 += map(noise(sxoff), 0, 1, -0.000000001, 0.000000001, true);
 	scale2 += map(noise(syoff), 0, 1, -0.000000001, 0.000000001, true);
-	amp1 += map(noise(axoff), 0, 1, -30, 30, true);
-	amp2 += map(noise(ayoff), 0, 1, -30, 30, true);
+	amp1 += map(noise(axoff), 0, 1, -10, 10, true);
+	amp2 += map(noise(ayoff), 0, 1, -10, 10, true);
 
 	amplitude1 = amp1;
 	amplitude2 = amp2;

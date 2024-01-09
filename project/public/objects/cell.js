@@ -16,6 +16,7 @@ class Cell {
 		this.yoff = yoff;
 
 		this.biomes = palette;
+		
 		this.index = 0;
 		this.hue = 0;
 		this.sat = 0;
@@ -26,16 +27,25 @@ class Cell {
 		this.amp1 = amp1;
 		this.amp2 = amp2;
 
-		this.oct = this.features.octaves;
+		this.oct = 2
+
+		this.letter = '';
 
 		this.createNoise();
 	}
 	display(inc) {
 		// Module ready to be built
 
-		noStroke();
+ 		noStroke();
 		fill(this.hue, this.sat, this.bright, 100);
-		rect(this.x, this.y, this.w, this.h);
+		rect(this.x, this.y, this.w, this.h); 
+
+		// draw a white letter in the middle of the cell
+		fill(0, 0, 100, 100);
+		textSize(this.w*1);
+		textAlign(CENTER, CENTER);
+		text(this.letter, this.x, this.y);
+
 
 		/* 		this.xoff += inc;
 		this.yoff += inc; */
@@ -72,8 +82,14 @@ class Cell {
 		let v = map(vn, -0.5, 0.5, -0.5, 0.5);
 		this.index = int(map(u + v, -1, 1, 0, this.biomes.length - 1, true));
 
-		this.hue = this.biomes[this.index][0];
+/* 		this.hue = this.biomes[this.index][0];
 		this.sat = this.biomes[this.index][1];
-		this.bright = this.biomes[this.index][2];
+		this.bright = this.biomes[this.index][2]; */
+
+		this.letter = this.biomes[this.index];
+		
+		this.hue = 0;
+		this.sat = 0;
+		this.bright = 0; 
 	}
 }
