@@ -63,7 +63,6 @@ class Mover {
 		this.borderY = height / 2.75;
 		this.uvalue = 4;
 		this.isBordered = true;
-
 		this.ang1Zone = ang1Zone;
 		this.ang2Zone = ang2Zone;
 		this.scl1Zone = scl1Zone;
@@ -87,6 +86,8 @@ class Mover {
 		);
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY + 200], 600 * MULTIPLIER);
 
+		let distHexagon = sdf_hexagon( [this.x, this.y], [this.centerX, this.centerY], 200 * MULTIPLIER);
+
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		/* 		this.ang1 = map(distCircle, -500 * MULTIPLIER, 200 * MULTIPLIER, -this.ang1Init * 8, this.ang1Init, true);
 		this.ang2 = map(distCircle, -500 * MULTIPLIER, 200 * MULTIPLIER, -this.ang2Init * 8, this.ang2Init, true); */
@@ -101,6 +102,14 @@ class Mover {
 		this.ang2 = parseInt(map(distFromCenter, 0, this.ang2Zone, -this.ang2Init * 2, this.ang2Init * 1, true));
 		this.scl1 = map(distFromCenter, 0, this.scl1Zone, -this.scl1Init * 2, this.scl1Init * 3, true);
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, -this.scl2Init * 2, this.scl2Init * 3, true); */
+
+		//! hexagon variant
+		this.ang1 = parseInt(map(distHexagon, 0, this.ang1Zone, -this.ang1Init * 2, this.ang1Init * 1, true));
+		this.ang2 = parseInt(map(distHexagon, 0, this.ang2Zone, -this.ang2Init * 2, this.ang2Init * 1, true));
+		this.scl1 = map(distHexagon, 0, this.scl1Zone, -this.scl1Init * 2, this.scl1Init * 3, true);
+		this.scl2 = map(distHexagon, 0, this.scl2Zone, -this.scl2Init * 2, this.scl2Init * 3, true);
+
+
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 		this.xRandDivider = fxrand() * 6;
