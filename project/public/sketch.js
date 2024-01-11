@@ -131,10 +131,14 @@ function INIT() {
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 	let hue = fxrand() * 360;
-	xMin = 0.05;
+/* 	xMin = 0.05;
 	xMax = 0.95;
 	yMin = 0.05;
-	yMax = 0.95;
+	yMax = 0.95; */
+	xMin = -0.01;
+	xMax = 1.01;
+	yMin = -0.01;
+	yMax = 1.01;
 
 	for (let i = 0; i < particleNum; i++) {
 		let x = fxrand() * (xMax - xMin) * width + xMin * width;

@@ -20,6 +20,7 @@ class Mover {
 	) {
 		this.x = x;
 		this.y = y;
+
 		this.initHue = parseInt(hue);
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
@@ -71,6 +72,7 @@ class Mover {
 
 	show() {
 		// draw a pixel
+		
 		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
@@ -104,10 +106,10 @@ class Mover {
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, -this.scl2Init * 2, this.scl2Init * 3, true); */
 
 		//! hexagon variant
-		this.ang1 = parseInt(map(distHexagon, 0, this.ang1Zone, -this.ang1Init * 2, this.ang1Init * 1, true));
-		this.ang2 = parseInt(map(distHexagon, 0, this.ang2Zone, -this.ang2Init * 2, this.ang2Init * 1, true));
-		this.scl1 = map(distHexagon, 0, this.scl1Zone, -this.scl1Init * 2, this.scl1Init * 3, true);
-		this.scl2 = map(distHexagon, 0, this.scl2Zone, -this.scl2Init * 2, this.scl2Init * 3, true);
+		this.ang1 = parseInt(map(distHexagon, -500, this.ang1Zone, -this.ang1Init * 8, this.ang1Init * 1, true));
+		this.ang2 = parseInt(map(distHexagon,  -500, this.ang2Zone, -this.ang2Init * 8, this.ang2Init * 1, true));
+		this.scl1 = map(distHexagon, -100, this.scl1Zone, -this.scl1Init, this.scl1Init * 1, true);
+		this.scl2 = map(distHexagon, -100, this.scl2Zone, -this.scl1Init, this.scl1Init * 1, true);
 
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
