@@ -8,20 +8,97 @@ features = $fx.getFeatures();
 seed = parseInt(fxrand() * 10000000);
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
-
-const paletteArr = [
-	//['broadleaf', 10],
-	//['lava', 10],
-	['blackwhite', 12.5],
-	['redblack', 12.5],
-	['yellowblack', 12.5],
-	['vintage', 12.5],
-	['lavalamp', 12.5],
-	['pop', 12.5],
-	['shagg', 12.5],
-	['neon', 12.5],
-	['ascii', 120000.5],
-];
+const paramTable = {
+	pseed: () => 7265,
+	x_rand_divider: () =>
+		weighted_choice([
+			[0.04, 6],
+			[0.03, 6],
+			[0.025, 90], // default
+			[0.02, 6],
+			[0.015, 6],
+			[0.01, 6],
+		]),
+	y_rand_divider: () =>
+		weighted_choice([
+			[0.04, 6],
+			[0.03, 6],
+			[0.025, 90], // default
+			[0.02, 6],
+			[0.015, 6],
+			[0.01, 6],
+		]),
+	bg_color: () =>
+		weighted_choice([
+			[[329, 98, 35, 100], 25], // default
+			[[346, 68, 58, 100], 25],
+			[[5, 43, 88, 100], 25],
+			[[0, 0, 0, 100], 25],
+		]),
+	particle_num: () =>
+		weighted_choice([
+			[150, 5],
+			[200, 85], // default
+			[250, 5],
+			[300, 5],
+		]),
+	stroke_weight: () =>
+		weighted_choice([
+			[0.75, 5],
+			[1, 5],
+			[1.5, 5],
+			[2, 80], // default
+			[2.5, 5],
+		]),
+	stroke_alpha: () =>
+		weighted_choice([
+			[20, 5],
+			[40, 80], // default
+			[60, 5],
+			[80, 5],
+			[100, 5],
+		]),
+	scale_min: () =>
+		weighted_choice([
+			[0.000071, 16],
+			[0.00025, 16],
+			[0.0005, 16],
+			[0.00071, 70], // default
+		]),
+	scale_max: () =>
+		weighted_choice([
+			[0.0015, 15],
+			[0.002, 15],
+			[0.0025, 75], // default
+			[0.0035, 15],
+		]),
+	amplitude: () =>
+		weighted_choice([
+			[750, 15],
+			[1000, 15],
+			[1250, 75], // default
+			[1500, 15],
+		]),
+	ease_scalar: () =>
+		weighted_choice([
+			[0.05, 15],
+			[0.075, 15],
+			[0.1, 15],
+			[0.25, 55], // default
+		]),
+	palette: () =>
+		weighted_choice([
+			["blackwhite", 12.5],
+			["redblack", 12.5],
+			["yellowblack", 12.5],
+			["vintage", 12.5],
+			["lavalamp", 1200000.5],
+			["pop", 12.5],
+			["shagg", 12.5],
+			["neon", 12.5],
+		]),
+	// TODO add all parameters that need to be randomized
+};
 
 let palettes = {
 	// name of the palette
@@ -177,101 +254,6 @@ let palettes = {
 		16: [0, 0, 0],
 		17: [30, 10, 98],
 	},
-	ascii : {
-		// map all characters to an index
-		1: '.', 
-    2: '-', 
-    3: "'", 
-    4: ":", 
-    5: "_", 
-    6: ",", 
-    7: "^", 
-    8: "=", 
-    9: ';', 
-    10: '>', 
-    11: '<', 
-    12: '+', 
-    13: '!', 
-    14: 'r', 
-    15: 'c', 
-    16: '*', 
-    17: '/', 
-    18: 'z', 
-    19: '?', 
-    20: 's', 
-    21: 'L', 
-    22: 'T', 
-    23: 'v', 
-    24: ')', 
-    25: 'J', 
-    26: '7', 
-    27: '(', 
-    28: '|', 
-    29: 'F', 
-    30: 'i', 
-    31: '{', 
-    32: 'C', 
-    33: '}', 
-    34: 'f', 
-    35: 'I', 
-    36: '3', 
-    37: '1', 
-    38: 't', 
-    39: 'l', 
-    40: 'u', 
-    41: '[', 
-    42: 'n', 
-    43: 'e', 
-    44: 'o', 
-    45: 'Z', 
-    46: '5', 
-    47: 'Y', 
-    48: 'x', 
-    49: 'j', 
-    50: 'y', 
-    51: 'a', 
-    52: ']', 
-    53: '2', 
-    54: 'E', 
-    55: 'S', 
-    56: 'w', 
-    57: 'q', 
-    58: 'k', 
-    59: 'P', 
-    60: '6', 
-    61: 'h', 
-    62: '9', 
-    63: 'd', 
-    64: '4', 
-    65: 'V', 
-    66: 'p', 
-    67: 'O', 
-    68: 'G', 
-    69: 'b', 
-    70: 'U', 
-    71: 'A', 
-    72: 'K', 
-    73: 'X', 
-    74: 'H', 
-    75: 'm', 
-    76: '8', 
-    77: 'R', 
-    78: 'D', 
-    79: '#', 
-    80: '$', 
-    81: 'B', 
-    82: 'g', 
-    83: '0', 
-    84: 'M', 
-    85: 'N', 
-    86: 'W', 
-    87: 'Q', 
-    88: '%', 
-    89: '&', 
-    90: '@'
-
-
-	},
 };
 
 const gridTypeArr = [
@@ -292,32 +274,21 @@ const octaveArr = [
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
-function generate_composition_params(palette_type, cell_type, octave_type) {
-	// SET DEFAULTS IF NOT PASSED IN
-	if (palette_type === undefined) {
-		palette_type = weighted_choice(paletteArr);
-	}
+function generate_composition_params(params) {
+	const randomizedParams = Object.fromEntries(
+		Object.keys(paramTable).map((key) => [key, paramTable[key]()])
+	);
+	console.log("Randomized params", randomizedParams);
+	params !== undefined && console.log("Override params", params);
 
-	if (cell_type === undefined) {
-		cell_type = weighted_choice(gridTypeArr);
-		console.log(cell_type);
-	}
-
-	if (octave_type === undefined) {
-		octave_type = weighted_choice(octaveArr);
-		console.log(octave_type);
-	}
-
-	//* EXCEPTIONS AND OVER-RIDES *//
-	// if necessary, add exceptions and over-rides here
-
-	//* PACK PARAMETERS INTO OBJECT *//
-	var composition_params = {
-		palette_type: palette_type,
-		cell_type: cell_type,
-		octave_type: octave_type,
+	return {
+		max_scale: 0.0025,
+		min_scale: 0.00071,
+		max_amp: 1200,
+		min_amp: 1,
+		ease_scalar: 0.25,
+		palette: "lavalamp",
+		...randomizedParams, // randomized on the table
+		...params, // explicit overrides
 	};
-
-	//* RETURN PARAMETERS *//
-	return composition_params;
 }

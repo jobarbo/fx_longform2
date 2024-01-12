@@ -1,4 +1,4 @@
-let features = '';
+let features = "";
 
 let bleed = 0;
 let inc = 0.02;
@@ -13,20 +13,19 @@ let amp1 = 10;
 let amp2 = 20;
 let scale1 = 0;
 let scale2 = 0;
-let xoff = Math.random() * 10000;
-let yoff = Math.random() * 10000;
 
+let animationFrameId;
 let easeAng = 0,
-	easeScalar2 = 200,
+	easeScalar = 0.26,
 	cycleCount = 0,
 	xi = 0,
 	yi = 0,
-	axoff = Math.random() * 10000,
-	ayoff = Math.random() * 10000,
-	sxoff = Math.random() * 10000,
-	syoff = Math.random() * 10000;
-
-
+	xoff = fxrand() * 1_000_000,
+	yoff = fxrand() * 1_000_000,
+	axoff = fxrand() * 1_000_000,
+	ayoff = fxrand() * 1_000_000,
+	sxoff = fxrand() * 1_000_000,
+	syoff = fxrand() * 1_000_000;
 
 function setup() {
 	//console.log(features);
@@ -66,8 +65,8 @@ function setup() {
 	let margin = -1;
 
 	amp1 = random([1, 3, 5, 10]);
-	amp2 = random([1000, 1500, 2000]);
-	scale1Arr = [0.001, 0.0025, ];
+	amp2 = random([1, 2, 3]);
+	scale1Arr = [0.001, 0.0025];
 	scale2Arr = [0.001, 0.0005, 0.0001, 0.00005, 0.00001];
 	yoff = random(100000);
 	xoff = random(100000);
@@ -82,7 +81,6 @@ function setup() {
 }
 
 function init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette) {
-
 	cells = [];
 	let framePassed = 0;
 	let grid = drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette);
@@ -91,22 +89,19 @@ function init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palett
 		let result = grid.next();
 		framePassed++;
 		if (result.done) {
-
 			clearInterval(interval);
 			let cosIndex = cos(radians(easeAng));
+			console.log(cosIndex);
 			if (cosIndex >= 1) {
 				cycleCount += 1;
-				
 			}
 			if (cycleCount < 1) {
 				init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette);
-				
 			} else {
 				noLoop();
 			}
 			// stop the interval
 		}
-
 	}, 0);
 }
 
@@ -118,8 +113,19 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 
 	scale1 += map(noise(sxoff), 0, 1, -0.000000001, 0.000000001, true);
 	scale2 += map(noise(syoff), 0, 1, -0.000000001, 0.000000001, true);
-	amp1 += map(noise(axoff), 0, 1, -10, 10, true);
-	amp2 += map(noise(ayoff), 0, 1, -10, 10, true);
+	amp1 += map(noise(axoff), 0, 1, -30, 30, true);
+	amp2 += map(noise(ayoff), 0, 1, -30, 30, true);
+
+	if (amp1 < 0) {
+		amp1 = 0;
+	} else if (amp1 > 1000) {
+		amp1 = 1000;
+	}
+	if (amp2 < 0) {
+		amp2 = 0;
+	} else if (amp2 > 1000) {
+		amp2 = 1000;
+	}
 
 	amplitude1 = amp1;
 	amplitude2 = amp2;
@@ -129,29 +135,13 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 
 	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
 	xi += map(noise(xoff), 0, 1, -1, 1, true);
-	yi += map(noise(yoff), 0, 1, -1, 1, true);
+	yi += map(noise(yoff), 0, 1, 2, 4, true);
 
 	for (let gridY = 0; gridY < cellCountY; gridY++) {
 		for (let gridX = 0; gridX < cellCountX; gridX++) {
 			let posX = cellWidth * gridX;
 			let posY = cellHeight * gridY;
-			let cell = new Cell(
-				posX,
-				posY,
-				xi,
-				yi,
-				cellWidth,
-				cellHeight,
-				amplitude1,
-				amplitude2,
-				scale1,
-				scale2,
-				margin,
-				xoff,
-				yoff,
-				inc,
-				palette
-			);
+			let cell = new Cell(posX, posY, xi, yi, cellWidth, cellHeight, amplitude1, amplitude2, scale1, scale2, margin, xoff, yoff, inc, palette);
 			cells.push(cell);
 			cell.display(inc);
 
@@ -166,7 +156,7 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 
 		//yoff += inc;
 	}
-	easeAng += 0.000001;
+	easeAng += 0.1;
 	xoff += 0.001;
 	yoff += 0.001;
 	axoff += 0.01;

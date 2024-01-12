@@ -8,28 +8,28 @@ let composition_params;
 
 composition_params = generate_composition_params();
 
-var {palette_type, cell_type, octave_type} = composition_params; // unpacking parameters we need in main.js and turning them into globals
-console.log(cell_type);
+var {palette, cell_type, octave_type} = composition_params; // unpacking parameters we need in main.js and turning them into globals
+console.log(palette);
 
 // this is how to define parameters
 $fx.params([
 	{
-		id: 'palette_type',
-		name: 'Type of',
-		type: 'select',
+		id: "palette_type",
+		name: "Type of",
+		type: "select",
 		//default: Math.PI,
 		options: {
 			options: [
-				'temperate broadleaf',
-				'barren rocky',
-				'blackwhite',
-				'redblack',
-				'blueyellow',
-				'pastel',
-				'bluepink',
-				'hunt',
-				'france',
-				'ascii',
+				"temperate broadleaf",
+				"barren rocky",
+				"blackwhite",
+				"redblack",
+				"blueyellow",
+				"pastel",
+				"bluepink",
+				"hunt",
+				"france",
+				"ascii",
 			],
 		},
 	},
@@ -37,8 +37,8 @@ $fx.params([
 
 // this is how features can be defined
 $fx.features({
-	biome: palette_type,
-	biomeColorList: Object.values(palettes[palette_type]),
+	biome: palette,
+	biomeColorList: Object.values(palettes[palette]),
 	cellSize: cell_type,
 	octaves: octave_type,
 });
