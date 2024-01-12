@@ -15,13 +15,14 @@ let graphicsArray = [];
 let cols = 4;
 let rows = 4;
 let cellSize = 350;
-let angleArray = [0,90,180,270];
+let angleArray = [0, 90, 180, 270];
 let configNum = 10;
 let angle = 0;
 let margin = 0;
+let time = 0;
+let scale = 10;
 
 function setup() {
-	console.log(features);
 	features = $fx.getFeatures();
 
 	// canvas setup
@@ -29,65 +30,51 @@ function setup() {
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * RATIO);
 	//imageMode(CENTER)
-	pixelDensity(dpi(6));
+	pixelDensity(dpi(2));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
 	angleMode(DEGREES);
 	//rectMode(CENTER);
 
+	margin = 30 * MULTIPLIER;
+	cellSize = ((width - margin * 2) / 100) * MULTIPLIER;
+	cols = int((width - margin) / cellSize);
+	rows = int((height - margin) / cellSize);
+	let cellNum = cols * rows;
+	console.log(cellNum);
 
-	INIT();
+	scale = cellSize / 2;
 }
 
-
-function INIT() {
-
+function draw() {
 	background(40, 10, 100);
-	margin = 0;
-	cellSize = (width - margin * 2) / 14;
-	cols = int((width-margin) / cellSize);
-	rows = int((height-margin) / cellSize);
-	console.log(cols, rows)
 
-	let letter = random(['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P', 'Q','R','S','T','U','V','W','X','Y','Z']);
-
-	
-	let index = 0;
-	let bgHue = random(0, 360);
 	for (let i = 0; i < cols; i++) {
 		for (let j = 0; j < rows; j++) {
-		let angle_index = int(random(angleArray.length));
-
-		let x = (width - cols * cellSize) / 2 + i * cellSize ;
-		let y = (height - rows * cellSize) / 2 + j * cellSize ;
-
-		graphicsArray[index] = createGraphics(cellSize, cellSize);
-		graphicsArray[index].angleMode(DEGREES);
-		graphicsArray[index].displayDensity(2);
-		graphicsArray[index].colorMode(HSB, 360, 100, 100, 100);
-	
-		graphicsArray[index].background(bgHue, 30, 85, 100);
-
-
-		// Apply rotation directly to the graphics object before drawing the 'A'
-		graphicsArray[index].push();
-		graphicsArray[index].translate(cellSize / 2, cellSize / 2);
-		graphicsArray[index].rotate(angleArray[angle_index]);
-		// make the fill always complemantary to the background
-		graphicsArray[index].fill((bgHue + 180) % 360, 30, 35, 100);
-		graphicsArray[index].noStroke();
-		// draw a triangle with a point on the bottom left corner, the top right corner, and the top left corner
-		graphicsArray[index].triangle(-cellSize / 2, cellSize / 2, cellSize / 2, -cellSize / 2, -cellSize / 2, -cellSize / 2);
-
-		image(graphicsArray[index], x, y, cellSize+1, cellSize+1);
-		stroke(0);
-		strokeWeight(0);
-		noFill();
-		rect(x, y, cellSize, cellSize);
-		index++;
+			let x = (width - cols * cellSize) / 2 + i * cellSize;
+			let y = (height - rows * cellSize) / 2 + j * cellSize;
+			let w0 = wobbly(x * scale, y * scale, time);
+			let w1 = wobbly(x * scale, (y + 0.5) * scale, time);
+			stroke(0);
+			strokeWeight(1);
+			noFill();
+			//rect(x, y, cellSize, cellSize);
+			// draw an ellipse at the center of each cell
+			fill(0);
+			noStroke();
+			ellipse(x + cellSize / 2, y + cellSize / 2, w0, w0);
+			noFill();
+			stroke(40, 10, 100);
+			strokeWeight(1);
+			ellipse(x + cellSize / 2, y + cellSize / 2, w1, w1);
 		}
 	}
+	time += 10.5; // Increment time for animation
+}
 
-
+function wobbly(x, y, t) {
+	let w0 = sin(10.3 * x + 1.4 * t + 2.0 + 112.5 * sin(0.4 * y + -1.3 * t + 1.0));
+	let w1 = sin(10.2 * y + 1.5 * t + 2.8 + 111.3 * sin(0.5 * x + -1.2 * t + 0.5));
+	return (w0 + w1 + 2) * 1 * scale;
 }
