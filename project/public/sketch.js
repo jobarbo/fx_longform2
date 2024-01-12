@@ -91,7 +91,7 @@ function init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palett
 		if (result.done) {
 			clearInterval(interval);
 			let cosIndex = cos(radians(easeAng));
-			console.log(cosIndex);
+
 			if (cosIndex >= 1) {
 				cycleCount += 1;
 			}
@@ -111,10 +111,10 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 
 	let easing = radians(easeAng);
 
-	scale1 += map(noise(sxoff), 0, 1, -0.000000001, 0.000000001, true);
-	scale2 += map(noise(syoff), 0, 1, -0.000000001, 0.000000001, true);
-	amp1 += map(noise(axoff), 0, 1, -30, 30, true);
-	amp2 += map(noise(ayoff), 0, 1, -30, 30, true);
+	scale1 = mapValue(cos(easing), -1, 1, 0.00071, 0.0025, true);
+	scale2 = mapValue(cos(easing), -1, 1, 0.0025, 0.00071, true);
+	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 1200, 1, true));
+	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1, 1200, true));
 
 	if (amp1 < 0) {
 		amp1 = 0;
@@ -134,8 +134,8 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 	let amplitude2 = int(map(noise(ayoff, axoff), 0, 1, 0, amp2 * 2, true)); */
 
 	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
-	xi += map(noise(xoff), 0, 1, -1, 1, true);
-	yi += map(noise(yoff), 0, 1, 2, 4, true);
+	//xi += map(noise(xoff), 0, 1, -1, 1, true);
+	yi += 2;
 
 	for (let gridY = 0; gridY < cellCountY; gridY++) {
 		for (let gridX = 0; gridX < cellCountX; gridX++) {

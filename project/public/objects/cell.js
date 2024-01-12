@@ -1,21 +1,5 @@
 class Cell {
-	constructor(
-		x,
-		y,
-		xi,
-		yi,
-		w,
-		h,
-		amp1,
-		amp2,
-		scale1,
-		scale2,
-		margin,
-		xoff,
-		yoff,
-		inc,
-		palette
-	) {
+	constructor(x, y, xi, yi, w, h, amp1, amp2, scale1, scale2, margin, xoff, yoff, inc, palette) {
 		this.features = $fx.getFeatures();
 
 		// Module ready to be built
@@ -42,7 +26,7 @@ class Cell {
 		this.amp1 = amp1;
 		this.amp2 = amp2;
 
-		this.oct = 1;
+		this.oct = 2;
 
 		this.createNoise();
 	}
