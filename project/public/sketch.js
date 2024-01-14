@@ -37,12 +37,13 @@ function setup() {
 	angleMode(DEGREES);
 	//rectMode(CENTER);
 
-	margin = 30 * MULTIPLIER;
-	cellSize = ((width - margin * 2) / 100) * MULTIPLIER;
+	console.log(DIM);
+	margin = 0;
+	cellSize = (width - margin * 2) / 100;
 	cols = int((width - margin) / cellSize);
 	rows = int((height - margin) / cellSize);
 	let cellNum = cols * rows;
-	console.log(cellNum);
+	console.log(cellSize);
 
 	scale = cellSize / 2;
 }
