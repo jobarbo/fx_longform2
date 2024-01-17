@@ -22,16 +22,12 @@ function setup() {
 	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
 
 	// if Safari mobile or any smartphone browser, use pixelDensity(0.5) to make the canvas bigger, else use pixelDensity(3.0)
-	if (
-		iOSSafari ||
-		(iOS && !iOSSafari) ||
-		(!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))
-	) {
+	if (iOSSafari || (iOS && !iOSSafari) || (!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))) {
 		pixelDensity(2);
 	} else {
 		pixelDensity(3);
 	}
-	createCanvas(1080, 1920);
+	createCanvas(1080, 1080 * 1.77);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000);
 	randomSeed(seed);
@@ -100,27 +96,8 @@ function INIT(seed) {
 		//let hueOffset = map(x, xMin * width, xMax * width, -10, 10);
 		let hueOffset = random(-50, 50);
 		let initHue = hue + hueOffset;
-		initHue =
-			initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(
-			new Mover(
-				x,
-				y,
-				initHue,
-				scl1,
-				scl2,
-				scl3,
-				sclOffset1,
-				sclOffset2,
-				sclOffset3,
-				xMin,
-				xMax,
-				yMin,
-				yMax,
-				isBordered,
-				seed
-			)
-		);
+		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
+		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
 	let bgCol = spectral.mix("#000", "#FAE8E0", 0.938);
 	background(bgCol);
