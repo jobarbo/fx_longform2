@@ -1,33 +1,3 @@
-({sin, cos, imul, PI} = Math);
-TAU = PI * 2;
-F = (N, f) => [...Array(N)].map((_, i) => f(i));
-
-console.log(fxhash);
-
-const sp = new URLSearchParams(window.location.search);
-//console.log(sp);
-
-let composition_params;
-
-composition_params = generate_composition_params();
-//console.log(composition_params);
-
-var {complexity, theme, composition, colormode, strokestyle, clampvalue} = composition_params; // unpacking parameters we need in main.js and turning them into globals
-
-//console.log(shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode);
-// this is how to define parameters
-// this is how to define parameters
-//console.log(theme);
-// this is how features can be defined
-$fx.features({
-	complexity: complexity,
-	theme: theme,
-	composition: composition,
-	colormode: colormode,
-	strokestyle: strokestyle,
-	clampvalue: clampvalue,
-});
-
 // log the parameters, for debugging purposes, artists won't have to do that
 //console.log('Current param values:');
 
@@ -36,7 +6,7 @@ $fx.features({
 //console.log($fx.getParams());
 
 // particles variables setup
-let features = '';
+let features = "";
 let movers = [];
 let movers_pos = [];
 let scl1;
@@ -93,7 +63,7 @@ function setup() {
 	rectMode(CENTER);
 	colorMode(HSB, 360, 100, 100, 100);
 
-	document.querySelector('canvas').classList.add('load');
+	document.querySelector("canvas").classList.add("load");
 
 	INIT();
 }
@@ -244,9 +214,9 @@ function animationManager() {
 		fill(255);
 		stroke(0);
 		textSize(30);
-		text('FPS: ' + fps.toFixed(2), 10, height - 10);
-		text('Max FPS: ' + maxFps.toFixed(2), 10, height - 50);
-		text('Min FPS: ' + minFps.toFixed(2), 10, height - 90);
+		text("FPS: " + fps.toFixed(2), 10, height - 10);
+		text("Max FPS: " + maxFps.toFixed(2), 10, height - 50);
+		text("Min FPS: " + minFps.toFixed(2), 10, height - 90);
 
 		if (sketch.next().done) {
 			cancelAnimationFrame(animationFrameId);
