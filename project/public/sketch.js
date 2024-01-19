@@ -1,4 +1,3 @@
-let features = '';
 let movers = [];
 let scl1;
 let scl2;
@@ -27,7 +26,7 @@ function setup() {
 	} else {
 		pixelDensity(2);
 	}
-	createCanvas(16 * 100, 22 * 100);
+	createCanvas(22 * 100, 22 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000);
 	randomSeed(seed);
@@ -42,7 +41,7 @@ function draw() {
 		}
 	}
 	if (frameCount > 1500) {
-		console.log('done');
+		console.log("done");
 		noLoop();
 	}
 }
@@ -63,13 +62,13 @@ function INIT(seed) {
 	let sclOffset2 = random([3]);
 	let sclOffset3 = random([2]);
 
-	console.log('sclOffset1', sclOffset1);
-	console.log('sclOffset2', sclOffset2);
-	console.log('sclOffset3', sclOffset3);
+	console.log("sclOffset1", sclOffset1);
+	console.log("sclOffset2", sclOffset2);
+	console.log("sclOffset3", sclOffset3);
 
-	console.log('scl1', scl1);
-	console.log('scl2', scl2);
-	console.log('scl3', scl3);
+	console.log("scl1", scl1);
+	console.log("scl2", scl2);
+	console.log("scl3", scl3);
 
 	xMin = 0.25;
 	xMax = 0.85;
@@ -94,26 +93,8 @@ function INIT(seed) {
 		let hueOffset = random(-20, 20);
 		let initHue = hue + hueOffset;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(
-			new Mover(
-				x,
-				y,
-				initHue,
-				scl1,
-				scl2,
-				scl3,
-				sclOffset1,
-				sclOffset2,
-				sclOffset3,
-				xMin,
-				xMax,
-				yMin,
-				yMax,
-				isBordered,
-				seed
-			)
-		);
+		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix('#000', '#fff', 0.938);
+	let bgCol = spectral.mix("#000", "#fff", 0.938);
 	background(bgCol);
 }
