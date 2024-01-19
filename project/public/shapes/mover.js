@@ -1,21 +1,5 @@
 class Mover {
-	constructor(
-		x,
-		y,
-		hue,
-		scl1,
-		scl2,
-		scl3,
-		sclOffset1,
-		sclOffset2,
-		sclOffset3,
-		xMin,
-		xMax,
-		yMin,
-		yMax,
-		isBordered,
-		seed
-	) {
+	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
@@ -54,17 +38,7 @@ class Mover {
 	}
 
 	move() {
-		let p = superCurve(
-			this.x,
-			this.y,
-			this.scl1,
-			this.scl2,
-			this.scl3,
-			this.sclOffset1,
-			this.sclOffset2,
-			this.sclOffset3,
-			this.seed
-		);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.seed);
 		// after 1 second, change the scale
 
 		//! crayon effect too
@@ -108,14 +82,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		scaleOffset2 = sclOff1,
 		scaleOffset3 = sclOff2,
 		nseed = seed;
-	un =
-		sin(nx * (scale1 * scaleOffset1) + nseed) +
-		cos(nx * (scale2 * scaleOffset2) + nseed) -
-		sin(nx * (scale3 * scaleOffset3) + nseed);
-	vn =
-		cos(ny * (scale1 * scaleOffset1) + nseed) +
-		sin(ny * (scale2 * scaleOffset2) + nseed) -
-		cos(ny * (scale3 * scaleOffset3) + nseed);
+	un = sin(nx * (scale1 * scaleOffset1) + nseed) + cos(nx * (scale2 * scaleOffset2) + nseed) - sin(nx * (scale3 * scaleOffset3) + nseed);
+	vn = cos(ny * (scale1 * scaleOffset1) + nseed) + sin(ny * (scale2 * scaleOffset2) + nseed) - cos(ny * (scale3 * scaleOffset3) + nseed);
 
 	//! center focused
 	/* 	let maxU = map(ny, 0, height, 3, -3, true);
