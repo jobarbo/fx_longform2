@@ -27,126 +27,58 @@ function setup() {
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
 	rectMode(CENTER);
-	flock = new Flock();
-	let hue = random(360);
-	for (let i = 0; i < 100; i++) {
-		flock.addBoid(new Boid(random(width), random(height), hue));
+	let spacingX = width / 60; // Cette variable détermine la taille des cellules de notre grille
+	let spacingY = height / 60; // Cette variable détermine la taille des cellules de notre grille
+	let margin = width / 15 - spacingY; // Cette variable détermine la marge de notre grille
+	let pass = 3; // This variable determines the number of passes
+	blendMode(BLEND);
+	for (i = 0; i < pass; i++) {
+		for (let x = margin; x < width - margin; x += spacingX) {
+			// loop through x
+			for (let y = margin; y < height - margin; y += spacingY) {
+				// loop through y
+				let rand = random(1); // get a random number between 0 and 1
+				if (rand < 0.75) {
+					// make a blue line for baseline
+					strokeWeight(2);
+					stroke(220, 80, 60, 50);
+					line(x, y + spacingY, x + spacingX, y + spacingY);
+				} else if (rand > 0.75) {
+					// make a blue line for baseline
+					strokeWeight(2);
+					stroke(220, 80, 60, 50);
+					line(x, y + spacingY, x + spacingX, y + spacingY);
+
+					// set random bezier control points
+					let xanchor1 = random(-spacingX * 4, spacingX * 4);
+					let yanchor1 = random(-spacingY * 4, spacingY * 4);
+					let xanchor2 = random(-spacingX / 4, spacingX / 4);
+					let yanchor2 = random(-spacingY / 4, spacingY / 4);
+
+					// make a bezier curve
+					stroke(0, 0, 20, 100);
+					strokeWeight(random(1, 2));
+					noFill();
+					bezier(x, y + spacingY, x + xanchor1, y + yanchor1, x + xanchor2, y + yanchor2, x + spacingX, y + spacingY);
+
+					// if random number is between 0.75 and 0.85
+					if (rand > 0.75 && rand < 0.8) {
+						// draw a line
+						line(x, y + spacingY / 2, x + spacingX, y + spacingY / 2);
+					}
+					// if random number is between 0.8 and 0.85
+					if (rand > 0.8 && rand < 0.85) {
+						// draw two dots
+						strokeWeight(5);
+						point(x, y + spacingY / 2);
+						point(x + spacingX, y + spacingY / 2);
+					}
+				}
+			}
+		}
 	}
-	background(45, 5, 100);
 }
 
 function draw() {
-	flock.run();
-}
-
-class Boid {
-	constructor(x, y, hue) {
-		this.position = createVector(x, y);
-		this.prevPosition = createVector(x, y);
-		this.velocity = p5.Vector.random2D();
-		this.velocity.setMag(random(2, 4));
-		this.acceleration = createVector();
-		this.maxForce = 0.1;
-		this.maxSpeed = 3;
-		this.detect = false;
-		this.hue = hue + random(-10, 10);
-		this.sat = random([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]);
-		this.bri = random([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]);
-		console.log(this.hue);
-	}
-
-	applyForce(force) {
-		this.acceleration.add(force);
-	}
-
-	flock(boids) {
-		let alignment = createVector();
-		let cohesion = createVector();
-		let separation = createVector();
-
-		let perceptionRadius = 50;
-
-		let total = 0;
-
-		for (let other of boids) {
-			let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
-			if (other != this && d < perceptionRadius) {
-				this.detect = true;
-				alignment.add(other.velocity);
-				cohesion.add(other.position);
-				separation.add(p5.Vector.sub(this.position, other.position));
-				total++;
-				line(this.position.x, this.position.y, other.position.x, other.position.y);
-			} else {
-				this.detect = false;
-			}
-		}
-
-		if (total > 0) {
-			alignment.div(total);
-			alignment.setMag(this.maxSpeed);
-			alignment.sub(this.velocity);
-			alignment.limit(this.maxForce);
-
-			cohesion.div(total);
-			cohesion.sub(this.position);
-			cohesion.setMag(this.maxSpeed);
-			cohesion.sub(this.velocity);
-			cohesion.limit(this.maxForce);
-
-			separation.div(total);
-			separation.setMag(this.maxSpeed);
-			separation.sub(this.velocity);
-			separation.limit(this.maxForce);
-		}
-
-		this.applyForce(alignment);
-		this.applyForce(cohesion);
-		this.applyForce(separation);
-	}
-
-	update() {
-		this.prevPosition.x = this.position.x;
-		this.prevPosition.y = this.position.y;
-		this.position.add(this.velocity);
-		this.velocity.add(this.acceleration);
-		this.velocity.limit(this.maxSpeed);
-		this.acceleration.mult(0);
-	}
-
-	edges() {
-		if (this.position.x > width + 50) this.position.x = -50;
-		else if (this.position.x < -50) this.position.x = width + 50;
-
-		if (this.position.y > height + 50) this.position.y = -50;
-		else if (this.position.y < -50) this.position.y = height + 50;
-	}
-
-	show() {
-		stroke(this.hue, this.sat, this.bri, 100);
-		strokeWeight(0.01);
-		//point(this.position.x, this.position.y);
-		//point(this.prevPosition.x, this.prevPosition.y);
-
-		//line(this.position.x, this.position.y, this.prevPosition.x, this.prevPosition.y);
-	}
-}
-
-class Flock {
-	constructor() {
-		this.boids = [];
-	}
-
-	addBoid(boid) {
-		this.boids.push(boid);
-	}
-
-	run() {
-		for (let boid of this.boids) {
-			boid.edges();
-			boid.flock(this.boids);
-			boid.update();
-			boid.show();
-		}
-	}
+	// create a 10_print-like pattern
 }
