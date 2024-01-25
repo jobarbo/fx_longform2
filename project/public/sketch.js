@@ -11,8 +11,10 @@ let DEFAULT_SIZE = window.innerWidth;
 let DIM;
 let MULTIPLIER;
 
+let v_p;
+let v_p_pos = {x: 0, y: 0};
+
 function setup() {
-	console.log(features);
 	features = $fx.getFeatures();
 
 	// canvas setup
@@ -24,8 +26,14 @@ function setup() {
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
 	rectMode(CENTER);
+	angleMode(DEGREES);
+	background(220, 80, 20);
 
-	background(0, 20, 100);
+	v_p = new VanishingPoint(width / 2, height / 2, 1, 3, true);
+	console.log(v_p);
+	console.log(width, height);
 }
 
-function draw() {}
+function draw() {
+	noLoop();
+}
