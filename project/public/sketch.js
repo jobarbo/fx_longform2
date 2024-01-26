@@ -27,11 +27,7 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rectMode(CENTER);
 	angleMode(DEGREES);
-	background(220, 80, 20);
-
-	v_p = new VanishingPoint(width / 2, height / 2, 1, 3, true);
-	console.log(v_p);
-	console.log(width, height);
+	background(50, 10, 10);
 }
 
 function draw() {
