@@ -1,7 +1,8 @@
 let config_type = parseInt(fxrand() * 3 + 1);
+//let config_type = 2;
 console.log(config_type);
 
-let features = '';
+let features = "";
 let movers = [];
 let scl1;
 let scl2;
@@ -43,7 +44,7 @@ function setup() {
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1200;
-	c = createCanvas(C_WIDTH, C_WIDTH );
+	c = createCanvas(C_WIDTH, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -52,22 +53,8 @@ function setup() {
 
 	centerX = width / 2;
 	centerY = height / 2;
-	borderX =
-		features.composition === 'compressed'
-			? width / 3.5
-			: features.composition === 'constrained'
-			? width / 3
-			: features.composition === 'semiconstrained'
-			? width / 2.35
-			: width / 1.9;
-	borderY =
-		features.composition === 'compressed'
-			? height / 2.75
-			: features.composition === 'constrained'
-			? height / 2.5
-			: features.composition === 'semiconstrained'
-			? height / 2.25
-			: height / 1.9;
+	borderX = features.composition === "compressed" ? width / 3.5 : features.composition === "constrained" ? width / 3 : features.composition === "semiconstrained" ? width / 2.35 : width / 1.9;
+	borderY = features.composition === "compressed" ? height / 2.75 : features.composition === "constrained" ? height / 2.5 : features.composition === "semiconstrained" ? height / 2.25 : height / 1.9;
 	INIT(rseed);
 }
 
@@ -95,7 +82,6 @@ function draw() {
 
 function INIT(seed) {
 	scl1 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
-	scl1 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
 	scl2 = scl1;
 
 	ang1 = 1;
@@ -114,28 +100,12 @@ function INIT(seed) {
 		let y = random(yMin, yMax) * height;
 		let initHue = hue + random(-1, 1);
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(
-			new Mover(
-				x,
-				y,
-				initHue,
-				scl1 / MULTIPLIER,
-				scl2 / MULTIPLIER,
-				ang1 * MULTIPLIER,
-				ang2 * MULTIPLIER,
-				xMin,
-				xMax,
-				yMin,
-				yMax,
-				xRandDivider,
-				yRandDivider,
-				seed,
-				features
-			)
-		);
+		movers.push(new Mover(x, y, initHue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, ang1 * MULTIPLIER, ang2 * MULTIPLIER, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features));
 	}
 
-	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == 'bright' ? 93 : 5, 100);
+	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == "bright" ? 93 : 5, 100);
 
 	background(bgCol);
+	//background(45, 100, 100);
+	//background(221, 100, 60);
 }
