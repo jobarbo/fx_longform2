@@ -11,8 +11,8 @@ seed = parseInt(fxrand() * 10000000);
 
 const shapeArr = [
 	// name, probability(0-100)
-	['ellipse', 50],
-	['rectangle', 50],
+	["ellipse", 50],
+	["rectangle", 50],
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function

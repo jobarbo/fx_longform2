@@ -28,6 +28,7 @@ function setup() {
 	rectMode(CENTER);
 	angleMode(DEGREES);
 	background(50, 10, 10);
+	fxpreview();
 }
 
 function draw() {
