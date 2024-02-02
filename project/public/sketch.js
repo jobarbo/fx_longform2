@@ -42,7 +42,7 @@ function setup() {
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 1600;
+	MULTIPLIER = C_WIDTH / 1200;
 	c = createCanvas(C_WIDTH, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
