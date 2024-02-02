@@ -30,7 +30,6 @@ F = (N, f) => [...Array(N)].map((_, i) => f(i));
 
 function setup() {
 	features = $fx.getFeatures();
-	console.log(features);
 	var ua = window.navigator.userAgent;
 	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
 	var webkit = !!ua.match(/WebKit/i);
@@ -43,13 +42,14 @@ function setup() {
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 1200;
+	MULTIPLIER = C_WIDTH / 1600;
 	c = createCanvas(C_WIDTH, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
+	noCursor();
 
 	centerX = width / 2;
 	centerY = height / 2;

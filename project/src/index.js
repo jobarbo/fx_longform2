@@ -1,5 +1,4 @@
 console.log(fxhash);
-console.log(fxrand());
 
 const sp = new URLSearchParams(window.location.search);
 console.log(sp);
@@ -14,8 +13,6 @@ var {complexity, theme, composition, colormode, strokestyle, clampvalue} = compo
 //console.log(shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode);
 // this is how to define parameters
 // this is how to define parameters
-console.log(theme);
-
 // this is how features can be defined
 $fx.features({
 	complexity: complexity,
@@ -25,10 +22,3 @@ $fx.features({
 	strokestyle: strokestyle,
 	clampvalue: clampvalue,
 });
-
-// log the parameters, for debugging purposes, artists won't have to do that
-console.log('Current param values:');
-
-// Added addtional transformation to the parameter for easier usage
-// e.g. color.hex.rgba, color.obj.rgba.r, color.arr.rgb[0]
-console.log($fx.getParams());
