@@ -38,7 +38,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(3.0);
+		pixelDensity(1.0);
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
@@ -49,7 +49,7 @@ function setup() {
 	nseed = noiseSeed(fxrand() * 10000);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
-	noCursor();
+	//noCursor();
 
 	centerX = width / 2;
 	centerY = height / 2;
