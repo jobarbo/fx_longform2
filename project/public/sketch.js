@@ -1,5 +1,5 @@
-let config_type = parseInt(fxrand() * 3 + 1);
-//let config_type = 2;
+// /let config_type = parseInt(fxrand() * 3 + 1);
+let config_type = 2;
 console.log(config_type);
 
 let features = "";
@@ -30,6 +30,7 @@ F = (N, f) => [...Array(N)].map((_, i) => f(i));
 
 function setup() {
 	features = $fx.getFeatures();
+	console.log(features);
 	var ua = window.navigator.userAgent;
 	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
 	var webkit = !!ua.match(/WebKit/i);
@@ -38,7 +39,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(1.0);
+		pixelDensity(3.0);
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
@@ -49,7 +50,6 @@ function setup() {
 	nseed = noiseSeed(fxrand() * 10000);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
-	//noCursor();
 
 	centerX = width / 2;
 	centerY = height / 2;
@@ -67,11 +67,8 @@ function draw() {
 		movers[i].move();
 	}
 	blendMode(BLEND);
-	noFill();
-	strokeWeight(0.1 * MULTIPLIER);
-	stroke(0, 0, 100, 100);
+
 	// draw a rectangle the size of the composition with centerX, centerY as the center and borderX, borderY as the width and height
-	//rect(centerX, centerY, borderX * 2, borderY * 2);
 	let elapsedTime = frameCount - startTime;
 	if (elapsedTime > maxFrames) {
 		window.rendered = c.canvas;
@@ -84,8 +81,8 @@ function INIT(seed) {
 	scl1 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
 	scl2 = scl1;
 
-	ang1 = 1;
-	ang2 = 1;
+	ang1 = 1000;
+	ang2 = 1000;
 
 	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	yRandDivider = xRandDivider;
@@ -103,9 +100,7 @@ function INIT(seed) {
 		movers.push(new Mover(x, y, initHue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, ang1 * MULTIPLIER, ang2 * MULTIPLIER, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features));
 	}
 
-	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == "bright" ? 93 : 5, 100);
+	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == "bright" ? 93 : 10, 100);
 
 	background(bgCol);
-	//background(45, 100, 100);
-	//background(221, 100, 60);
 }

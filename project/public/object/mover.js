@@ -11,7 +11,7 @@ class Mover {
 				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
 				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
 		this.initAlpha = 100;
-		this.initS = 0.2 * MULTIPLIER;
+		this.initS = 0.25 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = random([0, 0, 0, 10, 10, 10, 80, 100, 100, 100, 100, 100, 100]);
 		this.sat = 0;
@@ -28,8 +28,10 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = random([0.01, random(-100, 100)]);
-		this.yRandSkipperVal = random([0.01, random(-100, 100)]);
+		this.xRandSkipperVal = random([0.01, random(-0.01, 0.01)]);
+		this.yRandSkipperVal = random([0.01, random(-0.01, 0.01)]);
+		this.xRandSkipperVal = 0;
+		this.yRandSkipperVal = 0;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -40,10 +42,11 @@ class Mover {
 		this.zombie = false;
 		this.lineWeight = 0.1 * MULTIPLIER; //!try randomizing this
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [25, 25, 25, 25];
+		this.uvalue = [5, 5, 5, 5];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
+		this.nvalueLimit = 0.000000000000015;
 
-		this.satDir = 1;
+		this.satDir = 0.5;
 
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
@@ -65,7 +68,7 @@ class Mover {
 				this.nvalue[i] += 0.005 * this.nvalueDir[i];
 			} else if (config_type === 2) {
 				//! Equilibrium CONFIGURATION
-				this.uvalue[i] *= 1.015 * this.uvalueDir[i];
+				this.uvalue[i] += 0.15 * this.uvalueDir[i];
 				this.nvalue[i] += 0.015 * this.nvalueDir[i];
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
@@ -74,12 +77,15 @@ class Mover {
 			}
 
 			//! YoYo with value (not sure);
-			/* 
-			if (this.nvalue[i] <= -1.5 || this.nvalue[i] >= 1.5) {
-				this.nvalue[i] = this.nvalue[i] > 1.5 ? 1.5 : this.nvalue[i] < -1.5 ? -1.5 : this.nvalue[i];
+			//! get maybe easing/scalar from sartoro
+
+			if (this.nvalue[i] <= -this.nvalueLimit || this.nvalue[i] >= this.nvalueLimit) {
+				this.nvalue[i] = this.nvalue[i] > this.nvalueLimit ? this.nvalueLimit : this.nvalue[i] < -this.nvalueLimit ? -this.nvalueLimit : this.nvalue[i];
 				this.nvalueDir[i] *= -1;
+				this.lineWeight += 0.1;
 			}
-			if (this.uvalue[i] <= -200 || this.uvalue[i] >= 200) {
+
+			/* 			if (this.uvalue[i] <= -200 || this.uvalue[i] >= 200) {
 				this.uvalue[i] = this.uvalue[i] > 200 ? 200 : this.uvalue[i] < -200 ? -200 : this.uvalue[i];
 				this.uvalueDir[i] *= -1;
 			} */
@@ -100,22 +106,22 @@ class Mover {
 
 		if (this.x < this.xMin * width - this.lineWeight) {
 			this.x = this.xMax * width + fxrand() * this.lineWeight;
-			//this.y = this.y + fxrand() * this.lineWeight;
+			this.y = this.y + fxrand() * this.lineWeight;
 			//this.a = 100;
 		}
 		if (this.x > this.xMax * width + this.lineWeight) {
 			this.x = this.xMin * width - fxrand() * this.lineWeight;
-			//this.y = this.y + fxrand() * this.lineWeight;
+			this.y = this.y + fxrand() * this.lineWeight;
 			//this.a = 100;
 		}
 		if (this.y < this.yMin * height - this.lineWeight) {
 			this.y = this.yMax * height + fxrand() * this.lineWeight;
-			//this.x = this.x + fxrand() * this.lineWeight;
+			this.x = this.x + fxrand() * this.lineWeight;
 			//this.a = 100;
 		}
 		if (this.y > this.yMax * height + this.lineWeight) {
 			this.y = this.yMin * height - fxrand() * this.lineWeight;
-			//this.x = this.x + fxrand() * this.lineWeight;
+			this.x = this.x + fxrand() * this.lineWeight;
 			//this.a = 100;
 		}
 
