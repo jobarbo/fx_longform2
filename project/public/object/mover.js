@@ -1,7 +1,7 @@
 class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features) {
 		this.x = x;
-		this.y = height;
+		this.y = height + 300;
 		this.initHue = 201;
 		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
 		this.initBri =
@@ -38,12 +38,12 @@ class Mover {
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.zombie = false;
-		this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
+		this.lineWeight = 100 * MULTIPLIER; //!try randomizing this
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [5, 5, 0.35, 0.35];
+		this.uvalue = [2, 2, 0.55, 0.35];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
 		this.nlimit = 1.5;
-		this.satDir = 1;
+		this.satDir = 20;
 
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
@@ -61,7 +61,7 @@ class Mover {
 		for (let i = 0; i < this.nvalue.length; i++) {
 			if (config_type === 1) {
 				//! STARMAP CONFIGURATION
-				this.uvalue[i] *= 1.013 * this.uvalueDir[i];
+				this.uvalue[i] *= 1.01 * this.uvalueDir[i];
 				//this.nvalue[i] += 0.005 * this.nvalueDir[i];
 			} else if (config_type === 2) {
 				//! Equilibrium CONFIGURATION
@@ -115,8 +115,8 @@ class Mover {
 		}
 
 		let pxy = abs(p.x) + abs(p.y);
-		/* 		this.sat += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.satDir, this.satDir, true);
-		if (this.sat > 100 || this.sat < 0) this.satDir *= -1; */
+		this.sat += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.satDir, this.satDir, true);
+		if (this.sat > 100 || this.sat < 0) this.satDir *= -1;
 		this.hue += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
 	}
@@ -132,22 +132,22 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, nvalue, uvalue) 
 		dx,
 		dy;
 
-	dx = oct(nx, ny, scale1, 0, octave);
-	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	dx = oct(nx, ny, scale1, 1, octave);
-	dy = oct(nx, ny, scale2, 3, octave);
-	nx += dx * a1;
-	ny += dy * a2;
-
 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 0, octave);
+	dx = oct(nx, ny, scale1, 2, octave);
+	dy = oct(nx, ny, scale2, 1, octave);
+	nx += dx * a1;
+	ny += dy * a2;
+
+	dx = oct(nx, ny, scale1, 1, octave);
+	dy = oct(nx, ny, scale2, 2, octave);
+	nx += dx * a1;
+	ny += dy * a2;
+
+	let un = oct(nx, ny, scale1, 1, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 
 	let u = map(un, -nvalue[0], nvalue[1], -uvalue[0], uvalue[1], true);
