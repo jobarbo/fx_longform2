@@ -1,7 +1,7 @@
 class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features) {
 		this.x = x;
-		this.y = height;
+		this.y = y;
 		this.initHue = 201;
 		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
 		this.initBri =
@@ -28,8 +28,10 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = random([0.01, random(-100, 100)]);
-		this.yRandSkipperVal = random([0.01, random(-100, 100)]);
+		/* 		this.xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
+		this.yRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]); */
+		this.xRandSkipperVal = 0.01;
+		this.yRandSkipperVal = 0.01;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -38,9 +40,10 @@ class Mover {
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.zombie = false;
-		this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
+		//this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
+		this.lineWeight = 0.1 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [5, 5, 0.35, 0.35];
+		this.uvalue = [15, 15, 15, 15];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
 		this.nlimit = 1.5;
 		this.satDir = 1;
@@ -62,11 +65,11 @@ class Mover {
 			if (config_type === 1) {
 				//! STARMAP CONFIGURATION
 				this.uvalue[i] *= 1.013 * this.uvalueDir[i];
-				//this.nvalue[i] += 0.005 * this.nvalueDir[i];
+				this.nvalue[i] += 0.005 * this.nvalueDir[i];
 			} else if (config_type === 2) {
 				//! Equilibrium CONFIGURATION
 				this.uvalue[i] *= 1.015 * this.uvalueDir[i];
-				//this.nvalue[i] += 0.015 * this.nvalueDir[i];
+				this.nvalue[i] += 0.015 * this.nvalueDir[i];
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
 				this.uvalue[i] += 1;
@@ -151,7 +154,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, nvalue, uvalue) 
 	let vn = oct(nx, ny, scale2, 1, octave);
 
 	let u = map(un, -nvalue[0], nvalue[1], -uvalue[0], uvalue[1], true);
-	let v = map(vn, -nvalue[2], nvalue[3], -uvalue[2], -uvalue[3], true);
+	let v = map(vn, -nvalue[2], nvalue[3], -uvalue[2], uvalue[3], true);
 
 	let p = createVector(u, v);
 	return p;
