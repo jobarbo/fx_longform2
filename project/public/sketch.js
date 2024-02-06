@@ -79,7 +79,7 @@ function INIT(seed) {
 	yMin = -0.01;
 	yMax = 1.01; */
 
-	for (let i = 0; i < 152000; i++) {
+	for (let i = 0; i < 42000; i++) {
 		// distribue the movers within a circle using polar coordinates
 		/* 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
