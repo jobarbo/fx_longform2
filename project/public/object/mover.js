@@ -1,7 +1,7 @@
 class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features) {
 		this.x = x;
-		this.y = height + 300;
+		this.y = height + 200;
 		this.initHue = 201;
 		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
 		this.initBri =
@@ -17,7 +17,7 @@ class Mover {
 		this.sat = 0;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = features.colormode === "monochrome" || features.colormode === "fixed" ? 0 : features.colormode === "dynamic" ? 6 : 25;
+		this.hueStep = features.colormode === "monochrome" || features.colormode === "fixed" ? 2 : features.colormode === "dynamic" ? 6 : 25;
 		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -38,9 +38,9 @@ class Mover {
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.zombie = false;
-		this.lineWeight = 100 * MULTIPLIER; //!try randomizing this
+		this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [2, 2, 0.55, 0.35];
+		this.uvalue = [5, 5, 0.55, 0.35];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
 		this.nlimit = 1.5;
 		this.satDir = 20;
@@ -61,7 +61,7 @@ class Mover {
 		for (let i = 0; i < this.nvalue.length; i++) {
 			if (config_type === 1) {
 				//! STARMAP CONFIGURATION
-				this.uvalue[i] *= 1.01 * this.uvalueDir[i];
+				this.uvalue[i] *= 1.013 * this.uvalueDir[i];
 				//this.nvalue[i] += 0.005 * this.nvalueDir[i];
 			} else if (config_type === 2) {
 				//! Equilibrium CONFIGURATION
@@ -80,8 +80,8 @@ class Mover {
 				this.nvalueDir[i] *= -1;
 				this.lineWeight += 0.1 * MULTIPLIER;
 			} */
-			/* 
-			if (this.uvalue[i] <= -200 || this.uvalue[i] >= 200) {
+
+			/* 			if (this.uvalue[i] <= -200 || this.uvalue[i] >= 200) {
 				this.uvalue[i] = this.uvalue[i] > 200 ? 200 : this.uvalue[i] < -200 ? -200 : this.uvalue[i];
 				this.uvalueDir[i] *= -1;
 			} */
@@ -93,24 +93,31 @@ class Mover {
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
+		if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
+			this.a = 0;
+			this.zombie = true;
+		} else {
+			this.a = this.zombie ? this.zombieAlpha : this.initAlpha;
+		}
+
 		if (this.x < this.xMin * width - this.lineWeight) {
 			this.x = this.xMax * width + fxrand() * this.lineWeight;
-			this.y = this.y + fxrand() * this.lineWeight;
+			//this.y = this.y + fxrand() * this.lineWeight;
 			//this.a = 100;
 		}
 		if (this.x > this.xMax * width + this.lineWeight) {
 			this.x = this.xMin * width - fxrand() * this.lineWeight;
-			this.y = this.y + fxrand() * this.lineWeight;
+			//this.y = this.y + fxrand() * this.lineWeight;
 			//this.a = 100;
 		}
 		if (this.y < this.yMin * height - this.lineWeight) {
 			this.y = this.yMax * height + fxrand() * this.lineWeight;
-			this.x = this.x + fxrand() * this.lineWeight;
+			//this.x = this.x + fxrand() * this.lineWeight;
 			//this.a = 100;
 		}
 		if (this.y > this.yMax * height + this.lineWeight) {
 			this.y = this.yMin * height - fxrand() * this.lineWeight;
-			this.x = this.x + fxrand() * this.lineWeight;
+			//this.x = this.x + fxrand() * this.lineWeight;
 			//this.a = 100;
 		}
 
@@ -133,17 +140,17 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, nvalue, uvalue) 
 		dy;
 
 	dx = oct(nx, ny, scale1, 1, octave);
-	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	dx = oct(nx, ny, scale1, 2, octave);
 	dy = oct(nx, ny, scale2, 1, octave);
 	nx += dx * a1;
 	ny += dy * a2;
 
 	dx = oct(nx, ny, scale1, 1, octave);
-	dy = oct(nx, ny, scale2, 2, octave);
+	dy = oct(nx, ny, scale2, 1, octave);
+	nx += dx * a1;
+	ny += dy * a2;
+
+	dx = oct(nx, ny, scale1, 1, octave);
+	dy = oct(nx, ny, scale2, 1, octave);
 	nx += dx * a1;
 	ny += dy * a2;
 
