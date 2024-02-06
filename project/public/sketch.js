@@ -38,7 +38,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(3.0);
+		pixelDensity(1.0);
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
@@ -59,6 +59,7 @@ function setup() {
 }
 
 function draw() {
+	checkMIDI();
 	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
 		//if (frameCount > 20 || frameCount < 2) {
@@ -87,8 +88,9 @@ function INIT(seed) {
 	ang1 = 1;
 	ang2 = 1;
 
-	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
-	yRandDivider = xRandDivider;
+	//xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
+	xRandDivider = 0.1;
+	yRandDivider = 0.125;
 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
