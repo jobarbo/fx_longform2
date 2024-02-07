@@ -59,7 +59,7 @@ function setup() {
 }
 
 function draw() {
-	checkMIDI();
+	//checkMIDI();
 	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
 		//if (frameCount > 20 || frameCount < 2) {

@@ -121,8 +121,8 @@ class Mover {
 		/* this.sat += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.satDir, this.satDir, true);
 		if (this.sat > 100 || this.sat < 0) this.satDir *= -1;
 			this.hue += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.hueStep, this.hueStep, true); */
-		this.sat = s;
-		this.hue = h;
+		/* this.sat = s;
+		this.hue = h; */
 	}
 }
 
