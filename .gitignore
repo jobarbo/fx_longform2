@@ -4,4 +4,3 @@ dist-zipped/
 yarn.lock
 project/public/library/
 assets/
-lib/fxlens/
