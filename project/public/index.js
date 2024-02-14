@@ -220,9 +220,7 @@ function generate_composition_params(
 		scalename = scaleContent;
 		let index = -1;
 		for (let i = 0; i < scaleValueNameArr.length; i++) {
-			if (
-				JSON.stringify(scaleValueNameArr[i][0]) === JSON.stringify(scaleContent)
-			) {
+			if (JSON.stringify(scaleValueNameArr[i][0]) === JSON.stringify(scaleContent)) {
 				index = i;
 				break;
 			}
@@ -239,10 +237,7 @@ function generate_composition_params(
 		behaviorname = behaviorContent;
 		let index = -1;
 		for (let i = 0; i < particleBehaviorNameArr.length; i++) {
-			if (
-				JSON.stringify(particleBehaviorNameArr[i][0]) ===
-				JSON.stringify(behaviorContent)
-			) {
+			if (JSON.stringify(particleBehaviorNameArr[i][0]) === JSON.stringify(behaviorContent)) {
 				index = i;
 				break;
 			}
@@ -367,17 +362,11 @@ function weighted_choice(data) {
 	return data[data.length - 1][0];
 }
 
-let mapValue = (v, s, S, a, b) => (
-	(v = Math.min(Math.max(v, s), S)), ((v - s) * (b - a)) / (S - s) + a
-);
-const pmap = (v, cl, cm, tl, th, c) =>
-	c
-		? Math.min(Math.max(((v - cl) / (cm - cl)) * (th - tl) + tl, tl), th)
-		: ((v - cl) / (cm - cl)) * (th - tl) + tl;
+let mapValue = (v, s, S, a, b) => ((v = Math.min(Math.max(v, s), S)), ((v - s) * (b - a)) / (S - s) + a);
+const pmap = (v, cl, cm, tl, th, c) => (c ? Math.min(Math.max(((v - cl) / (cm - cl)) * (th - tl) + tl, tl), th) : ((v - cl) / (cm - cl)) * (th - tl) + tl);
 
 let clamp = (x, a, b) => (x < a ? a : x > b ? b : x);
-let smoothstep = (a, b, x) =>
-	((x -= a), (x /= b - a)) < 0 ? 0 : x > 1 ? 1 : x * x * (3 - 2 * x);
+let smoothstep = (a, b, x) => (((x -= a), (x /= b - a)) < 0 ? 0 : x > 1 ? 1 : x * x * (3 - 2 * x));
 let mix = (a, b, p) => a + p * (b - a);
 let dot = (v1, v2) => v1.x * v2.x + v1.y * v2.y;
 
@@ -432,28 +421,14 @@ F = (N, f) => [...Array(N)].map((_, i) => f(i)); // for loop / map / list functi
 //seed = Math.random() * 2 ** 32;
 
 S = Uint32Array.of(9, 7, 5, 3); // PRNG state
-R = (a = 1) =>
-	a *
-	((a = S[3]),
-	(S[3] = S[2]),
-	(S[2] = S[1]),
-	(a ^= a << 11),
-	(S[0] ^= a ^ (a >>> 8) ^ ((S[1] = S[0]) >>> 19)),
-	S[0] / 2 ** 32); // random function
+R = (a = 1) => a * ((a = S[3]), (S[3] = S[2]), (S[2] = S[1]), (a ^= a << 11), (S[0] ^= a ^ (a >>> 8) ^ ((S[1] = S[0]) >>> 19)), S[0] / 2 ** 32); // random function
 [...(seed + "ThxPiter")].map((c) => R((S[3] ^= c.charCodeAt() * 23205))); // seeding the random function
 
 // general noise definitions =============================================
 KNUTH = 0x9e3779b1; // prime number close to PHI * 2 ** 32
 NSEED = R(2 ** 32); // noise seed, random 32 bit integer
 // 3d noise grid function
-ri = (i, j, k) => (
-	(i = imul(
-		(((i & 1023) << 20) | ((j & 1023) << 10) | ((i ^ j ^ k) & 1023)) ^ NSEED,
-		KNUTH
-	)),
-	(i <<= 3 + (i >>> 29)),
-	(i >>> 1) / 2 ** 31 - 0.5
-);
+ri = (i, j, k) => ((i = imul((((i & 1023) << 20) | ((j & 1023) << 10) | ((i ^ j ^ k) & 1023)) ^ NSEED, KNUTH)), (i <<= 3 + (i >>> 29)), (i >>> 1) / 2 ** 31 - 0.5);
 
 // 3D value noise function ===============================================
 no = F(99, (_) => R(1024)); // random noise offsets
@@ -499,34 +474,18 @@ n2 = (
 	i,
 	c = nc[i] * s,
 	n = ns[i] * s,
-	xi = floor(
-		(([x, y] = [
-			(x - noiseCanvasWidth / 2) * c + (y - noiseCanvasHeight * 2) * n + nox[i],
-			(y - noiseCanvasHeight * 2) * c - (x - noiseCanvasWidth / 2) * n + noy[i],
-		]),
-		x)
-	),
+	xi = floor((([x, y] = [(x - noiseCanvasWidth / 2) * c + (y - noiseCanvasHeight * 2) * n + nox[i], (y - noiseCanvasHeight * 2) * c - (x - noiseCanvasWidth / 2) * n + noy[i]]), x)),
 	yi = floor(y) // (x,y) = coordinate, s = scale, i = noise offset index
 ) => (
 	(x -= xi),
 	(y -= yi),
 	(x *= x * (3 - 2 * x)),
 	(y *= y * (3 - 2 * y)),
-	ri(xi, yi, i) * (1 - x) * (1 - y) +
-		ri(xi, yi + 1, i) * (1 - x) * y +
-		ri(xi + 1, yi, i) * x * (1 - y) +
-		ri(xi + 1, yi + 1, i) * x * y
+	ri(xi, yi, i) * (1 - x) * (1 - y) + ri(xi, yi + 1, i) * (1 - x) * y + ri(xi + 1, yi, i) * x * (1 - y) + ri(xi + 1, yi + 1, i) * x * y
 );
 
 //! Spell formula from Piter The Mage
-ZZ = (x, m, b, r) =>
-	x < 0
-		? x
-		: x > (b *= r * 4)
-		? x - b
-		: ((x /= r), fract(x / 4) < 0.5 ? r : -r) *
-		  ((x = abs(fract(x / 2) - 0.5)),
-		  1 - (x > m ? x * 2 : x * (x /= m) * x * (2 - x) + m));
+ZZ = (x, m, b, r) => (x < 0 ? x : x > (b *= r * 4) ? x - b : ((x /= r), fract(x / 4) < 0.5 ? r : -r) * ((x = abs(fract(x / 2) - 0.5)), 1 - (x > m ? x * 2 : x * (x /= m) * x * (2 - x) + m)));
 
 // the point of all the previous code is that now you have a very
 // fast value noise function called nz(x,y,s,i). It has four parameters:
@@ -568,38 +527,10 @@ document.addEventListener("keydown", saveCanvas);
 
 // make a function to save the canvas as a png file with the git branch name and a timestamp
 function saveArtwork() {
-	var dayoftheweek = [
-		"sunday",
-		"monday",
-		"tuesday",
-		"wednesday",
-		"thursday",
-		"friday",
-		"saturday",
-	];
-	var monthoftheyear = [
-		"january",
-		"february",
-		"march",
-		"april",
-		"may",
-		"june",
-		"july",
-		"august",
-		"september",
-		"october",
-		"november",
-		"december",
-	];
+	var dayoftheweek = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+	var monthoftheyear = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 	var d = new Date();
-	var datestring =
-		d.getDate() +
-		"_" +
-		`${d.getMonth() + 1}` +
-		"_" +
-		d.getFullYear() +
-		"_" +
-		`${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+	var datestring = d.getDate() + "_" + `${d.getMonth() + 1}` + "_" + d.getFullYear() + "_" + `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
 	var fileName = datestring + ".png";
 
 	save(fileName);
@@ -757,9 +688,7 @@ function setupBundler() {
 			// fetch scalevalue based on scalename from scaleValueArr
 			let index = -1;
 			for (let i = 0; i < scaleValueNameArr.length; i++) {
-				if (
-					JSON.stringify(scaleValueNameArr[i][0]) === JSON.stringify(scalename)
-				) {
+				if (JSON.stringify(scaleValueNameArr[i][0]) === JSON.stringify(scalename)) {
 					index = i;
 					break;
 				}
@@ -777,9 +706,7 @@ function setupBundler() {
 			// fetch behaviorvalue based on behaviorname from behaviorValueArr
 			let index = -1;
 			for (let i = 0; i < behaviorNameArr.length; i++) {
-				if (
-					JSON.stringify(behaviorNameArr[i][0]) === JSON.stringify(location)
-				) {
+				if (JSON.stringify(behaviorNameArr[i][0]) === JSON.stringify(location)) {
 					index = i;
 					break;
 				}
@@ -931,12 +858,7 @@ function initSketch() {
 
 	//!check if we keep complementary colors background
 
-	bgHue =
-		features.bgmode == "complementary"
-			? (hue + 180) % 360
-			: features.bgmode == "analogous"
-			? (hue + 30) % 360
-			: hue;
+	bgHue = features.bgmode == "complementary" ? (hue + 180) % 360 : features.bgmode == "analogous" ? (hue + 30) % 360 : hue;
 	bgSat = features.bgmode == "transparent" ? 0 : random([2, 4, 6]);
 	bgCol = color(bgHue, bgSat, features.theme == "bright" ? 93 : 10, 100);
 	INIT_MOVERS();
@@ -1007,47 +929,17 @@ function INIT_MOVERS() {
 	};
 
 	let values = {
-		macro: [
-			features.amplitudemode == "high" ? 16000 : 5000,
-			features.amplitudemode == "high" ? 5000 : 1000,
-		],
-		close: [
-			features.amplitudemode == "high" ? 5000 : 1000,
-			features.amplitudemode == "high" ? 1000 : 500,
-		],
-		mid: [
-			features.amplitudemode == "high" ? 1000 : 500,
-			features.amplitudemode == "high" ? 500 : 100,
-		],
-		far: [
-			features.amplitudemode == "high" ? 500 : 100,
-			features.amplitudemode == "high" ? 100 : 10,
-		],
+		macro: [features.amplitudemode == "high" ? 16000 : 5000, features.amplitudemode == "high" ? 5000 : 1000],
+		close: [features.amplitudemode == "high" ? 5000 : 1000, features.amplitudemode == "high" ? 1000 : 500],
+		mid: [features.amplitudemode == "high" ? 1000 : 500, features.amplitudemode == "high" ? 500 : 100],
+		far: [features.amplitudemode == "high" ? 500 : 100, features.amplitudemode == "high" ? 100 : 10],
 	};
 
 	let thresholdsArr = thresholds[scale_mode];
 	let valuesArr = values[scale_mode];
 
-	let amp1Max = Math.floor(
-		map(
-			scl1,
-			thresholdsArr[0],
-			thresholdsArr[1],
-			valuesArr[0],
-			valuesArr[1],
-			true
-		)
-	);
-	let amp2Max = Math.floor(
-		map(
-			scl2,
-			thresholdsArr[0],
-			thresholdsArr[1],
-			valuesArr[0],
-			valuesArr[1],
-			true
-		)
-	);
+	let amp1Max = Math.floor(map(scl1, thresholdsArr[0], thresholdsArr[1], valuesArr[0], valuesArr[1], true));
+	let amp2Max = Math.floor(map(scl2, thresholdsArr[0], thresholdsArr[1], valuesArr[0], valuesArr[1], true));
 
 	amp1rnd1 = Math.floor(fxrand() * amp1Max);
 	amp1rnd2 = Math.floor(fxrand() * amp1Max);
@@ -1097,62 +989,28 @@ function INIT_MOVERS() {
 		let y = random(yMin, yMax) * height;
 
 		let initHue = hue;
-		initHue =
-			initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
+		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 
-		movers.push(
-			new Mover(
-				x,
-				y,
-				initHue,
-				scl1 / MULTIPLIER,
-				scl2 / MULTIPLIER,
-				amp1 * MULTIPLIER,
-				amp2 * MULTIPLIER,
-				xMin,
-				xMax,
-				yMin,
-				yMax,
-				xRandDivider,
-				yRandDivider
-			)
-		);
+		movers.push(new Mover(x, y, initHue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, amp1 * MULTIPLIER, amp2 * MULTIPLIER, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider));
 	}
 }
 
 function loadURLParams() {
-	window.location.search.includes("population")
-		? (particleNum = parseInt(window.location.search.split("population=")[1]))
-		: 800000;
+	window.location.search.includes("population") ? (particleNum = parseInt(window.location.search.split("population=")[1])) : 800000;
 	if (window.location.search.includes("dpi")) {
 		dpi_val = parseInt(window.location.search.split("dpi=")[1]);
 	}
 	if (window.location.search.includes("ratio=")) {
-		if (
-			window.location.search.includes("ratio=a4") ||
-			urlParams.ratio == "a4"
-		) {
+		if (window.location.search.includes("ratio=a4") || urlParams.ratio == "a4") {
 			RATIO = 1.414;
 			MARGIN = 250;
-		} else if (
-			window.location.search.includes("ratio=skate") ||
-			urlParams.ratio == "skate"
-		) {
+		} else if (window.location.search.includes("ratio=skate") || urlParams.ratio == "skate") {
 			RATIO = 3.888;
 			MARGIN = 0;
-		} else if (
-			window.location.search.includes("ratio=square") ||
-			window.location.search.includes("ratio=1") ||
-			urlParams.ratio == "square" ||
-			urlParams.ratio == "1"
-		) {
+		} else if (window.location.search.includes("ratio=square") || window.location.search.includes("ratio=1") || urlParams.ratio == "square" || urlParams.ratio == "1") {
 			RATIO = 1;
 			MARGIN = 300;
-		} else if (
-			window.location.search.includes("ratio=3") ||
-			window.location.search.includes("ratio=bookmark") ||
-			urlParams.ratio == "bookmark"
-		) {
+		} else if (window.location.search.includes("ratio=3") || window.location.search.includes("ratio=bookmark") || urlParams.ratio == "bookmark") {
 			RATIO = 3;
 			MARGIN = 150;
 		} else {
@@ -1174,13 +1032,8 @@ function drawTexture(hue) {
 		let y = fxrand() * height;
 		let sw = 0.45 * MULTIPLIER;
 		let h = hue + fxrand() * 2 - 1;
-		let s =
-			features.colormode != "monochrome"
-				? [0, 20, 40, 60, 80, 100][parseInt(fxrand() * 6)]
-				: 0;
-		let b = [0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100][
-			parseInt(fxrand() * 11)
-		];
+		let s = features.colormode != "monochrome" ? [0, 20, 40, 60, 80, 100][parseInt(fxrand() * 6)] : 0;
+		let b = [0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100][parseInt(fxrand() * 11)];
 		drawingContext.fillStyle = `hsla(${h}, ${s}%, ${b}%, 100%)`;
 		drawingContext.fillRect(x, y, sw, sw);
 	}
@@ -1204,8 +1057,7 @@ function showLoadingBar(elapsedTime, maxFrames, renderStart) {
 
 	// put the percent in the title of the page
 	document.title = percent.toFixed(0) + "%";
-	dom_dashboard.innerHTML =
-		percent.toFixed(0) + "%" + " - Time left : " + timeLeftSec + "s";
+	dom_dashboard.innerHTML = percent.toFixed(0) + "%" + " - Time left : " + timeLeftSec + "s";
 
 	if (percent.toFixed(0) >= 100) {
 		dom_dashboard.innerHTML = "Done!";
@@ -1214,22 +1066,7 @@ function showLoadingBar(elapsedTime, maxFrames, renderStart) {
 }
 
 class Mover {
-	constructor(
-		x,
-		y,
-		hue,
-		scl1,
-		scl2,
-		amp1,
-		amp2,
-		xMin,
-		xMax,
-		yMin,
-		yMax,
-		xRandDivider,
-		yRandDivider,
-		bgColArr
-	) {
+	constructor(x, y, hue, scl1, scl2, amp1, amp2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, bgColArr) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
@@ -1238,33 +1075,21 @@ class Mover {
 				? [60, 70, 80, 80, 90, 100][Math.floor(fxrand() * 6)]
 				: features.vibrancymode === "low"
 				? [0, 10, 20, 20, 30, 40][Math.floor(fxrand() * 6)]
-				: [0, 10, 20, 30, 40, 40, 60, 80, 80, 90, 100][
-						Math.floor(fxrand() * 11)
-				  ];
+				: [0, 10, 20, 30, 40, 40, 60, 80, 80, 90, 100][Math.floor(fxrand() * 11)];
 
 		this.initBri =
 			features.theme === "bright" && features.colormode !== "monochrome"
-				? [0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100][
-						Math.floor(fxrand() * 11)
-				  ]
+				? [0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100][Math.floor(fxrand() * 11)]
 				: features.theme === "bright" && features.colormode === "monochrome"
 				? [0, 0, 10, 20, 20, 30, 40, 60, 80][Math.floor(fxrand() * 9)]
 				: [40, 40, 60, 70, 70, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
 		this.initAlpha = 50;
 		this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;
-		this.sat =
-			features.colormode === "monochrome" || features.colormode === "duotone"
-				? 0
-				: this.initSat;
+		this.sat = features.colormode === "monochrome" || features.colormode === "duotone" ? 0 : this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep =
-			features.colormode === "monochrome" || features.colormode === "fixed"
-				? 1
-				: features.colormode === "dynamic" || features.colormode === "duotone"
-				? 10
-				: 20;
+		this.hueStep = features.colormode === "monochrome" || features.colormode === "fixed" ? 1 : features.colormode === "dynamic" || features.colormode === "duotone" ? 10 : 20;
 		this.satStep = features.colorMode === "duotone" ? 0.1 : 1;
 		this.briStep = 0;
 		this.s = this.initS;
@@ -1293,10 +1118,7 @@ class Mover {
 		this.bgCol = bgColArr;
 		this.zombie = false;
 		this.zombieAlpha = features.jdlmode === "true" ? this.initAlpha : 0;
-		this.lineWeight =
-			typeof features.lineModeValue === "string"
-				? eval(features.lineModeValue) * MULTIPLIER
-				: features.lineModeValue * MULTIPLIER;
+		this.lineWeight = typeof features.lineModeValue === "string" ? eval(features.lineModeValue) * MULTIPLIER : features.lineModeValue * MULTIPLIER;
 	}
 
 	show() {
@@ -1305,72 +1127,27 @@ class Mover {
 	}
 
 	move() {
-		let p = superCurve(
-			this.x,
-			this.y,
-			this.scl1,
-			this.scl2,
-			this.amp1,
-			this.amp2,
-			this.oct,
-			this.clampvaluearray,
-			this.uvalueArr
-		);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.amp1, this.amp2, this.oct, this.clampvaluearray, this.uvalueArr);
 
-		this.xRandSkipper =
-			fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) -
-			this.xRandSkipperVal * MULTIPLIER;
-		this.yRandSkipper =
-			fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) -
-			this.xRandSkipperVal * MULTIPLIER;
+		this.xRandSkipper = fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) - this.xRandSkipperVal * MULTIPLIER;
+		this.yRandSkipper = fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) - this.xRandSkipperVal * MULTIPLIER;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
 		let pxy = p.x - p.y;
-		this.hue += mapValue(
-			pxy,
-			-this.uvalue * 2,
-			this.uvalue * 2,
-			-this.hueStep,
-			this.hueStep,
-			true
-		);
+		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
-		this.bri += mapValue(
-			p.y,
-			-this.uvalue * 2,
-			this.uvalue * 2,
-			-this.briStep,
-			this.briStep,
-			true
-		);
+		this.bri += mapValue(p.y, -this.uvalue * 2, this.uvalue * 2, -this.briStep, this.briStep, true);
 		this.bri = this.bri > 100 ? 0 : this.bri < 0 ? 100 : this.bri;
-		this.sat += mapValue(
-			p.x,
-			-this.uvalue * 2,
-			this.uvalue * 2,
-			-this.satStep,
-			this.satStep,
-			true
-		);
+		this.sat += mapValue(p.x, -this.uvalue * 2, this.uvalue * 2, -this.satStep, this.satStep, true);
 		if (features.colormode != "monochrome" && features.colormode != "duotone") {
 			this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
 		} else if (features.colormode === "duotone") {
-			this.sat =
-				this.sat > this.initSat * 1.5
-					? 0
-					: this.sat < 0
-					? this.initSat * 1.5
-					: this.sat;
+			this.sat = this.sat > this.initSat * 1.5 ? 0 : this.sat < 0 ? this.initSat * 1.5 : this.sat;
 		}
 
-		if (
-			this.x < this.xMin * width ||
-			this.x > this.xMax * width ||
-			this.y < this.yMin * height ||
-			this.y > this.yMax * height
-		) {
+		if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
 			this.a = 0;
 			this.zombie = true;
 		} else {
@@ -1395,17 +1172,7 @@ class Mover {
 		}
 	}
 }
-function superCurve(
-	x,
-	y,
-	scl1,
-	scl2,
-	amp1,
-	amp2,
-	octave,
-	clampvalueArr,
-	uvalueArr
-) {
+function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueArr) {
 	let nx = x,
 		ny = y,
 		a1 = amp1,
@@ -1433,22 +1200,8 @@ function superCurve(
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let u = mapValue(
-		un,
-		-clampvalueArr[0],
-		clampvalueArr[1],
-		-uvalueArr[0],
-		uvalueArr[1],
-		true
-	);
-	let v = mapValue(
-		vn,
-		-clampvalueArr[2],
-		clampvalueArr[3],
-		-uvalueArr[2],
-		uvalueArr[3],
-		true
-	);
+	let u = mapValue(un, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], true);
+	let v = mapValue(vn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], true);
 
 	return {x: u, y: v};
 }
@@ -1624,9 +1377,11 @@ function mod_border_radius() {
 function mod_pres_mode() {
 	if (presentation) {
 		presentation = false;
+		document.querySelector(".frame").classList.remove("presentation");
 		document.querySelector("canvas").classList.remove("presentation");
 	} else {
 		presentation = true;
+		document.querySelector(".frame").classList.add("presentation");
 		document.querySelector("canvas").classList.add("presentation");
 	}
 	dom_presentation.innerHTML = presentation ? "ON" : "OFF";
@@ -1646,9 +1401,11 @@ function mod_info_mode() {
 function mod_tilt_mode() {
 	if (rotation_mode) {
 		rotation_mode = false;
+		document.querySelector(".frame").classList.remove("horizontal");
 		document.querySelector("canvas").classList.remove("horizontal");
 	} else {
 		rotation_mode = true;
+		document.querySelector(".frame").classList.add("horizontal");
 		document.querySelector("canvas").classList.add("horizontal");
 	}
 	dom_tilt.innerHTML = rotation_mode ? "ON" : "OFF";
