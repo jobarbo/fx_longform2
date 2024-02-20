@@ -146,6 +146,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, nvalue, uvalue) 
 	nx += dx * a1;
 	ny += dy * a2;
 
+	//! use same index and/or same octave for both u and n
 	let un = oct(nx, ny, scale1, 0, octave);
 	let vn = oct(nx, ny, scale2, 1, octave);
 

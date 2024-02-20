@@ -1,5 +1,5 @@
 let config_type = parseInt(fxrand() * 3 + 1);
-//config_type = 1;
+//config_type = 3;
 console.log(config_type);
 
 let features = "";
@@ -39,7 +39,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(3.0);
+		pixelDensity(5.0);
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
@@ -61,7 +61,7 @@ function setup() {
 }
 
 function draw() {
-	blendMode(SCREEN);
+	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
 		//if (frameCount > 20 || frameCount < 2) {
 		movers[i].show();
