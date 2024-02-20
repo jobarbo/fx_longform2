@@ -1,5 +1,5 @@
 let config_type = parseInt(fxrand() * 3 + 1);
-//let config_type = 2;
+config_type = 1;
 console.log(config_type);
 
 let features = "";
@@ -15,7 +15,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 600;
+let maxFrames = 800;
 let C_WIDTH;
 let MULTIPLIER;
 
@@ -42,7 +42,7 @@ function setup() {
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 1200;
+	MULTIPLIER = C_WIDTH / 1800;
 	c = createCanvas(C_WIDTH, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
