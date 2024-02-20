@@ -28,10 +28,10 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		/* 		this.xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
-		this.yRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]); */
-		this.xRandSkipperVal = 0.01;
-		this.yRandSkipperVal = 0.01;
+		this.xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
+		this.yRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
+		/* 		this.xRandSkipperVal = 0.01;
+		this.yRandSkipperVal = 0.01; */
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -78,7 +78,7 @@ class Mover {
 
 			//! YoYo with value (not sure);
 
-			/* 			if (this.nvalue[i] <= -this.nlimit || this.nvalue[i] >= this.nlimit) {
+			/* if (this.nvalue[i] <= -this.nlimit || this.nvalue[i] >= this.nlimit) {
 				this.nvalue[i] = this.nvalue[i] > this.nlimit ? this.nlimit : this.nvalue[i] < -this.nlimit ? -this.nlimit : this.nvalue[i];
 				this.nvalueDir[i] *= -1;
 				this.lineWeight += 0.1 * MULTIPLIER;
