@@ -39,7 +39,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(5.0);
+		pixelDensity(3.0);
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
@@ -96,7 +96,7 @@ function INIT(seed) {
 	yMin = -0.01;
 	yMax = 1.01;
 
-	let hue = random([30, 35, 40, 190, 195, 200, 205, 210, 215, 280, 285, 290, 300, 305, 310]);
+	let hue = random([30, 35, 40, 190, 195, 200, 205, 210, 215]);
 	for (let i = 0; i < 20000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
