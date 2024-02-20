@@ -61,7 +61,7 @@ function setup() {
 }
 
 function draw() {
-	blendMode(SCREEN);
+	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
 		//if (frameCount > 20 || frameCount < 2) {
 		movers[i].show();
