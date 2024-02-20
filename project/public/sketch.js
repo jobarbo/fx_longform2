@@ -49,7 +49,8 @@ function setup() {
 	nseed = noiseSeed(fxrand() * 10000);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
-	//noCursor();
+
+	frameRate(120);
 
 	centerX = width / 2;
 	centerY = height / 2;

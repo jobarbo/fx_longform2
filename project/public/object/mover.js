@@ -28,10 +28,10 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 75, 100])]);
-		this.yRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 75, 100])]);
-		/* 		this.xRandSkipperVal = 0.01;
-		this.yRandSkipperVal = 0.01; */
+		//this.xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 75, 100])]);
+		//this.yRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 75, 100])]);
+		this.xRandSkipperVal = 0.01;
+		this.yRandSkipperVal = 0.01;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -41,9 +41,9 @@ class Mover {
 		this.centerY = height / 2;
 		this.zombie = false;
 		//this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing
-		this.lineWeight = 0.1 * MULTIPLIER;
+		this.lineWeight = 0.01 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [30, 30, 1, 1];
+		this.uvalue = [30, 30, 0.4, 0.7];
 		this.nvalue = [0.15, 0.15, 0.15, 0.15];
 		this.nlimit = 0.1;
 		this.satDir = random(1, 5, 10, 25, 50);
@@ -68,7 +68,7 @@ class Mover {
 					this.uvalue[i] /= 1.001 * this.uvalueDir[i];
 				}
 
-				this.nvalue[i] += 0.005 * this.nvalueDir[i];
+				this.nvalue[i] += 0.0015 * this.nvalueDir[i];
 			} else if (config_type === 2) {
 				//! Equilibrium CONFIGURATION
 				this.uvalue[i] *= 1.015 * this.uvalueDir[i];
