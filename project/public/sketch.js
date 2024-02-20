@@ -1,5 +1,5 @@
 let config_type = parseInt(fxrand() * 3 + 1);
-//let config_type = 2;
+//config_type = 1;
 console.log(config_type);
 
 let features = "";
@@ -15,9 +15,10 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 600;
+let maxFrames = 1600;
 let C_WIDTH;
 let MULTIPLIER;
+let RATIO = 1;
 
 let centerX;
 let centerY;
@@ -43,7 +44,7 @@ function setup() {
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1200;
-	c = createCanvas(C_WIDTH, C_WIDTH);
+	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -55,11 +56,12 @@ function setup() {
 	centerY = height / 2;
 	borderX = features.composition === "compressed" ? width / 3.5 : features.composition === "constrained" ? width / 3 : features.composition === "semiconstrained" ? width / 2.35 : width / 1.9;
 	borderY = features.composition === "compressed" ? height / 2.75 : features.composition === "constrained" ? height / 2.5 : features.composition === "semiconstrained" ? height / 2.25 : height / 1.9;
+	console.log(features);
 	INIT(rseed);
 }
 
 function draw() {
-	blendMode(ADD);
+	blendMode(SCREEN);
 	for (let i = 0; i < movers.length; i++) {
 		//if (frameCount > 20 || frameCount < 2) {
 		movers[i].show();
@@ -94,7 +96,7 @@ function INIT(seed) {
 	yMin = -0.01;
 	yMax = 1.01;
 
-	let hue = random(360);
+	let hue = random([30, 35, 40, 190, 195, 200, 205, 210, 215, 280, 285, 290, 300, 305, 310]);
 	for (let i = 0; i < 20000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;

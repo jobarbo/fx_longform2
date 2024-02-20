@@ -2,14 +2,9 @@ class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features) {
 		this.x = x;
 		this.y = y;
-		this.initHue = 201;
+		this.initHue = hue;
 		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
-		this.initBri =
-			features.theme === "bright" && features.colormode !== "monochrome"
-				? random([0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100])
-				: features.theme === "bright" && features.colormode === "monochrome"
-				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
-				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
+		this.initBri = random([60, 70, 70, 80, 80, 80, 90, 100]);
 		this.initAlpha = 100;
 		this.initS = 0.22 * MULTIPLIER;
 		this.hue = this.initHue;
@@ -17,7 +12,7 @@ class Mover {
 		this.sat = 0;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = features.colormode === "monochrome" || features.colormode === "fixed" ? 0 : features.colormode === "dynamic" ? 6 : 25;
+		this.hueStep = random([0, 0.01, 0.1, 1, 2, 5, 7]);
 		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -28,10 +23,10 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
-		this.yRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
-		/* 		this.xRandSkipperVal = 0.01;
-		this.yRandSkipperVal = 0.01; */
+		this.xRandSkipperVal = random([0.01, 0.05, 0.1, random([0, 0.01, 0.1, 1, 2, 5, 10, 25, 50, 100])]);
+		this.yRandSkipperVal = this.xRandSkipperVal;
+		/* 		this.xRandSkipperVal = 0;
+		this.yRandSkipperVal = 0; */
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -40,13 +35,13 @@ class Mover {
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.zombie = false;
-		//this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
-		this.lineWeight = 0.1 * MULTIPLIER;
+		//this.lineWeight = random([0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10]) * MULTIPLIER; //!try randomizing this
+		this.lineWeight = 0 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [15, 15, 15, 15];
+		this.uvalue = [5, 5, 5, 5]; //! try with 10 or 5
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
 		this.nlimit = 1.5;
-		this.satDir = 1;
+		this.satDir = random(1, 5, 10, 25, 50);
 
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
@@ -72,8 +67,9 @@ class Mover {
 				this.nvalue[i] += 0.015 * this.nvalueDir[i];
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
-				this.uvalue[i] += 1;
-				//this.nvalue[i] -= 0.005;
+				//this.uvalue[i] *= 1.011;
+				this.uvalue[i] += 0.5 * this.uvalueDir[i];
+				//this.nvalue[i] += 0.0015 * this.nvalueDir[i];
 			}
 
 			//! YoYo with value (not sure);
@@ -81,7 +77,7 @@ class Mover {
 			/* if (this.nvalue[i] <= -this.nlimit || this.nvalue[i] >= this.nlimit) {
 				this.nvalue[i] = this.nvalue[i] > this.nlimit ? this.nlimit : this.nvalue[i] < -this.nlimit ? -this.nlimit : this.nvalue[i];
 				this.nvalueDir[i] *= -1;
-				this.lineWeight += 0.1 * MULTIPLIER;
+				//this.lineWeight += 0.1 * MULTIPLIER;
 			} */
 			/* 
 			if (this.uvalue[i] <= -200 || this.uvalue[i] >= 200) {
@@ -91,7 +87,7 @@ class Mover {
 		}
 
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
-		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
+		this.yRandSkipper = random(-this.yRandSkipperVal * MULTIPLIER, this.yRandSkipperVal * MULTIPLIER);
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
