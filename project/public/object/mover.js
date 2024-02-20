@@ -4,15 +4,15 @@ class Mover {
 		this.y = y;
 		this.initHue = hue;
 		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
-		this.initBri = random([30, 40, 60, 70, 70, 80, 80, 80, 90, 100]);
+		this.initBri = random([50, 60, 70, 70, 80, 80, 80, 90, 100]);
 		this.initAlpha = 100;
 		this.initS = 0.22 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = random([0, 0, 0, 10, 10, 10, 80, 100, 100, 100, 100, 100, 100]);
-		this.sat = 0;
+		//this.sat = 0;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = random([0, 0.01, 0.1, 1, 2, 5, 7]);
+		this.hueStep = random([0, 0.01, 0.1, 1, 2]);
 		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -38,12 +38,13 @@ class Mover {
 		//this.lineWeight = random([0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10]) * MULTIPLIER; //!try randomizing this
 		this.lineWeight = 0 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [5, 5, 5, 5]; //! try with 10 or 5
+		this.uvalue = [10, 10, 10, 10]; //! try with 10 or 5
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
 		this.nlimit = 1.5;
-		this.satDir = random(1, 5, 10, 25, 50);
+		this.satDir = random(-1, -5, -10, -25, -50);
 
 		this.nvalueDir = [-1, -1, -1, -1];
+		//! jouer avec le negatif et le positif
 		this.uvalueDir = [1, 1, 1, 1];
 	}
 
@@ -68,7 +69,7 @@ class Mover {
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
 				//this.uvalue[i] *= 1.011;
-				this.uvalue[i] += 0.5 * this.uvalueDir[i];
+				this.uvalue[i] += 0.75 * this.uvalueDir[i];
 				//this.nvalue[i] += 0.0015 * this.nvalueDir[i];
 			}
 
