@@ -14,10 +14,10 @@ class Mover {
 		this.initS = 0.22 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = random([0, 0, 0, 10, 10, 10, 80, 100, 100, 100, 100, 100, 100]);
-		this.sat = 0;
+		//this.sat = 0;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = features.colormode === "monochrome" || features.colormode === "fixed" ? 0 : features.colormode === "dynamic" ? 6 : 25;
+		this.hueStep = random([0, 0.01, 0.1, 1, 5]);
 		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -41,7 +41,8 @@ class Mover {
 		this.centerY = height / 2;
 		this.zombie = false;
 		//this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing
-		this.lineWeight = 0.1 * MULTIPLIER;
+		this.lineWeight = random([0.01, 0.1, 1, 2, 5]) * MULTIPLIER;
+		//this.lineWeight = 0.1 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [30, 30, 1, 1];
 		this.nvalue = [0.15, 0.15, 0.15, 0.15];
@@ -59,6 +60,9 @@ class Mover {
 	}
 
 	move() {
+		// ! TEST THIS
+		/* 		this.a = map(this.y, this.yMin * height, 0.5 * height, 10, 100, true);
+		this.yRandDivider = map(this.y, this.yMin * height, this.yMax * height, 0.25, 0.1, true); */
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed, this.oct, this.nvalue, this.uvalue);
 
 		for (let i = 0; i < this.nvalue.length; i++) {
