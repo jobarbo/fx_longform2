@@ -64,6 +64,20 @@ class Mover {
 		for (let i = 0; i < this.nvalue.length; i++) {
 			if (config_type === 1) {
 				//! STARMAP CONFIGURATION
+
+				/* 				if (i < 2) {
+					if (this.uvalue[i] < 25 || this.uvalue[i] > 50) {
+						this.uvalueDir[i] *= -1;
+						this.uvalue[i] = this.uvalue[i] > 25 ? 25 : this.uvalue[i] < 10 ? 10 : this.uvalue[i];
+					} else {
+						if (this.uvalueDir[i] > 0) {
+							this.uvalue[i] /= 1.001;
+						} else {
+							this.uvalue[i] *= 1.001;
+						}
+					}
+				} */
+
 				if (i < 2) {
 					this.uvalue[i] /= 1.001 * this.uvalueDir[i];
 				}
@@ -86,13 +100,7 @@ class Mover {
 				this.nvalueDir[i] *= -1;
 				//this.lineWeight += 0.1 * MULTIPLIER;
 			}
-			/* 
-			if (this.uvalue[i] <= -200 || this.uvalue[i] >= 200) {
-				this.uvalue[i] = this.uvalue[i] > 200 ? 200 : this.uvalue[i] < -200 ? -200 : this.uvalue[i];
-				this.uvalueDir[i] *= -1;
-			} */
 		}
-
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 
