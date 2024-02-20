@@ -65,7 +65,7 @@ class Mover {
 			if (config_type === 1) {
 				//! STARMAP CONFIGURATION
 
-				/* 				if (i < 2) {
+				/* 		tst		if (i < 2) {
 					if (this.uvalue[i] < 25 || this.uvalue[i] > 50) {
 						this.uvalueDir[i] *= -1;
 						this.uvalue[i] = this.uvalue[i] > 25 ? 25 : this.uvalue[i] < 10 ? 10 : this.uvalue[i];
