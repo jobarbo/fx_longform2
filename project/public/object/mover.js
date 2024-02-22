@@ -9,7 +9,7 @@ class Mover {
 		this.initS = 0.12 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
-		this.sat = 0;
+		this.sat = 100;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
 		this.s = this.initS;
@@ -48,7 +48,7 @@ class Mover {
 		this.ulow = 0.01;
 		this.uhigh = 50;
 
-		this.hueStep = 0.05;
+		this.hueStep = 0.015;
 		this.satDir = random([2]);
 	}
 
