@@ -12,7 +12,6 @@ class Mover {
 		this.sat = 0;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = 0.05;
 		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -35,17 +34,22 @@ class Mover {
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.zombie = false;
-		this.lineWeight = random([0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10]) * MULTIPLIER; //!try randomizing this
+		//this.lineWeight = random([0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10]) * MULTIPLIER; //!try randomizing this
 		this.lineWeight = 10 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [10, 10, 10, 10]; //! try with 10 or 5
 		this.nvalue = [0.00005, 0.00005, 0.00005, 0.00005];
 		this.nlimit = 1;
-		this.satDir = random([2]);
 
-		this.nvalueDir = [1, 1, 1, 1];
 		//! jouer avec le negatif et le positif
+		this.nvalueDir = [1, 1, 1, 1];
 		this.uvalueDir = [1, 1, 1, 1];
+
+		this.ulow = 0.01;
+		this.uhigh = 50;
+
+		this.hueStep = 0.05;
+		this.satDir = random([2]);
 	}
 
 	show() {
@@ -81,8 +85,8 @@ class Mover {
 				//this.lineWeight += 0.1 * MULTIPLIER;
 			}
 
-			if (this.uvalue[i] <= 0.01 || this.uvalue[i] >= 50) {
-				this.uvalue[i] = this.uvalue[i] > 50 ? 0.01 : this.uvalue[i] < 0.01 ? 50 : this.uvalue[i];
+			if (this.uvalue[i] <= this.ulow || this.uvalue[i] >= this.uhigh) {
+				this.uvalue[i] = this.uvalue[i] > this.uhigh ? this.ulow : this.uvalue[i] < this.ulow ? this.uhigh : this.uvalue[i];
 				//this.uvalueDir[i] *= -1;
 			}
 		}
