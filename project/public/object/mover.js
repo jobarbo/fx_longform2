@@ -22,7 +22,7 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = random([0.01, 0.05, 0.1, random([0, 0.01, 0.1, 1, 2, 5, 10, 25, 50, 300])]);
+		this.xRandSkipperVal = random([0.01, 0.05, 0.1, random([0, 0.01, 0.1, 1, 2, 5, 10, 25, 50, 75])]);
 		this.yRandSkipperVal = this.xRandSkipperVal;
 		/* 		this.xRandSkipperVal = 0.01;
 		this.yRandSkipperVal = 0.01; */
@@ -34,7 +34,7 @@ class Mover {
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.zombie = false;
-		//this.lineWeight = random([0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10]) * MULTIPLIER; //!try randomizing this
+		//this.lineWeight = random([0.01, 5, 10, 15, 20, 50]) * MULTIPLIER; //!try randomizing this
 		this.lineWeight = 10 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [10, 10, 10, 10]; //! try with 10 or 5
@@ -98,23 +98,23 @@ class Mover {
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
 		if (this.x < this.xMin * width - this.lineWeight) {
-			this.x = this.xMax * width + fxrand() * this.lineWeight;
-			this.y = this.y + fxrand() * this.lineWeight;
+			this.x = this.xMax * width + random() * this.lineWeight;
+			this.y = this.y + random() * this.lineWeight;
 			//this.a = 100;
 		}
 		if (this.x > this.xMax * width + this.lineWeight) {
-			this.x = this.xMin * width - fxrand() * this.lineWeight;
-			this.y = this.y + fxrand() * this.lineWeight;
+			this.x = this.xMin * width - random() * this.lineWeight;
+			this.y = this.y + random() * this.lineWeight;
 			//this.a = 100;
 		}
 		if (this.y < this.yMin * height - this.lineWeight) {
-			this.y = this.yMax * height + fxrand() * this.lineWeight;
-			this.x = this.x + fxrand() * this.lineWeight;
+			this.y = this.yMax * height + random() * this.lineWeight;
+			this.x = this.x + random() * this.lineWeight;
 			//this.a = 100;
 		}
 		if (this.y > this.yMax * height + this.lineWeight) {
-			this.y = this.yMin * height - fxrand() * this.lineWeight;
-			this.x = this.x + fxrand() * this.lineWeight;
+			this.y = this.yMin * height - random() * this.lineWeight;
+			this.x = this.x + random() * this.lineWeight;
 			//this.a = 100;
 		}
 
@@ -128,7 +128,7 @@ class Mover {
 }
 
 function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, nvalue, uvalue) {
-	let nx = x + 150,
+	let nx = x + 140,
 		ny = y - 0,
 		a1 = ang1,
 		a2 = ang2,
