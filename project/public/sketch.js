@@ -1,5 +1,5 @@
 let config_type = parseInt(fxrand() * 3 + 1);
-//config_type = 3;
+config_type = 2;
 console.log(config_type);
 
 let features = "";
@@ -15,7 +15,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 1600;
+let maxFrames = 1800;
 let C_WIDTH;
 let MULTIPLIER;
 let RATIO = 1;
@@ -43,7 +43,8 @@ function setup() {
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 1200;
+	MULTIPLIER = C_WIDTH / 600;
+
 	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
@@ -61,7 +62,7 @@ function setup() {
 }
 
 function draw() {
-	blendMode(ADD);
+	blendMode(SCREEN);
 	for (let i = 0; i < movers.length; i++) {
 		//if (frameCount > 20 || frameCount < 2) {
 		movers[i].show();
@@ -89,14 +90,14 @@ function INIT(seed) {
 	ang1 = 1;
 	ang2 = 1;
 
-	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
-	yRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
+	xRandDivider = random([0.015]);
+	yRandDivider = random([0.15]);
 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
 	yMax = 1.01;
 
-	let hue = random([30, 35, 40, 190, 195, 200, 205, 210, 215]);
+	let hue = random([25, 30, 35, 190, 195, 200, 205, 210, 215]);
 	for (let i = 0; i < 20000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
@@ -105,7 +106,7 @@ function INIT(seed) {
 		movers.push(new Mover(x, y, initHue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, ang1 * MULTIPLIER, ang2 * MULTIPLIER, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features));
 	}
 
-	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == "bright" ? 93 : 5, 100);
+	bgCol = color(220, 0, 5);
 
 	background(bgCol);
 	//background(45, 100, 100);
