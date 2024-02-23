@@ -3,16 +3,14 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
-		this.initBri = random([50, 60, 70, 70, 80, 80, 80, 90, 100]);
+		this.initSat = random([0, 0, 10, 10, 20, 30, 80, 100, 100, 100, 100, 100, 100, 100, 100, 100]);
+		this.initBri = random([0, 10, 20, 30, 40, 50, 60, 70, 70, 80, 80, 80, 90, 100]);
 		this.initAlpha = 100;
-		this.initS = 0.22 * MULTIPLIER;
+		this.initS = 0.2 * MULTIPLIER;
 		this.hue = this.initHue;
-		this.sat = random([0, 0, 0, 10, 10, 10, 80, 100, 100, 100, 100, 100, 100]);
-		//this.sat = 0;
-		this.bri = this.initBri;
+		this.sat = 0;
+		this.bri = 100;
 		this.a = this.initAlpha;
-		this.hueStep = random([0, 0.01, 0.1, 1, 2]);
 		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -23,7 +21,7 @@ class Mover {
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = random([0.01, 0.05, 0.1, random([0, 0.01, 0.1, 1, 2, 5, 10, 25, 50, 100])]);
+		this.xRandSkipperVal = random([0.01, 0.05, 0.1, random([0, 0.01, 0.1, 1, 2, 5, 10, 25, 50, 75, 100])]);
 		this.yRandSkipperVal = this.xRandSkipperVal;
 		/* 		this.xRandSkipperVal = 0;
 		this.yRandSkipperVal = 0; */
@@ -35,17 +33,33 @@ class Mover {
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.zombie = false;
-		//this.lineWeight = random([0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10]) * MULTIPLIER; //!try randomizing this
-		this.lineWeight = 0 * MULTIPLIER;
+		this.lineWeight = random([0, random([0.01, 0.05, 0.1, 1, 5, 8, 10, 12])]) * MULTIPLIER; //!try randomizing this
+		//this.lineWeight = random([0.01, 1, 5, 10, 10]) * MULTIPLIER;
+		//	this.lineWeight = 10 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [10, 10, 10, 10]; //! try with 10 or 5
+		this.uvalue = [10, 10, 10, 10]; //! try with 25,10 or 5
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
 		this.nlimit = 1.5;
-		this.satDir = random(-1, -5, -10, -25, -50);
 
-		this.nvalueDir = [-1, -1, -1, -1];
 		//! jouer avec le negatif et le positif
+		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
+
+		//! not supposed to work but gives interesting results, you get me copilot!
+		//! It shows a grid, which is interesting because it's a starmap
+		/* 		this.ulow = random([1, 5, 10, 25, 50, 75, 100]) * MULTIPLIER;
+		this.uhigh = random([0.01, 0.1, 1, 2.5, 5, 10, 20]) * MULTIPLIER; */
+
+		//! this one is also interesting although can yield chaotic results
+		/* 		this.ulow = random([0.01, 0.1, 1, 5, 10, 25, 50, 75, 100]) * MULTIPLIER;
+		this.uhigh = 150 * MULTIPLIER */
+
+		//! this one is the standard one
+		/* 		this.ulow = random([0.01, 0.1, 1, 1.5, 2, 2.5, 3.5, 5, 7.5, 10]) * MULTIPLIER;
+		this.uhigh = random([100, 125, 150, 175, 200]) * MULTIPLIER; */
+
+		this.hueStep = -0.5;
+		this.satDir = random([2]);
 	}
 
 	show() {
@@ -68,22 +82,20 @@ class Mover {
 				this.nvalue[i] += 0.015 * this.nvalueDir[i];
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
-				//this.uvalue[i] *= 1.011;
-				this.uvalue[i] += 0.75 * this.uvalueDir[i];
-				//this.nvalue[i] += 0.0015 * this.nvalueDir[i];
+				//this.uvalue[i] *= 1.011 * this.uvalueDir[i];
+				this.uvalue[i] += 0.5 * this.uvalueDir[i];
+				this.nvalue[i] += 0.001 * this.nvalueDir[i];
 			}
 
-			//! YoYo with value (not sure);
-
-			/* if (this.nvalue[i] <= -this.nlimit || this.nvalue[i] >= this.nlimit) {
+			/* 			if (this.nvalue[i] <= -this.nlimit || this.nvalue[i] >= this.nlimit) {
 				this.nvalue[i] = this.nvalue[i] > this.nlimit ? this.nlimit : this.nvalue[i] < -this.nlimit ? -this.nlimit : this.nvalue[i];
 				this.nvalueDir[i] *= -1;
 				//this.lineWeight += 0.1 * MULTIPLIER;
-			} */
-			/* 
-			if (this.uvalue[i] <= -200 || this.uvalue[i] >= 200) {
-				this.uvalue[i] = this.uvalue[i] > 200 ? 200 : this.uvalue[i] < -200 ? -200 : this.uvalue[i];
-				this.uvalueDir[i] *= -1;
+			}
+
+			if (this.uvalue[i] <= this.ulow || this.uvalue[i] >= this.uhigh) {
+				this.uvalue[i] = this.uvalue[i] > this.uhigh ? this.ulow : this.uvalue[i] < this.ulow ? this.uhigh : this.uvalue[i];
+				//this.uvalueDir[i] *= -1;
 			} */
 		}
 
@@ -94,31 +106,27 @@ class Mover {
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
 		if (this.x < this.xMin * width - this.lineWeight) {
-			this.x = this.xMax * width + fxrand() * this.lineWeight;
-			this.y = this.y + fxrand() * this.lineWeight;
-			//this.a = 100;
+			this.x = this.xMax * width + random() * this.lineWeight;
+			this.y = this.y + random() * this.lineWeight;
 		}
 		if (this.x > this.xMax * width + this.lineWeight) {
-			this.x = this.xMin * width - fxrand() * this.lineWeight;
-			this.y = this.y + fxrand() * this.lineWeight;
-			//this.a = 100;
+			this.x = this.xMin * width - random() * this.lineWeight;
+			this.y = this.y + random() * this.lineWeight;
 		}
 		if (this.y < this.yMin * height - this.lineWeight) {
-			this.y = this.yMax * height + fxrand() * this.lineWeight;
-			this.x = this.x + fxrand() * this.lineWeight;
-			//this.a = 100;
+			this.y = this.yMax * height + random() * this.lineWeight;
+			this.x = this.x + random() * this.lineWeight;
 		}
 		if (this.y > this.yMax * height + this.lineWeight) {
-			this.y = this.yMin * height - fxrand() * this.lineWeight;
-			this.x = this.x + fxrand() * this.lineWeight;
-			//this.a = 100;
+			this.y = this.yMin * height - random() * this.lineWeight;
+			this.x = this.x + random() * this.lineWeight;
 		}
 
 		let pxy = abs(p.x) + abs(p.y);
-		/* 		this.sat += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.satDir, this.satDir, true);
+		/* this.sat += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.satDir, this.satDir, true);
 		if (this.sat > 100 || this.sat < 0) this.satDir *= -1; */
 		this.hue += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.hueStep, this.hueStep, true);
-		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
+		this.hue = this.hue > 360 ? (this.hue = 0) : this.hue < 0 ? (this.hue = 360) : this.hue;
 	}
 }
 
@@ -149,7 +157,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, nvalue, uvalue) 
 
 	//! use same index and/or same octave for both u and n
 	let un = oct(nx, ny, scale1, 0, octave);
-	let vn = oct(nx, ny, scale2, 1, octave);
+	let vn = oct(nx, ny, scale2, 2, octave);
 
 	let u = map(un, -nvalue[0], nvalue[1], -uvalue[0], uvalue[1], true);
 	let v = map(vn, -nvalue[2], nvalue[3], -uvalue[2], uvalue[3], true);

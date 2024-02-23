@@ -1,5 +1,5 @@
 let config_type = parseInt(fxrand() * 3 + 1);
-//config_type = 3;
+//config_type = 1;
 console.log(config_type);
 
 let features = "";
@@ -61,7 +61,7 @@ function setup() {
 }
 
 function draw() {
-	blendMode(ADD);
+	blendMode(SCREEN);
 	for (let i = 0; i < movers.length; i++) {
 		//if (frameCount > 20 || frameCount < 2) {
 		movers[i].show();
@@ -95,6 +95,7 @@ function INIT(seed) {
 	xMax = 1.01;
 	yMin = -0.01;
 	yMax = 1.01;
+	console.log(xRandDivider, yRandDivider);
 
 	let hue = random([30, 35, 40, 190, 195, 200, 205, 210, 215]);
 	for (let i = 0; i < 20000; i++) {
