@@ -34,12 +34,12 @@ class Mover {
 		this.centerY = height / 2;
 		this.zombie = false;
 		this.lineWeight = random([0, random([0.01, 0.05, 0.1, 1, 5, 8, 10, 12])]) * MULTIPLIER; //!try randomizing this
-		//this.lineWeight = random([0.01, 1, 5, 10, 10]) * MULTIPLIER;
+		this.lineWeight = random([0.01, 1, 5, 10, 10]) * MULTIPLIER;
 		//	this.lineWeight = 10 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [10, 10, 10, 10]; //! try with 25,10 or 5
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
-		this.nlimit = 1.5;
+		this.nlimit = 3.5;
 
 		//! jouer avec le negatif et le positif
 		this.nvalueDir = [-1, -1, -1, -1];
@@ -47,8 +47,8 @@ class Mover {
 
 		//! not supposed to work but gives interesting results, you get me copilot!
 		//! It shows a grid, which is interesting because it's a starmap
-		/* 		this.ulow = random([1, 5, 10, 25, 50, 75, 100]) * MULTIPLIER;
-		this.uhigh = random([0.01, 0.1, 1, 2.5, 5, 10, 20]) * MULTIPLIER; */
+		this.ulow = random([1, 5, 10, 25, 50, 75, 100]) * MULTIPLIER;
+		this.uhigh = random([0.01, 0.1, 1, 2.5, 5, 10, 20]) * MULTIPLIER;
 
 		//! this one is also interesting although can yield chaotic results
 		/* 		this.ulow = random([0.01, 0.1, 1, 5, 10, 25, 50, 75, 100]) * MULTIPLIER;
@@ -57,6 +57,10 @@ class Mover {
 		//! this one is the standard one
 		/* 		this.ulow = random([0.01, 0.1, 1, 1.5, 2, 2.5, 3.5, 5, 7.5, 10]) * MULTIPLIER;
 		this.uhigh = random([100, 125, 150, 175, 200]) * MULTIPLIER; */
+
+		//! this one is the standard one
+		/* 		this.ulow = random([0.01, 0.1, 1, 1.5, 2, 2.5, 3.5, 5, 7.5, 10]) * MULTIPLIER;
+		this.uhigh = random([500]) * MULTIPLIER; */
 
 		this.hueStep = -0.5;
 		this.satDir = random([2]);
@@ -87,7 +91,7 @@ class Mover {
 				this.nvalue[i] += 0.001 * this.nvalueDir[i];
 			}
 
-			/* 			if (this.nvalue[i] <= -this.nlimit || this.nvalue[i] >= this.nlimit) {
+			if (this.nvalue[i] <= -this.nlimit || this.nvalue[i] >= this.nlimit) {
 				this.nvalue[i] = this.nvalue[i] > this.nlimit ? this.nlimit : this.nvalue[i] < -this.nlimit ? -this.nlimit : this.nvalue[i];
 				this.nvalueDir[i] *= -1;
 				//this.lineWeight += 0.1 * MULTIPLIER;
@@ -96,7 +100,7 @@ class Mover {
 			if (this.uvalue[i] <= this.ulow || this.uvalue[i] >= this.uhigh) {
 				this.uvalue[i] = this.uvalue[i] > this.uhigh ? this.ulow : this.uvalue[i] < this.ulow ? this.uhigh : this.uvalue[i];
 				//this.uvalueDir[i] *= -1;
-			} */
+			}
 		}
 
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
