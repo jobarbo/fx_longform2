@@ -57,9 +57,9 @@ function draw() {
 	//let angle = int(random([0, 45, 90, 180, 225, 270]));
 	let angle2 = int(random([0, 45, 90, 135, 180, 225, 270, 315]));
 	//let angle = random([45, 225]);
-	let angle = random([45, 135, 225, 315]);
+	//let angle = random([45, 135, 225, 315]);
 	//let angle = random([0, 180]);
-	//let angle = random([0, 90, 180, 270]);
+	let angle = random([0, 90, 180, 270]);
 	//let angle = random([90, 270]);
 	//let angle = 45;
 	//let angle2 = random([0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340]);
@@ -71,7 +71,7 @@ function draw() {
 	push();
 	rotate(angle);
 	scale(scale1);
-	paint(0, 1, 0, 1, 0, 1, particle_num, xi, yi, wi, scale1);
+	paint(0, 1, 0, 0.6, 0, 1, particle_num, xi, yi, wi, scale1);
 	pop();
 	push();
 	rotate(angle2);
@@ -103,19 +103,19 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, woff_l, woff_h, particle_num, xi,
 		let y = map(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//!Drapery Yin Yang
-		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//!Drapery Equilibrium
-		/* 		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
+		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true);
 
 		//! Astral Beings
 		/* 		let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings 2
-		/* 	let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings 3
