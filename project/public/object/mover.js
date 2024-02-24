@@ -137,8 +137,8 @@ class Mover {
 }
 
 function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, nvalue, uvalue) {
-	let nx = x + 200,
-		ny = y - 600,
+	let nx = x,
+		ny = y,
 		a1 = ang1,
 		a2 = ang2,
 		scale1 = scl1,
