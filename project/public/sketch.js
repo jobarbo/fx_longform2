@@ -1,5 +1,5 @@
 let config_type = parseInt(fxrand() * 3 + 1);
-//config_type = 1;
+config_type = 2;
 console.log(config_type);
 
 let features = "";
