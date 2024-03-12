@@ -20,12 +20,15 @@ class Mover {
 	) {
 		this.x = x;
 		this.y = y;
+		this.initX = x;
+		this.initY = y;
 		this.initHue = hue;
 		this.initSat = random([20, 30, 40, 50, 60, 70, 80, 90, 100]);
 		//this.initBri = random([0, 0, 10, 20]);
-		this.initBri = random([0, 10, 20, 30, 40, 50, 60, 70, 70, 70, 80, 80, 90, 100]);
+		//this.initBri = random([0, 10, 20, 30, 40, 50, 60, 70, 70, 70, 80, 80, 90, 100]);
+		this.initBri = 100;
 		this.initAlpha = 100;
-		this.initS = 0.45 * MULTIPLIER;
+		this.initS = 0.35 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -77,10 +80,17 @@ class Mover {
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 1302 * MULTIPLIER);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.amp1 = int(map(distCircle, -1300 * MULTIPLIER, 1 * MULTIPLIER, this.amp1Init, this.amp1Init * 4, true));
-		this.amp2 = int(map(distCircle, -1300 * MULTIPLIER, 1 * MULTIPLIER, this.amp2Init, this.amp2Init * 4, true));
+/* 		this.amp1 = int(map(distCircle, -1300 * MULTIPLIER, 1 * MULTIPLIER, this.amp1Init, this.amp1Init * 4, true));
+		this.amp2 = int(map(distCircle, -1300 * MULTIPLIER, 1 * MULTIPLIER, this.amp2Init, this.amp2Init * 4, true)); */
 		/* 		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
 		this.scl2 = 0.002; */
+
+				this.amp1 = int(map(distCircle, -2300 * MULTIPLIER, 30 * MULTIPLIER, -this.amp1Init* 2, this.amp1Init * 4, true));
+		this.amp2 = int(map(distCircle, -2300 * MULTIPLIER, 30 * MULTIPLIER, -this.amp2Init* 2, this.amp2Init * 4, true));
+		this.scl1 = map(distCircle, -2300* MULTIPLIER, 30* MULTIPLIER, -0.003, 0.003, true);
+		this.scl2 = map(distCircle, -2300* MULTIPLIER, 30* MULTIPLIER, -0.003, 0.003, true);
+		this.xRandDivider = map(distCircle, -2300 * MULTIPLIER, 30 * MULTIPLIER, -fxrand() * 6, fxrand() * 4, true);
+		this.yRandDivider = map(distCircle, -2300 * MULTIPLIER, 30 * MULTIPLIER, -fxrand() * 6, fxrand() * 4, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.amp1, this.amp2, this.oct);
 		this.xRandDivider = fxrand() * 6;
@@ -96,14 +106,16 @@ class Mover {
 		this.sat = this.sat > 100 ? 100 : this.sat < 0 ? 0 : this.sat;
 		this.bri += map(p.y, -1, this.uvalue, this.briStep, -this.briStep, true);
 		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri;
+		this.sat =0;
 
-		this.a = map(distCircle, 0, 3 * MULTIPLIER, 100, 0, true);
+		this.a = map(distCircle, -1* MULTIPLIER, 1 * MULTIPLIER, 100, 0, true);
+		this.s= map(distCircle, -1300* MULTIPLIER, 1000 * MULTIPLIER, this.initS, 0.01, true);
 
 		if (this.isBordered) {
 			if (distCircle > fxrand() * 8 - 4) {
 				let r = fxrand() * 2 * PI;
-				this.x = this.centerX + cos(r) * random(1298 * MULTIPLIER, 1304 * MULTIPLIER);
-				this.y = this.centerY + sin(r) * random(1298 * MULTIPLIER, 1304 * MULTIPLIER);
+				this.x = this.centerX + cos(r) * randomGaussian(1300 * MULTIPLIER, 4 * MULTIPLIER);
+				this.y = this.centerY + sin(r) * randomGaussian(1300 * MULTIPLIER, 4 * MULTIPLIER);
 			}
 		}
 	}

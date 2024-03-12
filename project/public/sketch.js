@@ -7,7 +7,7 @@ let yMin;
 let yMax;
 let startTime;
 //let maxFrames = 64 * 500000;
-let maxFrames = 64 * 1;
+let maxFrames = 800 * 1;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -56,13 +56,17 @@ function setup() {
 	console.log(scl1, scl2, amp1, amp2);
 
 	// champe how drastically it champes with the SDF
-	scl1Zone = 600;
-	scl2Zone = 600;
+	scl1Zone = 1200;
+	scl2Zone = 1200;
 	amp1Zone = 1;
 	amp2Zone = 1;
 
 	startTime = frameCount;
 	bgCol = color(random(30, 50), random([1, 5, 10]), 2, 100);
+
+	background(bgCol);
+	generateStars();
+	
 	INIT();
 }
 
@@ -97,7 +101,6 @@ function INIT() {
 	console.log('INIT');
 	let hue = fxrand() * 360;
 
-	background(bgCol);
 
 	//drawTexture(hue);
 	movers = [];
@@ -144,6 +147,40 @@ function INIT() {
 		);
 	}
 }
+
+function generateStars() {
+	//generate stars
+	let stars = [];
+	let starNum =random([250, 350, 500]);
+	for (let i = 0; i < starNum; i++) {
+		let x = random(0, width);
+		let y = random(0, height);
+		let hue = random([0, 5, 10, 15, 20, 25, 30, 35, 30, 35, 190, 195, 200, 205, 210, 215, 220, 225]);
+		let sat = random([0, 0, 10, 10, 10, 20, 30, 40, 50]) ;
+		let bri = 100;
+		stars.push(new Stars(x, y, hue, sat, bri, xMin, xMax, yMin, yMax));
+	}
+	//blendMode(SCREEN);
+	for (let i = 0; i < starNum; i++) {
+		for (let j = 0; j < 1000; j++) {
+			let xi = 0.2;
+			let yi = 0.8;
+			stars[i].show();
+			stars[i].move(xi, yi);
+		}
+	}
+
+	for (let i = 0; i < starNum; i++) {
+		for (let j = 0; j < 1000; j++) {
+			let xi = 0.8;
+			let yi = 0.2;
+			stars[i].show();
+			stars[i].move(xi, yi);
+		}
+	}
+	blendMode(BLEND);
+}
+
 
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
