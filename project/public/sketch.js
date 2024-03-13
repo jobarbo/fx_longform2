@@ -12,7 +12,7 @@ let DIM;
 let MULTIPLIER;
 let MAX_FRAMES = 1350;
 
-let particle_num = 20000;
+let particle_num = 10000;
 
 let xoff = 0.6;
 let yoff = 0.001;
@@ -46,7 +46,8 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rectMode(CENTER);
 	angleMode(DEGREES);
-	background(45, 0, 4);
+	//background(45, 0, 4);
+	background(45, 10, 100);
 	xi = random(1000000000000);
 	yi = random(1000000000000);
 	wi = random(1000000000000);
@@ -55,7 +56,7 @@ function setup() {
 
 function draw() {
 	// Draw with p5.js things
-	blendMode(SCREEN);
+	//blendMode(SCREEN);
 	displacement2 = random([100, 200, 300]);
 	translate(width / 2, height / 2);
 
@@ -67,33 +68,33 @@ function draw() {
 	//let angle = random([0, 180]);
 	//let angle1 = random([0, 90, 180, 270]);
 	//let angle = random([90, 270]);
-	//let angle1 = 45;
+	let angle1 = 45;
 	//let angle2 = random([0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340]);
 	//let angle = random([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350]);
 
-	let scale1 = 0.3;
+	let scale1 = 0.5;
 	let scale2 = 0.4;
 
 	push();
 	rotate(angle1);
 	scale(scale1);
-	paint(0, 1, 0, 0.6, 0, 1, particle_num, xi, yi, wi, scale1);
+	paint(0, 1, 0, 1, 0, 1, particle_num, xi, yi, wi, scale1);
 	pop();
-	push();
+	/* 	push();
 	rotate(angle2);
 	translate(0, displacement2);
 	scale(scale2);
 	paint(0.4, 0.6, 0.1, 0.9, 0, 1, particle_num, xi, yi, wi, scale2);
-	pop();
+	pop(); */
 	blendMode(BLEND);
-	angle1 += 90;
+	/* angle1 += 90;
 	angle2 += 45;
 	angle1 = angle1 < 0 ? 360 : angle1 > 360 ? 0 : angle1;
 	angle2 = angle2 < 0 ? 360 : angle2 > 360 ? 0 : angle2;
 	displacement2 += 50;
 	if (displacement2 > 300) {
 		displacement2 = 100;
-	}
+	} */
 	if (frameCount >= MAX_FRAMES) {
 		document.complete = true;
 		noLoop();
@@ -123,12 +124,12 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, woff_l, woff_h, particle_num, xi,
 		let y = map(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//!Drapery Equilibrium
-		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings
-		/* 		let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
+		let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 
 		//! Astral Beings 2
 		/* 		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
@@ -154,18 +155,19 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, woff_l, woff_h, particle_num, xi,
 		let y = map(noise(yoff, xoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		noStroke();
-		let w = map(noise(woff, random([xoff, yoff, wi])), n_range_min, n_range_max, 0.3, 0.3, true);
+
 		// map w to a higher value if the scale argument is smaller
 		//let w = map(scale, 0, 0.4, 1.6, 0.1, true);
 		/* 		let dist_center = dist(0, 0, x, y);
 		let w = map(dist_center, 0, pos_range, 0.2, 0.5, true); */
+		let w = map(noise(woff, random([xoff, yoff, wi])), n_range_min, n_range_max, 0.25, 0.25, true);
 		let elW = w * MULTIPLIER;
 		let ab_x = abs(x);
 		let ab_y = abs(y);
 		// map the saturation to the distance from the center
 		sat = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 3, 0, 100, true);
 		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range, 0, 45, true);
-		fill(hue, sat, random([5, 10, 25, 50, 100]), 100);
+		fill(0, 75, 10, 100);
 		ellipse(x, y, elW, elW);
 
 		wi += 0.0000000000000000000001;
