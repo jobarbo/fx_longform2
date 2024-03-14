@@ -56,11 +56,19 @@ function setup() {
 	rectMode(CENTER);
 	angleMode(DEGREES);
 	//background(45, 0, 4);
-	background(45, 10, 100);
+	//background(45, 10, 100);
+	// make a radial gradient background in vanilla js
+	drawingContext.globalCompositeOperation = "source-over";
+	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
+	gradient.addColorStop(0, "hsl(45, 100%, 95%)");
+	gradient.addColorStop(1, "hsl(45, 100%, 90%)");
+	drawingContext.fillStyle = gradient;
+	drawingContext.fillRect(0, 0, width, height);
+
 	xi = random(1000000000000);
 	yi = random(1000000000000);
 	wi = random(1000000000000);
-	pos_range = width;
+	pos_range = width * 1.5;
 }
 
 function draw() {
@@ -87,7 +95,7 @@ function draw() {
 	push();
 	rotate(angle1);
 	scale(scale1);
-	paint(0, 1, 0, 1, 0, 1, particle_num, xi, yi, wi, scale1);
+	paint(0.7, 1, 0, 1, 0, 1, particle_num, xi, yi, wi, scale1);
 	pop();
 	/* 	push();
 	rotate(angle2);
