@@ -22,8 +22,12 @@ let xi = Math.random * 1000000000000;
 let yi = Math.random * 1000000000000;
 
 let pos_range;
+//! Standard noise
 let n_range_min = 0;
 let n_range_max = 1;
+//! Custom noise
+/* let n_range_min = -1;
+let n_range_max = 1; */
 let hue = 0;
 let sat = 0;
 
@@ -32,6 +36,11 @@ let displacement2 = 100;
 
 let angle1 = 0;
 let angle2 = 0;
+
+let nx_scale = 0.00005;
+let ny_scale = 0.00005;
+/* let nx_scale = 0.001;
+let ny_scale = 0.001; */
 
 function setup() {
 	features = $fx.getFeatures();
@@ -62,17 +71,17 @@ function draw() {
 
 	//let angle = int(random([0, 45, 90]));
 	//let angle = int(random([0, 45, 90, 180, 225, 270]));
-	//let angle2 = int(random([0, 45, 90, 135, 180, 225, 270, 315]));
+	let angle1 = int(random([0, 45, 90, 135, 180, 225, 270, 315]));
 	//let angle = random([45, 225]);
 	//let angle1 = random([45, 135, 225, 315]);
 	//let angle = random([0, 180]);
 	//let angle1 = random([0, 90, 180, 270]);
 	//let angle = random([90, 270]);
-	let angle1 = 45;
+	//let angle1 = 45;
 	//let angle2 = random([0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340]);
 	//let angle = random([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350]);
 
-	let scale1 = 0.5;
+	let scale1 = 0.4;
 	let scale2 = 0.4;
 
 	push();
@@ -87,14 +96,18 @@ function draw() {
 	paint(0.4, 0.6, 0.1, 0.9, 0, 1, particle_num, xi, yi, wi, scale2);
 	pop(); */
 	blendMode(BLEND);
-	/* angle1 += 90;
+	/* 	angle1 += 45;
 	angle2 += 45;
 	angle1 = angle1 < 0 ? 360 : angle1 > 360 ? 0 : angle1;
-	angle2 = angle2 < 0 ? 360 : angle2 > 360 ? 0 : angle2;
+	angle2 = angle2 < 0 ? 360 : angle2 > 360 ? 0 : angle2; */
+	/* 
 	displacement2 += 50;
 	if (displacement2 > 300) {
 		displacement2 = 100;
-	} */
+	}
+	/* 	strokeWeight(20);
+	stroke(0, 100, 100, 100);
+	point(0, 0); */
 	if (frameCount >= MAX_FRAMES) {
 		document.complete = true;
 		noLoop();
@@ -111,10 +124,10 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, woff_l, woff_h, particle_num, xi,
 		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		//! Electron microscope
-		/* let x = map(noise(xoff, yoff), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, yoff), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, xoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
-		/* 		let x = map(oct(xoff, yoff, 0.0005, 1, 2), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(oct(yoff, xoff, 0.0025, 0, 2), n_range_min, n_range_max, -pos_range, pos_range, true); */
+		/* 		let x = map(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		//!block Rect
 		/* 		let x = map(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
@@ -128,12 +141,12 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, woff_l, woff_h, particle_num, xi,
 		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings
-		let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings 2
-		/* 		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
+		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 
 		//! Astral Beings 3
 		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
@@ -154,24 +167,32 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, woff_l, woff_h, particle_num, xi,
 		/* 		let x = map(noise(xoff, yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, xoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
-		noStroke();
-
 		// map w to a higher value if the scale argument is smaller
 		//let w = map(scale, 0, 0.4, 1.6, 0.1, true);
 		/* 		let dist_center = dist(0, 0, x, y);
 		let w = map(dist_center, 0, pos_range, 0.2, 0.5, true); */
-		let w = map(noise(woff, random([xoff, yoff, wi])), n_range_min, n_range_max, 0.25, 0.25, true);
+		//let w = map(noise(woff, random([xoff, yoff, wi])), n_range_min, n_range_max, 0.15, 0.15, true);
+		let w = map(nx_scale, 0.00005, 0.0025, 0.15, 0.15, true);
 		let elW = w * MULTIPLIER;
 		let ab_x = abs(x);
 		let ab_y = abs(y);
 		// map the saturation to the distance from the center
 		sat = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 3, 0, 100, true);
 		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range, 0, 45, true);
+		noStroke();
 		fill(0, 75, 10, 100);
-		ellipse(x, y, elW, elW);
+		rect(x, y, elW, elW);
 
 		wi += 0.0000000000000000000001;
 		xi += 0.0000000000000000000001;
 		yi += 0.0000000000000000000001;
+
+		//!animated scaling , need octaves
+		/* 
+		nx_scale *= 1.00000025;
+		ny_scale *= 1.00000025;
+
+		nx_scale = constrain(nx_scale, 0.00005, 0.002);
+		ny_scale = constrain(ny_scale, 0.00005, 0.002); */
 	}
 }
