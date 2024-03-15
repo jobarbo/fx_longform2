@@ -24,6 +24,13 @@ let centerY;
 let borderX;
 let borderY;
 
+let animation;
+let drawing = true;
+let elapsedTime = 0;
+let renderStart = Date.now();
+let framesRendered = 0;
+let totalElapsedTime = 0;
+
 ({sin, cos, imul, PI} = Math);
 TAU = PI * 2;
 F = (N, f) => [...Array(N)].map((_, i) => f(i));
@@ -73,6 +80,8 @@ function draw() {
 	// draw a rectangle the size of the composition with centerX, centerY as the center and borderX, borderY as the width and height
 	//rect(centerX, centerY, borderX * 2, borderY * 2);
 	let elapsedTime = frameCount - startTime;
+	showLoadingBar(elapsedTime, maxFrames, renderStart);
+
 	if (elapsedTime > maxFrames) {
 		window.rendered = c.canvas;
 		document.complete = true;
@@ -108,4 +117,25 @@ function INIT(seed) {
 	background(bgCol);
 	//background(45, 100, 100);
 	//background(221, 100, 60);
+}
+
+function showLoadingBar(elapsedTime, MAX_FRAMES, renderStart) {
+	framesRendered++;
+	let currentTime = Date.now();
+	totalElapsedTime = currentTime - renderStart;
+
+	let percent = (elapsedTime / MAX_FRAMES) * 100;
+	if (percent > 100) percent = 100;
+
+	let averageFrameTime = totalElapsedTime / framesRendered;
+
+	let remainingFrames = MAX_FRAMES - framesRendered;
+	let estimatedTimeRemaining = averageFrameTime * remainingFrames;
+
+	// Convert milliseconds to seconds
+	let timeLeftSec = Math.round(estimatedTimeRemaining / 1000);
+
+	// put the percent in the title of the page
+	document.title = percent.toFixed(0) + "%";
+	// show a loading bar on the bottom of the canvas
 }
