@@ -1,23 +1,5 @@
 class Mover {
-	constructor(
-		x,
-		y,
-		hue,
-		scl1,
-		scl2,
-		ang1,
-		ang2,
-		xMin,
-		xMax,
-		yMin,
-		yMax,
-		xRandDivider,
-		yRandDivider,
-		scl1Zone,
-		scl2Zone,
-		ang1Zone,
-		ang2Zone
-	) {
+	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, scl1Zone, scl2Zone, ang1Zone, ang2Zone) {
 		this.x = x;
 		this.y = y;
 
@@ -72,7 +54,7 @@ class Mover {
 
 	show() {
 		// draw a pixel
-		
+
 		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
@@ -81,14 +63,10 @@ class Mover {
 		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
 		// the sdf_box function returns the distance from the particle to the chosen location.
 		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
-		let distFromCenter = sdf_box(
-			[this.x, this.y],
-			[this.centerX, height - 2000 * MULTIPLIER],
-			[400 * MULTIPLIER, 400 * MULTIPLIER]
-		);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 2000 * MULTIPLIER], [400 * MULTIPLIER, 400 * MULTIPLIER]);
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY + 200], 600 * MULTIPLIER);
 
-		let distHexagon = sdf_hexagon( [this.x, this.y], [this.centerX, this.centerY], 200 * MULTIPLIER);
+		let distHexagon = sdf_hexagon([this.x, this.y], [this.centerX, this.centerY], 200 * MULTIPLIER);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		/* 		this.ang1 = map(distCircle, -500 * MULTIPLIER, 200 * MULTIPLIER, -this.ang1Init * 8, this.ang1Init, true);
@@ -106,12 +84,11 @@ class Mover {
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, -this.scl2Init * 2, this.scl2Init * 3, true); */
 
 		//! hexagon variant
-		this.ang1 = parseInt(map(distHexagon, -500, this.ang1Zone, -this.ang1Init * 8, this.ang1Init * 1, true));
-		this.ang2 = parseInt(map(distHexagon,  -500, this.ang2Zone, -this.ang2Init * 8, this.ang2Init * 1, true));
+		/* 		this.ang1 = parseInt(map(distHexagon, -500, this.ang1Zone, -this.ang1Init * 8, this.ang1Init * 1, true));
+		this.ang2 = parseInt(map(distHexagon, -500, this.ang2Zone, -this.ang2Init * 8, this.ang2Init * 1, true));
 		this.scl1 = map(distHexagon, -100, this.scl1Zone, -this.scl1Init, this.scl1Init * 1, true);
 		this.scl2 = map(distHexagon, -100, this.scl2Zone, -this.scl1Init, this.scl1Init * 1, true);
-
-
+ */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 		this.xRandDivider = fxrand() * 6;
@@ -125,28 +102,23 @@ class Mover {
 		this.y += this.speedY;
 
 		//!complexion standard (vegetation variant)
-		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
-		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true);
+		/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
+		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
 
 		//!complexion inverser (goldenfold variant)
-		/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
-		this.a = mapValue(this.speed, 2, 2.01, 100, 70, true); */
+		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
+		this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
 
 		//!complexion inverser (malachite variant)
 		/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
 		this.a = mapValue(this.speed, 2, 2.01, 100, 40, true); */
 
-		if (
-			this.x < this.xMin * width ||
-			this.x > this.xMax * width ||
-			this.y < this.yMin * height ||
-			this.y > this.yMax * height
-		) {
+		if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
 			this.a = 0;
 		}
 
 		//!goldenfold variant
-		/* 		if (this.speed < 1) {
+		if (this.speed < 1) {
 			this.hue = 35;
 			this.sat = this.initSat + 80;
 			this.bri = this.initBri + 30;
@@ -155,7 +127,7 @@ class Mover {
 			this.sat = this.initSat;
 			this.bri = this.initBri;
 		}
- */
+
 		//!malachite variant
 		/* 		if (this.speed < 1) {
 			this.hue = random(100, 220);
@@ -228,8 +200,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let sun = smoothstep(-0.5, 0.5, un);
-	let svn = smoothstep(-0.5, 0.5, vn);
+	let sun = smoothstep(-0.15, 0.5, un);
+	let svn = smoothstep(-0.5, 0.15, vn);
 
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */
@@ -241,8 +213,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let bValue = rangeB[Math.floor(fxrand() * rangeB.length)];
 
 	/* 	let u = mapValue(un, -0.5, 0.5, -aValue, bValue);
-	let v = mapValue(vn, -0.5, 0.5, -bValue, aValue); */
-
+	let v = mapValue(vn, -0.5, 0.5, -bValue, aValue);*/
 	let u = mapValue(sun, 0, 1, -aValue, bValue);
 	let v = mapValue(svn, 0, 1, -bValue, aValue);
 

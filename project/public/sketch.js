@@ -34,7 +34,7 @@ let renderMode = 1;
 let cycle = (maxFrames * particleNum) / 600;
 
 function setup() {
-	console.time('setup');
+	console.time("setup");
 	//pixelDensity(dpi(4));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
@@ -113,7 +113,7 @@ function* drawGenerator() {
 		if (elapsedTime > maxFrames && drawing) {
 			drawing = false;
 			// close the generator
-			console.timeEnd('setup');
+			console.timeEnd("setup");
 			return;
 		}
 	}
@@ -124,14 +124,14 @@ function* drawGenerator() {
 //////////////////////////////////////////////////////
 
 function INIT() {
-	console.log('INIT');
+	console.log("INIT");
 	background(bgCol);
 	movers = [];
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 	let hue = fxrand() * 360;
-/* 	xMin = 0.05;
+	/* 	xMin = 0.05;
 	xMax = 0.95;
 	yMin = 0.05;
 	yMax = 0.95; */
@@ -175,12 +175,12 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 	if (percent > 100) percent = 100;
 
 	// put the percent in the title of the page
-	document.title = percent.toFixed(0) + '%' + ' (mode ' + renderMode + ')';
+	document.title = percent.toFixed(0) + "%" + " (mode " + renderMode + ")";
 }
 
 function drawUI() {
 	// Define the stroke color and weight (line width)
-	drawingContext.strokeStyle = 'black';
+	drawingContext.strokeStyle = "black";
 	drawingContext.lineWidth = 2 * MULTIPLIER;
 	drawingContext.beginPath();
 
@@ -310,7 +310,7 @@ function keyPressed() {
 		maxFrames = keyCodeToMaxFrames;
 		drawing = true;
 		loop();
-		console.log('keyPressed');
+		console.log("keyPressed");
 		INIT(particleNum);
 	}
 }
