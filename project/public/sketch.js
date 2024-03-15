@@ -7,16 +7,15 @@ let W = window.innerWidth;
 let H = window.innerHeight;
 
 let CM = 1;
-let DEFAULT_SIZE = 400;
+let DEFAULT_SIZE = 1200;
 let DIM;
 let MULTIPLIER;
-let MAX_FRAMES = 1350;
+let MAX_FRAMES = 700;
 
 let particle_num = 10000;
 
 let xoff = 0.6;
 let yoff = 0.001;
-let woff = 0.3;
 
 let xi = Math.random * 1000000000000;
 let yi = Math.random * 1000000000000;
@@ -46,9 +45,10 @@ function setup() {
 	features = $fx.getFeatures();
 
 	// canvas setup
-	DIM = min(windowWidth * CM, windowHeight * CM);
-	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * RATIO);
+	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
+	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
+	console.log(MULTIPLIER);
+	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
 	pixelDensity(dpi(maxDPI));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -60,15 +60,14 @@ function setup() {
 	// make a radial gradient background in vanilla js
 	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
-	gradient.addColorStop(0, "hsl(45, 100%, 95%)");
-	gradient.addColorStop(1, "hsl(45, 100%, 90%)");
+	gradient.addColorStop(0.5, "hsl(45, 100%, 95%)");
+	gradient.addColorStop(1, "hsl(45, 100%, 93%)");
 	drawingContext.fillStyle = gradient;
 	drawingContext.fillRect(0, 0, width, height);
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	wi = random(1000000000000);
-	pos_range = width * 1.5;
+	pos_range = width / 2;
 }
 
 function draw() {
@@ -89,45 +88,32 @@ function draw() {
 	//let angle2 = random([0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340]);
 	//let angle = random([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350]);
 
-	let scale1 = 0.4;
-	let scale2 = 0.4;
+	let scale1 = 1;
+	let scale2 = 1;
 
 	push();
 	rotate(angle1);
 	scale(scale1);
-	paint(0.7, 1, 0, 1, 0, 1, particle_num, xi, yi, wi, scale1);
+	paint(1, 2, 1, 2, particle_num, xi, yi, scale1);
 	pop();
 	/* 	push();
 	rotate(angle2);
 	translate(0, displacement2);
 	scale(scale2);
-	paint(0.4, 0.6, 0.1, 0.9, 0, 1, particle_num, xi, yi, wi, scale2);
+	paint(0.4, 0.6, 0.1, 0.9, particle_num, xi, yi, scale2);
 	pop(); */
 	blendMode(BLEND);
-	/* 	angle1 += 45;
-	angle2 += 45;
-	angle1 = angle1 < 0 ? 360 : angle1 > 360 ? 0 : angle1;
-	angle2 = angle2 < 0 ? 360 : angle2 > 360 ? 0 : angle2; */
-	/* 
-	displacement2 += 50;
-	if (displacement2 > 300) {
-		displacement2 = 100;
-	}
-	/* 	strokeWeight(20);
-	stroke(0, 100, 100, 100);
-	point(0, 0); */
 	if (frameCount >= MAX_FRAMES) {
 		document.complete = true;
 		noLoop();
 	}
 }
 
-function paint(xoff_l, xoff_h, yoff_l, yoff_h, woff_l, woff_h, particle_num, xi, yi, wi, scale) {
+function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		woff = random(woff_l, woff_h);
-		//noiseDetail(10, 0.5);
+		//noiseDetail(4, 0.5);
 		//! Simple Block
 		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
@@ -175,12 +161,10 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, woff_l, woff_h, particle_num, xi,
 		/* 		let x = map(noise(xoff, yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, xoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
-		// map w to a higher value if the scale argument is smaller
-		//let w = map(scale, 0, 0.4, 1.6, 0.1, true);
-		/* 		let dist_center = dist(0, 0, x, y);
-		let w = map(dist_center, 0, pos_range, 0.2, 0.5, true); */
-		//let w = map(noise(woff, random([xoff, yoff, wi])), n_range_min, n_range_max, 0.15, 0.15, true);
-		let w = map(nx_scale, 0.00005, 0.0025, 0.15, 0.15, true);
+		//let w = map(scale, 0, 2, 0.3, 0.1, true);
+		//let w = 0.25;
+		let dist_center = dist(0, 0, x, y);
+		let w = map(dist_center, 0, pos_range / 2, 0.1, 0.2, true);
 		let elW = w * MULTIPLIER;
 		let ab_x = abs(x);
 		let ab_y = abs(y);
@@ -191,7 +175,6 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, woff_l, woff_h, particle_num, xi,
 		fill(0, 75, 10, 100);
 		rect(x, y, elW, elW);
 
-		wi += 0.0000000000000000000001;
 		xi += 0.0000000000000000000001;
 		yi += 0.0000000000000000000001;
 
