@@ -2,23 +2,17 @@ class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features) {
 		this.x = x;
 		this.y = y;
-		this.initHue = 201;
+		this.initHue = hue;
 		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
-		this.initBri =
-			features.theme === "bright" && features.colormode !== "monochrome"
-				? random([0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100])
-				: features.theme === "bright" && features.colormode === "monochrome"
-				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
-				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
+		this.initBri = random([10, 20, 50, 60, 70, 80, 90, 100]);
 		this.initAlpha = 100;
 		this.initS = 0.22 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = random([0, 0, 0, 10, 10, 10, 80, 100, 100, 100, 100, 100, 100]);
-		this.sat = 0;
-		this.bri = this.initBri;
+		this.bri = 0;
 		this.a = this.initAlpha;
-		this.hueStep = features.colormode === "monochrome" || features.colormode === "fixed" ? 0 : features.colormode === "dynamic" ? 6 : 25;
-		this.satDir = 1;
+		this.hueStep = 0.25;
+		this.satDir = 2;
 		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -35,19 +29,19 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.oct = 1;
+		this.oct = 3;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.zombie = false;
 		this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [15, 15, 15, 15];
-		this.nvalue = [0.5, 0.5, 0.5, 0.5];
-		this.nlimit = 1.25;
+		this.uvalue = [5, 5, 5, 5];
+		this.nvalue = [0.000001, 0.000001, 0.000001, 0.000001];
+		this.nlimit = 0.00005;
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
 		this.ulow = 5;
-		this.uhigh = 150;
+		this.uhigh = 15;
 		/* 		this.ulow = random([10, 25, 50, 75, 100, 125, 150, 175, 200]);
 		this.uhigh = random([0.01, 0.1, 1, 2.5, 5, 10, 20]); */
 
@@ -72,33 +66,34 @@ class Mover {
 
 		this.lineWeightMax = map(frameCount, 50, maxFrames - 200, this.shutterHigh, this.shutterLow, true);
 		this.skipperMax = map(frameCount, 50, maxFrames - 200, this.apertureHigh, this.apertureLow, true);
-
+		this.bri = map(frameCount, 50, maxFrames - 50, 40, 100, true);
+		this.sat = map(frameCount, 50, maxFrames - 50, 80, 20, true);
 		this.xRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
 		this.yRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
 		for (let i = 0; i < this.nvalue.length; i++) {
 			if (config_type === 1) {
 				//! STARMAP CONFIGURATION
 				this.uvalue[i] *= 1.013 * this.uvalueDir[i];
-				this.nvalue[i] += 0.01 * this.nvalueDir[i];
+				this.nvalue[i] += 0.000001 * this.nvalueDir[i];
 			} else if (config_type === 2) {
 				//! Equilibrium CONFIGURATION
 				this.uvalue[i] *= 1.015 * this.uvalueDir[i];
-				this.nvalue[i] += 0.015 * this.nvalueDir[i];
+				this.nvalue[i] += 0.0000015 * this.nvalueDir[i];
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
 				//this.uvalue[i] += 0.5;
 				this.uvalue[i] *= 1.011 * this.uvalueDir[i];
-				this.nvalue[i] += 0.005 * this.nvalueDir[i];
+				this.nvalue[i] += 0.0000005 * this.nvalueDir[i];
 			}
 
 			//! YoYo with value (not sure);
 
-			if (this.nvalue[i] <= -this.nlimit || this.nvalue[i] >= this.nlimit) {
+			if (this.nvalue[i] < -this.nlimit || this.nvalue[i] > this.nlimit) {
 				this.nvalue[i] = this.nvalue[i] > this.nlimit ? this.nlimit : this.nvalue[i] < -this.nlimit ? -this.nlimit : this.nvalue[i];
 				this.nvalueDir[i] *= -1;
 			}
 
-			if (this.uvalue[i] <= this.ulow || this.uvalue[i] >= this.uhigh) {
+			if (this.uvalue[i] < this.ulow || this.uvalue[i] > this.uhigh) {
 				this.uvalue[i] = this.uvalue[i] > this.uhigh ? this.ulow : this.uvalue[i] < this.ulow ? this.uhigh : this.uvalue[i];
 			}
 		}
@@ -113,8 +108,10 @@ class Mover {
 		let velocity = createVector((p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper, (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper);
 
 		let totalSpeed = abs(velocity.mag());
-		this.hue += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.hueStep, this.hueStep, true);
-		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
+		//this.sat += map(totalSpeed, 0, 600 * MULTIPLIER, -this.satDir, this.satDir, true);
+		//this.sat = this.sat > 95 ? (this.sat = 0) : this.sat < 0 ? (this.sat = 95) : this.sat;
+		this.hue += map(totalSpeed, 0, 1200 * MULTIPLIER, -this.hueStep, this.hueStep, true);
+		this.hue = this.hue > 360 ? (this.hue = 0) : this.hue < 0 ? (this.hue = 360) : this.hue;
 		this.lineWeight = map(totalSpeed, 0, 600 * MULTIPLIER, 0, this.lineWeightMax, true) * MULTIPLIER;
 
 		if (this.x < this.xMin * width - this.lineWeight) {
