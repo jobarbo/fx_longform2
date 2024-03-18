@@ -67,7 +67,7 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range = width / 2;
+	pos_range = width / 1.5;
 }
 
 function draw() {
@@ -94,7 +94,7 @@ function draw() {
 	push();
 	rotate(angle1);
 	scale(scale1);
-	paint(3, 4, 3, 4, particle_num, xi, yi, scale1);
+	paint(2.5, 3, 3.5, 4, particle_num, xi, yi, scale1);
 	pop();
 	/* 	push();
 	rotate(angle2);
@@ -118,8 +118,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		//! Electron microscope
-		let x = map(noise(xoff, yoff), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, xoff), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, yoff), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, xoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		/* 		let x = map(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		//!block Rect
@@ -143,8 +143,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings 3
-		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
+		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 
 		/* let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
@@ -164,7 +164,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		//let w = map(scale, 0, 2, 0.3, 0.1, true);
 		//let w = 0.25;
 		let dist_center = dist(0, 0, x, y);
-		let w = map(dist_center, 0, pos_range / 2, 0.1, 0.2, true);
+		let w = map(dist_center, 0, pos_range / 2, 0.125, 0.2, true);
 		let elW = w * MULTIPLIER;
 		let ab_x = abs(x);
 		let ab_y = abs(y);
