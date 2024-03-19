@@ -111,6 +111,13 @@ class Mover {
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
+		let pxy = abs(p.x) + abs(p.y);
+		this.sat += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.satDir, this.satDir, true);
+		if (this.sat > 100 || this.sat < 0) this.satDir *= -1;
+		/* 		this.hue += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.hueStep, this.hueStep, true); */
+		/* this.sat = s;
+		this.hue = h; */
+
 		if (this.x < this.xMin * width - this.lineWeight) {
 			this.x = this.xMax * width + fxrand() * this.lineWeight;
 			this.y = this.y + fxrand() * this.lineWeight;
@@ -130,15 +137,6 @@ class Mover {
 			this.x = this.x + fxrand() * this.lineWeight;
 			//this.a = 100;
 		}
-
-		let pxy = abs(p.x) + abs(p.y);
-		this.sat += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.satDir, this.satDir, true);
-		if (this.sat > 100 || this.sat < 0) this.satDir *= -1;
-		this.hue += map(pxy, -this.uvalue[0] * 2, this.uvalue[1] * 2, -this.hueStep, this.hueStep, true);
-		/* this.sat = s;
-		this.hue = h; */
-
-		// testing push
 	}
 }
 
