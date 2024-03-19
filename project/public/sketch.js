@@ -79,10 +79,10 @@ function draw() {
 	//let angle = int(random([0, 45, 90]));
 	//let angle = int(random([0, 45, 90, 180, 225, 270]));
 	//let angle1 = int(random([0, 45, 90, 135, 180, 225, 270, 315]));
-	//let angle = random([45, 225]);
+	let angle1 = random([45, 225]);
 	//let angle1 = random([45, 135, 225, 315]);
 	//let angle1 = random([45, 135, 225, 315]);
-	let angle1 = random([0, 90, 180, 270]);
+	//let angle1 = random([0, 90, 180, 270]);
 	//let angle1 = random([90, 270]);
 	//let angle1 = 45;
 	//let angle2 = random([0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340]);
@@ -94,7 +94,7 @@ function draw() {
 	push();
 	rotate(angle1);
 	scale(scale1);
-	paint(2.5, 3, 3.5, 4, particle_num, xi, yi, scale1);
+	paint(random([0.15, 0.9]), 1, random([0.15, 0.9]), 1, particle_num, xi, yi, scale1);
 	pop();
 	/* 	push();
 	rotate(angle2);
@@ -164,7 +164,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		//let w = map(scale, 0, 2, 0.3, 0.1, true);
 		//let w = 0.25;
 		let dist_center = dist(0, 0, x, y);
-		let w = map(dist_center, 0, pos_range / 2, 0.125, 0.2, true);
+		let w = map(dist_center, 0, pos_range / 2, 0.15, 0.2, true);
 		let elW = w * MULTIPLIER;
 		let ab_x = abs(x);
 		let ab_y = abs(y);
