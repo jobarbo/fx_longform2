@@ -3,12 +3,12 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
+		this.initSat = random([0, 0, 0, 0, 0, 10, 10, 10, 20, 30, 80, 100, 100, 100, 100, 100, 100, 100, 100, 100]);
 		this.initBri = 100;
 		this.initAlpha = 100;
 		this.initS = 0.22 * MULTIPLIER;
 		this.hue = this.initHue;
-		this.sat = random([0, 0, 0, 10, 10, 10, 80, 100, 100, 100, 100, 100, 100]);
+		this.sat = 100;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
 		this.hueStep = 0.2;
@@ -41,7 +41,7 @@ class Mover {
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
 		this.ulow = 5;
-		this.uhigh = 150;
+		this.uhigh = 100;
 		/* 		this.ulow = random([10, 25, 50, 75, 100, 125, 150, 175, 200]);
 		this.uhigh = random([0.01, 0.1, 1, 2.5, 5, 10, 20]); */
 
@@ -80,9 +80,9 @@ class Mover {
 				this.nvalue[i] += 0.015 * this.nvalueDir[i];
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
-				//this.uvalue[i] += 0.5;
-				this.uvalue[i] *= 1.011 * this.uvalueDir[i];
-				this.nvalue[i] += 0.005 * this.nvalueDir[i];
+				this.uvalue[i] *= 1.001 * this.uvalueDir[i];
+				//this.uvalue[i] += 1;
+				this.nvalue[i] += 0.01 * this.nvalueDir[i];
 			}
 
 			//! YoYo with value (not sure);
@@ -113,7 +113,6 @@ class Mover {
 		this.hue += map(totalSpeed, 0, 1200 * MULTIPLIER, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? (this.hue = 0) : this.hue < 0 ? (this.hue = 360) : this.hue;
 		this.lineWeight = map(totalSpeed, 0, 600 * MULTIPLIER, 0, this.lineWeightMax, true) * MULTIPLIER;
-
 		if (this.x < this.xMin * width - this.lineWeight) {
 			this.x = this.xMax * width + fxrand() * this.lineWeight;
 			this.y = this.y + fxrand() * this.lineWeight;
