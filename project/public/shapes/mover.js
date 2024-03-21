@@ -22,11 +22,12 @@ class Mover {
 		this.yRandDivider = 0.02;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xMin = xMin;
-		this.xMax = xMax;
-		this.yMin = yMin;
-		this.yMax = yMax;
+		this.xMin = -0.01;
+		this.xMax = 1.01;
+		this.yMin = -0.01;
+		this.yMax = 1.01;
 		this.isBordered = isBordered;
+		this.lineWeight = 10;
 	}
 
 	show() {
@@ -52,22 +53,23 @@ class Mover {
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
 		//shortand for if this.x is less than 0, set this.x to width and vice versa
-		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
-		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y;
-
-		if (this.isBordered) {
-			if (this.x < (this.xMin - random(4)) * width) {
-				this.x = (this.xMax + random(4)) * width;
-			}
-			if (this.x > (this.xMax + random(4)) * width) {
-				this.x = (this.xMin - random(4)) * width;
-			}
-			if (this.y < (this.yMin - random(4)) * height) {
-				this.y = (this.yMax + random(4)) * height;
-			}
-			if (this.y > (this.yMax + random(4)) * height) {
-				this.y = (this.yMin - random(4)) * height;
-			}
+		/* 		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
+		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y; */
+		if (this.x < this.xMin * width - this.lineWeight) {
+			this.x = this.xMax * width + random(this.lineWeight);
+			this.y = this.y + random(this.lineWeight);
+		}
+		if (this.x > this.xMax * width + this.lineWeight) {
+			this.x = this.xMin * width - random(this.lineWeight);
+			this.y = this.y + random(this.lineWeight);
+		}
+		if (this.y < this.yMin * height - this.lineWeight) {
+			this.y = this.yMax * height + random(this.lineWeight);
+			this.x = this.x + random(this.lineWeight);
+		}
+		if (this.y > this.yMax * height + this.lineWeight) {
+			this.y = this.yMin * height - random(this.lineWeight);
+			this.x = this.x + random(this.lineWeight);
 		}
 	}
 }
@@ -89,8 +91,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	/* 	let maxU = map(ny, 0, height, 3, -3, true);
 	let maxV = map(nx, 0, width, 3, -3, true);
 	let minU = map(ny, 0, height, -3, 3, true);
-	let minV = map(nx, 0, width, -3, 3, true);
- */
+	let minV = map(nx, 0, width, -3, 3, true); */
+
 	//! pNoise x SineCos
 	/* 	let maxU = map(
 		oct(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1, 6),

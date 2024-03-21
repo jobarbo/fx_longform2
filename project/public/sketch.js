@@ -70,10 +70,10 @@ function INIT(seed) {
 	console.log("scl2", scl2);
 	console.log("scl3", scl3);
 
-	xMin = 0.25;
-	xMax = 0.85;
+	xMin = -0.01;
+	xMax = 1.01;
 	yMin = 0.85;
-	yMax = 0.95;
+	yMax = 1;
 	/* 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
