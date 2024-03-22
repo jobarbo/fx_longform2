@@ -37,7 +37,7 @@ class Mover {
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [15, 15, 15, 15];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5];
-		this.nlimit = 10;
+		this.nlimit = 1; //! can put higher number here
 		this.nlow = -1;
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
@@ -81,9 +81,9 @@ class Mover {
 				this.nvalue[i] += 0.015 * this.nvalueDir[i];
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
-				this.uvalue[i] *= 1.013 * this.uvalueDir[i];
+				this.uvalue[i] *= 1.001 * this.uvalueDir[i];
 				//this.uvalue[i] += 1;
-				this.nvalue[i] += 0.5 * this.nvalueDir[i];
+				this.nvalue[i] += 0.01 * this.nvalueDir[i];
 			}
 
 			//! YoYo with value (not sure);
