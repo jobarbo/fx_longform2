@@ -15,7 +15,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 600;
+let maxFrames = 1000;
 let C_WIDTH;
 let MULTIPLIER;
 
@@ -50,7 +50,7 @@ function setup() {
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1200;
-	c = createCanvas(C_WIDTH, C_WIDTH);
+	c = createCanvas(C_WIDTH * 3, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
