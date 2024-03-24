@@ -6,7 +6,7 @@ class Mover {
 		this.initSat = random([0, 0, 0, 0, 0, 10, 10, 10, 20, 30, 80, 100, 100, 100, 100, 100, 100, 100, 100, 100]);
 		this.initBri = 100;
 		this.initAlpha = 100;
-		this.initS = 0.12 * MULTIPLIER;
+		this.initS = 0.2 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = 100;
 		this.bri = this.initBri;
@@ -36,7 +36,7 @@ class Mover {
 		this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [15, 15, 15, 15];
-		this.nvalue = [0.5, 0.5, 0.5, 0.5];
+		this.nvalue = [0.5, 0.5, 0.5, 0.5]; //! lower number here too
 		this.nlimit = 1; //! can put higher number here
 		this.nlow = -1;
 		this.nvalueDir = [-1, -1, -1, -1];
