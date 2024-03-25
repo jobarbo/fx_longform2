@@ -1,6 +1,6 @@
 let features = "";
 
-let maxDPI = 3;
+let maxDPI = 2;
 let RATIO = 1;
 
 let W = window.innerWidth;
@@ -47,7 +47,6 @@ function setup() {
 	// canvas setup
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
 	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
-	console.log(MULTIPLIER);
 	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
 	pixelDensity(dpi(maxDPI));
 	colorMode(HSB, 360, 100, 100, 100);
@@ -94,7 +93,8 @@ function draw() {
 	push();
 	rotate(angle1);
 	scale(scale1);
-	paint(random([0.15, 0.9]), 1, random([0.15, 0.9]), 1, particle_num, xi, yi, scale1);
+	paint(0, 1, 0, 1, particle_num, xi, yi, scale1);
+	/* 	paint(random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), particle_num, xi, yi, scale1); */
 	pop();
 	/* 	push();
 	rotate(angle2);
@@ -172,7 +172,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		sat = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 3, 0, 100, true);
 		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range, 0, 45, true);
 		noStroke();
-		fill(0, 75, 10, 100);
+		fill(hue, sat, 5, 100);
 		rect(x, y, elW, elW);
 
 		xi += 0.0000000000000000000001;
