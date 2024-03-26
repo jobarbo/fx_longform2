@@ -27,6 +27,7 @@ let n_range_max = 1;
 //! Custom noise
 /* let n_range_min = -1;
 let n_range_max = 1; */
+
 let hue = 0;
 let sat = 0;
 let bri = 0;
@@ -41,6 +42,22 @@ let nx_scale = 0.00005;
 let ny_scale = 0.00005;
 /* let nx_scale = 0.001;
 let ny_scale = 0.001; */
+
+let skipperMax = 0;
+
+let xRandSkipperVal;
+let yRandSkipperVal;
+
+let xRandSkipper = 0;
+let yRandSkipper = 0;
+
+let apertureLow = 0.001;
+let apertureHigh = 2;
+
+let xoff_l = 0.15;
+let xoff_h = 1;
+let yoff_l = 0.5;
+let yoff_h = 1;
 
 function setup() {
 	features = $fx.getFeatures();
@@ -68,6 +85,9 @@ function setup() {
 	xi = random(1000000000000);
 	yi = random(1000000000000);
 	pos_range = width / 1.5;
+
+	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
+	yRandSkipperVal = xRandSkipperVal;
 }
 
 function draw() {
@@ -90,11 +110,14 @@ function draw() {
 
 	let scale1 = 1;
 	let scale2 = 1;
-
+	//xoff_l = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 0, 0.4999, true);
+	//xoff_h = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 1, 0.5001, true);
+	//yoff_l = map(frameCount, MAX_FRAMES / 26.5, MAX_FRAMES / 2, 0.5, 0.99, true);
+	yoff_h = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 1, 0.505, true);
 	push();
 	rotate(angle1);
 	scale(scale1);
-	paint(0.75, 1, 0.75, 1, particle_num, xi, yi, scale1);
+	paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1);
 	/* 	paint(random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), particle_num, xi, yi, scale1); */
 	pop();
 	/* 	push();
@@ -104,6 +127,7 @@ function draw() {
 	paint(0.4, 0.6, 0.1, 0.9, particle_num, xi, yi, scale2);
 	pop(); */
 	blendMode(BLEND);
+
 	if (frameCount >= MAX_FRAMES) {
 		document.complete = true;
 		noLoop();
@@ -132,8 +156,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		let y = map(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//!Drapery Equilibrium
-		/* 		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
+		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true);
 
 		//! Astral Beings
 		/* 		let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
@@ -144,8 +168,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings 3
-		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		/* 		let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
@@ -162,22 +186,33 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		/* 		let x = map(noise(xoff, yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, xoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
+		skipperMax = map(frameCount, MAX_FRAMES / 100, MAX_FRAMES / 1.1, apertureHigh, apertureLow, true);
+
+		xRandSkipperVal = random(0.01, [random(0.00001, skipperMax)]);
+		yRandSkipperVal = xRandSkipperVal;
+
+		xRandSkipper = randomGaussian(0, xRandSkipperVal);
+		yRandSkipper = randomGaussian(0, yRandSkipperVal);
+
 		//let w = map(scale, 0, 2, 0.3, 0.1, true);
 		//let w = 0.25;
 		let dist_center = dist(0, 0, x, y);
-		let w = map(dist_center, 0, pos_range / 2, 0.2, 0.2, true);
+		//let w = map(dist_center, 0, pos_range / 2, 0.2, 0.2, true);
+		let w = map(frameCount, MAX_FRAMES / 5, MAX_FRAMES / 1.5, 0.2, 0.15, true);
 		let elW = w * MULTIPLIER;
-		let ab_x = abs(x);
-		let ab_y = abs(y);
+		let ab_x = x + xRandSkipper;
+		let ab_y = y + yRandSkipper;
+
 		// map the saturation to the distance from the center
-		sat = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1, 100, 0, true);
-		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 2, 360, 170, true);
+		//sat = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1, 50, 100, true);
 		//bri = map(cos(frameCount * 0.5), -1, 1, 0, 100, true);
-		bri = map(frameCount, MAX_FRAMES / 1.5, MAX_FRAMES, 100, 0, true);
+		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1, 360, 170, true);
+		sat = map(frameCount, 0, MAX_FRAMES / 2.5, 60, 100, true);
+		bri = map(frameCount, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, 60, true);
 
 		noStroke();
 		fill(hue, sat, bri, 100);
-		rect(x, y, elW, elW);
+		rect(ab_x, ab_y, elW, elW);
 
 		xi += 0.0000000000000000000001;
 		yi += 0.0000000000000000000001;
