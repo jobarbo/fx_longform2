@@ -29,6 +29,7 @@ let n_range_max = 1;
 let n_range_max = 1; */
 let hue = 0;
 let sat = 0;
+let bri = 0;
 
 let displacement1 = 0;
 let displacement2 = 100;
@@ -59,8 +60,8 @@ function setup() {
 	// make a radial gradient background in vanilla js
 	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
-	gradient.addColorStop(0.5, "hsl(45, 100%, 95%)");
-	gradient.addColorStop(1, "hsl(45, 100%, 93%)");
+	gradient.addColorStop(0.5, "hsl(221, 50%, 95%)");
+	gradient.addColorStop(1, "hsl(231, 50%, 93%)");
 	drawingContext.fillStyle = gradient;
 	drawingContext.fillRect(0, 0, width, height);
 
@@ -77,8 +78,8 @@ function draw() {
 
 	//let angle = int(random([0, 45, 90]));
 	//let angle = int(random([0, 45, 90, 180, 225, 270]));
-	//let angle1 = int(random([0, 45, 90, 135, 180, 225, 270, 315]));
-	let angle1 = random([45, 225]);
+	let angle1 = int(random([0, 45, 90, 135, 180, 225, 270, 315]));
+	//let angle1 = random([45, 225]);
 	//let angle1 = random([45, 135, 225, 315]);
 	//let angle1 = random([45, 135, 225, 315]);
 	//let angle1 = random([0, 90, 180, 270]);
@@ -93,7 +94,7 @@ function draw() {
 	push();
 	rotate(angle1);
 	scale(scale1);
-	paint(0, 1, 0, 1, particle_num, xi, yi, scale1);
+	paint(0.75, 1, 0.75, 1, particle_num, xi, yi, scale1);
 	/* 	paint(random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), particle_num, xi, yi, scale1); */
 	pop();
 	/* 	push();
@@ -146,7 +147,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 
-		/* let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings Asymmetrical
@@ -164,15 +165,18 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		//let w = map(scale, 0, 2, 0.3, 0.1, true);
 		//let w = 0.25;
 		let dist_center = dist(0, 0, x, y);
-		let w = map(dist_center, 0, pos_range / 2, 0.15, 0.2, true);
+		let w = map(dist_center, 0, pos_range / 2, 0.2, 0.2, true);
 		let elW = w * MULTIPLIER;
 		let ab_x = abs(x);
 		let ab_y = abs(y);
 		// map the saturation to the distance from the center
-		sat = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 3, 0, 100, true);
-		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range, 0, 45, true);
+		sat = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1, 100, 0, true);
+		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 2, 360, 170, true);
+		//bri = map(cos(frameCount * 0.5), -1, 1, 0, 100, true);
+		bri = map(frameCount, MAX_FRAMES / 1.5, MAX_FRAMES, 100, 0, true);
+
 		noStroke();
-		fill(hue, sat, 5, 100);
+		fill(hue, sat, bri, 100);
 		rect(x, y, elW, elW);
 
 		xi += 0.0000000000000000000001;
