@@ -54,7 +54,7 @@ let yRandSkipper = 0;
 let apertureLow = 0.001;
 let apertureHigh = 2;
 
-let xoff_l = 0.15;
+let xoff_l = 0;
 let xoff_h = 1;
 let yoff_l = 0.5;
 let yoff_h = 1;
@@ -65,7 +65,7 @@ function setup() {
 	// canvas setup
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
 	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
-	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
+	c = createCanvas(windowWidth, windowHeight * RATIO);
 	pixelDensity(dpi(maxDPI));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -112,8 +112,8 @@ function draw() {
 	let scale2 = 1;
 	//xoff_l = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 0, 0.4999, true);
 	//xoff_h = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 1, 0.5001, true);
-	yoff_l = map(frameCount, 0, MAX_FRAMES / 2, 0.5, 0.99, true);
-	//yoff_h = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 1, 0.505, true);
+	yoff_l = map(frameCount, 0, MAX_FRAMES / 2, 0.8, 0.99, true);
+	//yoff_h = map(frameCount, 0, MAX_FRAMES / 2, 1, 0.5, true);
 	push();
 	rotate(angle1);
 	scale(scale1);
@@ -203,10 +203,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		let ab_x = x + xRandSkipper;
 		let ab_y = y + yRandSkipper;
 
-		// map the saturation to the distance from the center
-		//sat = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1, 50, 100, true);
-		//bri = map(cos(frameCount * 0.5), -1, 1, 0, 100, true);
-		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.6, 360, 210, true);
+		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 360, 210, true);
 		sat = map(frameCount, 0, MAX_FRAMES / 2.5, 60, 100, true);
 		bri = map(frameCount, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, 60, true);
 
@@ -216,13 +213,5 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 
 		xi += 0.0000000000000000000001;
 		yi += 0.0000000000000000000001;
-
-		//!animated scaling , need octaves
-		/* 
-		nx_scale *= 1.00000025;
-		ny_scale *= 1.00000025;
-
-		nx_scale = constrain(nx_scale, 0.00005, 0.002);
-		ny_scale = constrain(ny_scale, 0.00005, 0.002); */
 	}
 }
