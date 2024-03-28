@@ -10,7 +10,7 @@ let CM = 1;
 let DEFAULT_SIZE = 1200;
 let DIM;
 let MULTIPLIER;
-let MAX_FRAMES = 700;
+//let MAX_FRAMES = 700;
 
 let particle_num = 10000;
 
@@ -35,8 +35,22 @@ let bri = 0;
 let displacement1 = 0;
 let displacement2 = 100;
 
-let angle1 = 0;
+let base_angle = 0;
+// let angle = [0, 45, 90];
+// let angle = [0, 45, 90, 180, 225, 270];
+// let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
+// let angle1 = [45, 225];
+//let angle1 = [45, 135, 225, 315];
+// let angle1 = [0, 90, 180, 270];
+// let angle1 = [90, 270];
+//let angle1 = [45];
+// let angle2 = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340]);
+let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 let angle2 = 0;
+
+let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1700));
+
+console.log(MAX_FRAMES);
 
 let nx_scale = 0.00005;
 let ny_scale = 0.00005;
@@ -77,8 +91,8 @@ function setup() {
 	// make a radial gradient background in vanilla js
 	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
-	gradient.addColorStop(0.5, "hsl(221, 50%, 95%)");
-	gradient.addColorStop(1, "hsl(231, 50%, 93%)");
+	gradient.addColorStop(0.5, "hsl(25, 100%, 98%)");
+	gradient.addColorStop(1, "hsl(36, 100%, 95%)");
 	drawingContext.fillStyle = gradient;
 	drawingContext.fillRect(0, 0, width, height);
 
@@ -96,18 +110,6 @@ function draw() {
 	displacement2 = random([100, 200, 300]);
 	translate(width / 2, height / 2);
 
-	//let angle = int(random([0, 45, 90]));
-	//let angle = int(random([0, 45, 90, 180, 225, 270]));
-	let angle1 = int(random([0, 45, 90, 135, 180, 225, 270, 315]));
-	//let angle1 = random([45, 225]);
-	//let angle1 = random([45, 135, 225, 315]);
-	//let angle1 = random([45, 135, 225, 315]);
-	//let angle1 = random([0, 90, 180, 270]);
-	//let angle1 = random([90, 270]);
-	//let angle1 = 45;
-	//let angle2 = random([0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340]);
-	//let angle = random([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350]);
-
 	let scale1 = 1;
 	let scale2 = 1;
 	//xoff_l = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 0, 0.4999, true);
@@ -115,7 +117,7 @@ function draw() {
 	yoff_l = map(frameCount, 0, MAX_FRAMES / 2, 0.8, 0.99, true);
 	//yoff_h = map(frameCount, 0, MAX_FRAMES / 2, 1, 0.5, true);
 	push();
-	rotate(angle1);
+	rotate(random(angle1));
 	scale(scale1);
 	paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1);
 	/* 	paint(random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), particle_num, xi, yi, scale1); */
