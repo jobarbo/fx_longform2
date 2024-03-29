@@ -44,10 +44,11 @@ let base_angle = 0;
 // let angle1 = [0, 90, 180, 270];
 // let angle1 = [90, 270];
 //let angle1 = [45];
-// let angle2 = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340]);
-let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
+let angle1 = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340];
+//let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 let angle2 = 0;
 
+let angle_index = 0;
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1700));
 
 console.log(MAX_FRAMES);
@@ -66,11 +67,14 @@ let xRandSkipper = 0;
 let yRandSkipper = 0;
 
 let apertureLow = 0.001;
-let apertureHigh = 2;
+let apertureHigh = 0.1;
 
-let xoff_l = 0;
+let yoff_l_init = 0.8;
+
+let xoff_l = 0.8;
 let xoff_h = 1;
-let yoff_l = 0.5;
+
+let yoff_l = yoff_l_init;
 let yoff_h = 1;
 
 function setup() {
@@ -79,7 +83,7 @@ function setup() {
 	// canvas setup
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
 	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
-	c = createCanvas(windowWidth, windowHeight * RATIO);
+	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
 	pixelDensity(dpi(maxDPI));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -92,7 +96,7 @@ function setup() {
 	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
 	gradient.addColorStop(0.5, "hsl(25, 100%, 98%)");
-	gradient.addColorStop(1, "hsl(36, 100%, 95%)");
+	gradient.addColorStop(0.8, "hsl(36, 100%, 95%)");
 	drawingContext.fillStyle = gradient;
 	drawingContext.fillRect(0, 0, width, height);
 
@@ -114,12 +118,20 @@ function draw() {
 	let scale2 = 1;
 	//xoff_l = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 0, 0.4999, true);
 	//xoff_h = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 1, 0.5001, true);
-	yoff_l = map(frameCount, 0, MAX_FRAMES / 2, 0.8, 0.99, true);
+	//yoff_l = map(cos(frameCount * 0.5), -1, 1, 0.99, 0.8, true);
+	//yoff_l = map(cos(angle1[angle_index]), -1, 1, 0.1, 0.8, true);
+	yoff_l = map(frameCount, 0, MAX_FRAMES / 2, 0.7, 0.99, true);
 	//yoff_h = map(frameCount, 0, MAX_FRAMES / 2, 1, 0.5, true);
 	push();
 	rotate(random(angle1));
 	scale(scale1);
 	paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1);
+	if (angle_index < angle1.length - 1) {
+		angle_index++;
+	} else {
+		angle_index = 0;
+	}
+
 	/* 	paint(random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), particle_num, xi, yi, scale1); */
 	pop();
 	/* 	push();

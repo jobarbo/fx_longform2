@@ -10,6 +10,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	background-color: #fff5e6;
 }
 
 body {
@@ -40,4 +41,17 @@ canvas.p5Canvas {
 	max-height: var(--hContent);
 	max-height: 100vh;
 	width: auto !important;
+	/*animation: rotate 0.3s linear infinite; */
+}
+
+/* make an animation that rotates the canvas on its center */
+
+@keyframes rotate {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
 }
