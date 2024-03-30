@@ -94,7 +94,7 @@ function INIT(seed) {
 	scl2 = scl1;
 
 	ang1 = 1;
-	ang2 = 1;
+	ang2 = 1000;
 
 	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	yRandDivider = xRandDivider;
