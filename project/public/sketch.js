@@ -102,7 +102,7 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range = width / 1.75;
+	pos_range = width / 1.5;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -116,11 +116,11 @@ function draw() {
 
 	let scale1 = 1;
 	let scale2 = 1;
-	//xoff_l = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 0, 0.4999, true);
+	//xoff_l = map(frameCount, 0, MAX_FRAMES / 2, 0.8, 0.99, true);
 	//xoff_h = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 1, 0.5001, true);
-	//yoff_l = map(cos(frameCount * 0.5), -1, 1, 0.99, 0.8, true);
+	yoff_l = map(cos(frameCount * 0.5), -1, 1, 0.99, 0.8, true);
 	//yoff_l = map(cos(angle1[angle_index]), -1, 1, 0.1, 0.8, true);
-	yoff_l = map(frameCount, 0, MAX_FRAMES / 2, 0.7, 0.99, true);
+	//yoff_l = map(frameCount, 0, MAX_FRAMES / 2, 0.7, 0.99, true);
 	//yoff_h = map(frameCount, 0, MAX_FRAMES / 2, 1, 0.5, true);
 	push();
 	rotate(random(angle1));
