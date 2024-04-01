@@ -29,7 +29,7 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.oct = 6;
+		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.zombie = false;
@@ -37,7 +37,7 @@ class Mover {
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [15, 15, 15, 15];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5]; //! lower number here too
-		this.nlimit = 12; //! can put higher number here
+		this.nlimit = 2; //! can put higher number here
 		this.nlow = -1;
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
@@ -65,8 +65,8 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed, this.oct, this.nvalue, this.uvalue);
 
-		this.lineWeightMax = map(frameCount, 50, maxFrames - 100, this.shutterHigh, this.shutterLow, true);
-		this.skipperMax = map(frameCount, 50, maxFrames - 100, this.apertureHigh, this.apertureLow, true);
+		this.lineWeightMax = map(frameCount, 50, maxFrames - 20, this.shutterHigh, this.shutterLow, true);
+		this.skipperMax = map(frameCount, 50, maxFrames - 20, this.apertureHigh, this.apertureLow, true);
 
 		this.xRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
 		this.yRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
@@ -81,9 +81,9 @@ class Mover {
 				this.nvalue[i] += 0.015 * this.nvalueDir[i];
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
-				this.uvalue[i] *= 1.2 * this.uvalueDir[i];
+				this.uvalue[i] *= 1.01 * this.uvalueDir[i];
 				//this.uvalue[i] += 1;
-				this.nvalue[i] += 0.97 * this.nvalueDir[i];
+				this.nvalue[i] += 0.7 * this.nvalueDir[i];
 			}
 
 			//! YoYo with value (not sure);
