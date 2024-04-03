@@ -37,12 +37,12 @@ let displacement2 = 100;
 let base_angle = 0;
 // let angle = [0, 45, 90];
 // let angle = [0, 45, 90, 180, 225, 270];
-// let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
+let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
 // let angle1 = [45, 225];
 //let angle1 = [45, 135, 225, 315];
 // let angle1 = [0, 90, 180, 270];
 // let angle1 = [90, 270];
-let angle1 = [45];
+//let angle1 = [45];
 //let angle1 = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340];
 //let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
@@ -72,14 +72,14 @@ let yRandSkipper = 0;
 let apertureLow = 0.1;
 let apertureHigh = 0.1;
 
-let yoff_l_init = 0.7;
-let xoff_l_init = 0.7;
+let yoff_l_init = 1.8;
+let xoff_l_init = 1.8;
 
 let xoff_l = xoff_l_init;
-let xoff_h = 1;
+let xoff_h = 2;
 
 let yoff_l = yoff_l_init;
-let yoff_h = 1;
+let yoff_h = 2;
 
 let cos_val;
 
@@ -114,14 +114,14 @@ function setup() {
 function draw() {
 	// Draw with p5.js things
 	//blendMode(SCREEN);
-	cos_val = sin(frameCount * 1000);
+	cos_val = sin(frameCount * 100);
 	//displacement2 = random([100, 200, 300]);
 	translate(width / 2, height / 2);
 
 	let scale1 = 1;
 	//let scale2 = 1;
-	xoff_l = map(cos_val, -1, 0, 0.985, 0.01, true);
-	yoff_l = map(cos_val, 0, 1, 0.01, 0.985, true);
+	xoff_l = map(cos_val, -1, 0, 1.985, 1.8, true);
+	yoff_l = map(cos_val, 0, 1, 1.8, 1.985, true);
 	for (let i = 0; i < angle1.length; i++) {
 		push();
 		rotate(angle1[i]);
@@ -142,6 +142,7 @@ function draw() {
 	if (frameCount >= MAX_FRAMES) {
 		document.complete = true;
 		noLoop();
+		console.log("done");
 	}
 }
 
@@ -216,7 +217,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		bri = map(frameCount, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, bri_min, true);
 		bri_min = map(frameCount, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 80, 60, true);
 		noStroke();
-		fill(hue, sat, bri, 100);
+		fill(0, 75, 10, 100);
 		rect(ab_x, ab_y, elW, elW);
 
 		xi += 0.0000000000000000000001;
