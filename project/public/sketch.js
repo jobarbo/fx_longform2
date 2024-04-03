@@ -42,14 +42,16 @@ let base_angle = 0;
 //let angle1 = [45, 135, 225, 315];
 // let angle1 = [0, 90, 180, 270];
 // let angle1 = [90, 270];
-//let angle1 = [45];
-let angle1 = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340];
+let angle1 = [45];
+//let angle1 = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340];
+//let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 let angle2 = 0;
 
 let particle_num = Math.floor(10000 / angle1.length);
 
 let angle_index = 0;
+
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1700));
 
 console.log(MAX_FRAMES);
@@ -70,8 +72,8 @@ let yRandSkipper = 0;
 let apertureLow = 0.1;
 let apertureHigh = 0.1;
 
-let yoff_l_init = 0.75;
-let xoff_l_init = 0.75;
+let yoff_l_init = 0.7;
+let xoff_l_init = 0.7;
 
 let xoff_l = xoff_l_init;
 let xoff_h = 1;
@@ -83,8 +85,6 @@ let cos_val;
 
 function setup() {
 	features = $fx.getFeatures();
-
-	// canvas setup
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
 	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
 	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
@@ -96,7 +96,6 @@ function setup() {
 	angleMode(DEGREES);
 	//background(45, 0, 4);
 	//background(45, 10, 100);
-	// make a radial gradient background in vanilla js
 	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
 	gradient.addColorStop(0.5, "hsl(25, 100%, 98%)");
@@ -115,17 +114,14 @@ function setup() {
 function draw() {
 	// Draw with p5.js things
 	//blendMode(SCREEN);
-	cos_val = sin(frameCount * 100);
-	displacement2 = random([100, 200, 300]);
+	cos_val = sin(frameCount * 1000);
+	//displacement2 = random([100, 200, 300]);
 	translate(width / 2, height / 2);
 
 	let scale1 = 1;
-	let scale2 = 1;
-	//xoff_l = map(cos_val, -1, 0, 0.99, 0.75, true);
-	//xoff_h = map(frameCount, MAX_FRAMES / 22.5, MAX_FRAMES / 2, 1, 0.5001, true);
-	//yoff_l = map(cos_val, 0, 1, 0.75, 0.99, true);
-	//yoff_l = map(frameCount, 0, MAX_FRAMES / 2, 0.7, 0.99, true);
-	//yoff_h = map(frameCount, 0, MAX_FRAMES / 2, 1, 0.5, true);
+	//let scale2 = 1;
+	xoff_l = map(cos_val, -1, 0, 0.985, 0.01, true);
+	yoff_l = map(cos_val, 0, 1, 0.01, 0.985, true);
 	for (let i = 0; i < angle1.length; i++) {
 		push();
 		rotate(angle1[i]);
@@ -176,16 +172,16 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 
 		//! Astral Beings
 		/* 		let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
-
+		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+ */
 		//! Astral Beings 2
-		/* 		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
+		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 
 		//! Astral Beings 3
-		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-
+ */
 		/* 	let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
