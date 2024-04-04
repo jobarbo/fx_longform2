@@ -37,14 +37,14 @@ let displacement2 = 100;
 let base_angle = 0;
 // let angle = [0, 45, 90];
 // let angle = [0, 45, 90, 180, 225, 270];
-let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
-// let angle1 = [45, 225];
+//let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
+//let angle1 = [45, 225];
 //let angle1 = [45, 135, 225, 315];
 // let angle1 = [0, 90, 180, 270];
 // let angle1 = [90, 270];
-//let angle1 = [45];
-//let angle1 = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340];
-//let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
+let angle1 = [45];
+// let angle1 = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340];
+// let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 let angle2 = 0;
 
@@ -52,9 +52,10 @@ let particle_num = Math.floor(10000 / angle1.length);
 
 let angle_index = 0;
 
-let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1700));
+let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
 
 console.log(MAX_FRAMES);
+console.log(particle_num);
 
 let nx_scale = 0.00005;
 let ny_scale = 0.00005;
@@ -69,11 +70,11 @@ let yRandSkipperVal;
 let xRandSkipper = 0;
 let yRandSkipper = 0;
 
-let apertureLow = 0.1;
-let apertureHigh = 0.1;
+let apertureLow = 0.01;
+let apertureHigh = 0.01;
 
-let yoff_l_init = 1.8;
-let xoff_l_init = 1.8;
+let yoff_l_init = 1;
+let xoff_l_init = 1;
 
 let xoff_l = xoff_l_init;
 let xoff_h = 2;
@@ -114,14 +115,14 @@ function setup() {
 function draw() {
 	// Draw with p5.js things
 	//blendMode(SCREEN);
-	cos_val = sin(frameCount * 100);
+	cos_val = sin(frameCount * 50);
 	//displacement2 = random([100, 200, 300]);
 	translate(width / 2, height / 2);
 
 	let scale1 = 1;
 	//let scale2 = 1;
-	xoff_l = map(cos_val, -1, 0, 1.985, 1.8, true);
-	yoff_l = map(cos_val, 0, 1, 1.8, 1.985, true);
+	xoff_l = map(cos_val, -1, -0.25, 1.99, 1, true);
+	yoff_l = map(cos_val, 0.25, 1, 1, 1.99, true);
 	for (let i = 0; i < angle1.length; i++) {
 		push();
 		rotate(angle1[i]);
@@ -173,16 +174,15 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 
 		//! Astral Beings
 		/* 		let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
- */
+		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
+
 		//! Astral Beings 2
-		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings 3
-		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
- */
 		/* 	let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
@@ -207,7 +207,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		xRandSkipper = randomGaussian(0, xRandSkipperVal);
 		yRandSkipper = randomGaussian(0, yRandSkipperVal);
 
-		let w = map(frameCount, MAX_FRAMES / 5, MAX_FRAMES / 1.5, 0.22, 0.15, true);
+		//let w = map(frameCount, MAX_FRAMES / 5, MAX_FRAMES / 1.5, 0.22, 0.15, true);
+		let w = map(abs(cos_val), 0, 1, 0.01, 0.2, true);
 		let elW = w * MULTIPLIER;
 		let ab_x = x + xRandSkipper;
 		let ab_y = y + yRandSkipper;
@@ -215,9 +216,10 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale) {
 		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 310, 210, true);
 		sat = map(frameCount, 0, MAX_FRAMES / 2.5, 60, 100, true);
 		bri = map(frameCount, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, bri_min, true);
-		bri_min = map(frameCount, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 80, 60, true);
+		bri_min = map(frameCount, MAX_FRAMES / 2, MAX_FRAMES / 1, 80, 40, true);
 		noStroke();
-		fill(0, 75, 10, 100);
+		//fill(0, 75, 10, 100);
+		fill(hue, sat, bri, 100);
 		rect(ab_x, ab_y, elW, elW);
 
 		xi += 0.0000000000000000000001;
