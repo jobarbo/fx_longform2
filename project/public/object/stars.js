@@ -8,14 +8,14 @@ class Stars {
 		this.hue = hue;
 		this.sat = sat;
 		this.bri = bri;
-    this.a = 100;
+		this.a = 100;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-    this.centerX = width / 2;
-    this.centerY = height / 2;
-		this.xRandSkipperVal = random([0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 1, 1.5, 2, 2.5, 3, 4,5,10]);
+		this.centerX = width / 2;
+		this.centerY = height / 2;
+		this.xRandSkipperVal = random([0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 10]);
 		this.yRandSkipperVal = this.xRandSkipperVal;
 	}
 
@@ -26,7 +26,7 @@ class Stars {
 	}
 
 	move(xi, yi) {
-    let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 1302 * MULTIPLIER);
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 902 * MULTIPLIER);
 		this.x = this.initX;
 		this.y = this.initY;
 
@@ -38,6 +38,6 @@ class Stars {
 		this.x += skipper.x * MULTIPLIER;
 		this.y += skipper.y * MULTIPLIER;
 
-    this.a = map(distCircle, 0, 3 * MULTIPLIER, 0, 100, true);
+		this.a = map(distCircle, 0, 3000 * MULTIPLIER, 0, 100, true);
 	}
 }

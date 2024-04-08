@@ -7,7 +7,7 @@ let yMin;
 let yMax;
 let startTime;
 //let maxFrames = 64 * 500000;
-let maxFrames = 800 * 1;
+let maxFrames = 72 * 1;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -23,7 +23,7 @@ let renderMode = 1;
 let scl1, scl2, amp1, amp2, scl1Zone, scl2Zone, amp1Zone, amp2Zone;
 
 function setup() {
-	console.time('setup');
+	console.time("setup");
 	var ua = window.navigator.userAgent;
 	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
 	var webkit = !!ua.match(/WebKit/i);
@@ -66,7 +66,7 @@ function setup() {
 
 	background(bgCol);
 	generateStars();
-	
+
 	INIT();
 }
 
@@ -85,10 +85,10 @@ function draw() {
 	showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
 
 	if (elapsedTime > maxFrames) {
-		console.log('elapsedTime', elapsedTime);
-		console.timeEnd('setup');
+		console.log("elapsedTime", elapsedTime);
+		console.timeEnd("setup");
 		let timeToRender = (elapsedTime / 60).toFixed(2);
-		console.log('timeToRender', timeToRender);
+		console.log("timeToRender", timeToRender);
 		noLoop();
 	}
 }
@@ -98,9 +98,8 @@ function draw() {
 //////////////////////////////////////////////////////
 
 function INIT() {
-	console.log('INIT');
+	console.log("INIT");
 	let hue = fxrand() * 360;
-
 
 	//drawTexture(hue);
 	movers = [];
@@ -151,12 +150,12 @@ function INIT() {
 function generateStars() {
 	//generate stars
 	let stars = [];
-	let starNum =random([250, 350, 500]);
+	let starNum = random([250, 350, 500]);
 	for (let i = 0; i < starNum; i++) {
 		let x = random(0, width);
 		let y = random(0, height);
 		let hue = random([0, 5, 10, 15, 20, 25, 30, 35, 30, 35, 190, 195, 200, 205, 210, 215, 220, 225]);
-		let sat = random([0, 0, 10, 10, 10, 20, 30, 40, 50]) ;
+		let sat = random([0, 0, 10, 10, 10, 20, 30, 40, 50]);
 		let bri = 100;
 		stars.push(new Stars(x, y, hue, sat, bri, xMin, xMax, yMin, yMax));
 	}
@@ -181,10 +180,9 @@ function generateStars() {
 	blendMode(BLEND);
 }
 
-
 function drawTexture(hue) {
 	// draw 200000 small rects to create a texture
-	console.log('drawTexture');
+	console.log("drawTexture");
 	for (let i = 0; i < 40000; i++) {
 		let x = random(width);
 		let y = random(height);
@@ -203,7 +201,7 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 	if (percent > 100) percent = 100;
 
 	// put the percent in the title of the page
-	document.title = percent.toFixed(0) + '%' + ' (mode ' + renderMode + ')';
+	document.title = percent.toFixed(0) + "%" + " (mode " + renderMode + ")";
 }
 
 function keyPressed() {
@@ -244,7 +242,7 @@ function keyPressed() {
 		maxFrames = keyCodeToMaxFrames;
 		drawing = true;
 		loop();
-		console.log('keyPressed');
+		console.log("keyPressed");
 		INIT(particleNum);
 	}
 }
