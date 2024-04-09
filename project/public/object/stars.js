@@ -14,7 +14,7 @@ class Stars {
 		this.yMin = yMin;
 		this.yMax = yMax;
 		this.centerX = width / 2;
-		this.centerY = height / 2;
+		this.centerY = height;
 		this.xRandSkipperVal = random([0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 0.1, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 10]);
 		this.yRandSkipperVal = this.xRandSkipperVal;
 	}
@@ -26,7 +26,7 @@ class Stars {
 	}
 
 	move(xi, yi) {
-		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 902 * MULTIPLIER);
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 2202 * MULTIPLIER);
 		this.x = this.initX;
 		this.y = this.initY;
 

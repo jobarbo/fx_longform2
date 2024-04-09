@@ -38,7 +38,7 @@ class Mover {
 		this.yLimit = 0.00015;
 		this.oct = 6;
 		this.centerX = width / 2;
-		this.centerY = height / 2;
+		this.centerY = height;
 		this.borderX = width / 2;
 		this.borderY = height / 2.75;
 		this.uvalue = 20;
@@ -56,7 +56,7 @@ class Mover {
 
 	move() {
 		/* 		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, this.centerY], [1000, 10]); */
-		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 302);
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 602);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		this.ang1 = int(map(distCircle, -300, -2, 700, 4000, true));
@@ -83,8 +83,8 @@ class Mover {
 		if (this.isBordered) {
 			if (distCircle > fxrand() * 8 - 4) {
 				let r = fxrand() * 2 * PI;
-				this.x = this.centerX + cos(r) * random(298, 302);
-				this.y = this.centerY + sin(r) * random(298, 302);
+				this.x = this.centerX + cos(r) * random(598, 602);
+				this.y = this.centerY + sin(r) * random(598, 602);
 			}
 		}
 	}

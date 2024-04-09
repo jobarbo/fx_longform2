@@ -15,7 +15,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 50251;
+let particleNum = 150251;
 let drawing = true;
 let bgCol;
 let renderMode = 1;
@@ -116,8 +116,8 @@ function INIT() {
 
 	for (let i = 0; i < particleNum; i++) {
 		let r = random(0, 2 * PI);
-		let x = width / 2 + cos(r) * 1300 * MULTIPLIER;
-		let y = height / 2 + sin(r) * 1300 * MULTIPLIER;
+		let x = width / 2 + cos(r) * 2600 * MULTIPLIER;
+		let y = height + sin(r) * 2600 * MULTIPLIER;
 		/* 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height; */
 
