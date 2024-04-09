@@ -116,8 +116,8 @@ function INIT() {
 
 	for (let i = 0; i < particleNum; i++) {
 		let r = random(0, 2 * PI);
-		let x = width / 2 + cos(r) * 1300 * MULTIPLIER;
-		let y = height / 2 + sin(r) * 1300 * MULTIPLIER;
+		let x = width / 2 + cos(r) * 900 * MULTIPLIER;
+		let y = height / 2 + sin(r) * 900 * MULTIPLIER;
 		/* 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height; */
 

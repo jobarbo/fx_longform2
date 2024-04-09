@@ -36,12 +36,12 @@ class Mover {
 		this.yMax = yMax;
 		this.xLimit = 0.00015;
 		this.yLimit = 0.00015;
-		this.oct = 14;
+		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX = width / 2;
 		this.borderY = height / 2.75;
-		this.uvalue = 20;
+		this.uvalue = 40;
 		this.isBordered = true;
 
 		this.ang1Zone = ang1Zone;
@@ -60,8 +60,8 @@ class Mover {
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 302);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distCircle, -300, 0, 1, 8000, true));
-		this.ang2 = int(map(distCircle, -300, 0, 3000, 1, true));
+		this.ang1 = int(map(distCircle, -400, 0, 1, 8000, true));
+		this.ang2 = int(map(distCircle, -400, 0, 3000, 1, true));
 		/* 		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
 		this.scl2 = 0.002; */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
@@ -80,15 +80,15 @@ class Mover {
 		this.bri += map(p.y, -1, this.uvalue, this.briStep, -this.briStep, true);
 		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri;
 
-		this.a = map(distCircle, 0, 3, 100, 0, true);
+		this.a = map(abs(distCircle), 0, 200, 100, 0, true);
 
-		if (this.isBordered) {
+		/* 		if (this.isBordered) {
 			if (distCircle > fxrand() * 8 - 4) {
 				let r = fxrand() * 2 * PI;
 				this.x = this.centerX + cos(r) * random(298, 304);
 				this.y = this.centerY + sin(r) * random(298, 304);
 			}
-		}
+		} */
 	}
 }
 function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
@@ -122,8 +122,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
 	let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
 
-	let u = map(un, -0.5, 0.5, -20, 1, true);
-	let v = map(vn, -0.5, 0.5, -1, 20, true);
+	let u = map(un, -0.5, 0.5, -5, 5, true);
+	let v = map(vn, -0.5, 0.5, -5, 5, true);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
