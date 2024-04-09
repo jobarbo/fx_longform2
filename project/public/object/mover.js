@@ -41,7 +41,7 @@ class Mover {
 		this.centerY = height / 2;
 		this.borderX = width / 2;
 		this.borderY = height / 2.75;
-		this.uvalue = 15;
+		this.uvalue = 20;
 		this.isBordered = true;
 		this.ang1Zone = ang1Zone;
 		this.ang2Zone = ang2Zone;
@@ -60,7 +60,7 @@ class Mover {
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		this.ang1 = int(map(distCircle, -300, -2, 700, 4000, true));
-		this.ang2 = 500;
+		this.ang2 = 2000;
 		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.uvalue);
@@ -74,7 +74,7 @@ class Mover {
 		this.hue += map(p.y, -1, this.uvalue, this.hueStep, -this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
 		this.sat += map(p.x, -this.uvalue, 1, -this.satStep, this.satStep, true);
-		this.sat = this.sat > 100 ? 100 : this.sat < 0 ? 0 : this.sat;
+		this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
 		this.bri += map(p.y, -1, this.uvalue, this.briStep, -this.briStep, true);
 		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri;
 
