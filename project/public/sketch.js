@@ -1,4 +1,4 @@
-let features = '';
+let features = "";
 let movers = [];
 let scl1;
 let scl2;
@@ -38,7 +38,7 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	INIT(rseed);
+	INIT();
 	let sketch = drawGenerator();
 
 	// use requestAnimationFrame to call the generator function and pass it the sketch function
@@ -79,7 +79,7 @@ function* drawGenerator() {
 		if (elapsedTime > maxFrames && drawing) {
 			drawing = false;
 			// close the generator
-			console.timeEnd('setup');
+			console.timeEnd("setup");
 			return;
 		}
 	}
@@ -89,22 +89,32 @@ function* drawGenerator() {
 	INIT(rseed);
 } */
 
-function INIT(seed) {
+function INIT() {
 	movers = [];
 	scl1 = random(0.003, 0.007);
 	scl2 = random(0.003, 0.007);
 	let hue = random(360);
 	let y = random(height / 1.5, height / 3);
 	let x = -400;
-	for (let i = 0; i < particleNum; i++) {
-		// make x iterate from 0 to width with a step of 20 pixels
-		x = random(-400, width + 400);
-		// make y start at height/2 but every other steps it's position is affected by noise
 
-		y = map(noise(x * (width / (particleNum * 10)), seed), 0, 1, height / 1.35, height / 6.8, true);
+	let top_y = 1;
+	let bottom_y = height / 3;
+	for (let j = 0; j < 5; j++) {
+		seed = random(10000);
+		noiseDetail(5 - j, 0.5);
+		for (let i = 0; i < particleNum; i++) {
+			// make x iterate from 0 to width with a step of 20 pixels
+			x = random(-400, width + 400);
+			// make y start at height/2 but every other steps it's position is affected by noise
 
-		movers.push(new Mover(x, y, hue, scl1, scl2, seed));
+			y = map(noise(x * (width / (particleNum * (5 + j))), seed), 0, 1, top_y, bottom_y, true);
+
+			movers.push(new Mover(x, y, hue, scl1, scl2, seed, j));
+		}
+		top_y += height / (7 - j);
+		bottom_y += height / (7 - j);
+		console.log(top_y, bottom_y);
 	}
-	let bgCol = spectral.mix('#fff', '#D79900', 0.038);
+	let bgCol = spectral.mix("#fff", "#D79900", 0.038);
 	background(bgCol);
 }

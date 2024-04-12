@@ -1,5 +1,5 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, seed) {
+	constructor(x, y, hue, scl1, scl2, seed, num) {
 		this.x = x;
 		this.y = y;
 		this.hue = hue;
@@ -15,6 +15,7 @@ class Mover {
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.seed = seed;
+		this.num = num;
 	}
 
 	show() {
@@ -31,14 +32,15 @@ class Mover {
 		//this.hue = map(p.x, -4, 4, this.hue - 3, this.hue + 3, true);
 		//this.sat = map(p.x, -4, 4, this.sat + 2, this.sat - 2, true);
 		//this.bri = map(p.x, -4, 4, this.bri - 2, this.bri + 2, true);
-		this.xRandDivider = random(0.0001, 2);
+		this.xRandDivider = random(0.0001, 1);
 		this.yRandDivider = random(0.00001, 1.5);
 		this.xRandSkipper = random(-0, 0);
 		this.yRandSkipper = random(0, 0);
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 		this.a = map(abs(p.x + p.y), 1.99, 2, 50, 100, true);
-		this.s = map(abs(p.x + p.y), 1.99, 2, 0.45, 0.25, true);
+		//this.s = map(abs(p.x + p.y), 1.99, 2, 0.45, 0.45, true);
+		this.s = map(this.num, 0, 5, 0.15, 0.6, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
@@ -100,8 +102,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave, ns) {
 	let aValue = rangeA[Math.floor(fxrand() * rangeA.length)];
 	let bValue = rangeB[Math.floor(fxrand() * rangeB.length)];
 
-	let u = mapValue(un, 0, noiseSpeed, -aValue, aValue);
-	let v = mapValue(vn, 0, noiseSpeed, 1, bValue);
+	let u = map(un, 0, noiseSpeed, -2, -1, true);
+	let v = map(vn, 0, noiseSpeed, 0, bValue, true);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
