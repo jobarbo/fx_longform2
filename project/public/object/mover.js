@@ -2,12 +2,11 @@ class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, scl1Zone, scl2Zone, ang1Zone, ang2Zone) {
 		this.x = x;
 		this.y = y;
-
 		this.initHue = parseInt(hue);
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initAlpha = 100;
-		this.initS = 0.5 * MULTIPLIER;
+		this.initS = 0.4 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -50,6 +49,8 @@ class Mover {
 		this.ang2Zone = ang2Zone;
 		this.scl1Zone = scl1Zone;
 		this.scl2Zone = scl2Zone;
+
+		this.xRange = 10;
 	}
 
 	show() {
@@ -63,14 +64,15 @@ class Mover {
 		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
 		// the sdf_box function returns the distance from the particle to the chosen location.
 		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
-		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 2000 * MULTIPLIER], [400 * MULTIPLIER, 400 * MULTIPLIER]);
+		this.xRange = map(this.y, height / 2, height, 10, 2000, true);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 2000 * MULTIPLIER], [this.xRange * MULTIPLIER, 2800 * MULTIPLIER]);
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY + 200], 600 * MULTIPLIER);
 
 		let distHexagon = sdf_hexagon([this.x, this.y], [this.centerX, this.centerY], 200 * MULTIPLIER);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		/* 		this.ang1 = map(distCircle, -500 * MULTIPLIER, 200 * MULTIPLIER, -this.ang1Init * 8, this.ang1Init, true);
-		this.ang2 = map(distCircle, -500 * MULTIPLIER, 200 * MULTIPLIER, -this.ang2Init * 8, this.ang2Init, true); */
+		this.ang1 = map(distFromCenter, -500 * MULTIPLIER, 200 * MULTIPLIER, -this.ang1Init * 8, this.ang1Init, true);
+		this.ang2 = map(distFromCenter, -500 * MULTIPLIER, 200 * MULTIPLIER, -this.ang2Init * 8, this.ang2Init, true);
 		/* 		this.scl1 = map(distCircle, -100 * MULTIPLIER, 200 * MULTIPLIER, -this.scl1Init, this.scl1Init * 1, true);
 		this.scl2 = map(distCircle, -100 * MULTIPLIER, 200 * MULTIPLIER, -this.scl2Init, this.scl2Init * 1, true); */
 
@@ -91,8 +93,8 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		this.xRandDivider = fxrand() * 6;
-		this.yRandDivider = fxrand() * 6;
+		this.xRandDivider = fxrand() * map(this.y, height / 2, height, 0.001, 5, true);
+		this.yRandDivider = fxrand() * map(this.y, height / 2, height, 0.001, 5, true);
 
 		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
 		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
@@ -120,8 +122,8 @@ class Mover {
 		//!goldenfold variant
 		if (this.speed < 1) {
 			this.hue = 35;
-			this.sat = this.initSat + 80;
-			this.bri = this.initBri + 30;
+			this.sat = this.initSat - 30;
+			this.bri = this.initBri + 50;
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
@@ -214,9 +216,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 
 	/* 	let u = mapValue(un, -0.5, 0.5, -aValue, bValue);
 	let v = mapValue(vn, -0.5, 0.5, -bValue, aValue);*/
-	let u = mapValue(sun, 0, 1, -aValue, bValue);
-	let v = mapValue(svn, 0, 1, -bValue, aValue);
-
+	let u = mapValue(sun, 0, 1, -aValue, aValue);
+	let v = mapValue(svn, 0, 1, -bValue, bValue);
 	//let p = createVector(u, v);
 	return {x: u, y: v};
 }
