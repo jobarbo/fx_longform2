@@ -39,9 +39,9 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
 
-		this.xRandDivider = 0.8;
+		this.xRandDivider = 1;
 		this.yRandDivider = 1;
-		this.xRandSkipper = random(-2.1, 2.1);
+		this.xRandSkipper = random(-0.1, 0.1);
 		this.yRandSkipper = random(-0.1, 0.1);
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
@@ -96,8 +96,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 1, 1);
-	let vn = oct(nx, ny, scale2, 2, 1);
+	let un = oct(nx, ny, scale1, 3, 1);
+	let vn = oct(nx, ny, scale2, 0, 3);
 
 	let u = map(un, -0.5, 0.5, -4, 4, true);
 	let v = map(vn, -0.5, 0.5, -4, 4, true);
