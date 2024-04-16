@@ -39,15 +39,15 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
 
-		this.xRandDivider = random(0.000001, 2.1);
-		this.yRandDivider = random(0.000001, 2.1);
-		this.xRandSkipper = random(-1.1, 1.1);
-		this.yRandSkipper = random(-1.1, 1.1);
+		this.xRandDivider = 0.8;
+		this.yRandDivider = 1;
+		this.xRandSkipper = random(-2.1, 2.1);
+		this.yRandSkipper = random(-0.1, 0.1);
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
-		this.s = map(p.x, -4, 4, 5, 1, true);
+		this.s = map(p.x, -4, 4, 2, 2, true);
 		this.a = map(p.x, -4, 4, 10, 30, true);
 		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
@@ -81,26 +81,29 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 		dx,
 		dy;
 
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
+	dx = oct(nx, ny, scale1, 2, 1);
+	dy = oct(nx, ny, scale2, 3, 1);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
+	dx = oct(nx, ny, scale1, 4, 1);
+	dy = oct(nx, ny, scale2, 0, 1);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
+	dx = oct(nx, ny, scale1, 2, 1);
+	dy = oct(nx, ny, scale2, 1, 1);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct3(nx, ny, scale1, 1);
-	let vn = oct3(nx, ny, scale2, 2);
+	let un = oct(nx, ny, scale1, 1, 1);
+	let vn = oct(nx, ny, scale2, 2, 1);
 
 	let u = map(un, -0.5, 0.5, -4, 4, true);
 	let v = map(vn, -0.5, 0.5, -4, 4, true);
+
+	/* 	let u = sin(ny * scale1 + seed) + cos(ny * scale2 + seed) + sin(ny * scale2 * 0.2 + seed);
+	let v = sin(nx * scale1 + seed) + cos(nx * scale2 + seed) - sin(nx * scale2 * 0.2 + seed); */
 	let p = createVector(u, v);
 	return p;
 }

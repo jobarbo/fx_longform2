@@ -1,4 +1,4 @@
-let features = '';
+let features = "";
 let movers = [];
 let scl1;
 let scl2;
@@ -27,7 +27,7 @@ function setup() {
 	} else {
 		pixelDensity(1.0);
 	}
-	createCanvas(5400, 5400);
+	createCanvas(2400, 2400);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -44,7 +44,7 @@ function draw() {
 	}
 
 	if (frameCount > 100) {
-		console.log('done');
+		console.log("done");
 		noLoop();
 	}
 }
@@ -86,6 +86,6 @@ function INIT(seed) {
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix('#fff', '#000', 0.138);
+	let bgCol = spectral.mix("#fff", "#000", 0.138);
 	background(bgCol);
 }
