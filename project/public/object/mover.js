@@ -25,6 +25,8 @@ class Mover {
 		this.yMin = yMin;
 		this.yMax = yMax;
 		this.isBordered = isBordered;
+		this.max_a = 30;
+		this.min_a = 10;
 	}
 
 	show() {
@@ -39,16 +41,20 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
 
-		this.xRandDivider = 1;
-		this.yRandDivider = 1;
-		this.xRandSkipper = random(-0.1, 0.1);
-		this.yRandSkipper = random(-0.1, 0.1);
+		this.xRandDivider = random([0.1, 0.5, 0.5, 1, 1, 1]);
+		this.yRandDivider = random([0.1, 0.5, 0.5, 1, 1, 1]);
+		this.xRandSkipper = 0;
+		this.yRandSkipper = 0;
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
-		this.s = map(p.x, -4, 4, 2, 2, true);
-		this.a = map(p.x, -4, 4, 10, 30, true);
+		let alpha_dist = dist(this.x, this.y, width / 2, height / 2);
+
+		this.s = map(abs(p.x), 0, 4, 2, 1, true);
+		this.a = map(abs(p.x), 0, 4, this.max_a, this.min_a, true);
+		this.max_a = map(alpha_dist, width / 4, width / 2.1, 30, 0, true);
+		this.min_a = map(alpha_dist, width / 4, width / 2.1, 10, 0, true);
 		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
 		this.sat = map(p.x, -4, 4, 20, 60, true);
@@ -79,25 +85,26 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 		scale1 = scl1,
 		scale2 = scl2,
 		dx,
-		dy;
+		dy,
+		octaves = 4;
 
-	dx = oct(nx, ny, scale1, 2, 1);
-	dy = oct(nx, ny, scale2, 3, 1);
+	dx = oct(nx, ny, scale1, 2, octaves);
+	dy = oct(nx, ny, scale2, 3, octaves);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 4, 1);
-	dy = oct(nx, ny, scale2, 0, 1);
+	dx = oct(nx, ny, scale1, 4, octaves);
+	dy = oct(nx, ny, scale2, 0, octaves);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 2, 1);
-	dy = oct(nx, ny, scale2, 1, 1);
+	dx = oct(nx, ny, scale1, 2, octaves);
+	dy = oct(nx, ny, scale2, 1, octaves);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 3, 1);
-	let vn = oct(nx, ny, scale2, 0, 3);
+	let un = oct(nx, ny, scale1, 3, octaves);
+	let vn = oct(nx, ny, scale2, 0, octaves);
 
 	let u = map(un, -0.5, 0.5, -4, 4, true);
 	let v = map(vn, -0.5, 0.5, -4, 4, true);

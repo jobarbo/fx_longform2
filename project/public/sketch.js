@@ -56,10 +56,10 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.002, 0.003);
-	scl2 = random(0.002, 0.003);
+	scl1 = random(0.001, 0.003);
+	scl2 = random(0.001, 0.003);
 	ang1 = int(random(1200));
-	ang2 = int(random(25000));
+	ang2 = int(random(10000));
 
 	xMin = 0.15;
 	xMax = 0.85;
