@@ -1,16 +1,16 @@
-class Mover {
+class Back_mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
 		this.initSat = random(0, 100);
 		this.initBri = random(0, 20);
-		this.initAlpha = random(0, 20);
+		this.initAlpha = 0;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.s = 1;
+		this.s = 10;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.ang1 = ang1;
@@ -34,7 +34,7 @@ class Mover {
 		//blendMode(SCREEN);
 
 		fill(this.hue, this.sat, this.bri, this.a);
-		noStroke();
+		stroke(this.hue, this.sat + 10, this.bri - 10, this.a);
 		circle(this.x, this.y, this.s);
 	}
 
@@ -51,14 +51,13 @@ class Mover {
 
 		let alpha_dist = dist(this.x, this.y, width / 2, height / 2);
 
-		this.s = map(abs(p.x), 0, 4, 1.5, 1, true);
 		this.a = map(abs(p.x), 0, 4, this.max_a, this.min_a, true);
 		this.max_a = map(alpha_dist, width / 4, width / 2.1, 30, 0, true);
 		this.min_a = map(alpha_dist, width / 4, width / 2.1, 10, 0, true);
-		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
+		this.hue = map(abs(p.x), 0, 4, this.initHue - 10, this.initHue + 10);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		this.sat = map(abs(p.x), 0, 4, 30, 0, true);
-		this.bri = map(abs(p.x), 0, 4, 20, 100, true);
+		this.sat = map(abs(p.x), 0, 4, 10, 100, true);
+		this.bri = map(abs(p.x), 0, 4, 100, 80, true);
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {
