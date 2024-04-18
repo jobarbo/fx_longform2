@@ -10,7 +10,7 @@ class Back_mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.s = 10;
+		this.s = 20;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.ang1 = ang1;
