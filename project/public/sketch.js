@@ -74,8 +74,8 @@ function INIT(seed) {
 	background(bgCol);
 
 	movers = [];
-	scl1 = random(0.001, 0.004);
-	scl2 = random(0.0001, 0.001);
+	scl1 = random(0.001, 0.0014);
+	scl2 = random(0.0001, 0.0014);
 	ang1 = int(random(1200));
 	ang2 = int(random(10000));
 
@@ -88,7 +88,7 @@ function INIT(seed) {
 	stroke(0, 0, 70, 100);
 	strokeWeight(3);
 	// add border radius to the rect
-	rect(xMin * width, yMin * height, (xMax - xMin) * width, (yMax - yMin) * height, 60);
+	rect(xMin * width, yMin * height, (xMax - xMin) * width, (yMax - yMin) * height, 0);
 
 	/* 	xMin = -0.05;
 	xMax = 1.05;
