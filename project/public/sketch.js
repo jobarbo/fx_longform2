@@ -39,12 +39,12 @@ function setup() {
 
 function draw() {
 	// put drawing code here
-	if (!is_bg_done && frameCount < 10) {
+	if (!is_bg_done && frameCount < 50) {
 		for (let i = 0; i < back_movers.length; i++) {
 			back_movers[i].show();
 			back_movers[i].move();
 		}
-		if (frameCount > 100) {
+		if (frameCount > 10) {
 			is_bg_done = true;
 		}
 	} else {
@@ -117,4 +117,42 @@ function INIT(seed) {
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
+}
+
+function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
+	let nx = x,
+		ny = y,
+		a1 = ang1,
+		a2 = ang2,
+		scale1 = scl1,
+		scale2 = scl2,
+		dx,
+		dy,
+		octaves = 6;
+
+	dx = oct(nx, ny, scale1, 2, octaves);
+	dy = oct(nx, ny, scale2, 3, octaves);
+	nx += dx * a1;
+	ny += dy * a2;
+
+	dx = oct(nx, ny, scale1, 4, octaves);
+	dy = oct(nx, ny, scale2, 0, octaves);
+	nx += dx * a1;
+	ny += dy * a2;
+
+	dx = oct(nx, ny, scale1, 2, octaves);
+	dy = oct(nx, ny, scale2, 1, octaves);
+	nx += dx * a1;
+	ny += dy * a2;
+
+	let un = oct(nx, ny, scale1, 3, octaves);
+	let vn = oct(nx, ny, scale2, 0, octaves);
+
+	let u = map(un, -0.5, 0.5, -4, 4, true);
+	let v = map(vn, -0.5, 0.5, -4, 4, true);
+
+	/* 	let u = sin(ny * scale1 + seed) + cos(ny * scale2 + seed) + sin(ny * scale2 * 0.2 + seed);
+	let v = sin(nx * scale1 + seed) + cos(nx * scale2 + seed) - sin(nx * scale2 * 0.2 + seed); */
+	let p = createVector(u, v);
+	return p;
 }

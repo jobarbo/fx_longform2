@@ -34,7 +34,7 @@ class Back_mover {
 		//blendMode(SCREEN);
 
 		fill(this.hue, this.sat, this.bri, this.a);
-		stroke(this.hue, this.sat + 10, this.bri - 10, this.a);
+		stroke(this.hue, this.sat + 20, this.bri - 20, this.a / 2);
 		circle(this.x, this.y, this.s);
 	}
 
@@ -54,7 +54,7 @@ class Back_mover {
 		this.a = map(abs(p.x), 0, 4, this.max_a, this.min_a, true);
 		this.max_a = map(alpha_dist, width / 4, width / 2.1, 30, 0, true);
 		this.min_a = map(alpha_dist, width / 4, width / 2.1, 10, 0, true);
-		this.hue = map(abs(p.x), 0, 4, this.initHue - 10, this.initHue + 10);
+		this.hue = map(abs(p.x), 0, 4, this.initHue - 30, this.initHue + 40);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
 		this.sat = map(abs(p.x), 0, 4, 10, 100, true);
 		this.bri = map(abs(p.x), 0, 4, 100, 80, true);
@@ -74,42 +74,4 @@ class Back_mover {
 			}
 		}
 	}
-}
-
-function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
-	let nx = x,
-		ny = y,
-		a1 = ang1,
-		a2 = ang2,
-		scale1 = scl1,
-		scale2 = scl2,
-		dx,
-		dy,
-		octaves = 6;
-
-	dx = oct(nx, ny, scale1, 2, octaves);
-	dy = oct(nx, ny, scale2, 3, octaves);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	dx = oct(nx, ny, scale1, 4, octaves);
-	dy = oct(nx, ny, scale2, 0, octaves);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	dx = oct(nx, ny, scale1, 2, octaves);
-	dy = oct(nx, ny, scale2, 1, octaves);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	let un = oct(nx, ny, scale1, 3, octaves);
-	let vn = oct(nx, ny, scale2, 0, octaves);
-
-	let u = map(un, -0.5, 0.5, -4, 4, true);
-	let v = map(vn, -0.5, 0.5, -4, 4, true);
-
-	/* 	let u = sin(ny * scale1 + seed) + cos(ny * scale2 + seed) + sin(ny * scale2 * 0.2 + seed);
-	let v = sin(nx * scale1 + seed) + cos(nx * scale2 + seed) - sin(nx * scale2 * 0.2 + seed); */
-	let p = createVector(u, v);
-	return p;
 }

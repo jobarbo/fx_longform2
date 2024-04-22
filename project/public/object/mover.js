@@ -53,12 +53,12 @@ class Mover {
 
 		this.s = map(abs(p.x), 0, 4, 1.5, 1, true);
 		this.a = map(abs(p.x), 0, 4, this.max_a, this.min_a, true);
-		this.max_a = map(alpha_dist, width / 4, width / 2.1, 30, 0, true);
-		this.min_a = map(alpha_dist, width / 4, width / 2.1, 10, 0, true);
+		this.max_a = map(alpha_dist, width / 4, width / 2.5, 30, 0, true);
+		this.min_a = map(alpha_dist, width / 4, width / 2.5, 10, 0, true);
 		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		this.sat = map(abs(p.x), 0, 4, 30, 0, true);
-		this.bri = map(abs(p.x), 0, 4, 20, 100, true);
+		this.sat = map(abs(p.x), 0, 4, 0, 0, true);
+		this.bri = map(abs(p.x), 0, 4, 0, 50, true);
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {
@@ -75,42 +75,4 @@ class Mover {
 			}
 		}
 	}
-}
-
-function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
-	let nx = x,
-		ny = y,
-		a1 = ang1,
-		a2 = ang2,
-		scale1 = scl1,
-		scale2 = scl2,
-		dx,
-		dy,
-		octaves = 6;
-
-	dx = oct(nx, ny, scale1, 2, octaves);
-	dy = oct(nx, ny, scale2, 3, octaves);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	dx = oct(nx, ny, scale1, 4, octaves);
-	dy = oct(nx, ny, scale2, 0, octaves);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	dx = oct(nx, ny, scale1, 2, octaves);
-	dy = oct(nx, ny, scale2, 1, octaves);
-	nx += dx * a1;
-	ny += dy * a2;
-
-	let un = oct(nx, ny, scale1, 3, octaves);
-	let vn = oct(nx, ny, scale2, 0, octaves);
-
-	let u = map(un, -0.5, 0.5, -4, 4, true);
-	let v = map(vn, -0.5, 0.5, -4, 4, true);
-
-	/* 	let u = sin(ny * scale1 + seed) + cos(ny * scale2 + seed) + sin(ny * scale2 * 0.2 + seed);
-	let v = sin(nx * scale1 + seed) + cos(nx * scale2 + seed) - sin(nx * scale2 * 0.2 + seed); */
-	let p = createVector(u, v);
-	return p;
 }
