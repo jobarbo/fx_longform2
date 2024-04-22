@@ -53,12 +53,17 @@ class Mover {
 
 		this.s = map(abs(p.x), 0, 4, 1.5, 1, true);
 		this.a = map(abs(p.x), 0, 4, this.max_a, this.min_a, true);
-		this.max_a = map(alpha_dist, width / 4, width / 2.5, 30, 0, true);
-		this.min_a = map(alpha_dist, width / 4, width / 2.5, 10, 0, true);
+		this.max_a = map(alpha_dist, width / 2.12, width / 2.1, 30, 0, true);
+		this.min_a = map(alpha_dist, width / 2.12, width / 2.1, 10, 0, true);
 		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
 		this.sat = map(abs(p.x), 0, 4, 0, 0, true);
 		this.bri = map(abs(p.x), 0, 4, 0, 50, true);
+
+		// 0 alpha if outside xMin, xMax, yMin, yMax
+		if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
+			this.a = 0;
+		}
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {

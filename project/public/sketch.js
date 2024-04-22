@@ -41,7 +41,9 @@ function draw() {
 	// put drawing code here
 	if (!is_bg_done && frameCount < 50) {
 		for (let i = 0; i < back_movers.length; i++) {
-			back_movers[i].show();
+			if (frameCount > 2) {
+				back_movers[i].show();
+			}
 			back_movers[i].move();
 		}
 		if (frameCount > 10) {
@@ -72,8 +74,8 @@ function INIT(seed) {
 	background(bgCol);
 
 	movers = [];
-	scl1 = random(0.001, 0.0012);
-	scl2 = random(0.001, 0.0012);
+	scl1 = random(0.001, 0.004);
+	scl2 = random(0.0001, 0.001);
 	ang1 = int(random(1200));
 	ang2 = int(random(10000));
 
@@ -85,7 +87,8 @@ function INIT(seed) {
 	noFill();
 	stroke(0, 0, 70, 100);
 	strokeWeight(3);
-	rect(xMin * width, yMin * height, (xMax - xMin) * width, (yMax - yMin) * height);
+	// add border radius to the rect
+	rect(xMin * width, yMin * height, (xMax - xMin) * width, (yMax - yMin) * height, 60);
 
 	/* 	xMin = -0.05;
 	xMax = 1.05;
