@@ -58,8 +58,8 @@ let totalElapsedTime = 0;
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
 let particle_num = Math.floor(10000 / angle1.length);
 
-//let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
-let cycle = parseInt(MAX_FRAMES / angle1.length);
+let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
+//let cycle = parseInt(MAX_FRAMES / angle1.length);
 
 console.log(cycle);
 
@@ -75,10 +75,10 @@ let xRandSkipper = 0;
 let yRandSkipper = 0;
 let apertureLow = 0.01;
 let apertureHigh = 0.01;
-let yoff_l_init = 1.1;
-let xoff_l_init = 1.1;
+let xoff_l_init = 1;
 let xoff_l = xoff_l_init;
 let xoff_h = 2;
+let yoff_l_init = 1;
 let yoff_l = yoff_l_init;
 let yoff_h = 2;
 let cos_val;
@@ -102,14 +102,14 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rectMode(CENTER);
 	angleMode(DEGREES);
-	//background(45, 0, 5);
+	background(45, 0, 5);
 	//background(45, 10, 100);
-	drawingContext.globalCompositeOperation = "source-over";
+	/* 	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
 	gradient.addColorStop(0.5, "hsl(25, 100%, 98%)");
 	gradient.addColorStop(0.8, "hsl(36, 100%, 95%)");
 	drawingContext.fillStyle = gradient;
-	drawingContext.fillRect(0, 0, width, height);
+	drawingContext.fillRect(0, 0, width, height); */
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
@@ -134,13 +134,13 @@ function* drawGenerator() {
 
 	while (true) {
 		// Draw with p5.js things
-		//blendMode(SCREEN);
+		blendMode(SCREEN);
 		cos_val = sin(generator_frameCount * 50);
 		//displacement2 = random([100, 200, 300]);
 		let scale1 = 1;
 		//let scale2 = 1;
-		xoff_l = map(cos_val, -1, 0, 1.99, 1.2, true);
-		yoff_l = map(cos_val, -0, 1, 1.2, 1.99, true);
+		xoff_l = map(cos_val, -1, 0, 1.99, 1.5, true);
+		yoff_l = map(cos_val, -0, 1, 1.5, 1.99, true);
 		for (let i = 0; i < angle1.length; i++) {
 			push();
 			rotate(angle1[i]);
@@ -244,24 +244,25 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		yRandSkipper = randomGaussian(0, yRandSkipperVal);
 
 		//let w = map(elapsedTime, MAX_FRAMES / 5, MAX_FRAMES / 1.5, 0.22, 0.15, true);
-		let w = map(abs(cos_val), 0, 1, 0.01, 0.2, true);
+		let w = map(abs(cos_val), 0, 1, 0.1, 0.2, true);
 
 		let elW = w * MULTIPLIER;
 		let ab_x = x + xRandSkipper;
 		let ab_y = y + yRandSkipper;
 
-		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 310, 210, true);
+		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 40, 0, true);
+		hue = map(abs(cos_val), 0, 1, 0, 40, true);
 		sat = map(elapsedTime, 0, MAX_FRAMES / 2.5, 60, 100, true);
-		bri = map(elapsedTime, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, bri_min, true);
-		bri_min = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 80, 40, true);
+		bri = map(elapsedTime, MAX_FRAMES / 3.5, MAX_FRAMES / 2, bri_min, 100, true);
+		bri_min = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 80, 80, true);
 
 		noStroke();
 		//fill(0, 75, 10, 100);
 		fill(hue, sat, bri, 100);
 		rect(ab_x, ab_y, elW, elW);
 
-		xi += 0.0000000000000000000001;
-		yi += 0.0000000000000000000001;
+		//xi += 10.1;
+		//yi += 10.1;
 	}
 }
 
