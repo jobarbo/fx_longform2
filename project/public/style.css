@@ -41,3 +41,30 @@ canvas.p5Canvas {
 	max-height: 100vh;
 	width: auto !important;
 }
+
+/* having fun here */
+
+main {
+	height: 87dvh;
+	display: flex;
+	align-items: center;
+	border: 4px solid black;
+	justify-content: center;
+	box-shadow: -2px -3px 2px 5px inset rgba(0, 0, 0, 1);
+	position: relative;
+	transform: rotate(90deg);
+}
+
+main::after {
+	content: "";
+	display: block;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	box-shadow: 4px 3px 4px 0px inset rgb(0 0 0 / 38%), 6px 7px 7.3px inset rgb(0 0 0 / 11%), 13.5px 14.2px 17.5px inset rgba(0, 0, 0, 0.041), 20px 21px 58px inset rgba(0, 0, 0, 0.025);
+}
+
+canvas.p5Canvas {
+	height: 100% !important;
+	box-shadow: 3.9px 4px 2.1px rgba(0, 0, 0, 0.4), 10.8px 11.2px 5.8px rgba(0, 0, 0, 0.209), 20.3px 20.9px 13.9px rgba(0, 0, 0, 0.136), 30px 31px 46px rgba(0, 0, 0, 0.088);
+}

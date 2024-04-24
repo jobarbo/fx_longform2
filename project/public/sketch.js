@@ -38,7 +38,7 @@ function setup() {
 	//pixelDensity(dpi(4));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM);
+	c = createCanvas(DIM, DIM * 3.88);
 	//A4 is 1.4142
 
 	/*
@@ -106,7 +106,7 @@ function* drawGenerator() {
 
 		elapsedTime = frameCount - startTime;
 		showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax);
-		drawUI();
+		//drawUI();
 
 		frameCount++;
 
@@ -131,14 +131,14 @@ function INIT() {
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 	let hue = fxrand() * 360;
-	/* 	xMin = 0.05;
-	xMax = 0.95;
-	yMin = 0.05;
-	yMax = 0.95; */
-	xMin = -0.01;
+	xMin = 0.04;
+	xMax = 0.96;
+	yMin = 0.01;
+	yMax = 0.99;
+	/* 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
-	yMax = 1.01;
+	yMax = 1.01; */
 
 	for (let i = 0; i < particleNum; i++) {
 		let x = fxrand() * (xMax - xMin) * width + xMin * width;

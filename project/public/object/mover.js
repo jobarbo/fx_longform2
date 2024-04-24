@@ -106,7 +106,7 @@ class Mover {
 		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
 
 		//!complexion inverser (goldenfold variant)
-		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
+		this.s = mapValue(this.speed, 0, 2.01, this.initS * 2, this.initS * 3, true);
 		this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
 
 		//!complexion inverser (malachite variant)
@@ -200,8 +200,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let sun = smoothstep(-0.15, 0.5, un);
-	let svn = smoothstep(-0.5, 0.15, vn);
+	let sun = smoothstep(-0.5, 0.15, un);
+	let svn = smoothstep(-0.15, 0.5, vn);
 
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */
@@ -214,8 +214,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 
 	/* 	let u = mapValue(un, -0.5, 0.5, -aValue, bValue);
 	let v = mapValue(vn, -0.5, 0.5, -bValue, aValue);*/
-	let u = mapValue(sun, 0, 1, -aValue, bValue);
-	let v = mapValue(svn, 0, 1, -bValue, aValue);
+	let u = mapValue(sun, 0, 1, -bValue, aValue);
+	let v = mapValue(svn, 0, 1, -aValue, bValue);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
