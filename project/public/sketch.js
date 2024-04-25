@@ -1,4 +1,4 @@
-let features = '';
+let features = "";
 let movers = [];
 let scl1;
 let scl2;
@@ -37,7 +37,7 @@ function draw() {
 	}
 
 	if (frameCount > 150) {
-		console.log('done');
+		console.log("done");
 		noLoop();
 	}
 }
@@ -62,6 +62,6 @@ function INIT(seed) {
 		let y = random(-0.1, 1.1) * height;
 		movers.push(new Mover(x, y, hue, scl1, scl2, ang1, ang2, seed));
 	}
-	let bgCol = spectral.mix('#fff', '#D79900', 0.038);
+	let bgCol = spectral.mix("#fff", "#D79900", 0.038);
 	background(bgCol);
 }
