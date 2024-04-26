@@ -106,7 +106,7 @@ class Mover {
 		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
 
 		//!complexion inverser (goldenfold variant)
-		this.s = mapValue(this.speed, 0, 2.01, this.initS * 2, this.initS * 3, true);
+		this.s = mapValue(this.speed, 0, 1.01, this.initS * 2, this.initS * 3, true);
 		this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
 
 		//!complexion inverser (malachite variant)

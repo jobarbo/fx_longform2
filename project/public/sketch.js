@@ -38,7 +38,7 @@ function setup() {
 	//pixelDensity(dpi(4));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 3.88);
+	c = createCanvas(DIM, DIM * 2);
 	//A4 is 1.4142
 
 	/*
@@ -133,8 +133,8 @@ function INIT() {
 	let hue = fxrand() * 360;
 	xMin = 0.04;
 	xMax = 0.96;
-	yMin = 0.01;
-	yMax = 0.99;
+	yMin = 0.02;
+	yMax = 0.98;
 	/* 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
