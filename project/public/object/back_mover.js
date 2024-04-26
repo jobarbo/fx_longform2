@@ -57,7 +57,7 @@ class Back_mover {
 
 		this.hue = map(abs(p.x), 0, 4, this.initHue - 30, this.initHue + 40, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		this.sat = map(abs(p.x), 0, 4, 10, 100, true);
+		this.sat = map(abs(p.x), 1, 4, 0, 100, true);
 		this.bri = map(abs(p.x), 0, 4, 100, 80, true);
 
 		if (this.isBordered) {
