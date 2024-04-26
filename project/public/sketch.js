@@ -187,7 +187,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		//noiseDetail(4, 0.5);
+		noiseDetail(4, 0.67);
 		//! Simple Block
 		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
@@ -213,13 +213,13 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
  */
 		//! Astral Beings 2
-		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings 3
 		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
-		/* 	let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings Asymmetrical
@@ -227,12 +227,12 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Hybrid Drapery Blocks
-		/* let x = map(noise(xoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//!complex organism (aliens)
-		/* let x = map(noise(xoff, yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, xoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
+		let x = map(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 
 		//skipperMax = map(elapsedTime, MAX_FRAMES / 100, MAX_FRAMES / 1.5, apertureHigh, apertureLow, true);
 		skipperMax = map(abs(cos_val), 0, 1, apertureHigh, apertureLow, true);
