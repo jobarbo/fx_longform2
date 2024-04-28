@@ -46,7 +46,7 @@ function draw() {
 			}
 			back_movers[i].move();
 		}
-		if (frameCount > 10) {
+		if (frameCount > 5) {
 			is_bg_done = true;
 		}
 	} else {
@@ -58,7 +58,7 @@ function draw() {
 		}
 	}
 
-	if (frameCount > 200) {
+	if (frameCount > 50) {
 		console.log("done");
 		noLoop();
 	}
@@ -151,11 +151,12 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	let un = oct(nx, ny, scale1, 3, octaves);
 	let vn = oct(nx, ny, scale2, 0, octaves);
 
+	let ui = sin(ny * scale1 + seed) + cos(nx * scale2 + seed) + sin(ny * scale2 * 0.2 + seed);
+	let vi = cos(nx * scale1 + seed) + sin(ny * scale2 + seed) - cos(nx * scale2 * 0.2 + seed);
+
 	let u = map(un, -0.5, 0.5, -4, 4, true);
 	let v = map(vn, -0.5, 0.5, -4, 4, true);
 
-	/* 	let u = sin(ny * scale1 + seed) + cos(ny * scale2 + seed) + sin(ny * scale2 * 0.2 + seed);
-	let v = sin(nx * scale1 + seed) + cos(nx * scale2 + seed) - sin(nx * scale2 * 0.2 + seed); */
 	let p = createVector(u, v);
 	return p;
 }

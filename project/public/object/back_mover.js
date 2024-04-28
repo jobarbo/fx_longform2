@@ -35,7 +35,7 @@ class Back_mover {
 
 		fill(this.hue, this.sat, this.bri, this.a);
 		stroke(this.hue, this.sat + 20, this.bri - 20, this.a / 2);
-		ellipse(this.x, this.y, this.s, random(-this.s * 2, this.s * 2));
+		ellipse(this.x, this.y, random(-this.s * 2, this.s * 2), random(-this.s * 2, this.s * 2));
 	}
 
 	move() {
@@ -57,8 +57,8 @@ class Back_mover {
 
 		this.hue = map(abs(p.x), 0, 4, this.initHue - 30, this.initHue + 40, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		this.sat = map(abs(p.x), 1, 4, 0, 100, true);
-		this.bri = map(abs(p.x), 0, 4, 100, 80, true);
+		this.sat = map(abs(p.x), 0, 1, 10, 60, true);
+		this.bri = map(abs(p.x), 0, 4, 100, 40, true);
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {
