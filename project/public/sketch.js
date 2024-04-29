@@ -15,8 +15,8 @@ let currentFrame = 0;
 //let maxFrames = 20;
 let maxFrames = 64 * 32;
 //let maxFrames = 64 * 120;
-let particleNum = 800000;
-//let particleNum = 10250;
+//let particleNum = 800000;
+let particleNum = 10250;
 //let particleNum = 2250;
 
 // viewport
@@ -32,6 +32,7 @@ let elapsedTime = 0;
 let drawing = true;
 let renderMode = 1;
 let cycle = (maxFrames * particleNum) / 600;
+let divider = 1.5;
 console.log(cycle);
 
 function setup() {
@@ -96,17 +97,19 @@ function* drawGenerator() {
 	while (true) {
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
-			mover.show();
-			mover.move();
+			mover.show(frameCount);
+			mover.move(frameCount);
 			if (count > draw_every) {
 				// splice half of the movers array and reinitialize the count
-				movers.splice(particleNum / 1.1, particleNum / 1.1);
+				divider = map(frameCount, maxFrames / 5, maxFrames, 1, 1.051, true);
+				movers.splice(particleNum / divider, particleNum / divider);
 				particleNum = movers.length;
-				console.log(particleNum);
+
 				count = 0;
 				yield;
 			}
 			draw_every = (maxFrames * particleNum) / 600;
+
 			count++;
 		}
 
@@ -170,7 +173,8 @@ function INIT() {
 				scl1Zone * MULTIPLIER,
 				scl2Zone * MULTIPLIER,
 				ang1Zone * MULTIPLIER,
-				ang2Zone * MULTIPLIER
+				ang2Zone * MULTIPLIER,
+				maxFrames
 			)
 		);
 	}

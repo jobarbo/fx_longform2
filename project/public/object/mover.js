@@ -1,8 +1,8 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, scl1Zone, scl2Zone, ang1Zone, ang2Zone) {
+	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, scl1Zone, scl2Zone, ang1Zone, ang2Zone, maxFrames) {
 		this.x = x;
 		this.y = y;
-
+		this.maxFrames = maxFrames;
 		this.initHue = parseInt(hue);
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
@@ -59,7 +59,7 @@ class Mover {
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
 
-	move() {
+	move(frameCount) {
 		// get the distance from the particle to the chosen location using the sdf_box function (signed distance function).
 		// the sdf_box function returns the distance from the particle to the chosen location.
 		// the sdf_box function takes 3 arguments: the particle's x and y coordinates, the chosen location's x and y coordinates, and the chosen location's width and height.
@@ -91,8 +91,10 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		this.xRandDivider = fxrand() * 6;
-		this.yRandDivider = fxrand() * 6;
+		let randMultX = map(frameCount, 0, this.maxFrames / 5, 0.1, 6, true);
+		let randMultY = map(frameCount, 0, this.maxFrames / 5, 0.1, 6, true);
+		this.xRandDivider = fxrand() * randMultX;
+		this.yRandDivider = fxrand() * randMultY;
 
 		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
 		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
@@ -107,6 +109,9 @@ class Mover {
 			//!complexion standard (vegetation variant)
 			/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
 		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
+			this.initS = map(frameCount, 0, this.maxFrames, 0.75, 0.5, true) * MULTIPLIER;
+			/* 		let alpha_min = map(frameCount, 0, this.maxFrames / 2, 10, 70, true);
+			let alpha_max = map(frameCount, 0, this.maxFrames / 2, 40, 100, true); */
 
 			//!complexion inverser (goldenfold variant)
 			this.s = mapValue(this.speed, 0, 1.01, this.initS * 2, this.initS * 3, true);
