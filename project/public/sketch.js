@@ -15,8 +15,8 @@ let currentFrame = 0;
 //let maxFrames = 20;
 let maxFrames = 64 * 32;
 //let maxFrames = 64 * 120;
-//let particleNum = 800000;
-let particleNum = 10250;
+let particleNum = 800000;
+//let particleNum = 10250;
 //let particleNum = 2250;
 
 // viewport
@@ -32,6 +32,7 @@ let elapsedTime = 0;
 let drawing = true;
 let renderMode = 1;
 let cycle = (maxFrames * particleNum) / 600;
+console.log(cycle);
 
 function setup() {
 	console.time("setup");
@@ -98,9 +99,14 @@ function* drawGenerator() {
 			mover.show();
 			mover.move();
 			if (count > draw_every) {
+				// splice half of the movers array and reinitialize the count
+				movers.splice(particleNum / 1.1, particleNum / 1.1);
+				particleNum = movers.length;
+				console.log(particleNum);
 				count = 0;
 				yield;
 			}
+			draw_every = (maxFrames * particleNum) / 600;
 			count++;
 		}
 
