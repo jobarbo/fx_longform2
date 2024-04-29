@@ -101,20 +101,20 @@ class Mover {
 		this.x += this.speedX;
 		this.y += this.speedY;
 
-		//!complexion standard (vegetation variant)
-		/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
-		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
-
-		//!complexion inverser (goldenfold variant)
-		this.s = mapValue(this.speed, 0, 1.01, this.initS * 2, this.initS * 3, true);
-		this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
-
-		//!complexion inverser (malachite variant)
-		/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
-		this.a = mapValue(this.speed, 2, 2.01, 100, 40, true); */
-
 		if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
 			this.a = 0;
+		} else {
+			//!complexion standard (vegetation variant)
+			/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
+		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
+
+			//!complexion inverser (goldenfold variant)
+			this.s = mapValue(this.speed, 0, 1.01, this.initS * 2, this.initS * 3, true);
+			this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
+
+			//!complexion inverser (malachite variant)
+			/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
+		this.a = mapValue(this.speed, 2, 2.01, 100, 40, true); */
 		}
 
 		//!goldenfold variant
