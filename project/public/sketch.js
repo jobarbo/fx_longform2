@@ -16,7 +16,7 @@ let currentFrame = 0;
 let maxFrames = 64 * 32;
 //let maxFrames = 64 * 120;
 //let particleNum = 800000;
-let particleNum = 10250;
+let particleNum = 100250;
 //let particleNum = 2250;
 
 // viewport
@@ -101,7 +101,7 @@ function* drawGenerator() {
 			mover.move(frameCount);
 			if (count > draw_every) {
 				// splice half of the movers array and reinitialize the count
-				divider = map(frameCount, maxFrames / 5, maxFrames, 1, 1.051, true);
+				divider = map(frameCount, maxFrames / 15, maxFrames, 1, 1.051, true);
 				movers.splice(particleNum / divider, particleNum / divider);
 				particleNum = movers.length;
 

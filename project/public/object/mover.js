@@ -91,10 +91,13 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		let randMultX = map(frameCount, 0, this.maxFrames / 5, 0.1, 1, true);
-		let randMultY = map(frameCount, 0, this.maxFrames / 5, 0.1, 1, true);
+		let randMultX = map(frameCount, 0, this.maxFrames / 2, 2, 0.01, true);
+		let randMultY = map(frameCount, 0, this.maxFrames / 2, 0.001, 0.1, true);
 		this.xRandDivider = randMultX;
 		this.yRandDivider = randMultY;
+
+		this.xRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 1, 0.1, true);
+		this.yRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0, 1, true);
 
 		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
 		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
@@ -106,16 +109,17 @@ class Mover {
 		if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
 			this.a = 0;
 		} else {
-			//!complexion standard (vegetation variant)
-			/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
-		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
 			this.initS = map(frameCount, 0, this.maxFrames / 2, 1, 0.5, true) * MULTIPLIER;
 			/* 		let alpha_min = map(frameCount, 0, this.maxFrames / 2, 10, 70, true);
 			let alpha_max = map(frameCount, 0, this.maxFrames / 2, 40, 100, true); */
 
+			//!complexion standard (vegetation variant)
+			this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS * 2, true);
+			this.a = mapValue(this.speed, 2, 2.01, 40, 100, true);
+
 			//!complexion inverser (goldenfold variant)
-			this.s = mapValue(this.speed, 0, 1.01, this.initS * 2, this.initS * 3, true);
-			this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
+			/* this.s = mapValue(this.speed, 0, 1.01, this.initS * 2, this.initS * 3, true);
+			this.a = mapValue(this.speed, 2, 2.01, 100, 70, true); */
 
 			//!complexion inverser (malachite variant)
 			/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
@@ -126,7 +130,7 @@ class Mover {
 		if (this.speed < 1) {
 			this.hue = 0;
 			this.sat = this.initSat + 80;
-			this.bri = this.initBri + 40;
+			this.bri = this.initBri + random(-20, 60);
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
