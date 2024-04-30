@@ -39,7 +39,7 @@ class Mover {
 		this.yMax = yMax;
 		this.xLimit = 0.00015;
 		this.yLimit = 0.00015;
-		this.oct = 1;
+		this.oct = 6;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX = width / 2;
@@ -91,13 +91,13 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		let randMultX = map(frameCount, 0, this.maxFrames / 2, 2, 0.01, true);
-		let randMultY = map(frameCount, 0, this.maxFrames / 2, 0.001, 0.1, true);
+		let randMultX = map(frameCount, 0, this.maxFrames / 2, 12, 0.0001, true);
+		let randMultY = map(frameCount, 0, this.maxFrames / 2, 0.0001, 12, true);
 		this.xRandDivider = randMultX;
 		this.yRandDivider = randMultY;
 
 		this.xRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 1, 0.1, true);
-		this.yRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0, 1, true);
+		this.yRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0.1, 1, true);
 
 		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
 		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
@@ -109,7 +109,7 @@ class Mover {
 		if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
 			this.a = 0;
 		} else {
-			this.initS = map(frameCount, 0, this.maxFrames / 2, 1, 0.5, true) * MULTIPLIER;
+			this.initS = map(frameCount, 0, this.maxFrames / 15, 0.5, 0.17, true) * MULTIPLIER;
 			/* 		let alpha_min = map(frameCount, 0, this.maxFrames / 2, 10, 70, true);
 			let alpha_max = map(frameCount, 0, this.maxFrames / 2, 40, 100, true); */
 
