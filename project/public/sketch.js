@@ -139,8 +139,8 @@ function* drawGenerator() {
 		//displacement2 = random([100, 200, 300]);
 		let scale1 = 1;
 		//let scale2 = 1;
-		xoff_l = map(cos_val, -1, 0, 1.998, 1.5, true);
-		yoff_l = map(cos_val, 0, 1, 1.5, 1.998, true);
+		xoff_l = map(cos_val, -1, 0, 1.98, 1.3, true);
+		yoff_l = map(cos_val, 0, 1, 1.3, 1.98, true);
 		for (let i = 0; i < angle1.length; i++) {
 			push();
 			rotate(angle1[i]);
@@ -192,8 +192,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		//! Electron microscope
-		/* 		let x = map(noise(xoff, yoff), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, xoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
+		let x = map(noise(xoff, yoff), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, xoff), n_range_min, n_range_max, -pos_range, pos_range, true);
 		/* 		let x = map(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		//!block Rect
@@ -210,15 +210,14 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 
 		//! Astral Beings
 		/* 		let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
- */
+		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		//! Astral Beings 2
 		/* 		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings 3
-		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		/* 		let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
@@ -244,7 +243,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		yRandSkipper = randomGaussian(0, yRandSkipperVal);
 
 		//let w = map(elapsedTime, MAX_FRAMES / 5, MAX_FRAMES / 1.5, 0.22, 0.15, true);
-		let w = map(abs(cos_val), 0, 1, 0.01, 0.3, true);
+		let w = map(abs(cos_val), 0, 1, 0.01, 0.2, true);
 
 		let elW = w * MULTIPLIER;
 		let ab_x = x + xRandSkipper;
