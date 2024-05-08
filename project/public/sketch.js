@@ -35,8 +35,8 @@ let displacement1 = 0;
 let displacement2 = 100;
 
 // let angle = [0, 45, 90];
-// let angle = [0, 45, 90, 180, 225, 270];
-let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
+let angle1 = [45, 105, 165, 225, 285, 345];
+//let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
 //let angle1 = [45, 225];
 //let angle1 = [45, 135, 225, 315];
 // let angle1 = [0, 90, 180, 270];
@@ -74,12 +74,12 @@ let xRandSkipper = 0;
 let yRandSkipper = 0;
 let apertureLow = 0.01;
 let apertureHigh = 0.01;
-let xoff_l_init = 0.5;
+let xoff_l_init = 1.2;
 let xoff_l = xoff_l_init;
-let xoff_h = 1;
-let yoff_l_init = 0.5;
+let xoff_h = 1.5;
+let yoff_l_init = 1.2;
 let yoff_l = yoff_l_init;
-let yoff_h = 1;
+let yoff_h = 1.5;
 let cos_val;
 let angle_index = 0;
 
@@ -112,7 +112,7 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range = width / 1.5;
+	pos_range = width / 1.2;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -134,25 +134,28 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 50);
-		//displacement2 = random([100, 200, 300]);
+		cos_val = cos(generator_frameCount * 10);
+		sin_val = sin(generator_frameCount * 10);
+		//displacement1 = random([100, 300, 500]);
+		//displacement2 = random([100, 300, 500]);
 		let scale1 = 1;
-		//let scale2 = 1;
-		xoff_l = map(cos_val, -1, 0, 0.99, 0.55, true);
-		yoff_l = map(cos_val, 0, 1, 0.55, 0.99, true);
+		let scale2 = 0.6;
+		xoff_l = map(cos_val, -1, 0, 1.495, 1, true);
+		yoff_l = map(cos_val, 0, 1, 1, 1.495, true);
+		/* 		xoff_l2 = map(cos_val, -1, 0, 1.39, 1.25, true);
+		yoff_l2 = map(cos_val, 0, 1, 1.25, 1.39, true); */
 		for (let i = 0; i < angle1.length; i++) {
 			push();
 			rotate(angle1[i]);
 			scale(scale1);
 			paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val);
-
-			/* 	paint(random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), random([0.15, 0.5, 0.75]), random([0.51, 1, 1.25]), particle_num, xi, yi, scale1); */
 			pop();
-			/* 	push();
-			rotate(angle2);
-			translate(0, displacement2);
+			/* 			
+			push();
+			rotate(angle1[i]);
+			translate(displacement2, 0);
 			scale(scale2);
-			paint(0.4, 0.6, 0.1, 0.9, particle_num, xi, yi, scale2);
+			paint(xoff_l2, xoff_h, yoff_l2, yoff_h, particle_num, xi, yi, scale2, cos_val);
 			pop(); */
 
 			if (count >= draw_every) {
@@ -186,7 +189,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		noiseDetail(4, 0.5);
+		//noiseDetail(4, 0.5);
 		//! Simple Block
 		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
@@ -200,7 +203,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = map(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//!Drapery Yin Yang
-		/* 		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//!Drapery Equilibrium
@@ -246,17 +249,18 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		yRandSkipper = randomGaussian(0, yRandSkipperVal);
 
 		//let w = map(elapsedTime, MAX_FRAMES / 5, MAX_FRAMES / 1.5, 0.22, 0.15, true);
-		let w = map(abs(cos_val), 0, 1, 0.05, 0.15, true);
+		let w = map(abs(cos_val), 0, 1, 0.01, 0.2, true);
 
 		let elW = w * MULTIPLIER;
 		let ab_x = x + xRandSkipper;
 		let ab_y = y + yRandSkipper;
-		hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 310, 210, true);
+		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 310, 210, true);
 		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 40, 0, true);
-		hue = map(abs(cos_val), 0.4, 1, 310, 210, true);
+		hue = map(abs(cos_val), 0.5, 1, 360, 210, true);
 		sat = map(elapsedTime, 0, MAX_FRAMES / 2.5, 60, 100, true);
-		bri = map(elapsedTime, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, bri_min, true);
-		bri_min = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 80, 60, true);
+		bri = map(abs(cos_val), 0.95, 1, 100, 30, true);
+		/* 	bri = map(elapsedTime, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, bri_min, true);
+		bri_min = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 80, 60, true); */
 
 		noStroke();
 		//fill(0, 75, 10, 100);
