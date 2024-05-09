@@ -91,8 +91,8 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		let randMultX = map(frameCount, 0, this.maxFrames / 5, 1, 6, true);
-		let randMultY = map(frameCount, 0, this.maxFrames / 5, 1, 6, true);
+		let randMultX = map(frameCount, 0, this.maxFrames / 5, 11, 6, true);
+		let randMultY = map(frameCount, 0, this.maxFrames / 5, 11, 6, true);
 		this.xRandDivider = randMultX;
 		this.yRandDivider = randMultY;
 
@@ -123,14 +123,18 @@ class Mover {
 		}
 
 		//!goldenfold variant
-		if (this.speed < 1) {
-			this.hue = 35;
-			this.sat = this.initSat + 80;
-			this.bri = this.initBri + 30;
+		if (this.speed < 10) {
+			this.hue = 30;
+			this.sat = this.initSat + random(60, 80);
+			this.bri = this.initBri + random(60, 70);
+		} else if (this.speed < 85) {
+			this.hue = 40;
+			this.sat = this.initSat + random(60, 80);
+			this.bri = this.initBri + random(60, 70);
 		} else {
-			this.hue = 210;
-			this.sat = this.initSat + 70;
-			this.bri = this.initBri + 150;
+			this.hue = this.initHue;
+			this.sat = 0;
+			this.bri = 100;
 		}
 
 		//!malachite variant
@@ -211,7 +215,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */
 
-	let rangeA = [10, 15, 20];
+	let rangeA = [50, 100, 200];
 	let rangeB = [1, 2, 3];
 
 	let aValue = rangeA[Math.floor(fxrand() * rangeA.length)];
@@ -219,8 +223,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 
 	/* 	let u = mapValue(un, -0.5, 0.5, -aValue, bValue);
 	let v = mapValue(vn, -0.5, 0.5, -bValue, aValue);*/
-	let u = mapValue(sun, 0, 1, -bValue, aValue);
-	let v = mapValue(svn, 0, 1, -aValue, bValue);
+	let u = mapValue(sun, 0, 1, -bValue, bValue);
+	let v = mapValue(svn, 0, 1, -aValue, aValue);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
