@@ -40,7 +40,7 @@ function setup() {
 	//pixelDensity(dpi(4));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 2);
+	c = createCanvas(DIM, DIM * 1.4);
 	//A4 is 1.4142
 
 	/*
@@ -54,8 +54,8 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 
 	frameIterator = maxFrames / maxFrames;
-	scl1 = fxrand() * (0.0022 - 0.001) + 0.001;
-	scl2 = fxrand() * (0.0022 - 0.001) + 0.001;
+	scl1 = fxrand() * (0.0022 - 0.0001) + 0.0001;
+	scl2 = fxrand() * (0.0022 - 0.0001) + 0.0001;
 	ang1 = parseInt(fxrand() * (500, 1200) + 500);
 	ang2 = parseInt(fxrand() * (1000, 1200) + 1000);
 

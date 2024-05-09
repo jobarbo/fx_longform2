@@ -91,10 +91,10 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		let randMultX = map(frameCount, 0, this.maxFrames / 5, 0.1, 6, true);
-		let randMultY = map(frameCount, 0, this.maxFrames / 5, 0.1, 6, true);
-		this.xRandDivider = fxrand() * randMultX;
-		this.yRandDivider = fxrand() * randMultY;
+		let randMultX = map(frameCount, 0, this.maxFrames / 5, 6, 6, true);
+		let randMultY = map(frameCount, 0, this.maxFrames / 5, 6, 6, true);
+		this.xRandDivider = fxrand() * randMultX + 6;
+		this.yRandDivider = fxrand() * randMultY + 6;
 
 		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
 		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
@@ -114,7 +114,7 @@ class Mover {
 			let alpha_max = map(frameCount, 0, this.maxFrames / 2, 40, 100, true); */
 
 			//!complexion inverser (goldenfold variant)
-			this.s = mapValue(this.speed, 0, 1.01, this.initS * 2, this.initS * 3, true);
+			this.s = mapValue(this.speed, 0, 2.01, this.initS * 2, this.initS * 3, true);
 			this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
 
 			//!complexion inverser (malachite variant)
@@ -123,14 +123,19 @@ class Mover {
 		}
 
 		//!goldenfold variant
-		if (this.speed < 1) {
-			this.hue = 35;
-			this.sat = this.initSat + 80;
-			this.bri = this.initBri + 30;
+		if (this.speed < 3) {
+			this.sat = this.initSat;
+			this.bri = this.initBri;
+			this.s = this.initS;
+			this.xRandSkipperVal = random(-1.1, 1.2);
+			this.yRandSkipperVal = random(-1.2, 1.1);
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
 			this.bri = this.initBri;
+			this.s = this.initS * 3;
+			this.xRandSkipperVal = 0;
+			this.yRandSkipperVal = 0;
 		}
 
 		//!malachite variant
