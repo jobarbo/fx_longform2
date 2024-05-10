@@ -126,7 +126,7 @@ class Mover {
 		if (this.speed < 3) {
 			this.sat = this.initSat;
 			this.bri = this.initBri;
-			this.s = this.initS;
+			this.s = this.initS * 0.75;
 			this.xRandSkipperVal = random(-1.1, 1.2);
 			this.yRandSkipperVal = random(-1.2, 1.1);
 		} else {
