@@ -55,7 +55,7 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(10000 / angle1.length);
+let particle_num = Math.floor(20000 / angle1.length);
 
 let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 //let cycle = parseInt(MAX_FRAMES / angle1.length);
@@ -74,12 +74,12 @@ let xRandSkipper = 0;
 let yRandSkipper = 0;
 let apertureLow = 0.01;
 let apertureHigh = 0.01;
-let xoff_l_init = 1.2;
+let xoff_l_init = 0.6;
 let xoff_l = xoff_l_init;
-let xoff_h = 1.5;
-let yoff_l_init = 1.2;
+let xoff_h = 1;
+let yoff_l_init = 0.6;
 let yoff_l = yoff_l_init;
-let yoff_h = 1.5;
+let yoff_h = 1;
 let cos_val;
 let angle_index = 0;
 
@@ -140,8 +140,8 @@ function* drawGenerator() {
 		//displacement2 = random([100, 300, 500]);
 		let scale1 = 1;
 		let scale2 = 0.6;
-		xoff_l = map(cos_val, -1, 0, 1.495, 1, true);
-		yoff_l = map(cos_val, 0, 1, 1, 1.495, true);
+		xoff_l = map(cos_val, -1, 0, 0.995, 0.6, true);
+		yoff_l = map(cos_val, 0, 1, 0.6, 0.995, true);
 		/* 		xoff_l2 = map(cos_val, -1, 0, 1.39, 1.25, true);
 		yoff_l2 = map(cos_val, 0, 1, 1.25, 1.39, true); */
 		for (let i = 0; i < angle1.length; i++) {
@@ -249,16 +249,16 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		yRandSkipper = randomGaussian(0, yRandSkipperVal);
 
 		//let w = map(elapsedTime, MAX_FRAMES / 5, MAX_FRAMES / 1.5, 0.22, 0.15, true);
-		let w = map(abs(cos_val), 0, 1, 0.01, 0.2, true);
+		let w = map(abs(cos_val), 0.9, 1, 0.1, 0.01, true);
 
 		let elW = w * MULTIPLIER;
 		let ab_x = x + xRandSkipper;
 		let ab_y = y + yRandSkipper;
 		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 310, 210, true);
 		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 40, 0, true);
-		hue = map(abs(cos_val), 0.5, 1, 360, 210, true);
-		sat = map(elapsedTime, 0, MAX_FRAMES / 2.5, 60, 100, true);
-		bri = map(abs(cos_val), 0.95, 1, 100, 30, true);
+		hue = map(abs(cos_val), 0.25, 1, 360, 1, true);
+		sat = map(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true);
+		bri = map(abs(cos_val), 0.99, 1, 100, 10, true);
 		/* 	bri = map(elapsedTime, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, bri_min, true);
 		bri_min = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 80, 60, true); */
 
