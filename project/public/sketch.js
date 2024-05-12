@@ -140,8 +140,8 @@ function INIT() {
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 	let hue = fxrand() * 360;
-	xMin = 0.04;
-	xMax = 0.96;
+	xMin = 0.025;
+	xMax = 0.975;
 	yMin = 0.02;
 	yMax = 0.98;
 	/* 	xMin = -0.01;
