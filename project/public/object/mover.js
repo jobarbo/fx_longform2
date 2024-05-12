@@ -93,8 +93,8 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 		let randMultX = map(frameCount, 0, this.maxFrames / 5, 6, 6, true);
 		let randMultY = map(frameCount, 0, this.maxFrames / 5, 6, 6, true);
-		this.xRandDivider = randMultX;
-		this.yRandDivider = fxrand() * randMultY;
+		this.xRandDivider = fxrand() * randMultX + 6;
+		this.yRandDivider = fxrand() * randMultY + 6;
 
 		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
 		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
@@ -123,12 +123,12 @@ class Mover {
 		}
 
 		//!goldenfold variant
-		if (this.speed < 2) {
+		if (this.speed < 3) {
 			this.sat = this.initSat;
 			this.bri = this.initBri;
-			this.s = this.initS * 0.75;
-			this.xRandSkipperVal = random(-1.1, 1.2);
-			this.yRandSkipperVal = random(-1.2, 1.1);
+			this.s = this.initS * 0.55;
+			this.xRandSkipperVal = random(-1.1, 1.1);
+			this.yRandSkipperVal = random(-1.1, 1.1);
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
@@ -210,13 +210,13 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let sun = smoothstep(-0.5, 0.15, un);
-	let svn = smoothstep(-0.15, 0.5, vn);
+	let sun = smoothstep(-0.5, 0.5, un);
+	let svn = smoothstep(-0.5, 0.5, vn);
 
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */
 
-	let rangeA = [30, 45, 60];
+	let rangeA = [40, 55, 70];
 	let rangeB = [0.1, 0.5, 1];
 
 	let aValue = rangeA[Math.floor(fxrand() * rangeA.length)];
