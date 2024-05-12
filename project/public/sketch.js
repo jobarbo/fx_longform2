@@ -256,7 +256,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let ab_y = y + yRandSkipper;
 		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 310, 210, true);
 		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 40, 0, true);
-		hue = map(abs(cos_val), 0.25, 1, 360, 1, true);
+		hue = map(abs(cos_val), 0.25, 1, 360, 30, true);
 		sat = map(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true);
 		bri = map(abs(cos_val), 0.99, 1, 100, 10, true);
 		/* 	bri = map(elapsedTime, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, bri_min, true);
