@@ -50,8 +50,6 @@ class Mover {
 		this.ang2Zone = ang2Zone;
 		this.scl1Zone = scl1Zone;
 		this.scl2Zone = scl2Zone;
-		this.sec_hue = random([80, 80, 90, 100, 0, 45, 325]);
-		this.sec_bri = random([0, 10, 20, 30, 40, 50]);
 	}
 
 	show() {
@@ -95,8 +93,8 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
 		let randMultX = map(frameCount, 0, this.maxFrames / 5, 6, 6, true);
 		let randMultY = map(frameCount, 0, this.maxFrames / 5, 6, 6, true);
-		this.xRandDivider = randMultX + 16;
-		this.yRandDivider = fxrand() * randMultY + 16;
+		this.xRandDivider = randMultX;
+		this.yRandDivider = fxrand() * randMultY;
 
 		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
 		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
@@ -125,13 +123,12 @@ class Mover {
 		}
 
 		//!goldenfold variant
-		if (this.speed < 3) {
-			this.hue = this.sec_hue;
-			this.sat = 100;
-			this.bri = this.sec_bri;
-			this.s = this.initS * 1.75;
-			this.xRandSkipperVal = random(-3.1, 3.2);
-			this.yRandSkipperVal = random(-3.2, 3.1);
+		if (this.speed < 2) {
+			this.sat = this.initSat;
+			this.bri = this.initBri;
+			this.s = this.initS * 0.75;
+			this.xRandSkipperVal = random(-1.1, 1.2);
+			this.yRandSkipperVal = random(-1.2, 1.1);
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
@@ -213,14 +210,14 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let sun = smoothstep(-0.5, 0.5, un);
-	let svn = smoothstep(-0.5, 0.5, vn);
+	let sun = smoothstep(-0.5, 0.15, un);
+	let svn = smoothstep(-0.15, 0.5, vn);
 
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */
 
-	let rangeA = [30, 50, 70];
-	let rangeB = [0.1, 0.2, 0.3];
+	let rangeA = [30, 45, 60];
+	let rangeB = [0.1, 0.5, 1];
 
 	let aValue = rangeA[Math.floor(fxrand() * rangeA.length)];
 	let bValue = rangeB[Math.floor(fxrand() * rangeB.length)];
