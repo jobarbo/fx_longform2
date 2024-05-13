@@ -141,10 +141,12 @@ function* drawGenerator() {
 		//displacement2 = random([100, 300, 500]);
 		let scale1 = 1;
 		let scale2 = 0.6;
-		let xoff_l_low = map(noise_cos, -1, 1, 0.7, 0.4, true);
-		let xoff_l_high = map(noise_cos, -1, 1, 0.99, 0.7, true);
-		xoff_h = xoff_l_high + 0.005;
-		yoff_h = xoff_l_high + 0.005;
+		/* 		let xoff_l_low = map(noise_cos, -1, 1, 0.7, 0.4, true);
+		let xoff_l_high = map(noise_cos, -1, 1, 0.99, 0.7, true); */
+		xoff_l_low = 0.4;
+		xoff_l_high = 0.99;
+		xoff_h = xoff_l_high + 0.001;
+		yoff_h = xoff_l_high + 0.001;
 
 		xoff_l = map(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
 		yoff_l = map(cos_val, 0, 1, xoff_l_low, xoff_l_high, true);
@@ -221,10 +223,10 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = map(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings
-		/* 		let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		//! Astral Beings 2
-		/* 		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings 3
