@@ -35,13 +35,13 @@ let displacement1 = 0;
 let displacement2 = 100;
 
 // let angle = [0, 45, 90];
-let angle1 = [45, 105, 165, 225, 285, 345];
+//let angle1 = [45, 105, 165, 225, 285, 345];
 //let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
 //let angle1 = [45, 225];
 //let angle1 = [45, 135, 225, 315];
 // let angle1 = [0, 90, 180, 270];
 // let angle1 = [90, 270];
-//let angle1 = [45];
+let angle1 = [45];
 //let angle1 = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340];
 // let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
@@ -55,7 +55,7 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(20000 / angle1.length);
+let particle_num = Math.floor(10000 / angle1.length);
 
 let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 //let cycle = parseInt(MAX_FRAMES / angle1.length);
@@ -102,13 +102,13 @@ function setup() {
 	rectMode(CENTER);
 	angleMode(DEGREES);
 	//background(45, 0, 5);
-	//background(45, 10, 100);
-	drawingContext.globalCompositeOperation = "source-over";
+	background(45, 0, 100);
+	/* 	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
 	gradient.addColorStop(0.5, "hsl(25, 100%, 98%)");
 	gradient.addColorStop(0.8, "hsl(36, 100%, 95%)");
 	drawingContext.fillStyle = gradient;
-	drawingContext.fillRect(0, 0, width, height);
+	drawingContext.fillRect(0, 0, width, height); */
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
@@ -135,13 +135,19 @@ function* drawGenerator() {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
 		cos_val = cos(generator_frameCount * 10);
-		sin_val = sin(generator_frameCount * 10);
+		sin_val = cos(generator_frameCount * 10);
+		noise_cos = sin(generator_frameCount * 100);
 		//displacement1 = random([100, 300, 500]);
 		//displacement2 = random([100, 300, 500]);
 		let scale1 = 1;
 		let scale2 = 0.6;
-		xoff_l = map(cos_val, -1, 0, 0.995, 0.6, true);
-		yoff_l = map(cos_val, 0, 1, 0.6, 0.995, true);
+		let xoff_l_low = map(noise_cos, -1, 1, 0.7, 0.4, true);
+		let xoff_l_high = map(noise_cos, -1, 1, 0.99, 0.7, true);
+		xoff_h = xoff_l_high + 0.005;
+		yoff_h = xoff_l_high + 0.005;
+
+		xoff_l = map(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
+		yoff_l = map(cos_val, 0, 1, xoff_l_low, xoff_l_high, true);
 		/* 		xoff_l2 = map(cos_val, -1, 0, 1.39, 1.25, true);
 		yoff_l2 = map(cos_val, 0, 1, 1.25, 1.39, true); */
 		for (let i = 0; i < angle1.length; i++) {
@@ -211,8 +217,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Jellyfish
-		let x = map(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings
 		/* 		let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
@@ -222,8 +228,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings 3
-		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
+		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		/* 		let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
@@ -242,25 +248,27 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		//skipperMax = map(elapsedTime, MAX_FRAMES / 100, MAX_FRAMES / 1.5, apertureHigh, apertureLow, true);
 		skipperMax = map(abs(cos_val), 0, 1, apertureHigh, apertureLow, true);
 
-		xRandSkipperVal = random(0.01, [random(0.01, skipperMax)]);
+		xRandSkipperVal = 0;
 		yRandSkipperVal = xRandSkipperVal;
 
 		xRandSkipper = randomGaussian(0, xRandSkipperVal);
 		yRandSkipper = randomGaussian(0, yRandSkipperVal);
 
 		//let w = map(elapsedTime, MAX_FRAMES / 5, MAX_FRAMES / 1.5, 0.22, 0.15, true);
-		let w = map(abs(cos_val), 0.9, 1, 0.1, 0.01, true);
+		let w = map(abs(cos_val), 0.0, 1, 0.01, 0.2, true);
 
 		let elW = w * MULTIPLIER;
 		let ab_x = x + xRandSkipper;
 		let ab_y = y + yRandSkipper;
 		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 310, 210, true);
 		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 40, 0, true);
-		hue = map(abs(cos_val), 0.25, 1, 360, 30, true);
+		hue = map(abs(cos_val), 0, 1, 320, 190, true);
 		sat = map(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true);
-		bri = map(abs(cos_val), 0.99, 1, 100, 10, true);
-		/* 	bri = map(elapsedTime, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, bri_min, true);
-		bri_min = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 80, 60, true); */
+		bri_min = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 80, true);
+		bri_max = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 30, true);
+		bri = map(abs(sin_val), 0, 1, 100 - bri_max, 80 - bri_min, true);
+
+		//bri = map(elapsedTime, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, bri_min, true);
 
 		noStroke();
 		//fill(0, 75, 10, 100);
