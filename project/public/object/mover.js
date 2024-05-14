@@ -114,7 +114,7 @@ class Mover {
 			let alpha_max = map(frameCount, 0, this.maxFrames / 2, 40, 100, true); */
 
 			//!complexion inverser (goldenfold variant)
-			this.s = mapValue(this.speed, 0, 2.01, this.initS * 2, this.initS * 3, true);
+			//this.s = mapValue(this.speed, 0, 2.01, this.initS * 2, this.initS * 3, true);
 			this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
 
 			//!complexion inverser (malachite variant)
@@ -126,16 +126,12 @@ class Mover {
 		if (this.speed < 3) {
 			this.sat = this.initSat;
 			this.bri = this.initBri;
-			this.s = this.initS * 0.55;
-			this.xRandSkipperVal = random(-1.1, 1.1);
-			this.yRandSkipperVal = random(-1.1, 1.1);
+			this.s = this.initS * 0;
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
 			this.bri = this.initBri;
-			this.s = this.initS * 3;
-			this.xRandSkipperVal = 0;
-			this.yRandSkipperVal = 0;
+			this.s = this.initS * 4;
 		}
 
 		//!malachite variant
@@ -210,14 +206,14 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let sun = smoothstep(-0.5, 0.5, un);
-	let svn = smoothstep(-0.5, 0.5, vn);
+	let sun = smoothstep(-0.5, 0.15, un);
+	let svn = smoothstep(-0.15, 0.5, vn);
 
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */
 
-	let rangeA = [40, 55, 70];
-	let rangeB = [0.1, 0.5, 1];
+	let rangeA = [10, 15, 20];
+	let rangeB = [1, 2, 3];
 
 	let aValue = rangeA[Math.floor(fxrand() * rangeA.length)];
 	let bValue = rangeB[Math.floor(fxrand() * rangeB.length)];

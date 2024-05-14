@@ -16,7 +16,7 @@ let currentFrame = 0;
 let maxFrames = 64 * 32;
 //let maxFrames = 64 * 120;
 //let particleNum = 800000;
-let particleNum = 10250;
+let particleNum = 15250;
 //let particleNum = 2250;
 
 // viewport
@@ -54,11 +54,10 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 
 	frameIterator = maxFrames / maxFrames;
-	scl1 = fxrand() * (0.0022 - 0.0001) + 0.0001;
-	scl2 = fxrand() * (0.0022 - 0.0001) + 0.0001;
+	scl1 = fxrand() * (0.0022 - 0.001) + 0.001;
+	scl2 = fxrand() * (0.0022 - 0.001) + 0.001;
 	ang1 = parseInt(fxrand() * (500, 1200) + 500);
 	ang2 = parseInt(fxrand() * (1000, 1200) + 1000);
-
 	// change how drastically it changes with the SDF
 	scl1Zone = 600;
 	scl2Zone = 600;
@@ -140,8 +139,8 @@ function INIT() {
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 	let hue = fxrand() * 360;
-	xMin = 0.025;
-	xMax = 0.975;
+	xMin = 0.04;
+	xMax = 0.96;
 	yMin = 0.02;
 	yMax = 0.98;
 	/* 	xMin = -0.01;
