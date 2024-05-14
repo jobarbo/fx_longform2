@@ -9,21 +9,20 @@ function setup() {
 	attractor = createVector(width / 2, height / 2);
 
 	// Initialize particles
-	for (let i = 0; i < 1; i++) {
+	for (let i = 0; i < 10; i++) {
 		particles.push(new Particle(randomEdgePosition()));
 	}
-	background(0, 0, 10);
+	background(5);
 }
 
 function draw() {
 	// Display attractor
-	fill(0, 0, 100);
+	fill(0, 0, 100, 100);
 	noStroke();
 	ellipse(attractor.x, attractor.y, 10, 10);
 
 	for (let particle of particles) {
-		particle.attracted(attractor);
-		particle.update();
+		particle.update(attractor);
 		particle.display();
 	}
 }
@@ -39,53 +38,47 @@ function randomEdgePosition() {
 class Particle {
 	constructor(position) {
 		this.position = position.copy();
-		this.prev_position = this.position.copy();
-		if (attractor) {
-			this.velocity = p5.Vector.sub(attractor, this.position).setMag(3); // Initial velocity towards attractor
-		} else {
-			this.velocity = p5.Vector.random2D().setMag(3); // Fallback initial velocity
-		}
+		this.velocity = p5.Vector.sub(attractor, this.position).setMag(3); // Initial velocity towards attractor
 		this.acceleration = createVector();
 		this.size = 10;
-		this.col = color(0, 100, 100);
+		this.col = color(random(360), 100, 100, 50);
+		this.diverged = false; // Flag to indicate if the particle has diverged
 	}
 
-	attracted(target) {
-		let force = p5.Vector.sub(target, this.position);
-		let distance = force.mag();
-		let maxDistance = 300; // Distance at which particles start diverging
-		if (distance < maxDistance) {
-			let angle = map(distance, 0, maxDistance, PI / 4, 0);
-			this.velocity.rotate(random(-angle, angle));
-		} else {
-			mag = map(distance, maxDistance, 0, 0.15, 0.15);
-			force.setMag(mag); // Constant attraction force
-			this.acceleration.add(force);
+	update(attractor) {
+		if (!this.diverged) {
+			let force = p5.Vector.sub(attractor, this.position);
+			let distance = force.mag();
+			let maxDistance = 100; // Distance at which particles start diverging
+			if (distance < maxDistance) {
+				let angle = map(distance, 0, maxDistance, PI / 1, PI / 1);
+				this.velocity.rotate(random(-angle, angle));
+				this.diverged = true; // Mark as diverged
+			} else {
+				force.setMag(0.2); // Constant attraction force
+				this.acceleration.add(force);
+			}
 		}
-	}
 
-	update() {
 		this.velocity.add(this.acceleration);
 		this.position.add(this.velocity);
 		this.acceleration.mult(0); // Reset acceleration
 
 		// Bounce off walls
-		/* 		if (this.position.x < 0 || this.position.x > width) {
-			this.velocity.x *= -1;
-			this.position.x = constrain(this.position.x, 0, width);
-		}
-		if (this.position.y < 0 || this.position.y > height) {
-			this.velocity.y *= -1;
-			this.position.y = constrain(this.position.y, 0, height);
-		} */
+		/*     if (this.position.x < 0 || this.position.x > width) {
+      this.velocity.x *= -1;
+      this.position.x = constrain(this.position.x, 0, width);
+    }
+    if (this.position.y < 0 || this.position.y > height) {
+      this.velocity.y *= -1;
+      this.position.y = constrain(this.position.y, 0, height);
+    } */
 	}
 
 	display() {
-		stroke(this.col);
-		strokeWeight(this.size);
+		noStroke();
 		fill(this.col);
-		line(this.position.x, this.position.y, this.prev_position.x, this.prev_position.y);
-		this.prev_position = this.position.copy();
+		ellipse(this.position.x, this.position.y, this.size);
 	}
 }
 
