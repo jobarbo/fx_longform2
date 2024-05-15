@@ -91,8 +91,8 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		let randMultX = map(frameCount, 0, this.maxFrames / 5, 0.1, 6, true);
-		let randMultY = map(frameCount, 0, this.maxFrames / 5, 0.1, 6, true);
+		let randMultX = map(frameCount, 0, this.maxFrames / 5, 1, 6, true);
+		let randMultY = map(frameCount, 0, this.maxFrames / 5, 1, 6, true);
 		this.xRandDivider = fxrand() * randMultX;
 		this.yRandDivider = fxrand() * randMultY;
 

@@ -40,7 +40,7 @@ function setup() {
 	//pixelDensity(dpi(4));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 2);
+	c = createCanvas(DIM * 2, DIM);
 	//A4 is 1.4142
 
 	/*
@@ -101,7 +101,7 @@ function* drawGenerator() {
 			mover.move(frameCount);
 			if (count > draw_every) {
 				// splice half of the movers array and reinitialize the count
-				divider = map(frameCount, maxFrames / 5, maxFrames, 1, 1.051, true);
+				divider = map(frameCount, maxFrames / 2, maxFrames, 1, 1.051, true);
 				movers.splice(particleNum / divider, particleNum / divider);
 				particleNum = movers.length;
 
@@ -140,10 +140,10 @@ function INIT() {
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 	let hue = fxrand() * 360;
-	xMin = 0.04;
-	xMax = 0.96;
-	yMin = 0.02;
-	yMax = 0.98;
+	xMin = 0.02;
+	xMax = 0.98;
+	yMin = 0.04;
+	yMax = 0.96;
 	/* 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
