@@ -257,7 +257,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		yRandSkipper = randomGaussian(0, yRandSkipperVal);
 
 		//let w = map(elapsedTime, MAX_FRAMES / 5, MAX_FRAMES / 1.5, 0.22, 0.15, true);
-		let w = map(abs(cos_val), 0.0, 1, 0.01, 0.2, true);
+		let w = map(abs(cos_val), 0.0, 1, 0.1, 0.1, true);
 
 		let elW = w * MULTIPLIER;
 		let ab_x = x + xRandSkipper;
