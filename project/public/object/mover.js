@@ -102,21 +102,16 @@ class Mover {
 		this.speed = Math.abs(p.x + p.y);
 		this.x += this.speedX;
 		this.y += this.speedY;
-
+		this.initS = map(frameCount, 0, this.maxFrames, 0.75, 0.5, true) * MULTIPLIER;
 		if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
 			this.a = 0;
 		} else {
 			//!complexion standard (vegetation variant)
 			/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
 		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
-			this.initS = map(frameCount, 0, this.maxFrames, 0.75, 0.5, true) * MULTIPLIER;
-			/* 		let alpha_min = map(frameCount, 0, this.maxFrames / 2, 10, 70, true);
-			let alpha_max = map(frameCount, 0, this.maxFrames / 2, 40, 100, true); */
-
 			//!complexion inverser (goldenfold variant)
 			this.s = mapValue(this.speed, 0, 2.01, this.initS * 2, this.initS * 3, true);
 			this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
-
 			//!complexion inverser (malachite variant)
 			/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
 		this.a = mapValue(this.speed, 2, 2.01, 100, 40, true); */
