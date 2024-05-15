@@ -141,10 +141,10 @@ function* drawGenerator() {
 		//displacement2 = random([100, 300, 500]);
 		let scale1 = 1;
 		let scale2 = 0.6;
-		/* 		let xoff_l_low = map(noise_cos, -1, 1, 0.7, 0.4, true);
-		let xoff_l_high = map(noise_cos, -1, 1, 0.99, 0.7, true); */
-		xoff_l_low = 0.4;
-		xoff_l_high = 0.99;
+		let xoff_l_low = map(noise_cos, -1, 1, 0.7, 0.4, true);
+		let xoff_l_high = map(noise_cos, -1, 1, 0.99, 0.7, true);
+		/* 		xoff_l_low = 0.4;
+		xoff_l_high = 0.99; */
 		xoff_h = xoff_l_high + 0.001;
 		yoff_h = xoff_l_high + 0.001;
 
