@@ -41,6 +41,7 @@ canvas.p5Canvas {
 	max-height: var(--hContent);
 	max-height: 100vh;
 	width: auto !important;
+	border: 3px solid #000;
 	/*animation: rotate 0.3s linear infinite; */
 }
 

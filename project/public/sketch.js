@@ -1,7 +1,7 @@
 let features = "";
 
 let maxDPI = 3;
-let RATIO = 1;
+let RATIO = 1.27;
 
 let W = window.innerWidth;
 let H = window.innerHeight;
@@ -48,6 +48,8 @@ let angle1 = [0, 90, 270];
 // let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 let angle2 = 0;
+let seed_arr = [];
+let translate_arr = [];
 
 let animation;
 let drawing = true;
@@ -57,7 +59,7 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(55000 / angle1.length);
+let particle_num = Math.floor(25000 / angle1.length);
 
 let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 //let cycle = parseInt(MAX_FRAMES / angle1.length);
@@ -96,7 +98,7 @@ function setup() {
 
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
 	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
-	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
+	c = createCanvas(C_WIDTH * RATIO, C_WIDTH);
 	pixelDensity(dpi(maxDPI));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -114,10 +116,12 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range = width / 1.5;
+	pos_range = width / 2;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
+
+	translate_arr = [-width / 8, 0, width / 8];
 
 	let sketch = drawGenerator();
 	function animate() {
@@ -155,7 +159,12 @@ function* drawGenerator() {
 		/* 		xoff_l2 = map(cos_val, -1, 0, 1.39, 1.25, true);
 		yoff_l2 = map(cos_val, 0, 1, 1.25, 1.39, true); */
 		for (let i = 0; i < angle1.length; i++) {
+			if (seed_arr[i] == undefined) {
+				seed_arr[i] = random(1000000000000);
+			}
+			noiseSeed(seed_arr[i]);
 			push();
+			translate(translate_arr[i], 0);
 			rotate(angle1[i]);
 			scale(scale1);
 			paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val);
