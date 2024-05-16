@@ -1,7 +1,7 @@
 let features = "";
 
 let maxDPI = 3;
-let RATIO = 1;
+let RATIO = 1.27;
 
 let W = window.innerWidth;
 let H = window.innerHeight;
@@ -36,11 +36,11 @@ let displacement2 = 100;
 
 // let angle = [0, 45, 90];
 //let angle1 = [45, 105, 165, 225, 285, 345];
-//let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
+let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
 //let angle1 = [45, 225];
 //let angle1 = [45, 135, 225, 315];
 //let angle1 = [0, 45, 90];
-let angle1 = [0, 90, 270];
+//let angle1 = [0, 90, 270];
 //let angle1 = [180, 270];
 // let angle1 = [90, 270];
 //let angle1 = [45];
@@ -48,6 +48,9 @@ let angle1 = [0, 90, 270];
 // let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 let angle2 = 0;
+
+let translate_arr = [];
+let seed_arr = [];
 
 let animation;
 let drawing = true;
@@ -57,7 +60,7 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(55000 / angle1.length);
+let particle_num = Math.floor(25000 / angle1.length);
 
 let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 //let cycle = parseInt(MAX_FRAMES / angle1.length);
@@ -96,7 +99,7 @@ function setup() {
 
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
 	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
-	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
+	c = createCanvas(C_WIDTH * RATIO, C_WIDTH);
 	pixelDensity(dpi(maxDPI));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -104,17 +107,19 @@ function setup() {
 	rectMode(CENTER);
 	angleMode(DEGREES);
 	//background(45, 0, 5);
-	background(45, 0, 100);
-	/* 	drawingContext.globalCompositeOperation = "source-over";
+	//background(45, 0, 100);
+	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
 	gradient.addColorStop(0.5, "hsl(25, 100%, 98%)");
 	gradient.addColorStop(0.8, "hsl(36, 100%, 95%)");
 	drawingContext.fillStyle = gradient;
-	drawingContext.fillRect(0, 0, width, height); */
+	drawingContext.fillRect(0, 0, width, height);
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range = width / 1.5;
+	pos_range = width / 1.25;
+	translate_arr = [-width, -width / 1.25, -width / 1.5, -width / 2, -width / 3, -width / 4, -width / 8, 0, width / 8, width / 4, width / 3, width / 2, width / 1.5, width / 1.25, width];
+	//translate_arr = [0];
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -141,22 +146,32 @@ function* drawGenerator() {
 		noise_cos = sin(generator_frameCount * 100);
 		//displacement1 = random([100, 300, 500]);
 		//displacement2 = random([100, 300, 500]);
-		let scale1 = 1.85;
+		let scale1 = 1;
 		let scale2 = 0.6;
-		let xoff_l_low = map(noise_cos, -1, 1, 1, 0.0, true);
-		let xoff_l_high = map(noise_cos, -1, 1, 1.99, 1, true);
+		let xoff_l_low = map(noise_cos, -1, 1, 0.5, 0.0, true);
+		let xoff_l_high = map(noise_cos, -1, 1, 1, 0.5, true);
+		let yoff_l_low = map(noise_cos, -1, 1, 0.5, 0.0, true);
+		let yoff_l_high = map(noise_cos, -1, 1, 1, 0.5, true);
 		/* 		xoff_l_low = 1.2;
 		xoff_l_high = 1.99; */
 		xoff_h = xoff_l_high + 0.001;
-		yoff_h = xoff_l_high + 0.001;
+		yoff_h = yoff_l_high + 0.001;
 
 		xoff_l = map(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
-		yoff_l = map(cos_val, 0, 1, xoff_l_low, xoff_l_high, true);
+		yoff_l = map(cos_val, 0, 1, yoff_l_low, yoff_l_high, true);
 		/* 		xoff_l2 = map(cos_val, -1, 0, 1.39, 1.25, true);
 		yoff_l2 = map(cos_val, 0, 1, 1.25, 1.39, true); */
-		for (let i = 0; i < angle1.length; i++) {
+		for (let i = 0; i < translate_arr.length; i++) {
+			// if seed_arr[i] is undefined, set it to a random value
+			if (seed_arr[i] === undefined) {
+				seed_arr[i] = random(200);
+			}
+
+			noiseSeed(seed_arr[i]);
+
 			push();
-			rotate(angle1[i]);
+			rotate(0);
+			translate(translate_arr[i], 0);
 			scale(scale1);
 			paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val);
 			pop();
@@ -259,7 +274,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		yRandSkipper = randomGaussian(0, yRandSkipperVal);
 
 		//let w = map(elapsedTime, MAX_FRAMES / 5, MAX_FRAMES / 1.5, 0.22, 0.15, true);
-		let w = map(abs(cos_val), 0.0, 1, 0.01, 0.15, true);
+		let w = map(abs(cos_val), 0.0, 1, 0, 0.25, true);
 
 		let elW = w * MULTIPLIER;
 		let ab_x = x + xRandSkipper;
