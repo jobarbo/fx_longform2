@@ -13,6 +13,12 @@ let yMin;
 let yMax;
 let isBordered = false;
 
+let DEFAULT_SIZE = 3600;
+let W = window.innerWidth;
+let H = window.innerHeight;
+let DIM;
+let MULTIPLIER;
+
 let is_bg_done = false;
 function setup() {
 	console.log(features);
@@ -30,7 +36,9 @@ function setup() {
 	} else {
 		pixelDensity(1.0);
 	}
-	createCanvas(2400, 2400);
+	DIM = min(windowWidth, windowHeight);
+	MULTIPLIER = DIM / DEFAULT_SIZE;
+	c = createCanvas(DIM * 1.2, DIM);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -71,7 +79,7 @@ function windowResized() {
 
 function INIT(seed) {
 	let bgCol = spectral.mix("#fff", "#000", 0.138);
-	background(bgCol);
+	background(190, 60, 70);
 
 	movers = [];
 	scl1 = random(0.001, 0.0014);
@@ -84,11 +92,11 @@ function INIT(seed) {
 	yMin = 0.15;
 	yMax = 0.85;
 
-	noFill();
+	/* 	noFill();
 	stroke(0, 0, 70, 100);
 	strokeWeight(3);
 	// add border radius to the rect
-	rect(xMin * width, yMin * height, (xMax - xMin) * width, (yMax - yMin) * height, 0);
+	rect(xMin * width, yMin * height, (xMax - xMin) * width, (yMax - yMin) * height, 0); */
 
 	/* 	xMin = -0.05;
 	xMax = 1.05;

@@ -11,6 +11,8 @@ class Back_mover {
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
 		this.s = 20;
+		this.scl1Init = scl1;
+		this.scl2Init = scl2;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.ang1 = ang1;
@@ -27,6 +29,9 @@ class Back_mover {
 		this.isBordered = isBordered;
 		this.max_a = 30;
 		this.min_a = 10;
+
+		this.centerX = width / 2;
+		this.centerY = height / 2;
 	}
 
 	show() {
@@ -39,6 +44,14 @@ class Back_mover {
 	}
 
 	move() {
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 1200 * MULTIPLIER);
+
+		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
+		/* 		this.ang1 = map(distCircle, -500 * MULTIPLIER, 200 * MULTIPLIER, -this.ang1Init * 8, this.ang1Init, true);
+		this.ang2 = map(distCircle, -500 * MULTIPLIER, 200 * MULTIPLIER, -this.ang2Init * 8, this.ang2Init, true); */
+		this.scl1 = map(distCircle, -200 * MULTIPLIER, 200 * MULTIPLIER, -this.scl1Init, this.scl1Init * 1, true);
+		this.scl2 = map(distCircle, -200 * MULTIPLIER, 200 * MULTIPLIER, -this.scl2Init, this.scl2Init * 1, true);
+
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
 
 		this.xRandDivider = random([0.1, 0.5, 0.5, 1, 1, 1]);
@@ -52,8 +65,8 @@ class Back_mover {
 		let alpha_dist = dist(this.x, this.y, width / 2, height / 2);
 
 		this.a = map(abs(p.x), 0, 4, this.max_a, this.min_a, true);
-		this.max_a = map(alpha_dist, width / 4, width / 1.5, 30, 0, true);
-		this.min_a = map(alpha_dist, width / 4, width / 1.5, 10, 0, true);
+		this.max_a = map(distCircle, 0, 2, 30, 0, true);
+		this.min_a = map(distCircle, 0, 2, 10, 0, true);
 
 		this.hue = map(abs(p.x), 0, 4, this.initHue - 30, this.initHue + 40, true);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
