@@ -42,8 +42,8 @@ let displacement2 = 100;
 //let angle1 = [0, 90, 270];
 //let angle1 = [180, 270];
 // let angle1 = [90, 270];
-let angle1 = [45];
-//let angle1 = [5, 25, 45, 65, 85, 105, 125, 145, 165, 185, 205, 225, 245, 265, 285, 305, 325, 345];
+//let angle1 = [45];
+let angle1 = [5, 25, 45, 65, 85, 105, 125, 145, 165, 185, 205, 225, 245, 265, 285, 305, 325, 345];
 // let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 let angle2 = 0;
@@ -142,8 +142,8 @@ function* drawGenerator() {
 		//displacement2 = random([100, 300, 500]);
 		let scale1 = 1;
 		let scale2 = 0.6;
-		let xoff_l_low = map(noise_cos, -1, 1, 0.7, 0.4, true);
-		let xoff_l_high = map(noise_cos, -1, 1, 0.99, 0.7, true);
+		let xoff_l_low = map(noise_cos, -1, 1, 0.5, 0.3, true);
+		let xoff_l_high = map(noise_cos, -1, 1, 0.7, 0.5, true);
 		/* 		xoff_l_low = 0.4;
 		xoff_l_high = 0.99; */
 		xoff_h = xoff_l_high + 0.001;
@@ -202,8 +202,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		//! Electron microscope
-		/* 		let x = map(noise(xoff, yoff), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, xoff), n_range_min, n_range_max, -pos_range, pos_range, true); */
+		let x = map(noise(xoff, yoff), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, xoff), n_range_min, n_range_max, -pos_range, pos_range, true);
 		/* 		let x = map(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		//!block Rect
@@ -230,8 +230,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
 		//! Astral Beings 3
-		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
-		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
+		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 		/* 		let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true);
 		let y = map(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range, pos_range, true); */
 
@@ -264,7 +264,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let ab_y = y + yRandSkipper;
 		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 310, 210, true);
 		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range / 1.7, 40, 0, true);
-		hue = map(abs(cos_val), 0, 1, 320, 190, true);
+		hue = map(abs(cos_val), 0, 1, 360, 190, true);
 		sat = map(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true);
 		bri_min = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 80, true);
 		bri_max = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 30, true);
