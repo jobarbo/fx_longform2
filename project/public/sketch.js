@@ -34,15 +34,16 @@ let bri_min = 60;
 let displacement1 = 0;
 let displacement2 = 100;
 
-// let angle = [0, 45, 90];
 //let angle1 = [45, 105, 165, 225, 285, 345];
 //let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
 //let angle1 = [45, 225];
 //let angle1 = [45, 135, 225, 315];
-// let angle1 = [0, 90, 180, 270];
+//let angle1 = [0, 45, 90];
+//let angle1 = [0, 90, 270];
+//let angle1 = [180, 270];
 // let angle1 = [90, 270];
 let angle1 = [45];
-//let angle1 = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340];
+//let angle1 = [5, 25, 45, 65, 85, 105, 125, 145, 165, 185, 205, 225, 245, 265, 285, 305, 325, 345];
 // let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 let angle2 = 0;
@@ -55,7 +56,7 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(10000 / angle1.length);
+let particle_num = Math.floor(15000 / angle1.length);
 
 let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 //let cycle = parseInt(MAX_FRAMES / angle1.length);
@@ -112,7 +113,7 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range = width / 1.2;
+	pos_range = width / 1.25;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -150,20 +151,19 @@ function* drawGenerator() {
 
 		xoff_l = map(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
 		yoff_l = map(cos_val, 0, 1, xoff_l_low, xoff_l_high, true);
-		/* 		xoff_l2 = map(cos_val, -1, 0, 1.39, 1.25, true);
-		yoff_l2 = map(cos_val, 0, 1, 1.25, 1.39, true); */
+
 		for (let i = 0; i < angle1.length; i++) {
 			push();
 			rotate(angle1[i]);
 			scale(scale1);
 			paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val);
 			pop();
-			/* 			
+			/*
 			push();
 			rotate(angle1[i]);
 			translate(displacement2, 0);
 			scale(scale2);
-			paint(xoff_l2, xoff_h, yoff_l2, yoff_h, particle_num, xi, yi, scale2, cos_val);
+			paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale2, cos_val);
 			pop(); */
 
 			if (count >= draw_every) {
