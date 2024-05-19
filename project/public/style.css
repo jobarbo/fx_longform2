@@ -10,7 +10,6 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	/*background-color: #fff5e6;*/
 }
 
 body {
@@ -41,17 +40,31 @@ canvas.p5Canvas {
 	max-height: var(--hContent);
 	max-height: 100vh;
 	width: auto !important;
-	/*animation: rotate 0.3s linear infinite; */
 }
 
-/* make an animation that rotates the canvas on its center */
+/* having fun here */
 
-@keyframes rotate {
-	0% {
-		transform: rotate(0deg);
-	}
+main {
+	height: 87dvh;
+	display: flex;
+	align-items: center;
+	border: 8px solid rgb(32, 22, 0);
+	justify-content: center;
+	box-shadow: 2.8px 2.8px 2.2px rgba(0, 0, 0, 0.118), 6.7px 6.7px 5.3px rgba(0, 0, 0, 0.119), 12.5px 12.5px 10px rgba(0, 0, 0, 0.115), 22.3px 22.3px 17.9px rgba(0, 0, 0, 0.11),
+		41.8px 41.8px 33.4px rgba(0, 0, 0, 0.105), 100px 100px 80px rgba(0, 0, 0, 0.1);
+	position: relative;
+	transform: rotate(0) scale(1);
+}
 
-	100% {
-		transform: rotate(360deg);
-	}
+main::after {
+	content: "";
+	display: block;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	box-shadow: 4px 3px 4px 0px inset rgb(0 0 0 / 38%), 6px 7px 7.3px inset rgb(0 0 0 / 11%), 13.5px 14.2px 17.5px inset rgba(0, 0, 0, 0.041), 20px 21px 58px inset rgba(0, 0, 0, 0.025);
+}
+
+canvas.p5Canvas {
+	height: 100% !important;
 }
