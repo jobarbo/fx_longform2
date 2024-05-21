@@ -115,8 +115,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width / 1.75;
-	pos_range_y = height / 1.75;
+	pos_range_x = width / 2;
+	pos_range_y = width / 2;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -133,19 +133,20 @@ function* drawGenerator() {
 	let count = 0;
 	let generator_frameCount = 0;
 	let draw_every = cycle;
-	translate(width / 2, height / 2);
+	translate(width / 2, height / 1.75);
 
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
 		cos_val = cos(generator_frameCount * 10);
 		sin_val = cos(generator_frameCount * 10);
-		noise_cos = sin(generator_frameCount * 100);
+		noise_cos = sin(generator_frameCount * 50);
+		// 40,45(5), 48,50,54,60,100
 		//displacement1 = random([100, 300, 500]);
 		//displacement2 = random([100, 300, 500]);
 		let scale1 = 1;
 		let scale2 = 0.6;
-		let xoff_l_low = map(noise_cos, -1, 1, 3, 2.7, true);
+		let xoff_l_low = map(noise_cos, -1, 1, 3, 2.3, true);
 		let xoff_l_high = map(noise_cos, -1, 1, 3, 2, true);
 		/* 		xoff_l_low = 0.4;
 		xoff_l_high = 0.99; */
@@ -200,7 +201,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		noiseDetail(2, 0.9);
+		noiseDetail(2, 0.8);
 		//! Simple Block
 		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -210,7 +211,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		/* 		let x = map(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = map(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//!block Rect
-		/* 		let x = map(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		/* 	let x = map(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = map(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//!Drapery Yin Yang
@@ -222,15 +223,15 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Jellyfish
-		let x = map(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+		/* 		let x = map(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = map(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Astral Beings
 		/* let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//! Astral Beings 2
-		/* 		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 		//! Astral Beings 3
 		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
