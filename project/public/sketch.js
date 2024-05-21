@@ -201,7 +201,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		noiseDetail(2, 0.8);
+		noiseDetail(2, 0.9);
 		//! Simple Block
 		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
