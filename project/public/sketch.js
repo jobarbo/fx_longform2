@@ -133,6 +133,7 @@ function showLoadingBar(elapsedTime, MAX_FRAMES, renderStart) {
 	let estimatedTimeRemaining = averageFrameTime * remainingFrames;
 
 	// Convert milliseconds to seconds
+	//bump
 	let timeLeftSec = Math.round(estimatedTimeRemaining / 1000);
 
 	// put the percent in the title of the page
