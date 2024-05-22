@@ -47,7 +47,6 @@ let angle1 = [0, 90, 180, 270];
 // let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 //let angle1 = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 315, 320, 325, 330, 335, 340, 345, 350, 355];
-let angle2 = 0;
 
 let animation;
 let drawing = true;
@@ -57,7 +56,7 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(40000 / angle1.length);
+let particle_num = Math.floor(20000 / angle1.length);
 
 let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 //let cycle = parseInt(MAX_FRAMES / angle1.length);
@@ -140,10 +139,11 @@ function* drawGenerator() {
 		/* 		cos_val = cos(generator_frameCount * 10);
 		sin_val = cos(generator_frameCount * 10);
 		noise_cos = sin(generator_frameCount * 50); */
+		// 40,45(5), 48,50,54,60,100
 		cos_val = tan(generator_frameCount * 10);
 		sin_val = tan(generator_frameCount * 10);
-		noise_cos = tan(generator_frameCount * 500);
-		// 40,45(5), 48,50,54,60,100
+		noise_cos = tan(generator_frameCount * 25);
+		// 15,25,100,500
 
 		let scale1 = 1;
 		let scale2 = 0.6;
@@ -207,6 +207,10 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		//!block Rect
 		/* 	let x = map(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = map(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+
+		//! block Rect 2
+		/* 		let x = map(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = map(noise(yoff, yoff, xi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//!Drapery Yin Yang
 		/* 		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
