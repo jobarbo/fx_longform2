@@ -16,7 +16,7 @@ let currentFrame = 0;
 let maxFrames = 64 * 32;
 //let maxFrames = 64 * 120;
 //let particleNum = 800000;
-let particleNum = 100250;
+let particleNum = 20250;
 //let particleNum = 2250;
 
 // viewport
