@@ -10,8 +10,6 @@ let CM = 1;
 let DEFAULT_SIZE = 1200;
 let DIM;
 let MULTIPLIER;
-//let MAX_FRAMES = 700;
-
 let xoff = 0.6;
 let yoff = 0.3;
 
@@ -39,11 +37,12 @@ let displacement2 = 100;
 //let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
 //let angle1 = [45, 225];
 //let angle1 = [45, 135, 225, 315];
+let angle1 = [0, 90, 180, 270];
 //let angle1 = [0, 45, 90];
 //let angle1 = [0, 90, 270];
 //let angle1 = [180, 270];
 //let angle1 = [90, 270];
-let angle1 = [45];
+//let angle1 = [45];
 //let angle1 = [5, 25, 45, 65, 85, 105, 125, 145, 165, 185, 205, 225, 245, 265, 285, 305, 325, 345];
 // let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
@@ -58,7 +57,7 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(10000 / angle1.length);
+let particle_num = Math.floor(40000 / angle1.length);
 
 let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 //let cycle = parseInt(MAX_FRAMES / angle1.length);
@@ -115,8 +114,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width / 2;
-	pos_range_y = width / 2;
+	pos_range_x = width / 1;
+	pos_range_y = width / 1;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -133,17 +132,19 @@ function* drawGenerator() {
 	let count = 0;
 	let generator_frameCount = 0;
 	let draw_every = cycle;
-	translate(width / 2, height / 1.75);
+	translate(width / 2, height / 2);
 
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 10);
+		/* 		cos_val = cos(generator_frameCount * 10);
 		sin_val = cos(generator_frameCount * 10);
-		noise_cos = sin(generator_frameCount * 50);
+		noise_cos = sin(generator_frameCount * 50); */
+		cos_val = tan(generator_frameCount * 10);
+		sin_val = tan(generator_frameCount * 10);
+		noise_cos = tan(generator_frameCount * 500);
 		// 40,45(5), 48,50,54,60,100
-		//displacement1 = random([100, 300, 500]);
-		//displacement2 = random([100, 300, 500]);
+
 		let scale1 = 1;
 		let scale2 = 0.6;
 		let xoff_l_low = map(noise_cos, -1, 1, 3, 2.3, true);
@@ -162,13 +163,6 @@ function* drawGenerator() {
 			scale(scale1);
 			paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val);
 			pop();
-			/*
-			push();
-			rotate(angle1[i]);
-			translate(displacement2, 0);
-			scale(scale2);
-			paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale2, cos_val);
-			pop(); */
 
 			if (count >= draw_every) {
 				count = 0;
@@ -260,29 +254,22 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		xRandSkipper = randomGaussian(0, xRandSkipperVal);
 		yRandSkipper = randomGaussian(0, yRandSkipperVal);
 
-		//let w = map(elapsedTime, MAX_FRAMES / 5, MAX_FRAMES / 1.5, 0.22, 0.15, true);
 		let w = map(abs(cos_val), 0.0, 1, 0.1, 0.15, true);
 
 		let elW = w * MULTIPLIER;
 		let ab_x = x + xRandSkipper;
 		let ab_y = y + yRandSkipper;
-		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range_x / 1.7, 310, 210, true);
-		//hue = map(sqrt(ab_x * ab_x + ab_y * ab_y), 0, pos_range_x / 1.7, 40, 0, true);
+
 		hue = map(abs(cos_val), 0, 1, 360, 190, true);
 		sat = map(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true);
 		bri_min = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 80, true);
 		bri_max = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 30, true);
 		bri = map(abs(sin_val), 0, 1, 100 - bri_max, 80 - bri_min, true);
 
-		//bri = map(elapsedTime, MAX_FRAMES / 3.5, MAX_FRAMES / 2, 100, bri_min, true);
-
 		noStroke();
 		//fill(0, 75, 10, 100);
 		fill(hue, sat, bri, 100);
 		rect(ab_x, ab_y, elW, elW);
-
-		//xi += 10.1;
-		//yi += 10.1;
 	}
 }
 
