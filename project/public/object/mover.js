@@ -36,8 +36,8 @@ class Mover {
 		this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [5, 5, 45, 45];
-		this.nvalue = [0.000001, 0.000001, 0.000001, 0.000001];
-		this.nlimit = [0.00005, 0.00005, 0.00005, 0.00005];
+		this.nvalue = [0.001, 0.001, 0.001, 0.001];
+		this.nlimit = [0.05, 0.05, 0.05, 0.05];
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
 		this.ulow = 5;
@@ -45,12 +45,12 @@ class Mover {
 
 		this.skipperMax = 10;
 
-		this.shutterLow = 2;
-		this.shutterHigh = 20;
+		this.shutterLow = 20;
+		this.shutterHigh = 2;
 		this.lineWeightMax = this.shutterHigh;
 
-		this.apertureLow = 0.1;
-		this.apertureHigh = 10;
+		this.apertureLow = 10;
+		this.apertureHigh = 0.1;
 	}
 
 	show() {
@@ -81,7 +81,7 @@ class Mover {
 				//! ORIGINAL CONFIGURATION
 				//this.uvalue[i] += 0.5;
 				this.uvalue[i] *= 1.011 * this.uvalueDir[i];
-				this.nvalue[i] += 0.0000005 * this.nvalueDir[i];
+				this.nvalue[i] += 0.000001 * this.nvalueDir[i];
 			}
 
 			//! YoYo with value (not sure);

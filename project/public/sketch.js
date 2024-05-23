@@ -50,7 +50,7 @@ function setup() {
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1200;
-	c = createCanvas(C_WIDTH, C_WIDTH * 1.33);
+	c = createCanvas(C_WIDTH * 1.33, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
