@@ -11,7 +11,7 @@ class Mover {
 		this.sat = random([0, 0, 0, 10, 10, 10, 80, 100, 100, 100, 100, 100, 100]);
 		this.bri = 0;
 		this.a = this.initAlpha;
-		this.hueStep = 0.25;
+		this.hueStep = 0.45;
 		this.satDir = 2;
 		this.s = this.initS;
 		this.scl1 = scl1;
@@ -37,13 +37,11 @@ class Mover {
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [5, 5, 5, 5];
 		this.nvalue = [0.000001, 0.000001, 0.000001, 0.000001];
-		this.nlimit = 0.00005;
+		this.nlimit = [0.00005, 0.00005, 0.00005, 0.00005];
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
 		this.ulow = 5;
 		this.uhigh = 15;
-		/* 		this.ulow = random([10, 25, 50, 75, 100, 125, 150, 175, 200]);
-		this.uhigh = random([0.01, 0.1, 1, 2.5, 5, 10, 20]); */
 
 		this.skipperMax = 10;
 
@@ -66,8 +64,8 @@ class Mover {
 
 		this.lineWeightMax = map(frameCount, 50, maxFrames - 200, this.shutterHigh, this.shutterLow, true);
 		this.skipperMax = map(frameCount, 50, maxFrames - 200, this.apertureHigh, this.apertureLow, true);
-		this.bri = map(frameCount, 50, maxFrames - 50, 40, 100, true);
-		this.sat = map(frameCount, 50, maxFrames - 50, 80, 20, true);
+		this.bri = map(frameCount, 50, maxFrames - 50, 40, 60, true);
+		this.sat = map(frameCount, 50, maxFrames - 50, 100, 70, true);
 		this.xRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
 		this.yRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
 		for (let i = 0; i < this.nvalue.length; i++) {
@@ -88,8 +86,8 @@ class Mover {
 
 			//! YoYo with value (not sure);
 
-			if (this.nvalue[i] < -this.nlimit || this.nvalue[i] > this.nlimit) {
-				this.nvalue[i] = this.nvalue[i] > this.nlimit ? this.nlimit : this.nvalue[i] < -this.nlimit ? -this.nlimit : this.nvalue[i];
+			if (this.nvalue[i] < -this.nlimit[i] || this.nvalue[i] > this.nlimit[i]) {
+				this.nvalue[i] = this.nvalue[i] > this.nlimit[i] ? this.nlimit[i] : this.nvalue[i] < -this.nlimit[i] ? -this.nlimit[i] : this.nvalue[i];
 				this.nvalueDir[i] *= -1;
 			}
 
