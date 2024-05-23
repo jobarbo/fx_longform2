@@ -35,13 +35,13 @@ class Mover {
 		this.zombie = false;
 		this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [5, 5, 5, 5];
+		this.uvalue = [5, 5, 45, 45];
 		this.nvalue = [0.000001, 0.000001, 0.000001, 0.000001];
 		this.nlimit = [0.00005, 0.00005, 0.00005, 0.00005];
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
 		this.ulow = 5;
-		this.uhigh = 15;
+		this.uhigh = 60;
 
 		this.skipperMax = 10;
 
@@ -64,8 +64,8 @@ class Mover {
 
 		this.lineWeightMax = map(frameCount, 50, maxFrames - 200, this.shutterHigh, this.shutterLow, true);
 		this.skipperMax = map(frameCount, 50, maxFrames - 200, this.apertureHigh, this.apertureLow, true);
-		this.bri = map(frameCount, 50, maxFrames - 50, 40, 60, true);
-		this.sat = map(frameCount, 50, maxFrames - 50, 100, 70, true);
+		this.bri = map(frameCount, 50, maxFrames - 50, 100, 40, true);
+		this.sat = map(frameCount, 50, maxFrames - 50, 20, 70, true);
 		this.xRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
 		this.yRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
 		for (let i = 0; i < this.nvalue.length; i++) {
