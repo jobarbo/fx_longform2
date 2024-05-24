@@ -34,11 +34,11 @@ let displacement1 = 0;
 let displacement2 = 100;
 
 //let angle1 = [45, 105, 165, 225, 285, 345];
-//let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
+let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
 //let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5];
 //let angle1 = [45, 225];
 //let angle1 = [45, 135, 225, 315];
-let angle1 = [0, 90, 180, 270];
+//let angle1 = [0, 90, 180, 270];
 //let angle1 = [0, 45, 90];
 //let angle1 = [0, 90, 270];
 //let angle1 = [180, 270];
@@ -114,8 +114,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width / 1.3;
-	pos_range_y = width / 1.3;
+	pos_range_x = width / 1.85;
+	pos_range_y = width / 1.85;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -143,8 +143,8 @@ function* drawGenerator() {
 		// 40,45(5), 48,50,54,60,100
 		cos_val = tan(generator_frameCount * 10);
 		sin_val = tan(generator_frameCount * 10);
-		noise_cos = tan(generator_frameCount * 500);
-		// 15,25,100,500
+		noise_cos = tan(generator_frameCount * 30);
+		// 6,8,9,10,11 / 12, 15,25,30,35,40,45(stable),50,60(stable)70,75,80,90(stable),100,200,500
 
 		let scale1 = 1;
 		let scale2 = 0.6;
@@ -155,34 +155,19 @@ function* drawGenerator() {
 				case 0:
 					xoff_l_low = map(noise_cos, -1, 1, 1, 0.3, true);
 					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
+
 					break;
 				case 1:
-					xoff_l_low = map(noise_cos, 1, -1, 2, 1.3, true);
-					xoff_l_high = map(noise_cos, 1, -1, 2, 1, true);
+					xoff_l_low = map(noise_cos, -1, 1, 2, 1.3, true);
+					xoff_l_high = map(noise_cos, -1, 1, 2, 1, true);
 					break;
 				case 2:
-					xoff_l_low = map(noise_cos, -1, 1, 3, 2.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 3, 2, true);
+					xoff_l_low = map(noise_cos, -1, 1, 1, 0.3, true);
+					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
 					break;
 				case 3:
-					xoff_l_low = map(noise_cos, 1, -1, 4, 3.3, true);
-					xoff_l_high = map(noise_cos, 1, -1, 4, 3, true);
-					break;
-				case 4:
-					xoff_l_low = map(noise_cos, -1, 1, 5, 4.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 5, 4, true);
-					break;
-				case 5:
-					xoff_l_low = map(noise_cos, 1, -1, 6, 5.3, true);
-					xoff_l_high = map(noise_cos, 1, -1, 6, 5, true);
-					break;
-				case 6:
-					xoff_l_low = map(noise_cos, -1, 1, 7, 6.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 7, 6, true);
-					break;
-				case 7:
-					xoff_l_low = map(noise_cos, 1, -1, 8, 7.3, true);
-					xoff_l_high = map(noise_cos, 1, -1, 8, 7, true);
+					xoff_l_low = map(noise_cos, -1, 1, 4, 3.3, true);
+					xoff_l_high = map(noise_cos, -1, 1, 4, 3, true);
 					break;
 			}
 			/* 		xoff_l_low = 0.4;
@@ -229,7 +214,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		noiseDetail(2, 0.9);
+		noiseDetail(2, 0.5);
 		//! Simple Block
 		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
