@@ -114,8 +114,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width / 1.85;
-	pos_range_y = width / 1.85;
+	pos_range_x = width / 1.6;
+	pos_range_y = width / 1.6;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -143,7 +143,7 @@ function* drawGenerator() {
 		// 40,45(5), 48,50,54,60,100
 		cos_val = tan(generator_frameCount * 10);
 		sin_val = tan(generator_frameCount * 10);
-		noise_cos = tan(generator_frameCount * 30);
+		noise_cos = tan(generator_frameCount * 25);
 		// 6,8,9,10,11 / 12, 15,25,30,35,40,45(stable),50,60(stable)70,75,80,90(stable),100,200,500
 
 		let scale1 = 1;
@@ -166,6 +166,22 @@ function* drawGenerator() {
 					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
 					break;
 				case 3:
+					xoff_l_low = map(noise_cos, -1, 1, 4, 3.3, true);
+					xoff_l_high = map(noise_cos, -1, 1, 4, 3, true);
+					break;
+				case 4:
+					xoff_l_low = map(noise_cos, -1, 1, 1, 0.3, true);
+					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
+					break;
+				case 5:
+					xoff_l_low = map(noise_cos, -1, 1, 2, 1.3, true);
+					xoff_l_high = map(noise_cos, -1, 1, 2, 1, true);
+					break;
+				case 6:
+					xoff_l_low = map(noise_cos, -1, 1, 1, 0.3, true);
+					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
+					break;
+				case 7:
 					xoff_l_low = map(noise_cos, -1, 1, 4, 3.3, true);
 					xoff_l_high = map(noise_cos, -1, 1, 4, 3, true);
 					break;
@@ -219,7 +235,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//! Electron microscope
-		/* 		let x = map(noise(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		/* let x = map(noise(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = map(noise(yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		/* 		let x = map(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = map(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -236,8 +252,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = map(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//!Drapery Equilibrium
-		/* 		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 		//! Jellyfish
 		/* 		let x = map(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
@@ -247,8 +263,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		/* let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//! Astral Beings 2
-		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+		/* 		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Astral Beings 3
 		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
@@ -288,7 +304,6 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		bri_min = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 80, true);
 		bri_max = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 30, true);
 		bri = map(abs(sin_val), 0, 1, 100 - bri_max, 80 - bri_min, true);
-
 		noStroke();
 		//fill(0, 75, 10, 100);
 		fill(hue, sat, bri, 100);
