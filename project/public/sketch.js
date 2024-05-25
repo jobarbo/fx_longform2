@@ -171,7 +171,7 @@ function* drawGenerator() {
 					xoff_l_low = map(noise_cos, -1, 1, 4, 3.3, true);
 					xoff_l_high = map(noise_cos, -1, 1, 4, 3, true);
 					break;
-				/* 				case 4:
+				case 4:
 					xoff_l_low = map(noise_cos, -1, 1, 1, 0.3, true);
 					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
 					break;
@@ -186,7 +186,7 @@ function* drawGenerator() {
 				case 7:
 					xoff_l_low = map(noise_cos, -1, 1, 4, 3.3, true);
 					xoff_l_high = map(noise_cos, -1, 1, 4, 3, true);
-					break; */
+					break;
 			}
 			/* 		xoff_l_low = 0.4;
 			xoff_l_high = 0.99; */
