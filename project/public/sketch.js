@@ -114,8 +114,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width / 1.6;
-	pos_range_y = width / 1.6;
+	pos_range_x = width / 1.5;
+	pos_range_y = width / 1.5;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -164,12 +164,14 @@ function* drawGenerator() {
 				case 2:
 					xoff_l_low = map(noise_cos, -1, 1, 1, 0.3, true);
 					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
+					/* 					xoff_l_low = map(noise_cos, -1, 1, 3, 2.3, true);
+					xoff_l_high = map(noise_cos, -1, 1, 3, 2, true); */
 					break;
 				case 3:
 					xoff_l_low = map(noise_cos, -1, 1, 4, 3.3, true);
 					xoff_l_high = map(noise_cos, -1, 1, 4, 3, true);
 					break;
-				case 4:
+				/* 				case 4:
 					xoff_l_low = map(noise_cos, -1, 1, 1, 0.3, true);
 					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
 					break;
@@ -184,12 +186,15 @@ function* drawGenerator() {
 				case 7:
 					xoff_l_low = map(noise_cos, -1, 1, 4, 3.3, true);
 					xoff_l_high = map(noise_cos, -1, 1, 4, 3, true);
-					break;
+					break; */
 			}
 			/* 		xoff_l_low = 0.4;
 			xoff_l_high = 0.99; */
+
 			xoff_h = xoff_l_high + 0.001;
 			yoff_h = xoff_l_high + 0.001;
+			// 0.001,0.005,0.007,0.01,0.05,0.07
+			// peut aussi etre alterné
 
 			xoff_l = map(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
 			yoff_l = map(cos_val, 0, 1, xoff_l_low, xoff_l_high, true);
