@@ -85,6 +85,30 @@ let yoff_h = 1;
 let cos_val;
 let angle_index = 0;
 
+const offValues_l = [
+	{low: 1, high: 0.3}, // case 0
+	{low: 2, high: 1.3}, // case 1
+	{low: 1, high: 0.3}, // case 2
+	{low: 4, high: 3.3}, // case 3
+	{low: 1, high: 0.3}, // case 4
+	{low: 2, high: 1.3}, // case 5
+	{low: 1, high: 0.3}, // case 6
+	{low: 4, high: 3.3}, // case 7
+	// Add more if needed
+];
+
+const offValues_h = [
+	{low: 1, high: 0}, // case 0
+	{low: 2, high: 1}, // case 1
+	{low: 1, high: 0}, // case 2
+	{low: 4, high: 3}, // case 3
+	{low: 1, high: 0}, // case 4
+	{low: 2, high: 1}, // case 5
+	{low: 1, high: 0}, // case 6
+	{low: 4, high: 3}, // case 7
+	// Add more if needed
+];
+
 function setup() {
 	features = $fx.getFeatures();
 
@@ -151,43 +175,8 @@ function* drawGenerator() {
 		let xoff_l_high;
 		let xoff_l_low;
 		for (let i = 0; i < angle1.length; i++) {
-			switch (i) {
-				case 0:
-					xoff_l_low = map(noise_cos, -1, 1, 1, 0.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
-
-					break;
-				case 1:
-					xoff_l_low = map(noise_cos, -1, 1, 2, 1.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 2, 1, true);
-					break;
-				case 2:
-					xoff_l_low = map(noise_cos, -1, 1, 1, 0.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
-					/* 					xoff_l_low = map(noise_cos, -1, 1, 3, 2.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 3, 2, true); */
-					break;
-				case 3:
-					xoff_l_low = map(noise_cos, -1, 1, 4, 3.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 4, 3, true);
-					break;
-				case 4:
-					xoff_l_low = map(noise_cos, -1, 1, 1, 0.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
-					break;
-				case 5:
-					xoff_l_low = map(noise_cos, -1, 1, 2, 1.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 2, 1, true);
-					break;
-				case 6:
-					xoff_l_low = map(noise_cos, -1, 1, 1, 0.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 1, 0, true);
-					break;
-				case 7:
-					xoff_l_low = map(noise_cos, -1, 1, 4, 3.3, true);
-					xoff_l_high = map(noise_cos, -1, 1, 4, 3, true);
-					break;
-			}
+			xoff_l_high = map(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
+			xoff_l_low = map(noise_cos, -1, 1, offValues_h[i].high, offValues_h[i].low, true);
 			/* 		xoff_l_low = 0.4;
 			xoff_l_high = 0.99; */
 
