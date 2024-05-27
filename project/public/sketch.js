@@ -61,8 +61,7 @@ let particle_num = Math.floor(20000 / angle1.length);
 
 let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 //let cycle = parseInt(MAX_FRAMES / angle1.length);
-
-console.log(cycle);
+console.log("cycle: ", cycle);
 
 let nx_scale = 0.00005;
 let ny_scale = 0.00005;
@@ -138,8 +137,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width / 1.5;
-	pos_range_y = width / 1.5;
+	pos_range_x = width / 2;
+	pos_range_y = width / 2;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -161,22 +160,25 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		/* 		cos_val = cos(generator_frameCount * 10);
+		/* 	cos_val = cos(generator_frameCount * 10);
 		sin_val = cos(generator_frameCount * 10);
-		noise_cos = sin(generator_frameCount * 50); */
-		// 40,45(5), 48,50,54,60,100
+		noise_cos = sin(generator_frameCount * 25);
+		off_cos = sin(generator_frameCount * 500); */
+		//noise_cos: 25,40,45(5), 48,50,54,60,100
+
 		cos_val = tan(generator_frameCount * 10);
 		sin_val = tan(generator_frameCount * 10);
 		noise_cos = tan(generator_frameCount * 25);
-		// 6,8,9,10,11 / 12, 15,25,30,35,40,45(stable),50,60(stable)70,75,80,90(stable),100,200,500
+		off_cos = tan(generator_frameCount * 500);
+		// noise_cos: 6,8,9,10,11 / 12, 15,18,20,25,30,36,35,40,45(stable),50,5460(stable)70,75,80,90(stable),100,200,500
+		// off_cos: 30,50,150,500
 
 		let scale1 = 1;
-		let scale2 = 0.6;
 		let xoff_l_high;
 		let xoff_l_low;
 		for (let i = 0; i < angle1.length; i++) {
-			xoff_l_high = map(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
-			xoff_l_low = map(noise_cos, -1, 1, offValues_h[i].high, offValues_h[i].low, true);
+			xoff_l_high = mapValue(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
+			xoff_l_low = mapValue(noise_cos, -1, 1, offValues_h[i].high, offValues_h[i].low, true);
 			/* 		xoff_l_low = 0.4;
 			xoff_l_high = 0.99; */
 
@@ -185,8 +187,11 @@ function* drawGenerator() {
 			// 0.001,0.005,0.007,0.01,0.05,0.07
 			// peut aussi etre alterné
 
-			xoff_l = map(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
-			yoff_l = map(cos_val, 0, 1, xoff_l_low, xoff_l_high, true);
+			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, 0, 1, xoff_l_low, xoff_l_high, true);
+
+			/* 			xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true); */
 			push();
 			rotate(angle1[i]);
 			scale(scale1);
@@ -224,84 +229,75 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		noiseDetail(2, 0.5);
+		noiseDetail(2, 0.9);
 		//! Simple Block
-		/* 		let x = map(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//! Electron microscope
-		/* let x = map(noise(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-		/* 		let x = map(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/* 		let x = mapValue(noise(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/* 		let x = mapValue(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//!block Rect
-		/* 	let x = map(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/* 	let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! block Rect 2
-		/* 		let x = map(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, yoff, xi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/*let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		 let y = mapValue(noise(yoff, yoff, xi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//!Drapery Yin Yang
-		/* 		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 		//!Drapery Equilibrium
-		let x = map(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+		/* 		let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Jellyfish
-		/* 		let x = map(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/* 		let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Astral Beings
-		/* let x = map(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/*let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);  	
+		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//! Astral Beings 2
-		/* 		let x = map(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/* 		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 		//! Astral Beings 3
-		/* 		let x = map(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-		/* 		let x = map(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/* 		let x = mapValue(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Astral Beings Asymmetrical
-		/* 		let x = map(noise(xoff, random([xoff, yoff, xi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/* 		let x = mapValue(noise(xoff, random([xoff, yoff, xi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Hybrid Drapery Blocks
-		/* 		let x = map(noise(xoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/* 		let x = mapValue(noise(xoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//!complex organism (aliens)
-		/* 		let x = map(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = map(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		/*let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		//skipperMax = map(elapsedTime, MAX_FRAMES / 100, MAX_FRAMES / 1.5, apertureHigh, apertureLow, true);
-		skipperMax = map(abs(cos_val), 0, 1, apertureHigh, apertureLow, true);
-
-		xRandSkipperVal = 0;
-		yRandSkipperVal = xRandSkipperVal;
-
-		xRandSkipper = randomGaussian(0, xRandSkipperVal);
-		yRandSkipper = randomGaussian(0, yRandSkipperVal);
-
-		let w = map(abs(cos_val), 0.0, 1, 0.1, 0.15, true);
-
+		let w = mapValue(abs(cos_val), 0.8, 1, 0.1, 0.15, true);
+		//let w = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0.1, 1, true);
 		let elW = w * MULTIPLIER;
-		let ab_x = x + xRandSkipper;
-		let ab_y = y + yRandSkipper;
+		let ab_x = x * MULTIPLIER;
+		let ab_y = y * MULTIPLIER;
 
-		hue = map(abs(cos_val), 0, 1, 360, 190, true);
-		sat = map(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true);
-		bri_min = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 80, true);
-		bri_max = map(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 30, true);
-		bri = map(abs(sin_val), 0, 1, 100 - bri_max, 80 - bri_min, true);
-		noStroke();
-		//fill(0, 75, 10, 100);
-		fill(hue, sat, bri, 100);
-		rect(ab_x, ab_y, elW, elW);
+		hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
+		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true);
+		bri_min = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 40, true);
+		bri_max = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 15, true);
+		bri = mapValue(abs(sin_val), 0, 1, 50 - bri_max, 40 - bri_min, true);
+		alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 100, 100, true);
+
+		drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
+		drawingContext.fillRect(ab_x, ab_y, elW, elW);
 	}
 }
 
