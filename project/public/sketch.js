@@ -137,8 +137,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width / 2;
-	pos_range_y = width / 2;
+	pos_range_x = width / 1.5;
+	pos_range_y = width / 1.5;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
