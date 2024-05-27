@@ -61,7 +61,6 @@ let particle_num = Math.floor(20000 / angle1.length);
 
 let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 //let cycle = parseInt(MAX_FRAMES / angle1.length);
-console.log("cycle: ", cycle);
 
 let nx_scale = 0.00005;
 let ny_scale = 0.00005;
@@ -85,13 +84,13 @@ let cos_val;
 let angle_index = 0;
 
 const offValues_l = [
-	{low: 1, high: 0.3}, // case 0
+	{low: 1, high: 0.1}, // case 0
 	{low: 2, high: 1.3}, // case 1
-	{low: 1, high: 0.3}, // case 2
+	{low: 1, high: 0.1}, // case 2
 	{low: 4, high: 3.3}, // case 3
-	{low: 1, high: 0.3}, // case 4
+	{low: 1, high: 0.1}, // case 4
 	{low: 2, high: 1.3}, // case 5
-	{low: 1, high: 0.3}, // case 6
+	{low: 1, high: 0.1}, // case 6
 	{low: 4, high: 3.3}, // case 7
 	// Add more if needed
 ];
@@ -162,7 +161,7 @@ function* drawGenerator() {
 		//blendMode(SCREEN);
 		/* 	cos_val = cos(generator_frameCount * 10);
 		sin_val = cos(generator_frameCount * 10);
-		noise_cos = sin(generator_frameCount * 25);
+		noise_cos = sin(generator_frameCount * 50);
 		off_cos = sin(generator_frameCount * 500); */
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
@@ -171,7 +170,8 @@ function* drawGenerator() {
 		noise_cos = tan(generator_frameCount * 25);
 		off_cos = tan(generator_frameCount * 500);
 		// noise_cos: 6,8,9,10,11 / 12, 15,18,20,25,30,36,35,40,45(stable),50,5460(stable)70,75,80,90(stable),100,200,500
-		// off_cos: 30,50,150,500
+		// off_cos: 26,30,50,150,500
+		//35+26 together with low noise ;)
 
 		let scale1 = 1;
 		let xoff_l_high;
@@ -283,8 +283,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		/*let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		let w = mapValue(abs(cos_val), 0.8, 1, 0.1, 0.15, true);
-		//let w = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0.1, 1, true);
+		let w = mapValue(abs(cos_val), 0, 1, 0.1, 0.18, true);
 		let elW = w * MULTIPLIER;
 		let ab_x = x * MULTIPLIER;
 		let ab_y = y * MULTIPLIER;
