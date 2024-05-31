@@ -1,7 +1,7 @@
 let features = "";
 
-let maxDPI = 3;
-let RATIO = 1.4;
+let maxDPI = 2;
+let RATIO = 3.88;
 
 let W = window.innerWidth;
 let H = window.innerHeight;
@@ -34,9 +34,10 @@ let displacement1 = 0;
 let displacement2 = 100;
 
 //let angle1 = [45, 105, 165, 225, 285, 345];
-let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
+//let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
 //let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5];
-//let angle1 = [45, 225];
+let angle1 = [45, 225];
+//let angle1 = [135, 315];
 //let angle1 = [45, 135, 225, 315];
 //let angle1 = [0, 90, 180, 270];
 //let angle1 = [0, 45, 90];
@@ -84,8 +85,8 @@ let cos_val;
 let angle_index = 0;
 
 const offValues_l = [
-	{low: 2, high: 1.1}, // case 0
-	{low: 1, high: 0.1}, // case 1
+	{low: 1, high: 0.1}, // case 0
+	{low: 1.1, high: 0.2}, // case 1
 	{low: 2, high: 1.1}, // case 2
 	{low: 3, high: 2.1}, // case 3
 	{low: 2, high: 1.1}, // case 4
@@ -96,8 +97,8 @@ const offValues_l = [
 ];
 
 const offValues_h = [
-	{low: 2, high: 1}, // case 0
-	{low: 1, high: 0}, // case 1
+	{low: 1, high: 0}, // case 0
+	{low: 1.1, high: 0.1}, // case 1
 	{low: 2, high: 1}, // case 2
 	{low: 3, high: 2}, // case 3
 	{low: 2, high: 1}, // case 4
@@ -130,14 +131,14 @@ function setup() {
 	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
 	gradient.addColorStop(0.5, "hsl(25, 100%, 95%)");
-	gradient.addColorStop(0.8, "hsl(36, 100%, 95%)");
+	gradient.addColorStop(0.8, "hsl(25, 100%, 95%)");
 	drawingContext.fillStyle = gradient;
 	drawingContext.fillRect(0, 0, width, height);
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width / 1.25;
-	pos_range_y = width / 1.25;
+	pos_range_x = height / 1.5;
+	pos_range_y = height / 1.5;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -259,31 +260,31 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Astral Beings
-		/*let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		/* let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//! Astral Beings 2
-		/* 		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
- */
+
 		//! Astral Beings 3
-		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+		/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		/* 		let x = mapValue(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Astral Beings Asymmetrical
 		/* 		let x = mapValue(noise(xoff, random([xoff, yoff, xi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 		//! Hybrid Drapery Blocks
 		/* 		let x = mapValue(noise(xoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//!complex organism (aliens)
-		/*let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		/* 		let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		let w = mapValue(abs(cos_val), 0, 1, 0.12, 0.2, true);
+		let w = mapValue(abs(cos_val), 0, 1, 0.3, 0.5, true);
 		let elW = w * MULTIPLIER;
 		let ab_x = x * MULTIPLIER;
 		let ab_y = y * MULTIPLIER;
