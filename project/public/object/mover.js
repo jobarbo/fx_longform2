@@ -96,11 +96,11 @@ class Mover {
 		this.xRandDivider = randMultX;
 		this.yRandDivider = randMultY;
 
-		this.xRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 1, 0.1, true);
-		this.yRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0, 1, true);
+		this.xRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 3, 0.1, true);
+		this.yRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0.1, 3, true);
 
-		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
-		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
+		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + random(-this.xRandSkipperVal, this.xRandSkipperVal);
+		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + random(-this.yRandSkipperVal, this.yRandSkipperVal);
 
 		this.speed = Math.abs(p.x + p.y);
 		this.x += this.speedX;
