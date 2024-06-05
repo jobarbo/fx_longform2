@@ -316,17 +316,17 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let ab_x = x * MULTIPLIER;
 		let ab_y = y * MULTIPLIER;
 
-		let index = Math.floor(mapValue(abs(noise_cos), 0, 1, 0, palette.length - 1, true));
+		/* 		let index = Math.floor(mapValue(abs(noise_cos), 0, 1, 0, palette.length - 1, true));
 
 		hue = palette[index].h;
 		sat = palette[index].s;
-		b = palette[index].l;
+		b = palette[index].l; */
 
-		/* 		hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
-		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true); */
+		hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
+		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true);
 		bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.1, MAX_FRAMES / 1, 0, 80, true);
 		bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.1, MAX_FRAMES / 1, 0, 15, true);
-		bri = mapValue(abs(sin_val), 1, 0, b - bri_max, b - bri_min, true);
+		bri = mapValue(abs(sin_val), 1, 0, 50 - bri_max, 40 - bri_min, true);
 		alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 100, 100, true);
 
 		drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
