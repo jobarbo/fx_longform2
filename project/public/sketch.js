@@ -326,7 +326,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true); */
 		bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.1, MAX_FRAMES / 1, 0, 80, true);
 		bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.1, MAX_FRAMES / 1, 0, 15, true);
-		bri = mapValue(abs(cos_val), 1, 0, b - bri_max, b - bri_min, true);
+		bri = mapValue(abs(sin_val), 1, 0, b - bri_max, b - bri_min, true);
 		alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 100, 100, true);
 
 		drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
