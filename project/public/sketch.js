@@ -1,5 +1,33 @@
 let features = "";
 
+let palette = [
+	{
+		h: 267,
+		s: 72,
+		l: 63,
+	},
+	{
+		h: 324,
+		s: 84,
+		l: 65,
+	},
+	{
+		h: 52,
+		s: 99,
+		l: 62,
+	},
+	{
+		h: 195,
+		s: 100,
+		l: 49,
+	},
+	{
+		h: 172,
+		s: 100,
+		l: 48,
+	},
+];
+
 let maxDPI = 3;
 let RATIO = 1;
 
@@ -136,8 +164,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width / 1;
-	pos_range_y = width / 1;
+	pos_range_x = width / 1.5;
+	pos_range_y = width / 1.5;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -243,8 +271,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = mapValue(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! block Rect 2
-		let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		/*let y = mapValue(noise(yoff, yoff, xi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
+		/*let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, yoff, xi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 		//!Drapery Yin Yang
 		/* let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);*/
@@ -255,14 +283,14 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 		//! Jellyfish
-		/* 	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
+		/* 		let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true); */
+		/*let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 		//! Astral Beings
 		/*let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//! Astral Beings 2
-		/* let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true); */
+		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		/* let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Astral Beings 3
@@ -288,11 +316,17 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let ab_x = x * MULTIPLIER;
 		let ab_y = y * MULTIPLIER;
 
-		hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
-		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true);
-		bri_min = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 40, true);
-		bri_max = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 0, 15, true);
-		bri = mapValue(abs(sin_val), 0, 1, 50 - bri_max, 40 - bri_min, true);
+		let index = Math.floor(mapValue(abs(noise_cos), 0, 1, 0, palette.length - 1, true));
+
+		hue = palette[index].h;
+		sat = palette[index].s;
+		b = palette[index].l;
+
+		/* 		hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
+		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true); */
+		bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.1, MAX_FRAMES / 1, 0, 80, true);
+		bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.1, MAX_FRAMES / 1, 0, 15, true);
+		bri = mapValue(abs(cos_val), 1, 0, b - bri_max, b - bri_min, true);
 		alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 100, 100, true);
 
 		drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
