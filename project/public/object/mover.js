@@ -39,7 +39,7 @@ class Mover {
 		this.yMax = yMax;
 		this.xLimit = 0.00015;
 		this.yLimit = 0.00015;
-		this.oct = 1;
+		this.oct = 2;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX = width / 2;
@@ -91,13 +91,13 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		let randMultX = map(frameCount, 0, this.maxFrames / 2, 2, 0.01, true);
-		let randMultY = map(frameCount, 0, this.maxFrames / 2, 0.001, 0.1, true);
+		let randMultX = map(frameCount, 0, this.maxFrames / 2, 2, 2.01, true);
+		let randMultY = map(frameCount, 0, this.maxFrames / 2, 0.1, 0.2, true);
 		this.xRandDivider = randMultX;
 		this.yRandDivider = randMultY;
 
-		this.xRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 3, 0.1, true);
-		this.yRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0.1, 3, true);
+		this.xRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0, 0.1, true);
+		this.yRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0.1, 0, true);
 
 		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + random(-this.xRandSkipperVal, this.xRandSkipperVal);
 		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + random(-this.yRandSkipperVal, this.yRandSkipperVal);
@@ -127,10 +127,10 @@ class Mover {
 		}
 
 		//!goldenfold variant
-		if (this.speed < 1) {
+		if (this.speedY < -620 || this.speedY > 5200) {
 			this.hue = 0;
 			this.sat = this.initSat + 80;
-			this.bri = this.initBri + random(-20, 60);
+			this.bri = this.initBri + random(20, 60);
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
