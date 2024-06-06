@@ -112,26 +112,26 @@ let cos_val;
 let angle_index = 0;
 
 const offValues_l = [
-	{low: 2, high: 1.2}, // case 0
-	{low: 1, high: 0.2}, // case 1
-	{low: 2.1, high: 1.3}, // case 2
-	{low: 3, high: 2.2}, // case 3
-	{low: 2.2, high: 1.4}, // case 4
-	{low: 1.1, high: 0.3}, // case 5
-	{low: 2.3, high: 1.5}, // case 6
-	{low: 3.1, high: 2.3}, // case 7
+	{low: 2, high: 1.3}, // case 0
+	{low: 1, high: 0.3}, // case 1
+	{low: 2, high: 1.3}, // case 2
+	{low: 3, high: 2.3}, // case 3
+	{low: 4, high: 3.3}, // case 4
+	{low: 5, high: 4.3}, // case 5
+	{low: 4, high: 3.3}, // case 6
+	{low: 3, high: 2.3}, // case 7
 	// Add more if needed
 ];
 
 const offValues_h = [
 	{low: 2, high: 1}, // case 0
 	{low: 1, high: 0}, // case 1
-	{low: 2.1, high: 1.1}, // case 2
+	{low: 2, high: 1}, // case 2
 	{low: 3, high: 2}, // case 3
-	{low: 2.2, high: 1.2}, // case 4
-	{low: 1.1, high: 0.1}, // case 5
-	{low: 2.3, high: 1.3}, // case 6
-	{low: 3.1, high: 2.1}, // case 7
+	{low: 4, high: 3}, // case 4
+	{low: 5, high: 4}, // case 5
+	{low: 4, high: 3}, // case 6
+	{low: 3, high: 2}, // case 7
 	// Add more if needed
 ];
 
@@ -164,8 +164,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width / 1.5;
-	pos_range_y = width / 1.5;
+	pos_range_x = width / 2;
+	pos_range_y = width / 2;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -195,8 +195,8 @@ function* drawGenerator() {
 
 		cos_val = tan(generator_frameCount * 10);
 		sin_val = tan(generator_frameCount * 10);
-		noise_cos = tan(generator_frameCount * 25);
-		off_cos = tan(generator_frameCount * 500);
+		noise_cos = tan(generator_frameCount * 35);
+		off_cos = tan(generator_frameCount * 150);
 		// noise_cos: 6,8,9,10,11 / 12, 15,18,20,25,30,36,35,40,45(stable),50,5460(stable)70,75,80,90(stable),100,200,500
 		// off_cos: 26,30,50,150,500
 		//35+26 together with low noise ;)
@@ -257,7 +257,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		noiseDetail(2, 0.9);
+		noiseDetail(4, 0.45);
 		//! Simple Block
 		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -275,8 +275,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = mapValue(noise(yoff, yoff, xi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 		//!Drapery Yin Yang
-		/* let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);*/
-		let y = mapValue(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+		/* let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 		//!Drapery Equilibrium
 		/* 	let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true); */
@@ -291,7 +291,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//! Astral Beings 2
 		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		/* let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 		//! Astral Beings 3
 		/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
