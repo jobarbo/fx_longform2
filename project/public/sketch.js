@@ -112,14 +112,14 @@ let cos_val;
 let angle_index = 0;
 
 const offValues_l = [
-	{low: 2, high: 1.3}, // case 0
-	{low: 1, high: 0.3}, // case 1
-	{low: 2, high: 1.3}, // case 2
-	{low: 3, high: 2.3}, // case 3
-	{low: 4, high: 3.3}, // case 4
-	{low: 5, high: 4.3}, // case 5
-	{low: 4, high: 3.3}, // case 6
-	{low: 3, high: 2.3}, // case 7
+	{low: 2, high: 1.1}, // case 0
+	{low: 1, high: 0.1}, // case 1
+	{low: 2, high: 1.1}, // case 2
+	{low: 3, high: 2.1}, // case 3
+	{low: 4, high: 3.1}, // case 4
+	{low: 5, high: 4.1}, // case 5
+	{low: 4, high: 3.1}, // case 6
+	{low: 3, high: 2.1}, // case 7
 	// Add more if needed
 ];
 
@@ -164,8 +164,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width / 2;
-	pos_range_y = width / 2;
+	pos_range_x = width * 1.7;
+	pos_range_y = width * 1.7;
 
 	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
 	yRandSkipperVal = xRandSkipperVal;
@@ -187,18 +187,18 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		/* 		cos_val = cos(generator_frameCount * 10);
+		cos_val = cos(generator_frameCount * 10);
 		sin_val = cos(generator_frameCount * 10);
-		noise_cos = sin(generator_frameCount * 50);
-		off_cos = sin(generator_frameCount * 500); */
+		noise_cos = sin(generator_frameCount * 40);
+		off_cos = sin(generator_frameCount * 60);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
-		cos_val = tan(generator_frameCount * 10);
+		/* 		cos_val = tan(generator_frameCount * 10);
 		sin_val = tan(generator_frameCount * 10);
 		noise_cos = tan(generator_frameCount * 35);
-		off_cos = tan(generator_frameCount * 150);
-		// noise_cos: 6,8,9,10,11 / 12, 15,18,20,25,30,36,35,40,45(stable),50,5460(stable)70,75,80,90(stable),100,200,500
-		// off_cos: 26,30,50,150,500
+		off_cos = tan(generator_frameCount * 150); */
+		// noise_cos: 6,8,9,10,11 / 12, 15,18,20,25,30,35,36,40,45(stable),50,54,60(stable)70,75,80,90(stable),100,200,500
+		// off_cos: 26,30,50,60,150,500,1250,1500
 		//35+26 together with low noise ;)
 
 		let scale1 = 1;
@@ -215,11 +215,11 @@ function* drawGenerator() {
 			// 0.001,0.005,0.007,0.01,0.05,0.07
 			// peut aussi etre alterné
 
-			/* 			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, 0, 1, xoff_l_low, xoff_l_high, true); */
+			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, 0, 1, xoff_l_low, xoff_l_high, true);
 
-			xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true);
+			/* xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true); */
 			push();
 			rotate(angle1[i]);
 			scale(scale1);
@@ -283,15 +283,15 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 		//! Jellyfish
-		/* 		let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true); */
-		/*let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
+		let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 		//! Astral Beings
-		/*let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		/* 		let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//! Astral Beings 2
-		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+		/* 		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Astral Beings 3
 		/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
