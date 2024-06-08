@@ -96,8 +96,6 @@ let ny_scale = 0.00005;
 let ny_scale = 0.001; */
 
 let skipperMax = 0;
-let xRandSkipperVal;
-let yRandSkipperVal;
 let xRandSkipper = 0;
 let yRandSkipper = 0;
 let apertureLow = 0.01;
@@ -138,6 +136,8 @@ const offValues_h = [
 function setup() {
 	features = $fx.getFeatures();
 
+	console.log(features);
+
 	elapsedTime = 0;
 	framesRendered = 0;
 	drawing = true;
@@ -164,11 +164,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width * 1.7;
-	pos_range_y = width * 1.7;
-
-	xRandSkipperVal = random([0.01, random([0.1, 1, 2, 5, 10, 25, 50, 100])]);
-	yRandSkipperVal = xRandSkipperVal;
+	pos_range_x = width * 1.5;
+	pos_range_y = width * 1.5;
 
 	let sketch = drawGenerator();
 	function animate() {
@@ -212,7 +209,7 @@ function* drawGenerator() {
 
 			xoff_h = xoff_l_high + 0.001;
 			yoff_h = xoff_l_high + 0.001;
-			// 0.001,0.005,0.007,0.01,0.05,0.07
+			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
 			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
@@ -296,6 +293,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		//! Astral Beings 3
 		/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+
+		//! astral beings 4
 		/* 		let x = mapValue(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 

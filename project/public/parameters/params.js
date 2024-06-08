@@ -11,15 +11,54 @@ seed = parseInt(fxrand() * 10000000);
 
 const shapeArr = [
 	// name, probability(0-100)
-	["ellipse", 50],
-	["rectangle", 50],
+	["simple block", 7.7],
+	["block rect", 7.7],
+	["block rect 2", 7.7],
+	["drapery yin/yang", 7.7],
+	["drapery equilibrium", 7.7],
+	["hybrid drapery/blocks", 7.7],
+	["electron microscope", 7.7],
+	["jellyfish", 7.7],
+	["astral beings", 7.7],
+	["astral beings 2", 7.7],
+	["astral beings 3", 7.7],
+	["astral beings 4", 7.7],
+	["complex organism", 7.7],
+];
+
+const lineWidthArr = [
+	["hairline", 12.5],
+	["very thin", 12.5],
+	["thin", 12.5],
+	["normal", 12.5],
+	["medium", 12.5],
+	["semibold", 12.5],
+	["bold", 12.5],
+	["black", 12.5],
+];
+
+const noiseRangeArr = [
+	["micro", 16],
+	["very small", 16],
+	["small", 16],
+	["medium", 16],
+	["large", 16],
+	["macro", 16],
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
-function generate_composition_params(shape_type) {
+function generate_composition_params(shape_type, line_type, noise_range) {
 	// SET DEFAULTS IF NOT PASSED IN
 	if (shape_type === undefined) {
 		shape_type = weighted_choice(shapeArr);
+	}
+
+	if (line_type === undefined) {
+		line_type = weighted_choice(lineWidthArr);
+	}
+
+	if (noise_range === undefined) {
+		noise_range = weighted_choice(noiseRangeArr);
 	}
 
 	//* EXCEPTIONS AND OVER-RIDES *//
@@ -28,6 +67,8 @@ function generate_composition_params(shape_type) {
 	//* PACK PARAMETERS INTO OBJECT *//
 	var composition_params = {
 		shape_type: shape_type,
+		line_type: line_type,
+		noise_range: noise_range,
 	};
 
 	//* RETURN PARAMETERS *//

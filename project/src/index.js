@@ -8,11 +8,11 @@ let composition_params;
 composition_params = generate_composition_params();
 //console.log(composition_params);
 
-var {shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode} = composition_params; // unpacking parameters we need in main.js and turning them into globals
+var {shape_type, line_type, noise_range} = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
-//console.log(shape_type, ellipse_num, line_num, rectangle_num, bg_mode, border_mode, format_mode, palette_mode, angle_mode);
+//console.log(shape_type);
 // this is how to define parameters
-$fx.params([
+/* $fx.params([
 	{
 		id: "shape_type",
 		name: "Type of",
@@ -22,11 +22,13 @@ $fx.params([
 			options: ["ellipse", "rectangle"],
 		},
 	},
-]);
+]); */
 //console.log($fx.getParam("shape_type"));
 // this is how features can be defined
 $fx.features({
-	shape_type: $fx.getParam("shape_type"),
+	shape_type: shape_type,
+	line_type: line_type,
+	noise_range: noise_range,
 });
 
 // log the parameters, for debugging purposes, artists won't have to do that
