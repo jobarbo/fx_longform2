@@ -45,9 +45,14 @@ const noiseRangeArr = [
 	["large", 16],
 	["macro", 16],
 ];
+const zoomLevelArr = [
+	["close", 33],
+	["medium", 33],
+	["far", 33],
+];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
-function generate_composition_params(shape_type, line_type, noise_range) {
+function generate_composition_params(shape_type, line_type, noise_range, zoom_level) {
 	// SET DEFAULTS IF NOT PASSED IN
 	if (shape_type === undefined) {
 		shape_type = weighted_choice(shapeArr);
@@ -61,6 +66,10 @@ function generate_composition_params(shape_type, line_type, noise_range) {
 		noise_range = weighted_choice(noiseRangeArr);
 	}
 
+	if (zoom_level === undefined) {
+		zoom_level = weighted_choice(zoomLevelArr);
+	}
+
 	//* EXCEPTIONS AND OVER-RIDES *//
 	// if necessary, add exceptions and over-rides here
 
@@ -69,6 +78,7 @@ function generate_composition_params(shape_type, line_type, noise_range) {
 		shape_type: shape_type,
 		line_type: line_type,
 		noise_range: noise_range,
+		zoom_level: zoom_level,
 	};
 
 	//* RETURN PARAMETERS *//

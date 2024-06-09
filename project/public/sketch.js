@@ -62,7 +62,7 @@ let displacement1 = 0;
 let displacement2 = 100;
 
 //let angle1 = [45, 105, 165, 225, 285, 345];
-let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
+/* let angle1 = [0, 45, 90, 135, 180, 225, 270, 315]; */
 //let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5];
 //let angle1 = [45, 225];
 //let angle1 = [45, 135, 225, 315];
@@ -71,7 +71,7 @@ let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
 //let angle1 = [0, 90, 270];
 //let angle1 = [180, 270];
 //let angle1 = [90, 270];
-//let angle1 = [45];
+let angle1 = [45];
 //let angle1 = [5, 25, 45, 65, 85, 105, 125, 145, 165, 185, 205, 225, 245, 265, 285, 305, 325, 345];
 // let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
@@ -110,14 +110,14 @@ let cos_val;
 let angle_index = 0;
 
 const offValues_l = [
-	{low: 2, high: 1.1}, // case 0
-	{low: 1, high: 0.1}, // case 1
-	{low: 2, high: 1.1}, // case 2
-	{low: 3, high: 2.1}, // case 3
-	{low: 4, high: 3.1}, // case 4
-	{low: 5, high: 4.1}, // case 5
-	{low: 4, high: 3.1}, // case 6
-	{low: 3, high: 2.1}, // case 7
+	{low: 2, high: 1.15}, // case 0
+	{low: 1, high: 0.15}, // case 1
+	{low: 2, high: 1.15}, // case 2
+	{low: 3, high: 2.15}, // case 3
+	{low: 4, high: 3.15}, // case 4
+	{low: 5, high: 4.15}, // case 5
+	{low: 4, high: 3.15}, // case 6
+	{low: 3, high: 2.15}, // case 7
 	// Add more if needed
 ];
 
@@ -164,8 +164,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width * 1.5;
-	pos_range_y = width * 1.5;
+	pos_range_x = width * 0.8;
+	pos_range_y = width * 0.8;
 
 	let sketch = drawGenerator();
 	function animate() {
@@ -179,21 +179,21 @@ function* drawGenerator() {
 	let count = 0;
 	let generator_frameCount = 0;
 	let draw_every = cycle;
-	translate(width / 2, height / 2);
+	translate(width / 2, height / 1.7);
 
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
 		cos_val = cos(generator_frameCount * 10);
 		sin_val = cos(generator_frameCount * 10);
-		noise_cos = sin(generator_frameCount * 40);
-		off_cos = sin(generator_frameCount * 60);
+		noise_cos = sin(generator_frameCount * 30);
+		off_cos = sin(generator_frameCount * 40);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
-		/* 		cos_val = tan(generator_frameCount * 10);
+		/* 	cos_val = tan(generator_frameCount * 10);
 		sin_val = tan(generator_frameCount * 10);
-		noise_cos = tan(generator_frameCount * 35);
-		off_cos = tan(generator_frameCount * 150); */
+		noise_cos = tan(generator_frameCount * 30);
+		off_cos = tan(generator_frameCount * 50); */
 		// noise_cos: 6,8,9,10,11 / 12, 15,18,20,25,30,35,36,40,45(stable),50,54,60(stable)70,75,80,90(stable),100,200,500
 		// off_cos: 26,30,50,60,150,500,1250,1500
 		//35+26 together with low noise ;)
@@ -212,11 +212,11 @@ function* drawGenerator() {
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
-			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, 0, 1, xoff_l_low, xoff_l_high, true);
+			/* 			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, 0, 1, xoff_l_low, xoff_l_high, true); */
 
-			/* xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true); */
+			xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true);
 			push();
 			rotate(angle1[i]);
 			scale(scale1);
@@ -254,7 +254,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		noiseDetail(4, 0.45);
+		noiseDetail(2, 0.8);
 		//! Simple Block
 		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -280,8 +280,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 		//! Jellyfish
-		let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+		/* 		let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! Astral Beings
 		/* 		let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
@@ -307,8 +307,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//!complex organism (aliens)
-		/*let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 		let w = mapValue(abs(cos_val), 0, 1, 0.12, 0.2, true);
 		let elW = w * MULTIPLIER;

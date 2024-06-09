@@ -8,7 +8,7 @@ let composition_params;
 composition_params = generate_composition_params();
 //console.log(composition_params);
 
-var {shape_type, line_type, noise_range} = composition_params; // unpacking parameters we need in main.js and turning them into globals
+var {shape_type, line_type, noise_range, zoom_level} = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
 //console.log(shape_type);
 // this is how to define parameters
@@ -29,6 +29,7 @@ $fx.features({
 	shape_type: shape_type,
 	line_type: line_type,
 	noise_range: noise_range,
+	zoom_level: zoom_level,
 });
 
 // log the parameters, for debugging purposes, artists won't have to do that
