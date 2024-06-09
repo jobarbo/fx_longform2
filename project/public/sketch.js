@@ -122,14 +122,14 @@ const offValues_l = [
 ];
 
 const offValues_h = [
-	{low: 2, high: 1}, // case 0
-	{low: 1, high: 0}, // case 1
-	{low: 2, high: 1}, // case 2
-	{low: 3, high: 2}, // case 3
-	{low: 4, high: 3}, // case 4
-	{low: 5, high: 4}, // case 5
-	{low: 4, high: 3}, // case 6
-	{low: 3, high: 2}, // case 7
+	{low: 2.15, high: 1}, // case 0
+	{low: 1.15, high: 0}, // case 1
+	{low: 2.15, high: 1}, // case 2
+	{low: 3.15, high: 2}, // case 3
+	{low: 4.15, high: 3}, // case 4
+	{low: 5.15, high: 4}, // case 5
+	{low: 4.15, high: 3}, // case 6
+	{low: 3.15, high: 2}, // case 7
 	// Add more if needed
 ];
 
@@ -164,8 +164,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width * 0.8;
-	pos_range_y = width * 0.8;
+	pos_range_x = width * 1;
+	pos_range_y = width * 1;
 
 	let sketch = drawGenerator();
 	function animate() {
@@ -179,7 +179,7 @@ function* drawGenerator() {
 	let count = 0;
 	let generator_frameCount = 0;
 	let draw_every = cycle;
-	translate(width / 2, height / 1.7);
+	translate(width / 2, height / 2);
 
 	while (true) {
 		// Draw with p5.js things
@@ -254,7 +254,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		noiseDetail(2, 0.8);
+		noiseDetail(5, 0.5);
 		//! Simple Block
 		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -287,8 +287,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		/* 		let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//! Astral Beings 2
-		/* 		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 		//! Astral Beings 3
 		/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
@@ -307,8 +307,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//!complex organism (aliens)
-		let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+		/* 		let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		let w = mapValue(abs(cos_val), 0, 1, 0.12, 0.2, true);
 		let elW = w * MULTIPLIER;
