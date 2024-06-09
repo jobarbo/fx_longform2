@@ -186,8 +186,8 @@ function* drawGenerator() {
 		//blendMode(SCREEN);
 		cos_val = cos(generator_frameCount * 10);
 		sin_val = cos(generator_frameCount * 10);
-		noise_cos = sin(generator_frameCount * 30);
-		off_cos = sin(generator_frameCount * 40);
+		noise_cos = sin(generator_frameCount * 40);
+		off_cos = sin(generator_frameCount * 70);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
 		/* 	cos_val = tan(generator_frameCount * 10);
