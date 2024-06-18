@@ -56,8 +56,8 @@ function setup() {
 	frameIterator = maxFrames / maxFrames;
 	scl1 = fxrand() * (0.0022 - 0.001) + 0.001;
 	scl2 = fxrand() * (0.0022 - 0.001) + 0.001;
-	ang1 = parseInt(fxrand() * (500, 1200) + 500);
-	ang2 = parseInt(fxrand() * (1000, 1200) + 1000);
+	ang1 = parseInt(fxrand() * (1000, 1200) + 1000);
+	ang2 = parseInt(fxrand() * (100, 1200) + 100);
 	// change how drastically it changes with the SDF
 	scl1Zone = 600;
 	scl2Zone = 600;
@@ -100,7 +100,7 @@ function* drawGenerator() {
 			mover.move(frameCount);
 			if (count > draw_every) {
 				// splice half of the movers array and reinitialize the count
-				divider = map(frameCount, maxFrames / 5, maxFrames, 1, 1.051, true);
+				divider = map(frameCount, maxFrames / 10, maxFrames, 1.0, 1.051, true);
 				movers.splice(particleNum / divider, particleNum / divider);
 				particleNum = movers.length;
 
@@ -139,8 +139,8 @@ function INIT() {
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 	let hue = fxrand() * 360;
-	xMin = 0.04;
-	xMax = 0.96;
+	xMin = 0.03;
+	xMax = 0.97;
 	yMin = 0.02;
 	yMax = 0.98;
 	/* 	xMin = -0.01;
@@ -149,8 +149,11 @@ function INIT() {
 	yMax = 1.01; */
 
 	for (let i = 0; i < particleNum; i++) {
-		let x = fxrand() * (xMax - xMin) * width + xMin * width;
-		let y = fxrand() * (yMax - yMin) * height + yMin * height;
+		/* 		let x = fxrand() * (xMax - xMin) * width + xMin * width; */
+		/* 		let y = fxrand() * (yMax - yMin) * height + yMin * height; */
+
+		let x = fxrand() * width;
+		let y = fxrand() * height;
 
 		let initHue = hue + fxrand() * 2 - 1;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
