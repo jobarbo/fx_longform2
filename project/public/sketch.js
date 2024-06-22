@@ -184,8 +184,8 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 125);
-		sin_val = cos(generator_frameCount * 125);
+		cos_val = cos(generator_frameCount * 10);
+		sin_val = cos(generator_frameCount * 50);
 		noise_cos = sin(generator_frameCount * 125);
 		off_cos = sin(generator_frameCount * 150);
 		nd_cos = sin(generator_frameCount * 125);
