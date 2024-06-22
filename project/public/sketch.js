@@ -110,8 +110,8 @@ let cos_val;
 let angle_index = 0;
 
 const offValues_l = [
-	{low: 2, high: 1.15}, // case 0
-	{low: 1, high: 0.15}, // case 1
+	{low: 2, high: 1.1}, // case 0
+	{low: 1, high: 0.1}, // case 1
 	{low: 2, high: 1.15}, // case 2
 	{low: 3, high: 2.15}, // case 3
 	{low: 4, high: 3.15}, // case 4
@@ -122,8 +122,8 @@ const offValues_l = [
 ];
 
 const offValues_h = [
-	{low: 2.15, high: 1}, // case 0
-	{low: 1.15, high: 0}, // case 1
+	{low: 2.1, high: 1}, // case 0
+	{low: 1.1, high: 0}, // case 1
 	{low: 2.15, high: 1}, // case 2
 	{low: 3.15, high: 2}, // case 3
 	{low: 4.15, high: 3}, // case 4
@@ -184,11 +184,17 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 10);
-		sin_val = cos(generator_frameCount * 10);
-		noise_cos = sin(generator_frameCount * 40);
-		off_cos = sin(generator_frameCount * 70);
+		cos_val = cos(generator_frameCount * 125);
+		sin_val = cos(generator_frameCount * 125);
+		noise_cos = sin(generator_frameCount * 125);
+		off_cos = sin(generator_frameCount * 150);
+		nd_cos = sin(generator_frameCount * 125);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
+
+		//cos_val = 125;//!test
+		//sin_val = 125;//!test
+		//n_cos = 125;//!test
+		//off_cos = 250;//!test
 
 		/* 	cos_val = tan(generator_frameCount * 10);
 		sin_val = tan(generator_frameCount * 10);
@@ -207,8 +213,8 @@ function* drawGenerator() {
 			/* 		xoff_l_low = 0.4;
 			xoff_l_high = 0.99; */
 
-			xoff_h = xoff_l_high + 0.001;
-			yoff_h = xoff_l_high + 0.001;
+			xoff_h = xoff_l_high + 0.002;
+			yoff_h = xoff_l_high + 0.002;
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
@@ -254,7 +260,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		noiseDetail(5, 0.5);
+		let nd = map(abs(nd_cos), 0, 1, 1, 6, true);
+		noiseDetail(nd, 0.5);
 		//! Simple Block
 		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
