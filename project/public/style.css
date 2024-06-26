@@ -45,10 +45,10 @@ canvas.p5Canvas {
 /* having fun here */
 
 main {
-	height: 87dvh;
+	width: 50dvh;
 	display: flex;
 	align-items: center;
-	border: 8px solid rgb(106, 72, 4);
+	border: 3px solid rgb(48, 32, 0);
 	justify-content: center;
 	box-shadow: 2.8px 2.8px 2.2px rgba(0, 0, 0, 0.118), 6.7px 6.7px 5.3px rgba(0, 0, 0, 0.119), 12.5px 12.5px 10px rgba(0, 0, 0, 0.115), 22.3px 22.3px 17.9px rgba(0, 0, 0, 0.11),
 		41.8px 41.8px 33.4px rgba(0, 0, 0, 0.105), 100px 100px 80px rgba(0, 0, 0, 0.1);
@@ -66,5 +66,5 @@ main::after {
 }
 
 canvas.p5Canvas {
-	height: 100% !important;
+	width: 100% !important;
 }
