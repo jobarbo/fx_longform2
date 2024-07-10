@@ -9,8 +9,8 @@ F = (N, f) => [...Array(N)].map((_, i) => f(i));
 // e.g. color.hex.rgba, color.obj.rgba.r, color.arr.rgb[0]
 
 // particles variables setup
-let features = '';
-let params = '';
+let features = "";
+let params = "";
 let movers = [];
 let movers_pos = [];
 let scl1;
@@ -71,11 +71,11 @@ function setup() {
 	DIM = min(W, H);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	//c = createCanvas(DIM, DIM * 1.4);
-	c=createCanvas(W,H);
+	c = createCanvas(W, H);
 	rectMode(CENTER);
 	colorMode(HSB, 360, 100, 100, 100);
 
-	document.querySelector('canvas').classList.add('load');
+	document.querySelector("canvas").classList.add("load");
 
 	INIT();
 }
@@ -153,11 +153,12 @@ function FRAME(seed) {
 	//	bgCol = color(355, 10, 95, 60);
 
 	let easing = radians(easeAng);
+	let easing2 = radians(easeAng + 180);
 
-	scl1 = mapValue(cos(easing), -1, 1, 0.00071, 0.0025, true);
-	scl2 = mapValue(cos(easing), -1, 1, 0.0025, 0.00071, true);
-	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 1200, 1, true));
-	amplitude2 = parseInt(mapValue(cos(easing), -1, 1, 1, 1200, true));
+	scl1 = mapValue(cos(easing2), -1, 1, 0.00071, 0.0025, true);
+	scl2 = mapValue(sin(easing), -1, 1, 0.0025, 0.00071, true);
+	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 700, 1, true));
+	amplitude2 = parseInt(mapValue(sin(easing2), -1, 1, 1, 700, true));
 	xRandDivider = random([0.025]);
 	yRandDivider = random([0.025]);
 
@@ -205,7 +206,6 @@ function FRAME(seed) {
 }
 
 function animationManager() {
-
 	// use requestAnimationFrame to call the generator function and pass it the sketch function
 	let sketch = drawGenerator();
 	function animate() {
@@ -283,9 +283,7 @@ function* drawGenerator() {
 	}
 }
 
-
-function displayFPS(){
-
+function displayFPS() {
 	let fps = frameRate();
 
 	if (fps > maxFps) {
@@ -300,7 +298,7 @@ function displayFPS(){
 	fill(255);
 	stroke(0);
 	textSize(30);
-	text('FPS: ' + fps.toFixed(2), 10, height - 10);
-	text('Max FPS: ' + maxFps.toFixed(2), 10, height - 50);
-	text('Min FPS: ' + minFps.toFixed(2), 10, height - 90);
+	text("FPS: " + fps.toFixed(2), 10, height - 10);
+	text("Max FPS: " + maxFps.toFixed(2), 10, height - 50);
+	text("Min FPS: " + minFps.toFixed(2), 10, height - 90);
 }
