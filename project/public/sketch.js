@@ -1,4 +1,4 @@
-let features = '';
+let features = "";
 let movers = [];
 let scl1;
 let scl2;
@@ -16,7 +16,7 @@ let img;
 let mask;
 
 function preload() {
-	img = loadImage('./image/Mono.png');
+	img = loadImage("./image/Mono.png");
 }
 
 function setup() {
@@ -35,7 +35,7 @@ function setup() {
 	} else {
 		pixelDensity(2);
 	}
-	createCanvas(16 * 100, 22 * 100);
+	createCanvas(16 * 100, 16 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000);
 	randomSeed(seed);
@@ -52,7 +52,7 @@ function draw() {
 	}
 	blendMode(BLEND);
 	if (frameCount > 1500) {
-		console.log('done');
+		console.log("done");
 		noLoop();
 	}
 }
@@ -67,9 +67,9 @@ function INIT(seed) {
 	scl2 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
 	scl3 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
 
-	console.log('scl1', scl1);
-	console.log('scl2', scl2);
-	console.log('scl3', scl3);
+	console.log("scl1", scl1);
+	console.log("scl2", scl2);
+	console.log("scl3", scl3);
 
 	/* 	scl1 = 0.01;
 	scl2 = 0.005;
@@ -85,18 +85,18 @@ function INIT(seed) {
 	let sclOffset2 = 1;
 	let sclOffset3 = 1;
 
-	console.log('sclOffset1', sclOffset1);
-	console.log('sclOffset2', sclOffset2);
-	console.log('sclOffset3', sclOffset3);
+	console.log("sclOffset1", sclOffset1);
+	console.log("sclOffset2", sclOffset2);
+	console.log("sclOffset3", sclOffset3);
 
-	console.log('scl1', scl1);
-	console.log('scl2', scl2);
-	console.log('scl3', scl3);
+	console.log("scl1", scl1);
+	console.log("scl2", scl2);
+	console.log("scl3", scl3);
 
-	xMin = 0.000001;
-	xMax = 1;
-	yMin = 0.000001;
-	yMax = 1;
+	xMin = -0.1;
+	xMax = 1.1;
+	yMin = -0.1;
+	yMax = 1.1;
 	/* 	xMin = 0.4;
 	xMax = 0.6;
 	yMin = 0.4;
@@ -116,26 +116,8 @@ function INIT(seed) {
 		let hueOffset = random(-20, 20);
 		let initHue = hue + hueOffset;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(
-			new Mover(
-				x,
-				y,
-				initHue,
-				scl1,
-				scl2,
-				scl3,
-				sclOffset1,
-				sclOffset2,
-				sclOffset3,
-				xMin,
-				xMax,
-				yMin,
-				yMax,
-				isBordered,
-				seed
-			)
-		);
+		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix('#000', '#fff', 0.08);
+	let bgCol = spectral.mix("#000", "#fff", 0.08);
 	background(bgCol);
 }
