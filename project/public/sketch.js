@@ -37,7 +37,7 @@ function setup() {
 	}
 	createCanvas(16 * 100, 16 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
-	seed = random(10000000);
+	seed = random(10000000000000);
 	randomSeed(seed);
 	INIT(seed);
 }
@@ -71,14 +71,18 @@ function INIT(seed) {
 	console.log("scl2", scl2);
 	console.log("scl3", scl3);
 
+	/* 	scl1 = 0.4;
+	scl2 = 0.002;
+	scl3 = 0.4;
+ */
 	/* 	scl1 = 0.01;
 	scl2 = 0.005;
 	scl3 = 0.01; */
 
 	/* 	scl1 = 0.0025;
 	scl2 = 0.0005;
-	scl3 = 0.0075; */
-
+	scl3 = 0.0075;
+ */
 	let hue = random(360);
 
 	let sclOffset1 = 1;
@@ -102,7 +106,7 @@ function INIT(seed) {
 	yMin = 0.4;
 	yMax = 0.6; */
 
-	for (let i = 0; i < 300000; i++) {
+	for (let i = 0; i < 30000; i++) {
 		// distribue the movers within a circle using polar coordinates
 		/* 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);

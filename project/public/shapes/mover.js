@@ -19,7 +19,7 @@ class Mover {
 		this.sclOffset3 = sclOffset3;
 		this.seed = seed;
 		this.xRandDivider = 0.004;
-		this.yRandDivider = 0.01;
+		this.yRandDivider = 0.002;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xMin = xMin;
@@ -42,8 +42,8 @@ class Mover {
 		// after 1 second, change the scale
 
 		//! crayon effect too
-		/* 		this.xRandDivider = random(0.1, 4);
-		this.yRandDivider = random(0.1, 4); */
+		this.xRandDivider = random(0.01, 0.01005);
+		this.yRandDivider = random(0.01, 0.01005);
 
 		/* 		this.xRandSkipper = random(-1.001, 1.001);
 		this.yRandSkipper = random(-1.001, 1.001);
@@ -51,13 +51,13 @@ class Mover {
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
-		if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
+		/* 		if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
 			this.s += 0.5;
 
-			if (this.s >= 5) {
-				this.s = 5;
+			if (this.s >= 3) {
+				this.s = 3;
 			}
-		}
+		} */
 
 		//shortand for if this.x is less than 0, set this.x to width and vice versa
 		this.x = this.x < -this.s ? width + this.s : this.x > width + this.s ? -this.s : this.x;
@@ -155,16 +155,16 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = -1;
 
 	//! Introverted
-	/* 	let u = map(vn, map(nx, 0, width, -0.0001, -0.0000001), map(nx, 0, width, 0.0000001, 0.0001), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -0.0001, -0.0000001), map(ny, 0, height, 0.0000001, 0.0001), minV, maxV, true); */
+	let u = map(vn, map(nx, 0, width, -1.0001, -0.0000001), map(nx, 0, width, 0.0000001, 1.0001), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -1.0001, -0.0000001), map(ny, 0, height, 0.0000001, 1.0001), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, 0, width, -5.4, -0.0001), map(ny, 0, width, 0.0001, 5.4), minU, maxU, true);
 	let v = map(un, map(nx, 0, height, -5.4, -0.0001), map(nx, 0, height, 0.0001, 5.4), minV, maxV, true); */
 
 	//! Equilibrium
-	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
-	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true);
+	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
+	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 
 	let p = createVector(u, v);
 	return p;
