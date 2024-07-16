@@ -10,7 +10,7 @@ let xMin;
 let xMax;
 let yMin;
 let yMax;
-let isBordered = false;
+let isBordered = true;
 
 let img;
 let mask;
@@ -97,14 +97,14 @@ function INIT(seed) {
 	console.log("scl2", scl2);
 	console.log("scl3", scl3);
 
-	xMin = -0.1;
+	/* 	xMin = -0.1;
 	xMax = 1.1;
 	yMin = -0.1;
-	yMax = 1.1;
-	/* 	xMin = 0.4;
-	xMax = 0.6;
-	yMin = 0.4;
-	yMax = 0.6; */
+	yMax = 1.1; */
+	xMin = 0.05;
+	xMax = 0.95;
+	yMin = 0.05;
+	yMax = 0.95;
 
 	for (let i = 0; i < 30000; i++) {
 		// distribue the movers within a circle using polar coordinates

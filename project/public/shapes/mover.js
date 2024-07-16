@@ -42,8 +42,8 @@ class Mover {
 		// after 1 second, change the scale
 
 		//! crayon effect too
-		this.xRandDivider = random(0.01, 0.01005);
-		this.yRandDivider = random(0.01, 0.01005);
+		this.xRandDivider = random(0.001, 0.0105);
+		this.yRandDivider = random(0.001, 0.0105);
 
 		/* 		this.xRandSkipper = random(-1.001, 1.001);
 		this.yRandSkipper = random(-1.001, 1.001);
@@ -60,21 +60,21 @@ class Mover {
 		} */
 
 		//shortand for if this.x is less than 0, set this.x to width and vice versa
-		this.x = this.x < -this.s ? width + this.s : this.x > width + this.s ? -this.s : this.x;
-		this.y = this.y < -this.s ? height + this.s : this.y > height + this.s ? -this.s : this.y;
+		/* 		this.x = this.x < -this.s ? width + this.s : this.x > width + this.s ? -this.s : this.x;
+		this.y = this.y < -this.s ? height + this.s : this.y > height + this.s ? -this.s : this.y; */
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {
-				this.x = (this.xMax + 0.015) * width;
+				this.x = (this.xMax - 0.015) * width;
 			}
 			if (this.x > (this.xMax + 0.015) * width) {
-				this.x = (this.xMin - 0.015) * width;
+				this.x = (this.xMin + 0.015) * width;
 			}
 			if (this.y < (this.yMin - 0.015) * height) {
-				this.y = (this.yMax + 0.015) * height;
+				this.y = (this.yMax - 0.015) * height;
 			}
 			if (this.y > (this.yMax + 0.015) * height) {
-				this.y = (this.yMin - 0.015) * height;
+				this.y = (this.yMin + 0.015) * height;
 			}
 		}
 	}
@@ -149,14 +149,14 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = random(-4, -0.001); */
 
 	//! Standard Mode
-	let maxU = 1;
-	let maxV = 1;
-	let minU = -1;
-	let minV = -1;
+	let maxU = 0.01;
+	let maxV = 0.1;
+	let minU = -0.01;
+	let minV = -0.1;
 
 	//! Introverted
-	let u = map(vn, map(nx, 0, width, -1.0001, -0.0000001), map(nx, 0, width, 0.0000001, 1.0001), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -1.0001, -0.0000001), map(ny, 0, height, 0.0000001, 1.0001), minV, maxV, true);
+	let u = map(vn, map(nx, 0, width, -2.5, -1.0000001), map(nx, 0, width, 1.0000001, 2.5), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -2.5, -1.0000001), map(ny, 0, height, 1.0000001, 2.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, 0, width, -5.4, -0.0001), map(ny, 0, width, 0.0001, 5.4), minU, maxU, true);
