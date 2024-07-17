@@ -42,8 +42,8 @@ class Mover {
 		// after 1 second, change the scale
 
 		//! crayon effect too
-		this.xRandDivider = random(0.001, 0.0105);
-		this.yRandDivider = random(0.001, 0.0105);
+		this.xRandDivider = random(0.002, 0.00205);
+		this.yRandDivider = random(0.002, 0.00205);
 
 		/* 		this.xRandSkipper = random(-1.001, 1.001);
 		this.yRandSkipper = random(-1.001, 1.001);
@@ -149,14 +149,14 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = random(-4, -0.001); */
 
 	//! Standard Mode
-	let maxU = 0.01;
-	let maxV = 0.1;
-	let minU = -0.01;
-	let minV = -0.1;
+	let maxU = 0.11;
+	let maxV = 0.11;
+	let minU = -0.11;
+	let minV = -0.11;
 
 	//! Introverted
-	let u = map(vn, map(nx, 0, width, -2.5, -1.0000001), map(nx, 0, width, 1.0000001, 2.5), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -2.5, -1.0000001), map(ny, 0, height, 1.0000001, 2.5), minV, maxV, true);
+	let u = map(vn, map(nx, 0, width, -1.5, -0.0000001), map(nx, 0, width, 1.0000001, 0.5), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -0.5, -1.0000001), map(ny, 0, height, 0.0000001, 1.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, 0, width, -5.4, -0.0001), map(ny, 0, width, 0.0001, 5.4), minU, maxU, true);

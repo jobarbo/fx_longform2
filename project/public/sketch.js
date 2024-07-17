@@ -35,7 +35,7 @@ function setup() {
 	} else {
 		pixelDensity(2);
 	}
-	createCanvas(16 * 100, 16 * 100);
+	createCanvas(10 * 100, 30 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000000000);
 	randomSeed(seed);
@@ -43,7 +43,7 @@ function setup() {
 }
 
 function draw() {
-	blendMode(ADD);
+	//blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
 		if (frameCount > 1) {
 			movers[i].show();
@@ -103,8 +103,8 @@ function INIT(seed) {
 	yMax = 1.1; */
 	xMin = 0.05;
 	xMax = 0.95;
-	yMin = 0.05;
-	yMax = 0.95;
+	yMin = 0.025;
+	yMax = 0.975;
 
 	for (let i = 0; i < 30000; i++) {
 		// distribue the movers within a circle using polar coordinates
@@ -122,6 +122,6 @@ function INIT(seed) {
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix("#000", "#fff", 0.08);
+	let bgCol = spectral.mix("#000", "#fff", 0.88);
 	background(bgCol);
 }
