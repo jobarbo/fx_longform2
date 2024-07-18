@@ -35,8 +35,8 @@ class Mover {
 		/* 		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
-		this.x += (p.x / random(0.2, 10.2) + random(-0.000001, 0.000001)) * MULTIPLIER;
-		this.y += (p.y / random(0.2, 10.2) + random(-0.000001, 0.000001)) * MULTIPLIER;
+		this.x += (p.x / random([10, 1]) + random(-0.000001, 0.000001)) * MULTIPLIER;
+		this.y += (p.y / random([2, 1, 0.1, 0.01]) + random(-0.000001, 0.000001)) * MULTIPLIER;
 		this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		/* 		if (this.hue < 0) {
