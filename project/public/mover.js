@@ -35,8 +35,8 @@ class Mover {
 		/* 		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
-		this.x += (p.x / random(0.2, 10.2) + random(-0.01, 0.01)) * MULTIPLIER;
-		this.y += (p.y / random(0.2, 10.2) + random(-0.01, 0.01)) * MULTIPLIER;
+		this.x += (p.x / random(0.2, 10.2) + random(-0.000001, 0.000001)) * MULTIPLIER;
+		this.y += (p.y / random(0.2, 10.2) + random(-0.000001, 0.000001)) * MULTIPLIER;
 		this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		/* 		if (this.hue < 0) {
@@ -80,7 +80,7 @@ function superCurve(x, y, scl1, scl2, seed) {
 		scale2 = scl2,
 		dx,
 		dy,
-		octave = 1;
+		octave = 4;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
