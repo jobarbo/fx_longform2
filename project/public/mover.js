@@ -7,7 +7,7 @@ class Mover {
 		this.sat = 0;
 		this.bri = 0;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 6 * MULTIPLIER;
+		this.s = 3 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.seed = seed;
@@ -37,7 +37,7 @@ class Mover {
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
 		this.x += (p.x / random([10, 1]) + random(-0.000001, 0.000001)) * MULTIPLIER;
 		this.y += (p.y / random([2, 1, 0.1, 0.01]) + random(-0.000001, 0.000001)) * MULTIPLIER;
-		this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
+		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
@@ -56,12 +56,12 @@ class Mover {
 		} else if (this.bri > 100) {
 			this.bri = random(90, 100);
 		} */
-		if (this.s < 1 * MULTIPLIER) {
+		/* 		if (this.s < 1 * MULTIPLIER) {
 			this.s = 1 * MULTIPLIER;
 		}
 		if (this.s > 5 * MULTIPLIER) {
 			this.s = 5 * MULTIPLIER;
-		}
+		} */
 
 		// if out of bounds, reset to random position inside canvas
 		if (this.x < -0.1 * width || this.x > 1.1 * width || this.y < -0.1 * height || this.y > 1.1 * height) {
