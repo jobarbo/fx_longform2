@@ -40,8 +40,8 @@ function draw() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.0005, 0.0015);
-	scl2 = random(0.0005, 0.0015);
+	scl1 = random(0.0005, 0.0055);
+	scl2 = random(0.0005, 0.0055);
 	let hue = random(360);
 	for (let i = 0; i < 50000; i++) {
 		let x = random(-0.1, 1.1) * width;
@@ -49,5 +49,5 @@ function INIT(seed) {
 		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, seed));
 	}
 
-	background(35, 20, 10);
+	background(0, 0, 100);
 }

@@ -4,8 +4,8 @@ class Mover {
 		this.y = y;
 		this.initHue = hue;
 		this.hue = hue;
-		this.sat = 50;
-		this.bri = 70;
+		this.sat = 0;
+		this.bri = 0;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
 		this.s = 6 * MULTIPLIER;
 		this.scl1 = scl1;
@@ -32,20 +32,20 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.seed);
 
 		let pos = abs(p.x) + abs(p.y);
-		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
+		/* 		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
-		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true);
-		this.x += (p.x / random(0.0001, 2.01) + random(-3.1, 0.1)) * MULTIPLIER;
-		this.y += (p.y / random(0.0001, 2.01) + random(-0.1, 3.1)) * MULTIPLIER;
+		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
+		this.x += (p.x / random(0.2, 10.2) + random(-0.01, 0.01)) * MULTIPLIER;
+		this.y += (p.y / random(0.2, 10.2) + random(-0.01, 0.01)) * MULTIPLIER;
 		this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
-		if (this.hue < 0) {
+		/* 		if (this.hue < 0) {
 			this.hue = 360;
 		}
 		if (this.hue > 360) {
 			this.hue = 0;
-		}
-
+		} */
+		/*
 		if (this.sat < 20) {
 			this.sat = random(20, 40);
 		} else if (this.sat > 100) {
@@ -55,7 +55,7 @@ class Mover {
 			this.bri = random(20, 30);
 		} else if (this.bri > 100) {
 			this.bri = random(90, 100);
-		}
+		} */
 		if (this.s < 1 * MULTIPLIER) {
 			this.s = 1 * MULTIPLIER;
 		}
@@ -75,12 +75,12 @@ function superCurve(x, y, scl1, scl2, seed) {
 	let nx = x,
 		ny = y,
 		a1 = 500,
-		a2 = 1,
+		a2 = 1000,
 		scale1 = scl1,
 		scale2 = scl2,
 		dx,
 		dy,
-		octave = 6;
+		octave = 1;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
@@ -99,8 +99,8 @@ function superCurve(x, y, scl1, scl2, seed) {
 
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
-	let u = map(un, -0.5, 0.5, -4, 4, true);
-	let v = map(vn, -0.5, 0.5, -14, 4, true);
+	let u = map(un, -0.5, 0.5, -14, 14, true);
+	let v = map(vn, -0.5, 0.5, -14, 14, true);
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
