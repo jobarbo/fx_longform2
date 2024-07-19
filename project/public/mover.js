@@ -80,7 +80,7 @@ function superCurve(x, y, scl1, scl2, seed) {
 		scale2 = scl2,
 		dx,
 		dy,
-		octave = 4;
+		octave = 6;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
