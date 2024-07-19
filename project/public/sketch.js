@@ -185,10 +185,10 @@ function* drawGenerator() {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
 		cos_val = cos(generator_frameCount * 45);
-		sin_val = cos(generator_frameCount * 10);
-		noise_cos = sin(generator_frameCount * 40);
-		off_cos = sin(generator_frameCount * 70);
-		nd_cos = sin(generator_frameCount * 40);
+		sin_val = cos(generator_frameCount * 45);
+		noise_cos = tan(generator_frameCount * 70);
+		off_cos = tan(generator_frameCount * 70);
+		//nd_cos = sin(generator_frameCount * 40);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
 		//cos_val = 125;//!test
@@ -261,9 +261,9 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
-		let ni = map(nd, 1, 6, 0.5, 0.7, true);
-		noiseDetail(nd, ni);
+		//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
+		//let ni = map(nd, 1, 6, 0.5, 0.7, true);
+		noiseDetail(2, 0.75);
 		//! Simple Block
 		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -332,9 +332,9 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 
 		hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
 		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true);
-		bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.1, MAX_FRAMES / 1, 0, 80, true);
-		bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.1, MAX_FRAMES / 1, 0, 15, true);
-		bri = mapValue(abs(sin_val), 1, 0, 50 - bri_max, 40 - bri_min, true);
+		bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 80, true);
+		bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 15, true);
+		bri = mapValue(abs(sin_val), 0, 1, 50 - bri_max, 40 - bri_min, true);
 		alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 100, 100, true);
 
 		drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
