@@ -5,7 +5,7 @@ let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
-
+let frameCount = 0;
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
@@ -28,6 +28,12 @@ function draw() {
 			movers[i].move();
 		}
 	}
+
+	if (frameCount > 100) {
+		noLoop();
+	}
+
+	frameCount++;
 
 	exporting = true;
 	if (!exporting && bleed > 0) {
