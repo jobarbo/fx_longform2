@@ -184,11 +184,11 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		/* 		cos_val = cos(generator_frameCount * 10);
+		cos_val = cos(generator_frameCount * 45);
 		sin_val = cos(generator_frameCount * 10);
 		noise_cos = sin(generator_frameCount * 40);
 		off_cos = sin(generator_frameCount * 70);
-		nd_cos = sin(generator_frameCount * 6);*/
+		nd_cos = sin(generator_frameCount * 40);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
 		//cos_val = 125;//!test
@@ -196,11 +196,11 @@ function* drawGenerator() {
 		//n_cos = 125;//!test
 		//off_cos = 250;//!test
 
-		cos_val = tan(generator_frameCount * 10);
-		sin_val = tan(generator_frameCount * 10);
+		/* 		cos_val = cos(generator_frameCount * 10);
+		sin_val = cos(generator_frameCount * 10);
 		noise_cos = tan(generator_frameCount * 6);
 		off_cos = tan(generator_frameCount * 2);
-		nd_cos = tan(generator_frameCount * 6);
+		nd_cos = tan(generator_frameCount * 6); */
 		// noise_cos: 6,8,9,10,11 / 12, 15,18,20,25,30,35,36,40,45(stable),50,54,60(stable)70,75,80,90(stable),100,200,500
 		// off_cos: 26,30,50,60,150,500,1250,1500
 		//35+26 together with low noise ;)
@@ -261,9 +261,9 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
-		let nd = floor(map(abs(nd_cos), 0, 1, 2, 5, true));
-		let ni = map(nd, 1, 6, 0.5, 0.5, true);
-		noiseDetail(nd, 0.5);
+		let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
+		let ni = map(nd, 1, 6, 0.5, 0.7, true);
+		noiseDetail(nd, ni);
 		//! Simple Block
 		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
