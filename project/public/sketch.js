@@ -186,8 +186,8 @@ function* drawGenerator() {
 		//blendMode(SCREEN);
 		cos_val = cos(generator_frameCount * 45);
 		sin_val = cos(generator_frameCount * 45);
-		noise_cos = tan(generator_frameCount * 70);
-		off_cos = tan(generator_frameCount * 70);
+		noise_cos = sin(generator_frameCount * 170);
+		off_cos = sin(generator_frameCount * 800);
 		//nd_cos = sin(generator_frameCount * 40);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
@@ -219,8 +219,8 @@ function* drawGenerator() {
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
-			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, 0, 1, xoff_l_low, xoff_l_high, true);
+			xoff_l = mapValue(cos_val, -1, 1, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, -1, 1, xoff_l_low, xoff_l_high, true);
 
 			/* 			xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
 			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true); */
@@ -263,7 +263,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		yoff = random(yoff_l, yoff_h);
 		//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 		//let ni = map(nd, 1, 6, 0.5, 0.7, true);
-		noiseDetail(2, 0.75);
+		noiseDetail(3, 0.6);
 		//! Simple Block
 		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
