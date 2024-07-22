@@ -110,28 +110,52 @@ let cos_val;
 let angle_index = 0;
 
 const offValues_l = [
-	{low: 1.8, high: 1.0}, // case 0
-	{low: 0.8, high: 0.0}, // case 1
-	{low: 1.8, high: 1.0}, // case 2
-	{low: 2.8, high: 2.0}, // case 3
-	{low: 3.8, high: 3.0}, // case 4
-	{low: 4.8, high: 4.0}, // case 5
-	{low: 3.8, high: 3.0}, // case 6
-	{low: 2.8, high: 2.0}, // case 7
+	{low: 1.9, high: 1.0}, // case 0
+	{low: 0.9, high: 0.0}, // case 1
+	{low: 1.9, high: 1.0}, // case 2
+	{low: 2.9, high: 2.0}, // case 3
+	{low: 3.9, high: 3.0}, // case 4
+	{low: 4.9, high: 4.0}, // case 5
+	{low: 3.9, high: 3.0}, // case 6
+	{low: 2.9, high: 2.0}, // case 7
 	// Add more if needed
 ];
 
 const offValues_h = [
-	{low: 2.0, high: 1.2}, // case 0
-	{low: 1.0, high: 0.2}, // case 1
-	{low: 2.0, high: 1.2}, // case 2
-	{low: 3.0, high: 2.2}, // case 3
-	{low: 4.0, high: 3.2}, // case 4
-	{low: 5.0, high: 4.2}, // case 5
-	{low: 4.0, high: 3.2}, // case 6
-	{low: 3.0, high: 2.2}, // case 7
+	{low: 2.0, high: 1.1}, // case 0
+	{low: 1.0, high: 0.1}, // case 1
+	{low: 2.0, high: 1.1}, // case 2
+	{low: 3.0, high: 2.1}, // case 3
+	{low: 4.0, high: 3.1}, // case 4
+	{low: 5.0, high: 4.1}, // case 5
+	{low: 4.0, high: 3.1}, // case 6
+	{low: 3.0, high: 2.1}, // case 7
 	// Add more if needed
 ];
+
+/* const offValues_l = [
+	{low: 2, high: 1.2}, // case 0
+	{low: 1, high: 0.2}, // case 1
+	{low: 2, high: 1.2}, // case 2
+	{low: 3, high: 2.2}, // case 3
+	{low: 4, high: 3.2}, // case 4
+	{low: 5, high: 4.2}, // case 5
+	{low: 4, high: 3.2}, // case 6
+	{low: 3, high: 2.2}, // case 7
+	// Add more if needed
+];
+
+const offValues_h = [
+	{low: 2.2, high: 1}, // case 0
+	{low: 1.2, high: 0}, // case 1
+	{low: 2.2, high: 1}, // case 2
+	{low: 3.2, high: 2}, // case 3
+	{low: 4.2, high: 3}, // case 4
+	{low: 5.2, high: 4}, // case 5
+	{low: 4.2, high: 3}, // case 6
+	{low: 3.2, high: 2}, // case 7
+	// Add more if needed
+]; */
 
 function setup() {
 	features = $fx.getFeatures();
@@ -219,8 +243,8 @@ function* drawGenerator() {
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
-			xoff_l = mapValue(cos_val, -1, 1, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, -1, 1, xoff_l_low, xoff_l_high, true);
+			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true);
 
 			/* 			xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
 			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true); */
@@ -263,7 +287,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		yoff = random(yoff_l, yoff_h);
 		//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 		//let ni = map(nd, 1, 6, 0.5, 0.7, true);
-		noiseDetail(3, 0.6);
+		noiseDetail(3, 0.5);
 		//! Simple Block
 		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -296,12 +320,12 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		/* 		let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 		//! Astral Beings 2
-		/* 		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 		//! Astral Beings 3
-		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+		/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 		//! astral beings 4
 		/* 		let x = mapValue(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
