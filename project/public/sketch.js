@@ -110,26 +110,26 @@ let cos_val;
 let angle_index = 0;
 
 const offValues_l = [
-	{low: 2, high: 1.2}, // case 0
-	{low: 1, high: 0.2}, // case 1
-	{low: 2, high: 1.15}, // case 2
-	{low: 3, high: 2.15}, // case 3
-	{low: 4, high: 3.15}, // case 4
-	{low: 5, high: 4.15}, // case 5
-	{low: 4, high: 3.15}, // case 6
-	{low: 3, high: 2.15}, // case 7
+	{low: 1.8, high: 1.0}, // case 0
+	{low: 0.8, high: 0.0}, // case 1
+	{low: 1.8, high: 1.0}, // case 2
+	{low: 2.8, high: 2.0}, // case 3
+	{low: 3.8, high: 3.0}, // case 4
+	{low: 4.8, high: 4.0}, // case 5
+	{low: 3.8, high: 3.0}, // case 6
+	{low: 2.8, high: 2.0}, // case 7
 	// Add more if needed
 ];
 
 const offValues_h = [
-	{low: 2.2, high: 1}, // case 0
-	{low: 1.2, high: 0}, // case 1
-	{low: 2.15, high: 1}, // case 2
-	{low: 3.15, high: 2}, // case 3
-	{low: 4.15, high: 3}, // case 4
-	{low: 5.15, high: 4}, // case 5
-	{low: 4.15, high: 3}, // case 6
-	{low: 3.15, high: 2}, // case 7
+	{low: 2.0, high: 1.2}, // case 0
+	{low: 1.0, high: 0.2}, // case 1
+	{low: 2.0, high: 1.2}, // case 2
+	{low: 3.0, high: 2.2}, // case 3
+	{low: 4.0, high: 3.2}, // case 4
+	{low: 5.0, high: 4.2}, // case 5
+	{low: 4.0, high: 3.2}, // case 6
+	{low: 3.0, high: 2.2}, // case 7
 	// Add more if needed
 ];
 
