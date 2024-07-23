@@ -212,7 +212,7 @@ function* drawGenerator() {
 		sin_val = cos(generator_frameCount * 45);
 		noise_cos = sin(generator_frameCount * 170);
 		off_cos = sin(generator_frameCount * 800);
-		//nd_cos = sin(generator_frameCount * 40);
+		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
 		//cos_val = 125;//!test
@@ -233,13 +233,15 @@ function* drawGenerator() {
 		let xoff_l_high;
 		let xoff_l_low;
 		for (let i = 0; i < angle1.length; i++) {
-			xoff_l_high = mapValue(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
-			xoff_l_low = mapValue(noise_cos, -1, 1, offValues_h[i].high, offValues_h[i].low, true);
-			/* 		xoff_l_low = 0.4;
-			xoff_l_high = 0.99; */
+			xoff_l_high = mapValue(abs(noise_cos), 0, 1, offValues_h[i].low, offValues_h[i].high, true);
+			xoff_l_low = mapValue(abs(noise_cos), 0, 1, offValues_l[i].low, offValues_l[i].high, true);
+			/* xoff_l_high = mapValue(noise_cos, -1, 1, offValues_h[i].low, offValues_h[i].high, true);
+			xoff_l_low = mapValue(noise_cos, -1, 1, offValues_l[i].low, offValues_l[i].high, true); */
+			/* xoff_l_high = mapValue(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
+			xoff_l_low = mapValue(noise_cos, -1, 1, offValues_h[i].high, offValues_h[i].low, true); */
 
-			xoff_h = xoff_l_high + 0.001;
-			yoff_h = xoff_l_high + 0.001;
+			xoff_h = xoff_l_high + 0.003;
+			yoff_h = xoff_l_high + 0.003;
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
@@ -286,7 +288,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
 		//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
-		//let ni = map(nd, 1, 6, 0.5, 0.7, true);
+		//let ni = map(nd, 1, 6, 0.7, 0.4, true);
 		noiseDetail(3, 0.5);
 		//! Simple Block
 		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
