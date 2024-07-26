@@ -41,10 +41,10 @@ class Mover {
 		this.nlow = -1;
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
-		/* 		this.ulow = 5;
-		this.uhigh = 100; */
-		this.ulow = random([10, 25, 50, 75, 100, 125, 150, 175, 200]);
-		this.uhigh = random([0.01, 0.1, 1, 2.5, 5, 10, 20]);
+		this.ulow = 5;
+		this.uhigh = 100;
+		/* 		this.ulow = random([10, 25, 50, 75, 100, 125, 150, 175, 200]);
+		this.uhigh = random([0.01, 0.1, 1, 2.5, 5, 10, 20]); */
 
 		this.skipperMax = 10;
 
@@ -82,7 +82,7 @@ class Mover {
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
 				//this.uvalue[i] *= 1.01 * this.uvalueDir[i];
-				this.uvalue[i] += 0.1;
+				this.uvalue[i] += 0.01;
 				this.nvalue[i] += 0.03 * this.nvalueDir[i];
 			}
 
