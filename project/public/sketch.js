@@ -134,8 +134,8 @@ const offValues_h = [
 ];
  */
 const offValues_l = [
-	{low: 2, high: 1.2}, // case 0
-	{low: 1, high: 0.2}, // case 1
+	{low: 2, high: 1.15}, // case 0
+	{low: 1, high: 0.15}, // case 1
 	{low: 2, high: 1.2}, // case 2
 	{low: 3, high: 2.2}, // case 3
 	{low: 4, high: 3.2}, // case 4
@@ -146,8 +146,8 @@ const offValues_l = [
 ];
 
 const offValues_h = [
-	{low: 2.2, high: 1}, // case 0
-	{low: 1.2, high: 0}, // case 1
+	{low: 2.15, high: 1}, // case 0
+	{low: 1.15, high: 0}, // case 1
 	{low: 2.2, high: 1}, // case 2
 	{low: 3.2, high: 2}, // case 3
 	{low: 4.2, high: 3}, // case 4
@@ -188,8 +188,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = height * 0.5;
-	pos_range_y = height * 0.5;
+	pos_range_x = height * 0.65;
+	pos_range_y = height * 0.65;
 
 	let sketch = drawGenerator();
 	function animate() {
@@ -203,7 +203,7 @@ function* drawGenerator() {
 	let count = 0;
 	let generator_frameCount = 0;
 	let draw_every = cycle;
-	translate(width / 2, height / 2);
+	translate(width / 2, height / 1.65);
 
 	while (true) {
 		// Draw with p5.js things
@@ -289,7 +289,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		yoff = random(yoff_l, yoff_h);
 		//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 		//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-		noiseDetail(3, 0.5);
+		noiseDetail(4, 0.5);
 		//! Simple Block
 		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -358,7 +358,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		b = palette[index].l; */
 
 		hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
-		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 100, true);
+		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true);
 		bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 80, true);
 		bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 15, true);
 		bri = mapValue(abs(sin_val), 0, 1, 50 - bri_max, 40 - bri_min, true);
