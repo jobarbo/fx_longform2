@@ -151,8 +151,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	let un = oct(nx, ny, scale1, 3, octaves);
 	let vn = oct(nx, ny, scale2, 0, octaves);
 
-	let ui = sin(ny * scale1 + seed) + cos(nx * scale2 + seed) + sin(ny * scale2 * 0.2 + seed);
-	let vi = cos(nx * scale1 + seed) + sin(ny * scale2 + seed) - cos(nx * scale2 * 0.2 + seed);
+	/* 	let ui = sin(ny * scale1 + un) + cos(ny * scale2 + un) + sin(ny * scale1 * 0.2 + un);
+	let vi = sin(nx * scale1 + vn) + cos(nx * scale2 + vn) - sin(nx * scale2 * 0.2 + vn); */
 
 	let u = map(un, -0.5, 0.5, -4, 4, true);
 	let v = map(vn, -0.5, 0.5, -4, 4, true);
