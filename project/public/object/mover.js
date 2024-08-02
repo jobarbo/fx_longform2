@@ -7,13 +7,13 @@ class Mover {
 		this.initBri = 100;
 		this.initAlpha = 100;
 		this.initS = 0.2 * MULTIPLIER;
+		this.s = this.initS;
 		this.hue = this.initHue;
-		this.sat = 100;
+		this.sat = 0;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
 		this.hueStep = 0.2;
 		this.satDir = 1;
-		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.ang1 = ang1;

@@ -18,6 +18,8 @@ let startTime;
 let maxFrames = 600; //! can be 1000
 let C_WIDTH;
 let MULTIPLIER;
+let RATIO = window.innerWidth / window.innerHeight;
+console.log(RATIO);
 
 let centerX;
 let centerY;
@@ -50,7 +52,7 @@ function setup() {
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1200;
-	c = createCanvas(C_WIDTH, C_WIDTH);
+	c = createCanvas(C_WIDTH * RATIO, C_WIDTH);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -114,7 +116,7 @@ function INIT(seed) {
 
 	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == "bright" ? 93 : 5, 100);
 
-	background(bgCol);
+	background(220, 100, 5);
 	//background(45, 100, 100);
 	//background(221, 100, 60);
 }
