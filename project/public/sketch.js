@@ -23,6 +23,10 @@ let xMin;
 let xMax;
 let yMin;
 let yMax;
+let xMinW;
+let xMaxW;
+let yMinH;
+let yMaxH;
 let bgCol;
 let xRandDivider, yRandDivider;
 let hue = fxrand() * 360;
@@ -66,7 +70,7 @@ function setup() {
 
 	console.log(params);
 
-	pixelDensity(dpi(1));
+	pixelDensity(dpi(2));
 
 	DIM = min(W, H);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
@@ -88,7 +92,7 @@ function INIT(seed) {
 	randomSeed(fxrand() * 1_000_000);
 	noiseSeed(fxrand() * 1_000_000);
 
-	bgCol = color(329, 98, 35, 100);
+	bgCol = color(329, 98, 0, 100);
 
 	xMin = -0.1;
 	xMax = 1.1;
@@ -159,8 +163,8 @@ function FRAME(seed) {
 	scl2 = mapValue(sin(easing), -1, 1, 0.0025, 0.00071, true);
 	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 800, 1, true));
 	amplitude2 = parseInt(mapValue(sin(easing), -1, 1, 1, 800, true));
-	xRandDivider = random([0.02]);
-	yRandDivider = random([0.02]);
+	xRandDivider = random([0.025]);
+	yRandDivider = random([0.025]);
 
 	/* 	xi += mapValue(oct(xoff, yoff, 1, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true);
 	yi += mapValue(oct(yoff, xoff, 3, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true); */
