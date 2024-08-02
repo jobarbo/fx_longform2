@@ -52,7 +52,7 @@ let easeAng = 0,
 
 // render time
 let elapsedTime = 0;
-let particleNum = 250;
+let particleNum = 220;
 let drawing = true;
 let cycle = (maxFrames * particleNum) / 1;
 
