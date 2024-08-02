@@ -155,12 +155,12 @@ function FRAME(seed) {
 	let easing = radians(easeAng);
 	let easing2 = radians(easeAng + 180);
 
-	scl1 = mapValue(cos(easing2), -1, 1, 0.00071, 0.0025, true);
+	scl1 = mapValue(cos(easing), -1, 1, 0.00071, 0.0025, true);
 	scl2 = mapValue(sin(easing), -1, 1, 0.0025, 0.00071, true);
-	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 700, 1, true));
-	amplitude2 = parseInt(mapValue(sin(easing2), -1, 1, 1, 700, true));
-	xRandDivider = random([0.025]);
-	yRandDivider = random([0.025]);
+	amplitude1 = parseInt(mapValue(cos(easing), -1, 1, 800, 1, true));
+	amplitude2 = parseInt(mapValue(sin(easing), -1, 1, 1, 800, true));
+	xRandDivider = random([0.02]);
+	yRandDivider = random([0.02]);
 
 	/* 	xi += mapValue(oct(xoff, yoff, 1, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true);
 	yi += mapValue(oct(yoff, xoff, 3, 6), 0, 1, -2 * MULTIPLIER, 2 * MULTIPLIER, true); */
