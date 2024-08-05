@@ -1,4 +1,4 @@
-let features = '';
+let features = "";
 let movers = [];
 let scl1;
 let scl2;
@@ -50,7 +50,7 @@ function setup() {
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
 
-	scl1 = random(0.005, 0.005);
+	scl1 = random(0.0025, 0.0025);
 	scl2 = scl1;
 	ang1 = int(random(500, 1000));
 	ang2 = int(random(500, 1000));
@@ -60,27 +60,29 @@ function setup() {
 
 function draw() {
 	// put drawing code here
+	blendMode(SCREEN);
 	for (let i = 0; i < movers.length; i++) {
 		movers[i].show();
 		movers[i].move();
 	}
+	blendMode(BLEND);
 
 	// every 100 frames, save the canvas
 
 	if (frameCount % 100 == 0) {
 		let cosIndex = cos(radians(easeAng));
-		console.log('cosIndex: ' + cosIndex);
+		console.log("cosIndex: " + cosIndex);
 		if (cosIndex >= 1) {
 			cycleCount += 1;
 		}
 		if (cycleCount < 1) {
-			console.log('screenshot');
+			console.log("screenshot");
 			saveArtwork();
 			INIT(rseed);
 		} else {
 			noLoop();
 		}
-		console.log('cycleCount: ' + cycleCount);
+		console.log("cycleCount: " + cycleCount);
 	}
 }
 
@@ -99,13 +101,13 @@ function INIT(seed) {
 	angle1 = int(map(noise(axoff, ayoff), 0, 1, 0, ang1 * 2, true));
 	angle2 = int(map(noise(ayoff, axoff), 0, 1, 0, ang2 * 2, true));
 	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
-	xi += map(noise(xoff), 0, 1, -50, 50, true);
-	yi += map(noise(yoff), 0, 1, -50, 50, true);
+	xi += map(noise(xoff), 0, 1, -4, 4, true);
+	yi += map(noise(yoff), 0, 1, -4, 4, true);
 	hue += map(noise(xoff, yoff), 0, 1, -2, 2, true);
 	hue < 0 ? hue + 360 : hue > 360 ? hue - 360 : hue;
 
-	console.log('xi: ' + xi);
-	console.log('yi: ' + yi);
+	console.log("xi: " + xi);
+	console.log("yi: " + yi);
 
 	easeAng += 1;
 	xoff += 0.001;
@@ -115,17 +117,17 @@ function INIT(seed) {
 	sxoff += 0.01;
 	syoff += 0.01;
 
-	console.log('scl1: ' + scl1);
-	console.log('scl2: ' + scl2);
-	console.log('ang1: ' + angle1);
-	console.log('ang2: ' + angle2);
+	console.log("scl1: " + scl1);
+	console.log("scl2: " + scl2);
+	console.log("ang1: " + angle1);
+	console.log("ang2: " + angle2);
 
-	console.log('cos(easing): ' + cos(easing));
+	console.log("cos(easing): " + cos(easing));
 
-	xMin = 0.2;
-	xMax = 0.8;
-	yMin = 0.1;
-	yMax = 0.9;
+	xMin = -0.01;
+	xMax = 1.01;
+	yMin = -0.01;
+	yMax = 1.01;
 	/* 	xMin = -0.15;
 	xMax = 1.15;
 	yMin = -0.15;
@@ -145,6 +147,6 @@ function INIT(seed) {
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, xi, yi, initHue, scl1, scl2, angle1, angle2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix('#000', '#deb887', 0.1);
+	let bgCol = spectral.mix("#000", "#deb887", 0.1);
 	background(bgCol);
 }
