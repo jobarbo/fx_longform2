@@ -203,7 +203,7 @@ function* drawGenerator() {
 	let count = 0;
 	let generator_frameCount = 0;
 	let draw_every = cycle;
-	translate(width / 2, height / 1.65);
+	translate(width / 2, height / 2);
 
 	while (true) {
 		// Draw with p5.js things
