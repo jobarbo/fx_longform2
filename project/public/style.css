@@ -54,7 +54,6 @@ main {
 		3.3px 2.1px 8.8px rgba(0, 0, 0, 0.101), 8px 5px 21px rgba(0, 0, 0, 0.14);
 	position: relative;
 	transform: rotate(0) scale(1);
-	border-radius: 150px;
 	overflow: hidden;
 }
 
