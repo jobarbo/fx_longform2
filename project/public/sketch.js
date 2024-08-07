@@ -19,6 +19,7 @@ let maxFrames = 600; //! can be 1000
 let C_WIDTH;
 let MULTIPLIER;
 let RATIO = window.innerWidth / window.innerHeight;
+RATIO = 1;
 console.log(RATIO);
 
 let centerX;

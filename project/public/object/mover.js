@@ -35,14 +35,14 @@ class Mover {
 		this.zombie = false;
 		this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [15, 15, 15, 15];
+		this.uvalue = [55, 55, 55, 55];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5]; //! lower number here too
-		this.nlimit = 1; //! can put higher number here
-		this.nlow = -1;
+		this.nlimit = 20; //! can put higher number here
+		this.nlow = -20;
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
-		this.ulow = 5;
-		this.uhigh = 100;
+		this.ulow = 50;
+		this.uhigh = 300;
 		/* 		this.ulow = random([10, 25, 50, 75, 100, 125, 150, 175, 200]);
 		this.uhigh = random([0.01, 0.1, 1, 2.5, 5, 10, 20]); */
 
@@ -82,8 +82,8 @@ class Mover {
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
 				//this.uvalue[i] *= 1.01 * this.uvalueDir[i];
-				this.uvalue[i] += 0.01;
-				this.nvalue[i] += 0.03 * this.nvalueDir[i];
+				this.uvalue[i] += 1.5;
+				this.nvalue[i] += 1.2 * this.nvalueDir[i];
 			}
 
 			//! YoYo with value (not sure);
