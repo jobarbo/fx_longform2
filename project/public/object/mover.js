@@ -8,7 +8,7 @@ class Mover {
 		this.initSat = random([0, 0, 10, 20, 20, 40, 50, 60, 70, 80, 80, 90, 90, 100]);
 		this.initBri = random([10, 10, 20, 20, 40, 50, 60, 70, 80, 80, 90, 100]);
 		this.initAlpha = 100;
-		this.initS = 0.6;
+		this.initS = 0.4;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
@@ -37,16 +37,18 @@ class Mover {
 		fill(this.hue, this.sat, this.bri, this.a);
 		noStroke();
 		rect(this.x, this.y, this.s);
+
+		/* 		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
+		drawingContext.fillRect(this.x, this.y, this.s, this.s); */
 	}
 
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed, this.xi, this.yi);
 
-		this.xRandDivider = random(2, 2.1);
-		this.yRandDivider = random(2, 2.1);
-		this.xRandSkipper = random(-1.1, 1.1);
-		this.yRandSkipper = random(-1.1, 1.1);
-
+		this.xRandDivider = random(0.1, 2.1);
+		this.yRandDivider = random(2.1, 2.1);
+		this.xRandSkipper = random(-0.5, 0.5);
+		this.yRandSkipper = random(-0.5, 0.5);
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
@@ -56,34 +58,34 @@ class Mover {
 
 		let pxy = p.x - p.y;
 
-		let mapVal = map(pxy, -4, 4, -1, 1, true);
+		let mapVal = mapValue(pxy, -4, 4, -1, 1, true);
 
-		this.hue = map(mapVal, -1, 1, this.initHue - 40, this.initHue + 40, true);
-		this.sat = map(mapVal, -1, 1, this.initSat + 20, this.initSat - 20, true);
-		this.bri = map(mapVal, -1, 1, this.initBri - 20, this.initBri + 20, true);
+		this.hue = mapValue(mapVal, -1, 1, this.initHue - 40, this.initHue + 40, true);
+		this.sat = 0;
+		this.bri = mapValue(mapVal, -1, 1, this.initBri - 20, this.initBri + 20, true);
 		// shorthand for if this.hue is less than 0, set this.hue to 360 and vice versa
 		this.hue = this.hue < 0 ? this.hue + 360 : this.hue > 360 ? this.hue - 360 : this.hue;
 
 		//this.a = map(p.x, -4, 4, this.initAlpha - 5, this.initAlpha + 5, true);
 		this.s += map(mapVal, -1, 1, -0.001, 0.001, true);
-		this.s = constrain(this.s, 0.2, 1.2);
+		this.s = constrain(this.s, 0.1, 1);
 
 		//this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		/* 		this.sat = map(p.x, -4, 4, 0, 100, true);
-		this.bri = map(p.x, -4, 4, 0, 40, true); */
+		/* 		this.sat = mapValue(p.x, -4, 4, 0, 100, true);
+		this.bri = mapValue(p.x, -4, 4, 0, 40, true); */
 
 		if (this.isBordered) {
-			if (this.x < (this.xMin - 0.015) * width) {
-				this.x = (this.xMax + 0.015) * width;
+			if (this.x < this.xMin * width) {
+				this.x = this.xMax * width;
 			}
-			if (this.x > (this.xMax + 0.015) * width) {
-				this.x = (this.xMin - 0.015) * width;
+			if (this.x > this.xMax * width) {
+				this.x = this.xMin * width;
 			}
-			if (this.y < (this.yMin - 0.015) * height) {
-				this.y = (this.yMax + 0.015) * height;
+			if (this.y < this.yMin * height) {
+				this.y = this.yMax * height;
 			}
-			if (this.y > (this.yMax + 0.015) * height) {
-				this.y = (this.yMin - 0.015) * height;
+			if (this.y > this.yMax * height) {
+				this.y = this.yMin * height;
 			}
 		}
 	}
@@ -99,26 +101,26 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, xi, yi) {
 		dx,
 		dy;
 
-	dx = oct(nx, ny, scale1, 0, 6);
-	dy = oct(nx, ny, scale2, 2, 6);
+	dx = oct(nx, ny, scale1, 0, 1);
+	dy = oct(nx, ny, scale2, 2, 1);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 1, 6);
-	dy = oct(nx, ny, scale2, 3, 6);
+	dx = oct(nx, ny, scale1, 1, 1);
+	dy = oct(nx, ny, scale2, 3, 1);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 1, 6);
-	dy = oct(nx, ny, scale2, 1, 6);
+	dx = oct(nx, ny, scale1, 1, 1);
+	dy = oct(nx, ny, scale2, 5, 1);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 3, 6);
-	let vn = oct(nx, ny, scale2, 2, 6);
+	let un = oct(nx, ny, scale1, 3, 1);
+	let vn = oct(nx, ny, scale2, 2, 1);
 
-	let u = map(un, -0.5, 0.5, -4, 4, true);
-	let v = map(vn, -0.5, 0.5, -4, 4, true);
+	let u = mapValue(un, -0.5, 0.5, -4, 4, true);
+	let v = mapValue(vn, -0.5, 0.5, -4, 4, true);
 
 	let p = createVector(u, v);
 	return p;

@@ -10,7 +10,7 @@ let xMin;
 let xMax;
 let yMin;
 let yMax;
-let isBordered = false;
+let isBordered = true;
 let drawing = false;
 let hue = Math.random() * 360;
 let easeAng = 0,
@@ -42,18 +42,18 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(1.0);
+		pixelDensity(2.0);
 	}
 	//createCanvas((16 * 300) / 3, (16 * 300) / 3);
-	createCanvas(1080, 1920);
+	createCanvas(1080, 1080);
 	colorMode(HSB, 360, 100, 100, 100);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
 
 	scl1 = random(0.0025, 0.0025);
 	scl2 = scl1;
-	ang1 = int(random(500, 1000));
-	ang2 = int(random(500, 1000));
+	ang1 = int(random(2500, 4000));
+	ang2 = int(random(2500, 4000));
 
 	INIT(rseed);
 }
@@ -69,7 +69,7 @@ function draw() {
 
 	// every 100 frames, save the canvas
 
-	if (frameCount % 100 == 0) {
+	if (frameCount % 50 == 0) {
 		let cosIndex = cos(radians(easeAng));
 		console.log("cosIndex: " + cosIndex);
 		if (cosIndex >= 1) {
@@ -95,21 +95,22 @@ function INIT(seed) {
 	movers = [];
 	let easing = radians(easeAng);
 	let xpff;
-	scl1 += map(noise(sxoff, syoff), 0, 1, -0.0001, 0.0001, true);
+	//scl1 += map(noise(sxoff, syoff), 0, 1, -0.0001, 0.0001, true);
+	scl1 = map(cos(easing), -1, 1, -0.002, 0.002, true);
 	scl2 = scl1;
 
 	angle1 = int(map(noise(axoff, ayoff), 0, 1, 0, ang1 * 2, true));
 	angle2 = int(map(noise(ayoff, axoff), 0, 1, 0, ang2 * 2, true));
 	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
-	xi += map(noise(xoff), 0, 1, -4, 4, true);
-	yi += map(noise(yoff), 0, 1, -4, 4, true);
+	xi = map(cos(easing), -1, 1, -600, -600, true);
+	yi = map(cos(easing), -1, 1, -600, -600, true);
 	hue += map(noise(xoff, yoff), 0, 1, -2, 2, true);
 	hue < 0 ? hue + 360 : hue > 360 ? hue - 360 : hue;
 
 	console.log("xi: " + xi);
 	console.log("yi: " + yi);
 
-	easeAng += 1;
+	easeAng += 0.3;
 	xoff += 0.001;
 	yoff += 0.001;
 	axoff += 0.01;
@@ -124,16 +125,16 @@ function INIT(seed) {
 
 	console.log("cos(easing): " + cos(easing));
 
-	xMin = -0.01;
-	xMax = 1.01;
-	yMin = -0.01;
-	yMax = 1.01;
+	xMin = -0.1;
+	xMax = 1.1;
+	yMin = -0.1;
+	yMax = 1.1;
 	/* 	xMin = -0.15;
 	xMax = 1.15;
 	yMin = -0.15;
 	yMax = 1.15; */
-
-	for (let i = 0; i < 40000; i++) {
+	//hue = 71.11800734885037;
+	for (let i = 0; i < 60000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
@@ -147,6 +148,6 @@ function INIT(seed) {
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, xi, yi, initHue, scl1, scl2, angle1, angle2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix("#000", "#deb887", 0.1);
+	let bgCol = spectral.mix("#000", "#b08968", 0.01);
 	background(bgCol);
 }
