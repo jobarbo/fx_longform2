@@ -8,7 +8,7 @@ class Mover {
 		this.initSat = random([0, 0, 10, 20, 20, 40, 50, 60, 70, 80, 80, 90, 90, 100]);
 		this.initBri = random([10, 10, 20, 20, 40, 50, 60, 70, 80, 80, 90, 100]);
 		this.initAlpha = 100;
-		this.initS = 0.4;
+		this.initS = 0.3;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
 		this.bri = this.initBri;
@@ -45,8 +45,8 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed, this.xi, this.yi);
 
-		this.xRandDivider = random(0.1, 2.1);
-		this.yRandDivider = random(2.1, 2.1);
+		this.xRandDivider = random(0.1, 0.3);
+		this.yRandDivider = random(0.1, 0.3);
 		this.xRandSkipper = random(-0.5, 0.5);
 		this.yRandSkipper = random(-0.5, 0.5);
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
@@ -61,13 +61,13 @@ class Mover {
 		let mapVal = mapValue(pxy, -4, 4, -1, 1, true);
 
 		this.hue = mapValue(mapVal, -1, 1, this.initHue - 40, this.initHue + 40, true);
-		this.sat = 0;
+		this.sat = map(mapVal, -1, 1, this.initSat + 20, this.initSat - 20, true);
 		this.bri = mapValue(mapVal, -1, 1, this.initBri - 20, this.initBri + 20, true);
 		// shorthand for if this.hue is less than 0, set this.hue to 360 and vice versa
 		this.hue = this.hue < 0 ? this.hue + 360 : this.hue > 360 ? this.hue - 360 : this.hue;
 
 		//this.a = map(p.x, -4, 4, this.initAlpha - 5, this.initAlpha + 5, true);
-		this.s += map(mapVal, -1, 1, -0.001, 0.001, true);
+		this.s += map(mapVal, -1.4, 1.4, -0.001, 0.001, true);
 		this.s = constrain(this.s, 0.1, 1);
 
 		//this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
@@ -101,23 +101,23 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, xi, yi) {
 		dx,
 		dy;
 
-	dx = oct(nx, ny, scale1, 0, 1);
-	dy = oct(nx, ny, scale2, 2, 1);
+	dx = oct(nx, ny, scale1, 0, 3);
+	dy = oct(nx, ny, scale2, 2, 3);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 1, 1);
-	dy = oct(nx, ny, scale2, 3, 1);
+	dx = oct(nx, ny, scale1, 1, 3);
+	dy = oct(nx, ny, scale2, 3, 3);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 1, 1);
-	dy = oct(nx, ny, scale2, 5, 1);
+	dx = oct(nx, ny, scale1, 1, 3);
+	dy = oct(nx, ny, scale2, 5, 3);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 3, 1);
-	let vn = oct(nx, ny, scale2, 2, 1);
+	let un = oct(nx, ny, scale1, 3, 3);
+	let vn = oct(nx, ny, scale2, 2, 3);
 
 	let u = mapValue(un, -0.5, 0.5, -4, 4, true);
 	let v = mapValue(vn, -0.5, 0.5, -4, 4, true);

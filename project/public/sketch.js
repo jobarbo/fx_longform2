@@ -69,7 +69,7 @@ function draw() {
 
 	// every 100 frames, save the canvas
 
-	if (frameCount % 50 == 0) {
+	if (frameCount % 100 == 0) {
 		let cosIndex = cos(radians(easeAng));
 		console.log("cosIndex: " + cosIndex);
 		if (cosIndex >= 1) {
@@ -134,7 +134,7 @@ function INIT(seed) {
 	yMin = -0.15;
 	yMax = 1.15; */
 	//hue = 71.11800734885037;
-	for (let i = 0; i < 60000; i++) {
+	for (let i = 0; i < 40000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
