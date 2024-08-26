@@ -1,53 +1,58 @@
 //* PARAMS *//
 // put global settings here if needed
-
+fx = $fx;
+fxhash = $fx.hash;
+fxrand = $fx.rand;
+rand = fxrand;
+features = $fx.getFeatures();
+seed = parseInt(fxrand() * 10000000);
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
 const complexityArr = [
-	['1', 20],
-	['2', 70],
-	['3', 5],
-	['4', 2],
-	['5', 2],
-	['6', 1],
+	["1", 20],
+	["2", 70],
+	["3", 5],
+	["4", 2],
+	["5", 2],
+	["6", 1],
 ];
 
 const themeArr = [
-	['bright', 0],
-	['dark', 100],
+	["bright", 0],
+	["dark", 100],
 ];
 
 const compositionArr = [
-	['semiconstrained', 33],
-	['constrained', 33],
-	['compressed', 33],
+	["semiconstrained", 33],
+	["constrained", 33],
+	["compressed", 33],
 ];
 
 const colorModeArr = [
-	['monochrome', 100],
-	['fixed', 0],
-	['dynamic', 0],
-	['iridescent', 0],
+	["monochrome", 100],
+	["fixed", 0],
+	["dynamic", 0],
+	["iridescent", 0],
 ];
 
 const strokestyleArr = [
-	['thin', 100],
-	['regular', 0],
-	['bold', 0],
+	["thin", 100],
+	["regular", 0],
+	["bold", 0],
 ];
 
 const clampvalueArr = [
-	['0.0000015,0.25,0.25,0.0000015', 50],
-	['0.0000015,0.025,0.025,0.0000015', 50],
-	['0.00015,0.015,0.015,0.00015', 50],
-	['0.15,0.00000015,0.15,0.0000015', 50],
-	['0.0015,0.000015,0.0015,0.000015', 50],
-	['0.05,0.05,0.05,0.05', 50],
-	['0.15,0.15,0.15,0.15', 50],
-	['0.015,0.015,0.015,0.015', 50],
-	['0.0015,0.0015,0.0015,0.0015', 50],
-	['0.0000015,0.0000015,0.0000015,0.0000015', 50],
+	["0.0000015,0.25,0.25,0.0000015", 50],
+	["0.0000015,0.025,0.025,0.0000015", 50],
+	["0.00015,0.015,0.015,0.00015", 50],
+	["0.15,0.00000015,0.15,0.0000015", 50],
+	["0.0015,0.000015,0.0015,0.000015", 50],
+	["0.05,0.05,0.05,0.05", 50],
+	["0.15,0.15,0.15,0.15", 50],
+	["0.015,0.015,0.015,0.015", 50],
+	["0.0015,0.0015,0.0015,0.0015", 50],
+	["0.0000015,0.0000015,0.0000015,0.0000015", 50],
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function

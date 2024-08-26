@@ -1,4 +1,4 @@
-let features = '';
+let features = "";
 let movers = [];
 let scl1;
 let scl2;
@@ -87,20 +87,20 @@ function draw() {
 
 	if (frameCount % 100 == 0) {
 		let cosIndex = cos(radians(easeAng));
-		console.log('cosIndex: ' + cosIndex);
+		console.log("cosIndex: " + cosIndex);
 		if (cosIndex >= 1) {
 			cycleCount += 1;
 		}
 		if (cycleCount < 1) {
 			movers = [];
-			//saveArtwork();
+			saveArtwork();
 			elapsedTime = 0;
 			frameCount = 0;
 			INIT(rseed);
 		} else {
 			noLoop();
 		}
-		console.log('cycleCount: ' + cycleCount);
+		console.log("cycleCount: " + cycleCount);
 	}
 }
 
@@ -128,8 +128,8 @@ function INIT(seed) {
 	/* 	xi += map(noise(xoff), 0, 0.9, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
 	yi += map(noise(yoff), 0, 0.9, -1 * MULTIPLIER, 1 * MULTIPLIER, true); */
 
-	console.log('xi: ' + xi);
-	console.log('yi: ' + yi);
+	console.log("xi: " + xi);
+	console.log("yi: " + yi);
 
 	easeAng += 0.12;
 	xoff += 0.001;
@@ -139,12 +139,12 @@ function INIT(seed) {
 	sxoff += 0.007;
 	syoff += 0.007;
 
-	console.log('scl1: ' + scl1);
-	console.log('scl2: ' + scl2);
-	console.log('ang1: ' + angle1);
-	console.log('ang2: ' + angle2);
+	console.log("scl1: " + scl1);
+	console.log("scl2: " + scl2);
+	console.log("ang1: " + angle1);
+	console.log("ang2: " + angle2);
 
-	console.log('cos(easing): ' + cos(easing));
+	console.log("cos(easing): " + cos(easing));
 
 	xMin = -0.01;
 	xMax = 1.01;
@@ -156,28 +156,8 @@ function INIT(seed) {
 		let y = random(yMin, yMax) * height;
 		let initHue = hue + random(-1, 1);
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(
-			new Mover(
-				x,
-				y,
-				xi,
-				yi,
-				initHue,
-				scl1 / MULTIPLIER,
-				scl2 / MULTIPLIER,
-				angle1 * MULTIPLIER,
-				angle2 * MULTIPLIER,
-				xMin,
-				xMax,
-				yMin,
-				yMax,
-				xRandDivider,
-				yRandDivider,
-				seed,
-				features
-			)
-		);
+		movers.push(new Mover(x, y, xi, yi, initHue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, angle1 * MULTIPLIER, angle2 * MULTIPLIER, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features));
 	}
-	bgCol = color(random(0, 360), random([0, 2]), features.theme == 'bright' ? 93 : 10, 100);
+	bgCol = color(random(0, 360), random([0, 2]), features.theme == "bright" ? 93 : 10, 100);
 	background(bgCol);
 }
