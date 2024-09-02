@@ -24,7 +24,7 @@ class Back_mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.isBordered = isBordered;
+		this.isBordered = true;
 		this.max_a = 30;
 		this.min_a = 10;
 	}
@@ -61,17 +61,17 @@ class Back_mover {
 		this.bri = map(abs(p.x), 0, 4, 100, 40, true);
 
 		if (this.isBordered) {
-			if (this.x < (this.xMin - 0.015) * width) {
-				this.x = (this.xMax + 0.015) * width;
+			if (this.x < (this.xMin - 0.075) * width) {
+				this.x = this.xMax * width;
 			}
-			if (this.x > (this.xMax + 0.015) * width) {
-				this.x = (this.xMin - 0.015) * width;
+			if (this.x > (this.xMax + 0.075) * width) {
+				this.x = this.xMin * width;
 			}
-			if (this.y < (this.yMin - 0.015) * height) {
-				this.y = (this.yMax + 0.015) * height;
+			if (this.y < (this.yMin - 0.075) * height) {
+				this.y = this.yMax * height;
 			}
-			if (this.y > (this.yMax + 0.015) * height) {
-				this.y = (this.yMin - 0.015) * height;
+			if (this.y > (this.yMax + 0.075) * height) {
+				this.y = this.yMin * height;
 			}
 		}
 	}
