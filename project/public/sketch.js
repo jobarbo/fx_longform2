@@ -1,4 +1,4 @@
-let features = '';
+let features = "";
 let movers = [];
 let scl1;
 let scl2;
@@ -44,7 +44,7 @@ function draw() {
 	}
 
 	if (frameCount > 100) {
-		console.log('done');
+		console.log("done");
 		noLoop();
 	}
 }
@@ -56,8 +56,8 @@ function windowResized() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.00001, 0.005);
-	scl2 = random(0.00001, 0.005);
+	scl1 = random(0.00001, 0.0025);
+	scl2 = random(0.00001, 0.0025);
 	ang1 = int(random(1000));
 	ang2 = int(random(1000));
 
@@ -72,7 +72,7 @@ function INIT(seed) {
 	yMax = 1.05; */
 
 	let hue = random(360);
-	for (let i = 0; i < 100000; i++) {
+	for (let i = 0; i < 50000; i++) {
 		/* 		// distribue the movers within a circle using polar coordinates
 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
@@ -86,6 +86,6 @@ function INIT(seed) {
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix('#fff', '#000', 0.138);
+	let bgCol = spectral.mix("#fff", "#000", 0.938);
 	background(bgCol);
 }

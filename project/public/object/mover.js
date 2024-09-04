@@ -29,7 +29,7 @@ class Mover {
 
 	show() {
 		//
-		//blendMode(SCREEN);
+		blendMode(SCREEN);
 
 		fill(this.hue, this.sat, this.bri, this.a);
 		noStroke();
@@ -49,10 +49,10 @@ class Mover {
 
 		this.s = map(p.x, -4, 4, 5, 1, true);
 		this.a = map(p.x, -4, 4, 10, 30, true);
-		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
+		this.hue += map(p.x, -4, 4, -20, 20);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		this.sat = map(p.x, -4, 4, 20, 60, true);
-		this.bri = map(p.x, -4, 4, 20, 10, true);
+		this.sat = map(p.x, -4, 4, 100, 70, true);
+		this.bri = map(p.x, -4, 4, 60, 100, true);
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {
@@ -81,23 +81,23 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 		dx,
 		dy;
 
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
+	dx = oct(nx, ny, scale1, 6, 6);
+	dy = oct(nx, ny, scale2, 1, 1);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
+	dx = oct(nx, ny, scale1, 4, 6);
+	dy = oct(nx, ny, scale2, 3, 6);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct3(nx, ny, scale1, 0);
-	dy = oct3(nx, ny, scale2, 1);
+	dx = oct(nx, ny, scale1, 2, 6);
+	dy = oct(nx, ny, scale2, 7, 6);
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct3(nx, ny, scale1, 1);
-	let vn = oct3(nx, ny, scale2, 2);
+	let un = oct(nx, ny, scale1, 0, 6);
+	let vn = oct(nx, ny, scale2, 2, 6);
 
 	let u = map(un, -0.5, 0.5, -4, 4, true);
 	let v = map(vn, -0.5, 0.5, -4, 4, true);
