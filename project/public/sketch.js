@@ -34,7 +34,7 @@ let easeAng = 0,
 TAU = PI * 2;
 F = (N, f) => [...Array(N)].map((_, i) => f(i));
 
-let video_duration = 1; //seconds
+let video_duration = 10; //seconds
 let video_fps = 25;
 let current_video_frame = 0;
 let total_video_frames = video_duration * video_fps;
@@ -96,7 +96,7 @@ function draw() {
 		if (current_video_frame < total_video_frames) {
 			current_video_frame++;
 			movers = [];
-			//saveArtwork();
+			saveArtwork();
 			elapsedTime = 0;
 			frameCount = 0;
 			INIT(rseed);
@@ -128,7 +128,6 @@ function INIT(seed) {
 	angle1 = int(map(cos(easing), -1, 1, 500, 1600, true));
 	angle2 = int(map(cos(easing), -1, 1, 1600, 500, true));
 
-	//angle1 = int(map(cos(easing), -1, 1, 0, 2000, true));
 	/* 	xi += map(noise(xoff), 0, 0.9, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
 	yi += map(noise(yoff), 0, 0.9, -1 * MULTIPLIER, 1 * MULTIPLIER, true); */
 
@@ -136,7 +135,7 @@ function INIT(seed) {
 	console.log("yi: " + yi);
 
 	// easeAng increment should make the easing function complete a full cycle in the total_video_frames
-	let easeAngIncrement = PI / (total_video_frames / 2);
+	let easeAngIncrement = PI / (total_video_frames / 1);
 	easeAng += easeAngIncrement;
 	console.log("easeAng: " + easeAng);
 	console.log("easeAngIncrement: " + easeAngIncrement);
