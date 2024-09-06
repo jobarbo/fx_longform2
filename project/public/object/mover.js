@@ -1,23 +1,5 @@
 class Mover {
-	constructor(
-		x,
-		y,
-		xi,
-		yi,
-		hue,
-		scl1,
-		scl2,
-		ang1,
-		ang2,
-		xMin,
-		xMax,
-		yMin,
-		yMax,
-		xRandDivider,
-		yRandDivider,
-		seed,
-		features
-	) {
+	constructor(x, y, xi, yi, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, easing, features) {
 		this.x = x;
 		this.y = y;
 		this.xi = xi;
@@ -25,35 +7,29 @@ class Mover {
 		this.initHue = hue;
 		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
 		this.initBri =
-			features.theme === 'bright' && features.colormode !== 'monochrome'
+			features.theme === "bright" && features.colormode !== "monochrome"
 				? random([0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100])
-				: features.theme === 'bright' && features.colormode === 'monochrome'
+				: features.theme === "bright" && features.colormode === "monochrome"
 				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
 				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
 		this.initAlpha = 100;
-		this.initS = 0.45 * MULTIPLIER;
+		this.initS = 0.25 * MULTIPLIER;
 		this.hue = this.initHue;
-		this.sat = features.colormode === 'monochrome' ? 0 : this.initSat;
+		this.sat = features.colormode === "monochrome" ? 0 : this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep =
-			features.colormode === 'monochrome' || features.colormode === 'fixed'
-				? 1
-				: features.colormode === 'dynamic'
-				? 6
-				: 25;
+		this.hueStep = features.colormode === "monochrome" || features.colormode === "fixed" ? 1 : features.colormode === "dynamic" ? 6 : 25;
 		this.s = this.initS;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.ang1 = ang1;
 		this.ang2 = ang2;
-		this.seed = seed;
 		this.xRandDivider = xRandDivider;
 		this.yRandDivider = yRandDivider;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperVal = features.strokestyle === 'thin' ? 0.1 : features.strokestyle === 'bold' ? 2 : 1;
-		this.yRandSkipperVal = features.strokestyle === 'thin' ? 0.1 : features.strokestyle === 'bold' ? 2 : 1;
+		this.xRandSkipperVal = features.strokestyle === "thin" ? 0.1 : features.strokestyle === "bold" ? 2 : 1;
+		this.yRandSkipperVal = features.strokestyle === "thin" ? 0.1 : features.strokestyle === "bold" ? 2 : 1;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -61,10 +37,10 @@ class Mover {
 		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
-		this.borderX = width / 3;
-		this.borderY = height / 3;
-
-		this.clampvaluearray = features.clampvalue.split(',').map(Number);
+		this.borderX = width / 2;
+		this.borderY = height / 2;
+		this.easing = easing;
+		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = 5;
 	}
 
@@ -75,23 +51,13 @@ class Mover {
 	}
 
 	move() {
-		let p = superCurve(
-			this.x,
-			this.y,
-			this.xi,
-			this.yi,
-			this.scl1,
-			this.scl2,
-			this.ang1,
-			this.ang2,
-			this.seed,
-			this.oct,
-			this.clampvaluearray,
-			this.uvalue
-		);
+		let p = superCurve(this.x, this.y, this.xi, this.yi, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.clampvaluearray, this.uvalue);
 
 		this.xRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
 		this.yRandSkipper = random(-this.xRandSkipperVal * MULTIPLIER, this.xRandSkipperVal * MULTIPLIER);
+
+		/* this.xRandDivider = map(cos(this.easing), -1, 1, 0.06, 0.1, true);
+		this.yRandDivider = map(cos(this.easing), -1, 1, 0.1, 0.06, true); */
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
@@ -123,11 +89,11 @@ class Mover {
 			abs(this.y - this.centerY - this.borderY)
 		);
 
-		this.a = map(distanceToEdge, 10, 60, 0, 20, true);
+		this.a = map(distanceToEdge, 20, 100, 0, 20, true);
 	}
 }
 
-function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, seed, octave, clampvalueArr, uvalue) {
+function superCurve(x, y, xi, yi, scl1, scl2, ang1, ang2, octave, clampvalueArr, uvalue) {
 	let nx = x + xi,
 		ny = y + yi,
 		a1 = ang1,

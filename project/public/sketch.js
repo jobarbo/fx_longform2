@@ -27,15 +27,20 @@ let easeAng = 0,
 	xoff = Math.random() * 10000,
 	yoff = Math.random() * 10000,
 	axoff = Math.random() * 10000,
-	ayoff = Math.random() * 10000;
-(sxoff = Math.random() * 10000), (syoff = Math.random() * 10000);
+	ayoff = Math.random() * 10000,
+	sxoff = Math.random() * 10000,
+	syoff = Math.random() * 10000;
 ({sin, cos, imul, PI} = Math);
 TAU = PI * 2;
 F = (N, f) => [...Array(N)].map((_, i) => f(i));
 
+let video_duration = 1; //seconds
+let video_fps = 25;
+let current_video_frame = 0;
+let total_video_frames = video_duration * video_fps;
+
 function setup() {
 	features = $fx.getFeatures();
-	console.log(features);
 	var ua = window.navigator.userAgent;
 	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
 	var webkit = !!ua.match(/WebKit/i);
@@ -48,8 +53,8 @@ function setup() {
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 800;
-	c = createCanvas(C_WIDTH, C_WIDTH);
+	MULTIPLIER = C_WIDTH / 130;
+	c = createCanvas(1080, 1920);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -85,15 +90,13 @@ function draw() {
 	}
 	blendMode(BLEND);
 
-	if (frameCount % 100 == 0) {
+	if (frameCount % 25 == 0) {
 		let cosIndex = cos(radians(easeAng));
 		console.log("cosIndex: " + cosIndex);
-		if (cosIndex >= 1) {
-			cycleCount += 1;
-		}
-		if (cycleCount < 1) {
+		if (current_video_frame < total_video_frames) {
+			current_video_frame++;
 			movers = [];
-			saveArtwork();
+			//saveArtwork();
 			elapsedTime = 0;
 			frameCount = 0;
 			INIT(rseed);
@@ -105,7 +108,8 @@ function draw() {
 }
 
 function INIT(seed) {
-	let easing = radians(easeAng);
+	let easing = easeAng;
+	let cosEasing = cos(easing);
 	let xpff;
 	/* 	scl1 += map(noise(sxoff, syoff), 0, 0.95, -0.000005, 0.000005, true);
 	scl1 = constrain(scl1, 0, 0.1);
@@ -114,12 +118,12 @@ function INIT(seed) {
 	/* 	ang1 += int(map(noise(axoff, ayoff), 0, 0.95, -1, 1, true));
 	ang1 = constrain(ang1, 0, 2000);
 	ang2 += int(map(noise(ayoff, axoff), 0, 0.95, -1, 1, true));
-	ang2 = constrain(ang2, 0, 2000);
-	angle1 = ang1;
-	angle2 = ang2; */
+	ang2 = constrain(ang2, 0, 2000);*/
+	let angle1 = ang1;
+	let angle2 = ang2;
 
-	scl1 = map(cos(easing), -1, 1, 0.0022, 0.0007, true);
-	scl2 = map(cos(easing), -1, 1, 0.0007, 0.0022, true);
+	scl1 = map(cosEasing, -1, 1, 0.0022, 0.0007, true);
+	scl2 = map(cosEasing, -1, 1, 0.0007, 0.0022, true);
 
 	angle1 = int(map(cos(easing), -1, 1, 500, 1600, true));
 	angle2 = int(map(cos(easing), -1, 1, 1600, 500, true));
@@ -131,7 +135,12 @@ function INIT(seed) {
 	console.log("xi: " + xi);
 	console.log("yi: " + yi);
 
-	easeAng += 0.12;
+	// easeAng increment should make the easing function complete a full cycle in the total_video_frames
+	let easeAngIncrement = PI / (total_video_frames / 2);
+	easeAng += easeAngIncrement;
+	console.log("easeAng: " + easeAng);
+	console.log("easeAngIncrement: " + easeAngIncrement);
+	console.log("current_video_frame: " + current_video_frame);
 	xoff += 0.001;
 	yoff += 0.001;
 	axoff += 0.0025;
@@ -156,7 +165,7 @@ function INIT(seed) {
 		let y = random(yMin, yMax) * height;
 		let initHue = hue + random(-1, 1);
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(new Mover(x, y, xi, yi, initHue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, angle1 * MULTIPLIER, angle2 * MULTIPLIER, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features));
+		movers.push(new Mover(x, y, xi, yi, initHue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, angle1 * MULTIPLIER, angle2 * MULTIPLIER, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, easing, features));
 	}
 	bgCol = color(random(0, 360), random([0, 2]), features.theme == "bright" ? 93 : 10, 100);
 	background(bgCol);
