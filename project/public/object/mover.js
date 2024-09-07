@@ -37,8 +37,8 @@ class Mover {
 		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
-		this.borderX = width / 2;
-		this.borderY = height / 2;
+		this.borderX = width / 1.5;
+		this.borderY = height / 1.5;
 		this.easing = easing;
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = 5;

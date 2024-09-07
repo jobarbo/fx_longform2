@@ -53,13 +53,13 @@ function setup() {
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
-	MULTIPLIER = C_WIDTH / 130;
+	MULTIPLIER = C_WIDTH / 250;
 	c = createCanvas(1080, 1920);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
-	xRandDivider = random([0.08]);
-	yRandDivider = xRandDivider;
+	xRandDivider = random([0.1]);
+	yRandDivider = random([0.05]);
 	xoff = random(1000000);
 	yoff = random(1000000);
 	axoff = random(1000000);
@@ -90,7 +90,7 @@ function draw() {
 	}
 	blendMode(BLEND);
 
-	if (frameCount % 25 == 0) {
+	if (frameCount % 50 == 0) {
 		let cosIndex = cos(radians(easeAng));
 		console.log("cosIndex: " + cosIndex);
 		if (current_video_frame < total_video_frames) {
@@ -128,8 +128,10 @@ function INIT(seed) {
 	angle1 = int(map(cos(easing), -1, 1, 500, 1600, true));
 	angle2 = int(map(cos(easing), -1, 1, 1600, 500, true));
 
-	/* 	xi += map(noise(xoff), 0, 0.9, -1 * MULTIPLIER, 1 * MULTIPLIER, true);
-	yi += map(noise(yoff), 0, 0.9, -1 * MULTIPLIER, 1 * MULTIPLIER, true); */
+	xi += 2;
+	/* yi += map(noise(yoff), 0, 0.9, -1 * MULTIPLIER, 1 * MULTIPLIER, true); */
+	/* 	xi = map(cos(easing), -1, 1, -500, -600, true); */
+	/* 	yi = map(cos(easing), -1, 1, -600, -500, true); */
 
 	console.log("xi: " + xi);
 	console.log("yi: " + yi);
@@ -142,11 +144,10 @@ function INIT(seed) {
 	console.log("current_video_frame: " + current_video_frame);
 	xoff += 0.001;
 	yoff += 0.001;
-	axoff += 0.0025;
-	ayoff += 0.0025;
-	sxoff += 0.007;
-	syoff += 0.007;
-
+	axoff += 0.01;
+	ayoff += 0.01;
+	sxoff += 0.01;
+	syoff += 0.01;
 	console.log("scl1: " + scl1);
 	console.log("scl2: " + scl2);
 	console.log("ang1: " + angle1);
@@ -154,10 +155,10 @@ function INIT(seed) {
 
 	console.log("cos(easing): " + cos(easing));
 
-	xMin = -0.01;
-	xMax = 1.01;
-	yMin = -0.01;
-	yMax = 1.01;
+	xMin = -0.2;
+	xMax = 1.2;
+	yMin = -0.2;
+	yMax = 1.2;
 
 	for (let i = 0; i < 50000; i++) {
 		let x = random(xMin, xMax) * width;
