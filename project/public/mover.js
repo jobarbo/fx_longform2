@@ -7,7 +7,7 @@ class Mover {
 		this.sat = 50;
 		this.bri = 70;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 6 * MULTIPLIER;
+		this.s = 3 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.seed = seed;
@@ -22,7 +22,7 @@ class Mover {
 	show() {
 		//
 		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, 10);
+		fill(this.hue, this.sat, this.bri, 20);
 		//stroke(34, 40, 90,80);
 		noStroke();
 		ellipse(this.x, this.y, this.s);
@@ -32,12 +32,12 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.seed);
 
 		let pos = abs(p.x) + abs(p.y);
-		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
-		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
-		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true);
+		this.hue = map(pos, 2, 6, this.hue - 3, this.hue + 3, true);
+		this.sat = map(pos, 2, 6, this.sat + 3, this.sat - 3, true);
+		this.bri = map(pos, 2, 6, this.bri - 3, this.bri + 3, true);
 		this.x += (p.x / random(0.0001, 2.01) + random(-3.1, 0.1)) * MULTIPLIER;
 		this.y += (p.y / random(0.0001, 2.01) + random(-0.1, 3.1)) * MULTIPLIER;
-		this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
+		this.s += map(pos, 2, 6, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		if (this.hue < 0) {
 			this.hue = 360;
@@ -74,7 +74,7 @@ class Mover {
 function superCurve(x, y, scl1, scl2, seed) {
 	let nx = x,
 		ny = y,
-		a1 = 500,
+		a1 = 1,
 		a2 = 1,
 		scale1 = scl1,
 		scale2 = scl2,
@@ -100,7 +100,7 @@ function superCurve(x, y, scl1, scl2, seed) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 	let u = map(un, -0.5, 0.5, -4, 4, true);
-	let v = map(vn, -0.5, 0.5, -14, 4, true);
+	let v = map(vn, -0.5, 0.5, -4, 4, true);
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
