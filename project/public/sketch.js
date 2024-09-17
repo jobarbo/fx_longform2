@@ -35,7 +35,7 @@ function setup() {
 	} else {
 		pixelDensity(2);
 	}
-	createCanvas(10 * 100, 30 * 100);
+	createCanvas(16 * 100, 22 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000000000);
 	randomSeed(seed);
@@ -101,10 +101,10 @@ function INIT(seed) {
 	xMax = 1.1;
 	yMin = -0.1;
 	yMax = 1.1; */
-	xMin = 0.05;
-	xMax = 0.95;
-	yMin = 0.025;
-	yMax = 0.975;
+	xMin = 0.06;
+	xMax = 0.94;
+	yMin = 0.04;
+	yMax = 0.96;
 
 	for (let i = 0; i < 30000; i++) {
 		// distribue the movers within a circle using polar coordinates
