@@ -63,13 +63,13 @@ function draw() {
  */
 function INIT(seed) {
 	movers = [];
-	scl1 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
+	/* 	scl1 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
 	scl2 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
-	scl3 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
+	scl3 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]); */
 
-	console.log("scl1", scl1);
-	console.log("scl2", scl2);
-	console.log("scl3", scl3);
+	scl1 = 0.03;
+	scl2 = 0.03;
+	scl3 = 0.03;
 
 	/* 	scl1 = 0.4;
 	scl2 = 0.002;
@@ -83,6 +83,10 @@ function INIT(seed) {
 	scl2 = 0.0005;
 	scl3 = 0.0075;
  */
+
+	console.log("scl1", scl1);
+	console.log("scl2", scl2);
+	console.log("scl3", scl3);
 	let hue = random(360);
 
 	let sclOffset1 = 1;
