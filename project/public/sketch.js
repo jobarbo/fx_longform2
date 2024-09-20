@@ -69,7 +69,7 @@ function INIT(seed) {
 
 	scl1 = 0.02;
 	scl2 = 0.062;
-	scl3 = 0.002;
+	scl3 = 0.02;
 
 	/* 	scl1 = 0.4;
 	scl2 = 0.002;
