@@ -10,7 +10,7 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = 100;
-		this.s = random([1]);
+		this.s = random([0.75]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -22,10 +22,10 @@ class Mover {
 		this.yRandDivider = 0.1;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xMin = 0.05;
-		this.xMax = 0.95;
-		this.yMin = 0.05;
-		this.yMax = 0.95;
+		this.xMin = xMin;
+		this.xMax = xMax;
+		this.yMin = yMin;
+		this.yMax = yMax;
 		this.isBordered = isBordered;
 	}
 
@@ -38,12 +38,12 @@ class Mover {
 	}
 
 	move() {
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.seed, this.xMin, this.xMax, this.yMin, this.yMax);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.seed);
 		// after 1 second, change the scale
 
 		//! crayon effect too
-		this.xRandDivider = random(0.011, 0.01125);
-		this.yRandDivider = random(0.011, 0.01125);
+		this.xRandDivider = random(0.1, 0.1025);
+		this.yRandDivider = random(0.1, 0.1025);
 
 		/* 	this.xRandSkipper = random(-0.0001, 0.0001);
 		this.yRandSkipper = random(-0.0001, 0.0001); */
@@ -80,7 +80,7 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed, xMin, xMax, yMin, yMax) {
+function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMin, xMax, yMax, seed) {
 	let nx = x,
 		ny = y,
 		scale1 = scl1,
@@ -96,17 +96,23 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed, xMi
 	un = sin(nx * (scale1 * scaleOffset1) + nseed) + cos(nx * (scale2 * scaleOffset2) + nseed) - sin(nx * (scale3 * scaleOffset3) + nseed);
 	vn = cos(ny * (scale1 * scaleOffset1) + nseed) + sin(ny * (scale2 * scaleOffset2) + nseed) - cos(ny * (scale3 * scaleOffset3) + nseed);
 
-	//! center focused
-	let maxU = map(ny, yMin * height, yMax * height, 3, -3, true);
-	let maxV = map(nx, xMin * width, xMax * width, 3, -3, true);
-	let minU = map(ny, yMin * height, yMax * height, -3, 3, true);
-	let minV = map(nx, xMin * width, xMax * width, -3, 3, true);
+	//! center focused introverted
+	/* let maxU = map(ny, xMin * width, xMax * width, 3, -3, true);
+	let maxV = map(nx, yMin * height, yMax * height, 3, -3, true);
+	let minU = map(ny, xMin * width, xMax * width, -3, 3, true);
+	let minV = map(nx, yMin * height, yMax * height, -3, 3, true); */
+
+	//! center focused extroverted
+	/* 	let maxU = map(nx, xMin * width, xMax * width, 3, -3, true);
+	let maxV = map(ny, yMin * height, yMax * height, 3, -3, true);
+	let minU = map(nx, xMin * width, xMax * width, -3, 3, true);
+	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	/* let maxU = map(oct(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1, 1), -0.005, 0.005, -4, 4, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1, 1), -0.005, 0.005, -4, 4, true);
 	let maxV = map(oct(nx * (scale2 * scaleOffset1) + nseed, nx * (scale1 * scaleOffset2) + nseed, noiseScale2, 2, 1), -0.005, 0.005, -4, 4, true);
 	let minU = map(oct(ny * (scale3 * scaleOffset1) + nseed, ny * (scale1 * scaleOffset3) + nseed, noiseScale3, 0, 1), -0.005, 0.005, -4, 4, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + nseed, nx * (scale3 * scaleOffset3) + nseed, noiseScale2, 3, 1), -0.005, 0.005, -4, 4, true); */
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + nseed, nx * (scale3 * scaleOffset3) + nseed, noiseScale2, 3, 1), -0.005, 0.005, -4, 4, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
@@ -127,12 +133,12 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed, xMi
 	let minV = -0.11; */
 
 	//! Introverted
-	let u = map(vn, map(nx, 0, width, -0.0000001, -0.00000015), map(nx, 0, width, 0.0000001, 0.00000015), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -0.0000001, -0.00000015), map(ny, 0, height, 0.0000001, 0.00000015), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1.5), minV, maxV, true);
 
 	//! Extroverted
-	/* 	let u = map(vn, map(ny, 0, width, -5.4, -0.0001), map(ny, 0, width, 0.0001, 5.4), minU, maxU, true);
-	let v = map(un, map(nx, 0, height, -5.4, -0.0001), map(nx, 0, height, 0.0001, 5.4), minV, maxV, true); */
+	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
+	let v = map(un, map(nx, yMin * height, yMax * height, -5.4, -0.0001), map(nx, yMin * height, yMax * height, 0.0001, 5.4), minV, maxV, true); */
 
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);

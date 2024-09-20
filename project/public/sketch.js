@@ -43,7 +43,7 @@ function setup() {
 }
 
 function draw() {
-	//blendMode(SCREEN);
+	//blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
 		if (frameCount > 1) {
 			movers[i].show();
@@ -67,9 +67,9 @@ function INIT(seed) {
 	scl2 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
 	scl3 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]); */
 
-	scl1 = 0.02;
-	scl2 = 0.062;
-	scl3 = 0.002;
+	scl1 = 0.01;
+	scl2 = 0.01;
+	scl3 = 0.01;
 
 	/* 	scl1 = 0.4;
 	scl2 = 0.002;
@@ -89,7 +89,7 @@ function INIT(seed) {
 	let hue = random(360); */
 
 	let sclOffset1 = 1;
-	let sclOffset2 = 0.1;
+	let sclOffset2 = 1;
 	let sclOffset3 = 1;
 
 	console.log("sclOffset1", sclOffset1);
@@ -104,10 +104,10 @@ function INIT(seed) {
 	xMax = 1.1;
 	yMin = -0.1;
 	yMax = 1.1; */
-	xMin = 0.05;
-	xMax = 0.95;
-	yMin = 0.05;
-	yMax = 0.95;
+	xMin = 0.06;
+	xMax = 0.94;
+	yMin = 0.06;
+	yMax = 0.94;
 
 	for (let i = 0; i < 100000; i++) {
 		// distribue the movers within a circle using polar coordinates
