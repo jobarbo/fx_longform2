@@ -1,31 +1,16 @@
 let features = "";
 
 let palette = [
-	{
-		h: 267,
-		s: 72,
-		l: 63,
-	},
-	{
-		h: 324,
-		s: 84,
-		l: 65,
-	},
-	{
-		h: 52,
-		s: 99,
-		l: 62,
-	},
-	{
-		h: 195,
-		s: 100,
-		l: 49,
-	},
-	{
-		h: 172,
-		s: 100,
-		l: 48,
-	},
+	{name: "Rose", hex: "f72585", rgb: [247, 37, 133], cmyk: [0, 85, 46, 3], hsb: [333, 85, 97], hsl: [333, 93, 56], lab: [55, 79, 1]},
+	{name: "Fandango", hex: "b5179e", rgb: [181, 23, 158], cmyk: [0, 87, 13, 29], hsb: [309, 87, 71], hsl: [309, 77, 40], lab: [43, 70, -34]},
+	{name: "Grape", hex: "7209b7", rgb: [114, 9, 183], cmyk: [38, 95, 0, 28], hsb: [276, 95, 72], hsl: [276, 91, 38], lab: [32, 66, -66]},
+	{name: "Chrysler blue", hex: "560bad", rgb: [86, 11, 173], cmyk: [50, 94, 0, 32], hsb: [268, 94, 68], hsl: [268, 88, 36], lab: [27, 60, -68]},
+	{name: "Dark blue", hex: "480ca8", rgb: [72, 12, 168], cmyk: [57, 93, 0, 34], hsb: [263, 93, 66], hsl: [263, 87, 35], lab: [25, 58, -69]},
+	{name: "Zaffre", hex: "3a0ca3", rgb: [58, 12, 163], cmyk: [64, 93, 0, 36], hsb: [258, 93, 64], hsl: [258, 86, 34], lab: [23, 55, -70]},
+	{name: "Palatinate blue", hex: "3f37c9", rgb: [63, 55, 201], cmyk: [69, 73, 0, 21], hsb: [243, 73, 79], hsl: [243, 57, 50], lab: [34, 48, -74]},
+	{name: "Neon blue", hex: "4361ee", rgb: [67, 97, 238], cmyk: [72, 59, 0, 7], hsb: [229, 72, 93], hsl: [229, 83, 60], lab: [47, 36, -74]},
+	{name: "Chefchaouen Blue", hex: "4895ef", rgb: [72, 149, 239], cmyk: [70, 38, 0, 6], hsb: [212, 70, 94], hsl: [212, 84, 61], lab: [61, 5, -52]},
+	{name: "Vivid sky blue", hex: "4cc9f0", rgb: [76, 201, 240], cmyk: [68, 16, 0, 6], hsb: [194, 68, 94], hsl: [194, 85, 62], lab: [76, -22, -29]},
 ];
 
 let maxDPI = 3;
@@ -85,10 +70,10 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(20000 / angle1.length);
+let particle_num = Math.floor(10000 / angle1.length);
 
 //let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
-let cycle = 10000;
+let cycle = 100000;
 
 let nx_scale = 0.00005;
 let ny_scale = 0.00005;
@@ -233,7 +218,7 @@ function* drawGenerator() {
 		sin_val = cos(generator_frameCount * 45);
 		noise_cos = sin(generator_frameCount * 170);
 		off_cos = sin(generator_frameCount * 800);
-		col_cos = cos(generator_frameCount * 25);
+		col_cos = cos(generator_frameCount * 45);
 		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
@@ -276,7 +261,7 @@ function* drawGenerator() {
 			rotate(angle1[i]);
 			scale(scale1);
 			for (let s = 0; s < particle_num; s++) {
-				paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val);
+				paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val, sin_val, noise_cos, col_cos, off_cos);
 
 				if (count >= draw_every) {
 					count = 0;
@@ -307,7 +292,7 @@ function* drawGenerator() {
 	}
 }
 
-function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_val) {
+function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_val, sin_val, noise_cos, col_cos, off_cos) {
 	xoff = random(xoff_l, xoff_h);
 	yoff = random(yoff_l, yoff_h);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
@@ -369,22 +354,23 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	/* 		let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-	let w = mapValue(abs(cos_val), 0, 1, 0.26, 0.36, true);
+	//let w = mapValue(abs(cos_val), 0, 1, 0.16, 0.26, true);
+	let w = mapValue(abs(cos_val), 0, 1, 0.32, 0.46, true);
 	let elW = w * MULTIPLIER;
 	let ab_x = x * MULTIPLIER;
 	let ab_y = y * MULTIPLIER;
 	let index = Math.floor(mapValue(abs(col_cos), 0, 1, 0, palette.length - 1, true));
 
-	hue = palette[index].h;
-	sat = palette[index].s;
-	b = palette[index].l;
+	hue = palette[index].hsl[0];
+	sat = palette[index].hsl[1];
+	b = palette[index].hsl[2];
 
 	/* 	hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
 	sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true); */
 	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 80, true);
 	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 15, true);
 	bri = mapValue(abs(col_cos), 0, 1, b - bri_max, b - bri_min, true);
-	alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 100, 100, true);
+	alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 50, 50, true);
 
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 	drawingContext.fillRect(ab_x, ab_y, elW, elW);
