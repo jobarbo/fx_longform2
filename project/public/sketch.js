@@ -233,6 +233,7 @@ function* drawGenerator() {
 		sin_val = cos(generator_frameCount * 45);
 		noise_cos = sin(generator_frameCount * 170);
 		off_cos = sin(generator_frameCount * 800);
+		col_cos = cos(generator_frameCount * 100);
 		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
