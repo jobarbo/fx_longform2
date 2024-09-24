@@ -35,11 +35,12 @@ canvas.p5Canvas {
 	margin-right: auto;
 	margin-top: 0;
 	margin-bottom: 0;
-	height: auto !important;
-	max-width: var(--wContent);
-	max-height: var(--hContent);
+	height: auto !important; /* Maintain auto height */
+	width: auto !important; /* Maintain auto width */
+	aspect-ratio: attr(data-aspect-ratio); /* Use a custom attribute for aspect ratio */
+	max-width: calc(min(100vh, 100vw) * 0.95); /* 5% smaller than the smallest axis */
+	max-height: calc(min(100vh, 100vw) * 0.95); /* 5% smaller than the smallest axis */
 	max-height: 100vh;
-	width: auto !important;
 }
 
 /* having fun here */
@@ -54,6 +55,9 @@ main {
 		41.8px 41.8px 33.4px rgba(0, 0, 0, 0.105), 100px 100px 80px rgba(0, 0, 0, 0.1);
 	position: relative;
 	transform: rotate(0) scale(1);
+	height: calc(min(100vh, 100vw) * 0.95); /* 5% smaller than the smallest axis */
+	width: calc(min(100vh, 100vw) * 0.95); /* 5% smaller than the smallest axis */
+	aspect-ratio: attr(data-aspect-ratio); /* Use a custom attribute for aspect ratio */
 }
 
 main::after {
@@ -63,8 +67,4 @@ main::after {
 	width: 100%;
 	position: absolute;
 	box-shadow: 4px 3px 4px 0px inset rgb(0 0 0 / 38%), 6px 7px 7.3px inset rgb(0 0 0 / 11%), 13.5px 14.2px 17.5px inset rgba(0, 0, 0, 0.041), 20px 21px 58px inset rgba(0, 0, 0, 0.025);
-}
-
-canvas.p5Canvas {
-	height: 100% !important;
 }
