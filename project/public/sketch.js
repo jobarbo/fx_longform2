@@ -73,7 +73,7 @@ let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
 let particle_num = Math.floor(10000 / angle1.length);
 
 //let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
-let cycle = 100000;
+let cycle = 10000;
 
 let nx_scale = 0.00005;
 let ny_scale = 0.00005;
