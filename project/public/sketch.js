@@ -120,26 +120,26 @@ const offValues_h = [
  */
 
 const offValues_l = [
-	{low: 2, high: 1.4}, // case 0
-	{low: 1, high: 0.4}, // case 1
-	{low: 2.1, high: 1.5}, // case 2
-	{low: 3, high: 2.4}, // case 3
-	{low: 2.2, high: 1.6}, // case 4
-	{low: 1.1, high: 0.5}, // case 5
-	{low: 2.3, high: 1.7}, // case 6
-	{low: 3.1, high: 2.5}, // case 7
+	{low: 2, high: 1.2}, // case 0
+	{low: 1, high: 0.2}, // case 1
+	{low: 2.1, high: 1.3}, // case 2
+	{low: 3, high: 2.2}, // case 3
+	{low: 2.2, high: 1.4}, // case 4
+	{low: 1.1, high: 0.3}, // case 5
+	{low: 2.3, high: 1.5}, // case 6
+	{low: 3.1, high: 2.3}, // case 7
 	// Add more if needed
 ];
 
 const offValues_h = [
-	{low: 2, high: 1}, // case 0
-	{low: 1, high: 0}, // case 1
-	{low: 2.1, high: 1.1}, // case 2
-	{low: 3, high: 2}, // case 3
-	{low: 2.2, high: 1.2}, // case 4
-	{low: 1.1, high: 0.1}, // case 5
-	{low: 2.3, high: 1.3}, // case 6
-	{low: 3.1, high: 2.1}, // case 7
+	{low: 2.2, high: 1}, // case 0
+	{low: 1.2, high: 0}, // case 1
+	{low: 2.3, high: 1.1}, // case 2
+	{low: 3.2, high: 2}, // case 3
+	{low: 2.4, high: 1.2}, // case 4
+	{low: 1.3, high: 0.1}, // case 5
+	{low: 2.5, high: 1.3}, // case 6
+	{low: 3.3, high: 2.1}, // case 7
 	// Add more if needed
 ];
 /* const offValues_l = [
@@ -219,8 +219,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = height * 0.6;
-	pos_range_y = height * 0.6;
+	pos_range_x = height * 0.7;
+	pos_range_y = height * 0.7;
 	translate(width / 2, height / 2);
 	let sketch = drawGenerator();
 	function animate() {
@@ -321,7 +321,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	yoff = random(yoff_l, yoff_h);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(2, 0.77);
+	noiseDetail(4, 0.6);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
