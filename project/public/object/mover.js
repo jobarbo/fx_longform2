@@ -96,10 +96,14 @@ class Mover {
 		this.xRandDivider = randMultX;
 		this.yRandDivider = randMultY;
 
+		this.speed = Math.abs(p.x + p.y);
+		let randMinMaxX = map(this.speed, 0, 5.3, 10, 0, true);
+		let randMinMaxY = map(this.speed, 0, 5.3, 10, 0, true);
+		this.xRandSkipperVal = random(-randMinMaxX, randMinMaxX);
+		this.yRandSkipperVal = random(-randMinMaxY, randMinMaxY);
 		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
 		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
 
-		this.speed = Math.abs(p.x + p.y);
 		this.x += this.speedX;
 		this.y += this.speedY;
 
@@ -209,8 +213,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let sun = smoothstep(-0.5, 0.15, un);
-	let svn = smoothstep(-0.15, 0.5, vn);
+	let sun = smoothstep(-0.05, 0.15, un);
+	let svn = smoothstep(-0.15, 0.05, vn);
 
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */
@@ -224,7 +228,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	/* 	let u = mapValue(un, -0.5, 0.5, -aValue, bValue);
 	let v = mapValue(vn, -0.5, 0.5, -bValue, aValue);*/
 	let u = mapValue(sun, 0, 1, -bValue, bValue);
-	let v = mapValue(svn, 0, 1, -aValue, aValue);
+	let v = mapValue(svn, 0, 1, -aValue, bValue);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
