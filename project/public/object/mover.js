@@ -91,8 +91,8 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		let randMultX = map(frameCount, 0, this.maxFrames / 5, 11, 6, true);
-		let randMultY = map(frameCount, 0, this.maxFrames / 5, 11, 6, true);
+		let randMultX = map(frameCount, 0, this.maxFrames / 5, 0.5, 1500, true);
+		let randMultY = map(frameCount, 0, this.maxFrames / 5, 0.5, 1500, true);
 		this.xRandDivider = randMultX;
 		this.yRandDivider = randMultY;
 
@@ -213,8 +213,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let sun = smoothstep(-0.05, 0.15, un);
-	let svn = smoothstep(-0.15, 0.05, vn);
+	let sun = smoothstep(-0.00000000001, 0.00000000001, un);
+	let svn = smoothstep(-0.00000000001, 0.00000000001, vn);
 
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */

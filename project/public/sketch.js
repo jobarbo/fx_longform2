@@ -37,10 +37,10 @@ console.log(cycle);
 
 function setup() {
 	console.time("setup");
-	pixelDensity(dpi(2));
+	pixelDensity(dpi(3));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM);
+	c = createCanvas(DIM, DIM * 1.4142);
 	//A4 is 1.4142
 
 	/*
@@ -68,7 +68,7 @@ function setup() {
 	startTime = frameCount;
 
 	// create a bghue variable that is a random number between 30 and 50
-	let bghue = 158;
+	let bghue = 210;
 	let bgsat = 100;
 	let bgbri = 19;
 	let bga = 100;
