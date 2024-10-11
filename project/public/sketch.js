@@ -16,7 +16,7 @@ let currentFrame = 0;
 let maxFrames = 64 * 32;
 //let maxFrames = 64 * 120;
 //let particleNum = 800000;
-let particleNum = 100250;
+let particleNum = 500250;
 //let particleNum = 2250;
 
 // viewport
@@ -69,8 +69,8 @@ function setup() {
 
 	// create a bghue variable that is a random number between 30 and 50
 	let bghue = 210;
-	let bgsat = 100;
-	let bgbri = 19;
+	let bgsat = 0;
+	let bgbri = 100;
 	let bga = 100;
 	bgCol = color(bghue, bgsat, bgbri, bga);
 

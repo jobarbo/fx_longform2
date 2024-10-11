@@ -126,7 +126,7 @@ class Mover {
 		this.a = mapValue(this.speed, 2, 2.01, 100, 40, true); */
 		}
 
-		//!goldenfold variant
+		/* 		//!goldenfold variant
 		if (this.speed < 10) {
 			this.hue = 30;
 			this.sat = this.initSat + random(60, 80);
@@ -139,7 +139,7 @@ class Mover {
 			this.hue = this.initHue;
 			this.sat = 0;
 			this.bri = 100;
-		}
+		} */
 
 		//!malachite variant
 		/* 		if (this.speed < 1) {
