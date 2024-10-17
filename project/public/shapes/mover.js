@@ -41,9 +41,12 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.seed, this.xMin, this.xMax, this.yMin, this.yMax);
 		// after 1 second, change the scale
 
-		//! crayon effect too
-		this.xRandDivider = random(0.011, 0.01125);
-		this.yRandDivider = random(0.011, 0.01125);
+		//! new divider with mapping
+		this.xRandDivider = map(this.x, 0, width, 0.100001125, 0.011125);
+		this.yRandDivider = map(this.y, 0, height, 0.100001125, 0.011125);
+		//! original divider
+		/* 		this.xRandDivider = random(0.011, 0.01125);
+		this.yRandDivider = random(0.011, 0.01125); */
 
 		/* 	this.xRandSkipper = random(-0.0001, 0.0001);
 		this.yRandSkipper = random(-0.0001, 0.0001); */
