@@ -10,7 +10,7 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = 100;
-		this.s = random([1.25]);
+		this.s = random([1]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -107,6 +107,12 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed, xMi
 	let maxV = map(ny, xMin * width, xMax * width, 2, -2, true);
 	let minU = map(nx, yMin * height, yMax * height, -2, 2, true);
 	let minV = map(ny, xMin * width, xMax * width, -2, 2, true); */
+
+	//! center focused 3
+	/* 	let maxU = map(nx, xMin * width, xMax * width, 2, -2, true);
+	let maxV = map(ny, yMin * height, yMax * height, 2, -2, true);
+	let minU = map(nx, xMin * width, xMax * width, -2, 2, true);
+	let minV = map(ny, yMin * height, yMax * height, -2, 2, true); */
 
 	//! pNoise x SineCos
 	/* let maxU = map(oct(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1, 1), -0.005, 0.005, -4, 4, true);

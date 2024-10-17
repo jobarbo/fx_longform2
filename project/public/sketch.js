@@ -88,8 +88,8 @@ function INIT(seed) {
 	console.log("scl3", scl3);
 	let hue = random(360); */
 
-	let sclOffset1 = 1;
-	let sclOffset2 = 0.1;
+	let sclOffset1 = 2;
+	let sclOffset2 = 0.000001;
 	let sclOffset3 = 1;
 
 	console.log("sclOffset1", sclOffset1);
