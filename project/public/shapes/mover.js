@@ -140,14 +140,14 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = random(-4, -0.001); */
 
 	//! Standard Mode
-	let maxU = 1;
-	let maxV = 1;
-	let minU = -1;
-	let minV = -1;
+	let maxU = 4.01;
+	let maxV = 4.01;
+	let minU = -4;
+	let minV = -4;
 
 	//! Introverted
-	let u = map(vn, map(nx, 0, width, -4, -0.1), map(nx, 0, width, 0.1, 4), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -4, -0.1), map(ny, 0, height, 0.1, 4), minV, maxV, true);
+	let u = map(vn, map(nx, 0, width, -18, -14.1), map(nx, 0, width, 14.1, 18), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -18, -14.1), map(ny, 0, height, 14.1, 18), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, 0, width, -4, -0.1), map(ny, 0, width, 0.1, 4), minU, maxU, true);
