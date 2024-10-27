@@ -47,8 +47,8 @@ let displacement1 = 0;
 let displacement2 = 100;
 
 //let angle1 = [45, 105, 165, 225, 285, 345];
-let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
-/* let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5]; */
+/* let angle1 = [0, 45, 90, 135, 180, 225, 270, 315]; */
+let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5];
 /* let angle1 = [45, 225]; */
 //let angle1 = [45, 135, 225, 315];
 //let angle1 = [0, 90, 180, 270];
@@ -118,31 +118,7 @@ const offValues_h = [
 	// Add more if needed
 ];
  */
-
 const offValues_l = [
-	{low: 2, high: 1.2}, // case 0
-	{low: 1, high: 0.2}, // case 1
-	{low: 2.1, high: 1.3}, // case 2
-	{low: 3, high: 2.2}, // case 3
-	{low: 2.2, high: 1.4}, // case 4
-	{low: 1.1, high: 0.3}, // case 5
-	{low: 2.3, high: 1.5}, // case 6
-	{low: 3.1, high: 2.3}, // case 7
-	// Add more if needed
-];
-
-const offValues_h = [
-	{low: 2.2, high: 1}, // case 0
-	{low: 1.2, high: 0}, // case 1
-	{low: 2.3, high: 1.1}, // case 2
-	{low: 3.2, high: 2}, // case 3
-	{low: 2.4, high: 1.2}, // case 4
-	{low: 1.3, high: 0.1}, // case 5
-	{low: 2.5, high: 1.3}, // case 6
-	{low: 3.3, high: 2.1}, // case 7
-	// Add more if needed
-];
-/* const offValues_l = [
 	{low: 1, high: 0.042}, // case 0
 	{low: 2, high: 1.042}, // case 1
 	{low: 3, high: 2.042}, // case 2
@@ -186,7 +162,7 @@ const offValues_h = [
 	{low: 2.042, high: 1}, // case 17
 	{low: 1.042, high: 0}, // case 18
 	// Add more if needed
-]; */
+];
 
 function setup() {
 	features = $fx.getFeatures();
@@ -219,8 +195,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = height * 0.7;
-	pos_range_y = height * 0.7;
+	pos_range_x = height * 0.95;
+	pos_range_y = height * 0.95;
 	translate(width / 2, height / 2);
 	let sketch = drawGenerator();
 	function animate() {
@@ -321,23 +297,22 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	yoff = random(yoff_l, yoff_h);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(4, 0.6);
+	noiseDetail(5, 0.6);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 	//! Electron microscope
-	//! Electron microscope
-	let x = mapValue(noise(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true); /*
-			let y = mapValue(noise(yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-	/* 		let x = mapValue(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-			let y = mapValue(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+	/* 	let x = mapValue(noise(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+	/* let x = mapValue(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 	//!block Rect
 	/*let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-			let y = mapValue(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+		let y = mapValue(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//! block Rect 2
-	/* 		let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true); */
-	let y = mapValue(noise(yoff, yoff, xi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+	/*let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, yoff, xi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 	//!Drapery Yin Yang
 	/* let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
@@ -348,8 +323,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 	//! Jellyfish
-	/* 	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 	//! Astral Beings
 	/* let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
