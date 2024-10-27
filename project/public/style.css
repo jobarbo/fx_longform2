@@ -38,8 +38,8 @@ canvas.p5Canvas {
 	height: auto !important; /* Maintain auto height */
 	width: auto !important; /* Maintain auto width */
 	aspect-ratio: attr(data-aspect-ratio); /* Use a custom attribute for aspect ratio */
-	max-width: calc(min(100vh, 100vw) * 0.95); /* 5% smaller than the smallest axis */
-	max-height: calc(min(100vh, 100vw) * 0.95); /* 5% smaller than the smallest axis */
+	max-width: calc(min(100vh, 100vw) * 1); /* 5% smaller than the smallest axis */
+	max-height: calc(min(100vh, 100vw) * 1); /* 5% smaller than the smallest axis */
 	max-height: 100vh;
 }
 
@@ -49,14 +49,14 @@ main {
 	height: 87dvh;
 	display: flex;
 	align-items: center;
-	border: 8px solid rgb(32, 22, 0);
+	/* border: 8px solid rgb(32, 22, 0); */
 	justify-content: center;
-	box-shadow: 2.8px 2.8px 2.2px rgba(0, 0, 0, 0.118), 6.7px 6.7px 5.3px rgba(0, 0, 0, 0.119), 12.5px 12.5px 10px rgba(0, 0, 0, 0.115), 22.3px 22.3px 17.9px rgba(0, 0, 0, 0.11),
+	/*box-shadow: 2.8px 2.8px 2.2px rgba(0, 0, 0, 0.118), 6.7px 6.7px 5.3px rgba(0, 0, 0, 0.119), 12.5px 12.5px 10px rgba(0, 0, 0, 0.115), 22.3px 22.3px 17.9px rgba(0, 0, 0, 0.11),
 		41.8px 41.8px 33.4px rgba(0, 0, 0, 0.105), 100px 100px 80px rgba(0, 0, 0, 0.1);
 	position: relative;
 	transform: rotate(0) scale(1);
 	height: calc(min(100vh, 100vw) * 0.95); /* 5% smaller than the smallest axis */
-	width: calc(min(100vh, 100vw) * 0.95); /* 5% smaller than the smallest axis */
+	width: calc(min(100vh, 100vw) * 1); /* 5% smaller than the smallest axis */
 	aspect-ratio: attr(data-aspect-ratio); /* Use a custom attribute for aspect ratio */
 }
 
@@ -66,5 +66,5 @@ main::after {
 	height: 100%;
 	width: 100%;
 	position: absolute;
-	box-shadow: 4px 3px 4px 0px inset rgb(0 0 0 / 38%), 6px 7px 7.3px inset rgb(0 0 0 / 11%), 13.5px 14.2px 17.5px inset rgba(0, 0, 0, 0.041), 20px 21px 58px inset rgba(0, 0, 0, 0.025);
+	/* box-shadow: 4px 3px 4px 0px inset rgb(0 0 0 / 38%), 6px 7px 7.3px inset rgb(0 0 0 / 11%), 13.5px 14.2px 17.5px inset rgba(0, 0, 0, 0.041), 20px 21px 58px inset rgba(0, 0, 0, 0.025); */
 }
