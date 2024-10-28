@@ -13,7 +13,7 @@ function setup() {
 	// canvas setup
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1);
+	c = createCanvas(DIM, DIM * 1.4);
 	pixelDensity(2);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -49,7 +49,7 @@ function INIT(seed) {
 	scl1 = random(0.00075, 0.0015);
 	scl2 = scl1;
 	let hue = random(360);
-	for (let i = 0; i < 200000; i++) {
+	for (let i = 0; i < 50000; i++) {
 		let x = random(-0.1, 1.1) * width;
 		let y = random(-0.1, 1.1) * height;
 		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, seed));

@@ -7,7 +7,7 @@ class Mover {
 		this.sat = 0;
 		this.bri = 0;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 1 * MULTIPLIER;
+		this.s = 3 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.seed = seed;
@@ -22,7 +22,7 @@ class Mover {
 	show() {
 		//
 		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, 20);
+		fill(this.hue, this.sat, this.bri, 10);
 		//stroke(34, 40, 90,80);
 		noStroke();
 		ellipse(this.x, this.y, this.s);
