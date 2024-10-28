@@ -10,6 +10,8 @@ class Mover {
 		this.s = 3 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
+		this.a1 = a1;
+		this.a2 = a2;
 		this.seed = seed;
 		this.xRandDivider = random(0.0001, 2.01) * MULTIPLIER;
 		this.yRandDivider = random(0.0001, 2.01) * MULTIPLIER;
@@ -29,14 +31,14 @@ class Mover {
 	}
 
 	move() {
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.seed);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.a1, this.a2, this.seed);
 
 		let pos = abs(p.x) + abs(p.y);
 		/* 		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
-		this.x += (p.x / randomGaussian(0.05, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
-		this.y += (p.y / randomGaussian(0.05, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
+		this.x += (p.x / randomGaussian(0.1, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
+		this.y += (p.y / randomGaussian(0.1, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		/* 		if (this.hue < 0) {
@@ -71,31 +73,31 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, seed) {
+function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	let nx = x,
 		ny = y,
-		a1 = 1200 * MULTIPLIER,
-		a2 = 1 * MULTIPLIER,
 		scale1 = scl1,
 		scale2 = scl2,
+		amplitude1 = a1,
+		amplitude2 = a2,
 		dx,
 		dy,
 		octave = 1;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1;
-	ny += dy * a2;
+	nx += dx * amplitude1;
+	ny += dy * amplitude2;
 
 	dx = oct(nx, ny, scale1, 4, octave);
 	dy = oct(nx, ny, scale2, 3, octave);
-	nx += dx * a1;
-	ny += dy * a2;
+	nx += dx * amplitude1;
+	ny += dy * amplitude2;
 
 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1;
-	ny += dy * a2;
+	nx += dx * amplitude1;
+	ny += dy * amplitude2;
 
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);

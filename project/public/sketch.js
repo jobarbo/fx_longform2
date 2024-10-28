@@ -46,13 +46,15 @@ function draw() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.00075, 0.0015);
-	scl2 = scl1;
+	scl1 = random(0.00075, 0.0025);
+	scl2 = random(0.00075, 0.0025);
+	a1 = int(random(1, 2000) * MULTIPLIER);
+	a2 = int(random(1, 2000) * MULTIPLIER);
 	let hue = random(360);
 	for (let i = 0; i < 50000; i++) {
 		let x = random(-0.1, 1.1) * width;
 		let y = random(-0.1, 1.1) * height;
-		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, seed));
+		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, a1, a2, seed));
 	}
 
 	background(0, 0, 100);
