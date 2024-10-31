@@ -35,8 +35,8 @@ class Mover {
 		/* 		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
-		this.x += (p.x / randomGaussian(0.1, 0.00000000000000001) + randomGaussian(0, 0.00000000000000001)) * MULTIPLIER;
-		this.y += (p.y / randomGaussian(0.1, 0.00000000000000001) + randomGaussian(0, 0.00000000000000001)) * MULTIPLIER;
+		this.x += (p.x / randomGaussian(0.1, 0.0000000001) + randomGaussian(0.1, 0.00000000000000001)) * MULTIPLIER;
+		this.y += (p.y / randomGaussian(0.1, 0.0000000001) + randomGaussian(0.1, 0.00000000000000001)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		/* 		if (this.hue < 0) {
@@ -74,7 +74,7 @@ class Mover {
 function superCurve(x, y, scl1, scl2, seed) {
 	let nx = x,
 		ny = y,
-		a1 = 1,
+		a1 = 120,
 		a2 = 1,
 		scale1 = scl1,
 		scale2 = scl2,
@@ -82,7 +82,7 @@ function superCurve(x, y, scl1, scl2, seed) {
 		dy,
 		octave = 1;
 
-	/* 	dx = oct(nx, ny, scale1, 0, octave);
+	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
 	ny += dy * a2;
@@ -98,17 +98,17 @@ function superCurve(x, y, scl1, scl2, seed) {
 	ny += dy * a2;
 
 	let un = oct(nx, ny, scale1, 3, octave);
-	let vn = oct(nx, ny, scale2, 2, octave); */
-	//let u = map(un, -0.05, 0.0005, -45, 25, true);
-	//let v = map(vn, -0.0005, 0.05, -25, 45, true);
+	let vn = oct(nx, ny, scale2, 2, octave);
+	let u = map(un, -1.05, 1.05, -100, 100, true);
+	let v = map(vn, -1.05, 1.05, -100, 100, true);
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
-	let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
-	let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) + sin(x * scl2 * 0.2 + seed);
-	let ux = map(u, -0.05, 0.05, -15, 25, true);
-	let vx = map(v, -0.05, 0.05, -25, 15, true);
+	/* 	let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
+	let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) + sin(x * scl2 * 0.2 + seed); */
+	/* 	let ux = map(u, -1.05, 1.05, -15, 25, true);
+	let vx = map(v, -1.05, 1.05, -25, 15, true); */
 
-	let p = createVector(ux, vx);
+	let p = createVector(u, v);
 	return p;
 }
