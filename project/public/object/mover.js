@@ -7,7 +7,7 @@ class Mover {
 		//this.initBri = random([0, 0, 10, 20]);
 		this.initBri = random([0, 10, 20, 30, 40, 50, 60, 70, 70, 70, 80, 80, 80, 80, 90, 90, 100]);
 		this.initAlpha = 100;
-		this.initS = 0.45 * MULTIPLIER;
+		this.initS = 0.55 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -41,7 +41,7 @@ class Mover {
 		this.centerY = height;
 		this.borderX = width / 2;
 		this.borderY = height / 2.75;
-		this.uvalue = 20;
+		this.uvalue = 25;
 		this.isBordered = true;
 		this.ang1Zone = ang1Zone;
 		this.ang2Zone = ang2Zone;
@@ -67,6 +67,8 @@ class Mover {
 		this.xRandDivider = fxrand() * 6 + 0.000001;
 		this.yRandDivider = fxrand() * 6 + 0.000001;
 
+		this.s = map(frameCount, 0, maxFrames / 4, 0.6, 0.25, true) * MULTIPLIER;
+
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
@@ -74,7 +76,7 @@ class Mover {
 		this.hue += map(p.y, -1, this.uvalue, this.hueStep, -this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
 		this.sat += map(p.x, -this.uvalue, 1, -this.satStep, this.satStep, true);
-		this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
+		//this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
 		this.bri += map(p.y, -1, this.uvalue, this.briStep, -this.briStep, true);
 		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri;
 
@@ -121,8 +123,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave, uvalue) {
 	/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
 	let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
 
-	let u = map(un, -0.5, 0.5, -uv, 1, true);
-	let v = map(vn, -0.5, 0.5, -1, uv, true);
+	let u = map(un, -0.35, 0.35, -uv, 5, true);
+	let v = map(vn, -0.35, 0.35, -5, uv, true);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};

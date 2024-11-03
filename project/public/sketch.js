@@ -15,7 +15,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 150251;
+let particleNum = 450251;
 let drawing = true;
 let bgCol;
 let renderMode = 1;
@@ -51,7 +51,7 @@ function setup() {
 
 	scl1 = fxrand() * (0.0005 - 0.00052) + 0.0005;
 	scl2 = fxrand() * (0.0005 - 0.00052) + 0.0005;
-	amp1 = int(fxrand() * (2000, 3200) + 2000);
+	amp1 = int(fxrand() * (1, 3200) + 1);
 	amp2 = int(fxrand() * (2000, 3200) + 2000);
 	console.log(scl1, scl2, amp1, amp2);
 
@@ -72,7 +72,7 @@ function setup() {
 
 function draw() {
 	// put drawing code here
-	blendMode(ADD);
+	blendMode(SCREEN);
 	for (let i = 0; i < movers.length; i++) {
 		//for (let j = 0; j < 50; j++) {
 		movers[i].move();
@@ -121,7 +121,7 @@ function INIT() {
 		/* 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height; */
 
-		let initHue = hue + random(-1, 1);
+		let initHue = 190 + random(-1, 1);
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(
 			new Mover(
