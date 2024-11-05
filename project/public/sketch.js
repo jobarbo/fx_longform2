@@ -15,7 +15,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 50251;
+let particleNum = 150251;
 let drawing = true;
 let bgCol;
 let renderMode = 1;
@@ -72,7 +72,7 @@ function setup() {
 
 function draw() {
 	// put drawing code here
-	blendMode(ADD);
+	blendMode(SCREEN);
 	for (let i = 0; i < movers.length; i++) {
 		//for (let j = 0; j < 50; j++) {
 		movers[i].move();

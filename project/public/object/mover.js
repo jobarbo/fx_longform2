@@ -11,10 +11,10 @@ class Mover {
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
-		this.bri = this.initBri;
+		this.bri = 60;
 		this.a = this.initAlpha;
-		this.hueStep = 16;
-		this.satStep = 15;
+		this.hueStep = 1;
+		this.satStep = 2;
 		this.briStep = 5;
 		this.scl1Init = scl1;
 		this.scl2Init = scl2;
@@ -60,14 +60,14 @@ class Mover {
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 302);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distCircle, -400, 0, 1, 8000, true));
-		this.ang2 = int(map(distCircle, -400, 0, 3000, 1, true));
-		/* 		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
-		this.scl2 = 0.002; */
+		this.ang1 = int(map(distCircle, -1400, 0, 1, 3000, true));
+		this.ang2 = int(map(distCircle, -1400, 0, 3000, 1, true));
+		this.scl1 = map(distCircle, -1300, -2, 0.05, 0.003, true);
+		this.scl2 = map(distCircle, -1300, -2, 0.002, 0.001, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		this.xRandDivider = fxrand() * 6;
-		this.yRandDivider = fxrand() * 6;
+		this.xRandDivider = fxrand() * 1;
+		this.yRandDivider = fxrand() * 1;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
@@ -82,7 +82,7 @@ class Mover {
 
 		this.a = map(abs(distCircle), 0, 200, 100, 0, true);
 
-		/* 		if (this.isBordered) {
+		/* if (this.isBordered) {
 			if (distCircle > fxrand() * 8 - 4) {
 				let r = fxrand() * 2 * PI;
 				this.x = this.centerX + cos(r) * random(298, 304);
@@ -122,8 +122,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
 	let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
 
-	let u = map(un, -0.5, 0.5, -5, 5, true);
-	let v = map(vn, -0.5, 0.5, -5, 5, true);
+	let u = map(un, -0.5, 0.5, -15, 15, true);
+	let v = map(vn, -0.5, 0.5, -15, 15, true);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
