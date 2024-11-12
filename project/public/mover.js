@@ -6,8 +6,9 @@ class Mover {
 		this.hue = hue;
 		this.sat = 0;
 		this.bri = 0;
+		this.a = 100;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 0.6 * MULTIPLIER;
+		this.s = 1 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.a1 = a1;
@@ -24,7 +25,7 @@ class Mover {
 	show() {
 		//
 		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, 100);
+		fill(this.hue, this.sat, this.bri, this.a);
 		//stroke(34, 40, 90,80);
 		noStroke();
 		ellipse(this.x, this.y, this.s);
@@ -41,7 +42,8 @@ class Mover {
 		this.y += (p.y / randomGaussian(1.1, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
-		this.s = map(abs(pos), 10, 40, 0, 1 * MULTIPLIER, true);
+		this.s = map(abs(pos), 10, 40, 1, 2 * MULTIPLIER, true);
+		this.a = map(abs(pos), 20, 80, 10, 100, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
@@ -70,9 +72,21 @@ class Mover {
 		// if out of bounds, reset to random position inside canvas
 		if (this.x < -0.1 * width || this.x > 1.1 * width || this.y < -0.1 * height || this.y > 1.1 * height) {
 			this.s = 0;
-			this.x = random(-0, 1) * width;
-			this.y = random(-0, 1) * height;
+			this.x = random(-0.1, 1.1) * width;
+			this.y = random(-0.1, 1.1) * height;
 		}
+
+		/* 		// Check if out of bounds and reposition to the opposite side
+		if (this.x < -0.1 * width) {
+			this.x = 1.1 * width; // Move to the right side
+		} else if (this.x > 1.1 * width) {
+			this.x = -0.1 * width; // Move to the left side
+		}
+		if (this.y < -0.1 * height) {
+			this.y = 1.1 * height; // Move to the bottom side
+		} else if (this.y > 1.1 * height) {
+			this.y = -0.1 * height; // Move to the top side
+		} */
 	}
 }
 
