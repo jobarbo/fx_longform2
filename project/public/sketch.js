@@ -7,7 +7,7 @@ let yMin;
 let yMax;
 let startTime;
 //let maxFrames = 64 * 500000;
-let maxFrames = 172 * 1;
+let maxFrames = 100 * 1;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
