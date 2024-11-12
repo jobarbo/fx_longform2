@@ -109,7 +109,7 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
-	let un = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 10.5 + seed);
+	let un = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 55.5 + seed);
 	let vn = sin(x * scl1 + seed) + cos(x * scl2 + seed) - sin(x * scl2 * 0.05 + seed);
 
 	let u = map(un, -0.05, 0.0005, -25, 15, true);
