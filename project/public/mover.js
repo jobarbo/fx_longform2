@@ -38,7 +38,7 @@ class Mover {
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
 		this.x += (p.x / randomGaussian(0.02, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
-		this.y += (p.y / randomGaussian(10.1, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
+		this.y += (p.y / randomGaussian(1.1, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		this.s = map(abs(pos), 10, 40, 0, 1 * MULTIPLIER, true);
@@ -102,15 +102,19 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	nx += dx * amplitude1;
 	ny += dy * amplitude2;
 
-	let un = oct(nx, ny, scale1, 3, octave);
-	let vn = oct(nx, ny, scale2, 2, octave);
-	let u = map(un, -0.05, 0.0005, -25, 15, true);
-	let v = map(vn, -0.0005, 0.05, -15, 25, true);
+	/* 	let un = oct(nx, ny, scale1, 3, octave);
+	let vn = oct(nx, ny, scale2, 2, octave); */
+	/* 	let u = map(un, -0.05, 0.0005, -25, 15, true);
+	let v = map(vn, -0.0005, 0.05, -15, 25, true); */
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
-	//let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
-	//let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) - sin(x * scl2 * 0.2 + seed);
+	let un = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 10.5 + seed);
+	let vn = sin(x * scl1 + seed) + cos(x * scl2 + seed) - sin(x * scl2 * 0.05 + seed);
+
+	let u = map(un, -0.05, 0.0005, -25, 15, true);
+	let v = map(vn, -0.0005, 0.05, -15, 25, true);
+
 	let p = createVector(u, v);
 	return p;
 }
