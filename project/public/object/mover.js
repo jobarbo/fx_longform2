@@ -2,6 +2,7 @@ class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, scl1Zone, scl2Zone, ang1Zone, ang2Zone) {
 		this.x = x;
 		this.y = y;
+
 		this.initHue = hue;
 		this.initSat = random([50, 60, 70, 80, 90, 100]);
 		//this.initBri = random([0, 0, 10, 20]);
@@ -59,15 +60,19 @@ class Mover {
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 602);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distCircle, -300, -2, 700, 4000, true));
-		this.ang2 = 2000;
-		this.scl1 = map(distCircle, -300, -2, 0.005, 0.003, true);
+		this.ang1 = int(map(abs(distCircle), 0, 1600, 4000, 1500, true));
+		this.ang2 = 1000;
+		this.scl1 = map(abs(distCircle), 0, 1600, 0.007, 0.003, true);
+		//this.scl2 = map(abs(distCircle), 0, 300, 0.003, 0.01, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.uvalue);
-		this.xRandDivider = fxrand() * 6 + 0.000001;
-		this.yRandDivider = fxrand() * 6 + 0.000001;
+		this.xRandDivider = fxrand() * 8;
+		this.yRandDivider = fxrand() * 6;
 
-		this.s = map(frameCount, 0, maxFrames / 4, 0.6, 0.25, true) * MULTIPLIER;
+		/* 		this.xRandDivider = randomGaussian(6, 6) + 0.000001;
+		this.yRandDivider = randomGaussian(6, 6) + 0.000001; */
+
+		this.s = map(distCircle, 0, -600, 0.6, 0.45, true) * MULTIPLIER;
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
@@ -76,9 +81,9 @@ class Mover {
 		this.hue += map(p.y, -1, this.uvalue, this.hueStep, -this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
 		this.sat += map(p.x, -this.uvalue, 1, -this.satStep, this.satStep, true);
-		//this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
+		this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
 		this.bri += map(p.y, -1, this.uvalue, this.briStep, -this.briStep, true);
-		this.bri = this.bri > 100 ? 100 : this.bri < 0 ? 0 : this.bri;
+		this.bri = this.bri > 70 ? 70 : this.bri < 40 ? 40 : this.bri;
 
 		this.a = map(distCircle, 0, 3, 100, 0, true);
 
@@ -123,8 +128,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave, uvalue) {
 	/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
 	let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
 
-	let u = map(un, -0.35, 0.35, -uv, 5, true);
-	let v = map(vn, -0.35, 0.35, -5, uv, true);
+	let u = map(un, -0.035, 0.035, -uv, 3.1, true);
+	let v = map(vn, -0.035, 0.035, -3.1, uv, true);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};

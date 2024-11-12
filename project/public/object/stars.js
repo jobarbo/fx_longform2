@@ -26,7 +26,7 @@ class Stars {
 	}
 
 	move(xi, yi) {
-		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 2202 * MULTIPLIER);
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 2402 * MULTIPLIER);
 		this.x = this.initX;
 		this.y = this.initY;
 
@@ -38,6 +38,6 @@ class Stars {
 		this.x += skipper.x * MULTIPLIER;
 		this.y += skipper.y * MULTIPLIER;
 
-		this.a = map(distCircle, 0, 3000 * MULTIPLIER, 0, 100, true);
+		this.a = map(distCircle, 0, 200 * MULTIPLIER, 0, 100, true);
 	}
 }

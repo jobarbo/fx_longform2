@@ -7,7 +7,7 @@ let yMin;
 let yMax;
 let startTime;
 //let maxFrames = 64 * 500000;
-let maxFrames = 72 * 1;
+let maxFrames = 172 * 1;
 let currentFrame = 0;
 let DEFAULT_SIZE = 3600;
 let W = window.innerWidth;
@@ -15,7 +15,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 450251;
+let particleNum = 100251;
 let drawing = true;
 let bgCol;
 let renderMode = 1;
@@ -101,7 +101,7 @@ function INIT() {
 	console.log("INIT");
 	let hue = fxrand() * 360;
 
-	//drawTexture(hue);
+	// Initialize movers array
 	movers = [];
 
 	console.log(scl1, scl2, amp1, amp2);
@@ -121,7 +121,7 @@ function INIT() {
 		/* 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height; */
 
-		let initHue = 190 + random(-1, 1);
+		let initHue = int(hue + randomGaussian(hue, 10));
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(
 			new Mover(
