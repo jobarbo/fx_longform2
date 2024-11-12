@@ -22,6 +22,7 @@ function setup() {
 }
 
 function draw() {
+	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
 		for (let t = 0; t < 1; t++) {
 			movers[i].show();
@@ -57,5 +58,5 @@ function INIT(seed) {
 		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, a1, a2, seed));
 	}
 
-	background(30, 5, 100);
+	background(30, 5, 5);
 }

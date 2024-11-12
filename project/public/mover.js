@@ -5,10 +5,10 @@ class Mover {
 		this.initHue = hue;
 		this.hue = hue;
 		this.sat = 0;
-		this.bri = 0;
+		this.bri = 100;
 		this.a = 100;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 1 * MULTIPLIER;
+		this.s = 0 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.a1 = a1;
@@ -42,8 +42,8 @@ class Mover {
 		this.y += (p.y / randomGaussian(1.1, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
-		this.s = map(abs(pos), 10, 40, 0.2, 1 * MULTIPLIER, true);
-		this.a = map(abs(pos), 20, 80, 50, 100, true);
+		this.s = map(abs(pos), 20, 40, 0.2, 0.6 * MULTIPLIER, true);
+		this.a = map(abs(pos), 20, 80, 10, 100, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
