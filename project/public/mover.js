@@ -8,7 +8,7 @@ class Mover {
 		this.bri = 100;
 		this.a = 100;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 0 * MULTIPLIER;
+		this.s = 1 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.a1 = a1;
@@ -42,7 +42,7 @@ class Mover {
 		this.y += (p.y / randomGaussian(1.1, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
-		this.s = map(abs(pos), 20, 40, 0.2, 0.6 * MULTIPLIER, true);
+		this.s = map(abs(pos), 20, 40, 0.2, 1 * MULTIPLIER, true);
 		this.a = map(abs(pos), 20, 80, 10, 100, true);
 
 		/* 		if (this.hue < 0) {
@@ -101,7 +101,7 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 		dy,
 		octave = 1;
 
-	/* 	dx = oct(nx, ny, scale1, 0, octave);
+	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * amplitude1;
 	ny += dy * amplitude2;
@@ -114,7 +114,7 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * amplitude1;
-	ny += dy * amplitude2; */
+	ny += dy * amplitude2;
 
 	/* 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave); */
@@ -127,8 +127,8 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	let noiseScale = 0.2; // Scale for noise function
 
 	// Modify the calculations to include time and noise
-	let un = sin(y * scl1 + seed + time) + cos(y * scl2 + seed + time) + sin(y * scl2 * 50.5 + seed + time) + noise(x * noiseScale, y * noiseScale);
-	let vn = sin(x * scl1 + seed + time) + cos(x * scl2 + seed + time) - sin(x * scl2 * 0.05 + seed + time) + noise(x * noiseScale, y * noiseScale);
+	let un = sin(y * scl1 + seed + time) + cos(y * scl2 + seed + time) + sin(y * scl2 * 50.5 + seed + time) + oct(ny * scl1 + seed + time, nx * scl2 + seed + time, noiseScale, 2, 1);
+	let vn = sin(x * scl1 + seed + time) + cos(x * scl2 + seed + time) - sin(x * scl2 * 0.05 + seed + time) + oct(nx * scl2 + seed + time, ny * scl1 + seed + time, noiseScale, 3, 1);
 
 	let u = map(un, -0.05, 0.0005, -25, 15, true);
 	let v = map(vn, -0.0005, 0.05, -15, 25, true);
