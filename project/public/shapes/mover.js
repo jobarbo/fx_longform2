@@ -1,21 +1,5 @@
 class Mover {
-	constructor(
-		x,
-		y,
-		hue,
-		scl1,
-		scl2,
-		scl3,
-		sclOffset1,
-		sclOffset2,
-		sclOffset3,
-		xMin,
-		xMax,
-		yMin,
-		yMax,
-		isBordered,
-		seed
-	) {
+	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed) {
 		this.startX = x;
 		this.startY = y;
 		this.x = x;
@@ -51,7 +35,7 @@ class Mover {
 		this.isBordered = true;
 		this.randBorderAlpha = 10;
 		this.zombie = false;
-		this.randRespawn = 10;
+		this.randRespawn = 1;
 	}
 
 	show() {
@@ -70,17 +54,7 @@ class Mover {
 	move() {
 		this.px = this.x;
 		this.py = this.y;
-		let p = superCurve(
-			this.x,
-			this.y,
-			this.scl1,
-			this.scl2,
-			this.scl3,
-			this.sclOffset1,
-			this.sclOffset2,
-			this.sclOffset3,
-			this.seed
-		);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.seed);
 		// after 1 second, change the scale
 
 		//! crayon effect too
@@ -100,20 +74,14 @@ class Mover {
 			this.s = 0.1;
 		}
 		if (this.zombie) {
-			this.s += 0.1;
+			this.s += 0.001;
 			if (this.a < 100) {
 				this.a += 10;
 			} else {
 				this.a = 100;
 				this.zombie = false;
 			}
-		} else if (
-			this.isBordered &&
-			(this.x < this.xMin * width ||
-				this.x > this.xMax * width ||
-				this.y < this.yMin * height ||
-				this.y > this.yMax * height)
-		) {
+		} else if (this.isBordered && (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height)) {
 			this.a -= this.randBorderAlpha;
 			if (this.a < 0) {
 				this.x = this.startX + random(-this.randRespawn, this.randRespawn);
@@ -137,14 +105,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		noiseScale1 = 0.05,
 		noiseScale2 = 0.05,
 		noiseScale3 = 0.05,
-		un =
-			sin(nx * (scale1 * scaleOffset1)) +
-			cos(nx * (scale2 * scaleOffset2)) -
-			sin(nx * (scale3 * scaleOffset3)),
-		vn =
-			cos(ny * (scale1 * scaleOffset1)) +
-			sin(ny * (scale2 * scaleOffset2)) -
-			cos(ny * (scale3 * scaleOffset3));
+		un = sin(nx * (scale1 * scaleOffset1)) + cos(nx * (scale2 * scaleOffset2)) - sin(nx * (scale3 * scaleOffset3)),
+		vn = sin(ny * (scale1 * scaleOffset1)) + cos(ny * (scale2 * scaleOffset2)) + sin(ny * (scale3 * scaleOffset3));
 	//! center focused
 	/* 	let maxU = map(ny, 0, height, 3, -3, true);
 	let maxV = map(nx, 0, width, 3, -3, true);
@@ -208,22 +170,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let v = map(un, map(ny, 0, height, -4, -0.001), map(ny, 0, height, 0.001, 4), minV, maxV, true); */
 
 	//! Extroverted
-	let u = map(
-		vn,
-		map(nx, 0, width, 4, 0.1),
-		map(nx, 0, width, -0.1, -4),
-		maxU,
-		minU,
-		true
-	);
-	let v = map(
-		un,
-		map(ny, 0, height, 4, 0.1),
-		map(ny, 0, height, -0.1, -4),
-		maxV,
-		minV,
-		true
-	);
+	let u = map(vn, map(nx, 0, width, 4, 0.1), map(nx, 0, width, -0.1, -4), maxU, minU, true);
+	let v = map(un, map(ny, 0, height, 4, 0.1), map(ny, 0, height, -0.1, -4), maxV, minV, true);
 
 	//! Equilibrium
 	/* 	let u = map(vn, -3, 3, minU, maxU, true);
