@@ -10,7 +10,7 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.s = 1;
+		this.s = 0;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.ang1 = ang1;
@@ -86,7 +86,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 		scale2 = scl2,
 		dx,
 		dy,
-		octaves = 4;
+		octaves = 2;
 
 	dx = oct(nx, ny, scale1, 2, octaves);
 	dy = oct(nx, ny, scale2, 3, octaves);
@@ -109,8 +109,12 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	let u = map(un, -0.5, 0.5, -4, 4, true);
 	let v = map(vn, -0.5, 0.5, -4, 4, true);
 
-	/* 	let u = sin(ny * scale1 + seed) + cos(ny * scale2 + seed) + sin(ny * scale2 * 0.2 + seed);
-	let v = sin(nx * scale1 + seed) + cos(nx * scale2 + seed) - sin(nx * scale2 * 0.2 + seed); */
+	/* 	let un = sin(ny * scale1) + cos(ny * scale2) + sin(ny * scale2 * 5);
+	let vn = sin(nx * scale1) + cos(nx * scale2) - sin(nx * scale2 * 5);
+
+	let u = map(un, -1.5, 1.5, -4, 4, true);
+	let v = map(vn, -1.5, 1.5, -4, 4, true); */
+
 	let p = createVector(u, v);
 	return p;
 }

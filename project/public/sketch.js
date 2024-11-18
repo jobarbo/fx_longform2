@@ -59,7 +59,7 @@ function INIT(seed) {
 	scl1 = random(0.001, 0.003);
 	scl2 = random(0.001, 0.003);
 	ang1 = int(random(1200));
-	ang2 = int(random(10000));
+	ang2 = int(random(20000));
 
 	xMin = 0.15;
 	xMax = 0.85;
