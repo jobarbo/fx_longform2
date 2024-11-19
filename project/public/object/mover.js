@@ -41,17 +41,19 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed);
 
-		this.xRandDivider = random([0.1, 0.5, 0.5, 1, 1, 1]);
-		this.yRandDivider = random([0.1, 0.5, 0.5, 1, 1, 1]);
-		this.xRandSkipper = 0;
-		this.yRandSkipper = 0;
+		/* 		this.xRandDivider = random([0.1, 0.5, 0.5, 1, 1, 1]);
+		this.yRandDivider = random([0.1, 0.5, 0.5, 1, 1, 1]); */
+		this.xRandDivider = 0.051;
+		this.yRandDivider = 0.051;
+		this.xRandSkipper = random(-1, 1);
+		this.yRandSkipper = random(-1, 1);
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
 		let alpha_dist = dist(this.x, this.y, width / 2, height / 2);
 
-		this.s = map(abs(p.x), 0, 4, 2, 1, true);
+		this.s = map(abs(p.x), 0, 4, 2, 0.01, true);
 		this.a = map(abs(p.x), 0, 4, this.max_a, this.min_a, true);
 		this.max_a = map(alpha_dist, width / 4, width / 2.1, 30, 0, true);
 		this.min_a = map(alpha_dist, width / 4, width / 2.1, 10, 0, true);
@@ -86,7 +88,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 		scale2 = scl2,
 		dx,
 		dy,
-		octaves = 2;
+		octaves = 6;
 
 	dx = oct(nx, ny, scale1, 2, octaves);
 	dy = oct(nx, ny, scale2, 3, octaves);
@@ -106,8 +108,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	let un = oct(nx, ny, scale1, 3, octaves);
 	let vn = oct(nx, ny, scale2, 0, octaves);
 
-	let u = map(un, -0.5, 0.5, -4, 4, true);
-	let v = map(vn, -0.5, 0.5, -4, 4, true);
+	let u = map(un, -0.5, 0.5, -0.1, 0.1, true);
+	let v = map(vn, -0.5, 0.5, -0.1, 0.1, true);
 
 	/* 	let un = sin(ny * scale1) + cos(ny * scale2) + sin(ny * scale2 * 5);
 	let vn = sin(nx * scale1) + cos(nx * scale2) - sin(nx * scale2 * 5);
