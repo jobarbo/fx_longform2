@@ -60,9 +60,9 @@ class Mover {
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 602);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(abs(distCircle), 0, 1600, 4000, 1500, true));
-		this.ang2 = 1000;
-		this.scl1 = map(abs(distCircle), 0, 1600, 0.007, 0.003, true);
+		this.ang1 = int(map(distCircle, -800, -0, 700, 4000, true));
+		this.ang2 = 2000;
+		this.scl1 = map(distCircle, -800, 0, 0.005, 0.003, true);
 		//this.scl2 = map(abs(distCircle), 0, 300, 0.003, 0.01, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.uvalue);
