@@ -39,10 +39,10 @@ class Mover {
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
 		this.x += (p.x / randomGaussian(0.02, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
-		this.y += (p.y / randomGaussian(1.1, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
+		this.y += (p.y / randomGaussian(0.02, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
-		this.s = map(abs(pos), 20, 40, 0.2, 1 * MULTIPLIER, true);
+		this.s = map(abs(pos), 20, 40, 1, 1, true) * MULTIPLIER;
 		this.a = map(abs(pos), 20, 80, 10, 100, true);
 
 		/* 		if (this.hue < 0) {
@@ -124,11 +124,11 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
 	let time = millis() * 0.00000001; // Introduce a time variable for dynamic movement
-	let noiseScale = 0.2; // Scale for noise function
+	let noiseScale = 0.00000000000001; // Scale for noise function
 
 	// Modify the calculations to include time and noise
-	let un = sin(y * scl1 + seed + time) + cos(y * scl2 + seed + time) + sin(y * scl2 * 50.5 + seed + time) + oct(ny * scl1 + seed + time, nx * scl2 + seed + time, noiseScale, 2, 1);
-	let vn = sin(x * scl1 + seed + time) + cos(x * scl2 + seed + time) - sin(x * scl2 * 0.05 + seed + time) + oct(nx * scl2 + seed + time, ny * scl1 + seed + time, noiseScale, 3, 1);
+	let un = sin(ny * scl1 + seed + time) - cos(ny * scl2 + seed + time) + sin(ny * scl1 * 50.5 + seed + time) + oct(ny * scl1 + seed + time, ny * scl2 + seed + time, noiseScale, 2, 1);
+	let vn = sin(nx * scl2 + seed + time) + cos(nx * scl1 + seed + time) - sin(nx * scl2 * 0.05 + seed + time) + oct(nx * scl2 + seed + time, nx * scl1 + seed + time, noiseScale, 3, 1);
 
 	let u = map(un, -0.05, 0.0005, -25, 15, true);
 	let v = map(vn, -0.0005, 0.05, -15, 25, true);
