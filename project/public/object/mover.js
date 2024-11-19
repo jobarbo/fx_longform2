@@ -43,20 +43,20 @@ class Mover {
 
 		/* 		this.xRandDivider = random([0.1, 0.5, 0.5, 1, 1, 1]);
 		this.yRandDivider = random([0.1, 0.5, 0.5, 1, 1, 1]); */
-		this.xRandDivider = 0.051;
-		this.yRandDivider = 0.051;
-		this.xRandSkipper = random(-1, 1);
-		this.yRandSkipper = random(-1, 1);
+		this.xRandDivider = randomGaussian(2.5, 3);
+		this.yRandDivider = randomGaussian(2.5, 3);
+		this.xRandSkipper = randomGaussian(0, 0);
+		this.yRandSkipper = randomGaussian(0, 0);
 
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
 		let alpha_dist = dist(this.x, this.y, width / 2, height / 2);
 
-		this.s = map(abs(p.x), 0, 4, 2, 0.01, true);
+		this.s = map(abs(p.x), 0, 4, 0.8, 0.8, true);
 		this.a = map(abs(p.x), 0, 4, this.max_a, this.min_a, true);
-		this.max_a = map(alpha_dist, width / 4, width / 2.1, 30, 0, true);
-		this.min_a = map(alpha_dist, width / 4, width / 2.1, 10, 0, true);
+		this.max_a = map(alpha_dist, width / 4, width / 2.1, 100, 0, true);
+		this.min_a = map(alpha_dist, width / 4, width / 2.1, 100, 0, true);
 		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
 		this.sat = map(p.x, -4, 4, 20, 60, true);
@@ -108,8 +108,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	let un = oct(nx, ny, scale1, 3, octaves);
 	let vn = oct(nx, ny, scale2, 0, octaves);
 
-	let u = map(un, -0.5, 0.5, -0.1, 0.1, true);
-	let v = map(vn, -0.5, 0.5, -0.1, 0.1, true);
+	let u = map(un, -1, 1, -134, 134, true);
+	let v = map(vn, -1, 1, -134, 134, true);
 
 	/* 	let un = sin(ny * scale1) + cos(ny * scale2) + sin(ny * scale2 * 5);
 	let vn = sin(nx * scale1) + cos(nx * scale2) - sin(nx * scale2 * 5);
@@ -117,6 +117,6 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed) {
 	let u = map(un, -1.5, 1.5, -4, 4, true);
 	let v = map(vn, -1.5, 1.5, -4, 4, true); */
 
-	let p = createVector(u, v);
+	let p = createVector(u, u);
 	return p;
 }
