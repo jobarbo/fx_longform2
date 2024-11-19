@@ -59,8 +59,8 @@ class Mover {
 		this.min_a = map(alpha_dist, width / 4, width / 2.1, 100, 0, true);
 		this.hue = map(p.x, -4, 4, this.initHue - 60, this.initHue + 60);
 		this.hue = this.hue > 360 ? this.hue - 360 : this.hue < 0 ? this.hue + 360 : this.hue;
-		this.sat = map(p.x, -4, 4, 20, 60, true);
-		this.bri = map(p.x, -4, 4, 20, 10, true);
+		this.sat = map(p.x, -4, 4, 0, 0, true);
+		this.bri = map(p.x, -4, 4, 20, 0, true);
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {
