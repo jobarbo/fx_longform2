@@ -62,13 +62,13 @@ class Mover {
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		this.ang1 = int(map(distCircle, -800, -0, 700, 6000, true));
-		this.ang2 = int(map(distCircle, -800, -0, 6000, 700, true));
+		this.ang2 = 1000;
 		this.scl1 = map(distCircle, -800, 0, 0.005, 0.003, true);
 		//this.scl2 = map(abs(distCircle), 0, 300, 0.003, 0.01, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.uvalue);
-		this.xRandDivider = fxrand() * 8;
-		this.yRandDivider = fxrand() * 6;
+		this.xRandDivider = fxrand() * map(distCircle, -200, 0, 8, 12, true);
+		this.yRandDivider = fxrand() * map(distCircle, -200, 0, 6, 10, true);
 
 		/* 		this.xRandDivider = randomGaussian(6, 6) + 0.000001;
 		this.yRandDivider = randomGaussian(6, 6) + 0.000001; */
