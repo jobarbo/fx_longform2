@@ -121,7 +121,7 @@ function INIT() {
 		/* 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height; */
 
-		let initHue = int(hue + randomGaussian(hue, 10));
+		let initHue = int(hue);
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(
 			new Mover(

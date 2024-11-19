@@ -2,7 +2,8 @@ class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, scl1Zone, scl2Zone, ang1Zone, ang2Zone) {
 		this.x = x;
 		this.y = y;
-
+		this.startX = x;
+		this.startY = y;
 		this.initHue = hue;
 		this.initSat = random([50, 60, 70, 80, 90, 100]);
 		//this.initBri = random([0, 0, 10, 20]);
@@ -60,8 +61,8 @@ class Mover {
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 602);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = int(map(distCircle, -800, -0, 700, 4000, true));
-		this.ang2 = 2000;
+		this.ang1 = int(map(distCircle, -800, -0, 700, 6000, true));
+		this.ang2 = int(map(distCircle, -800, -0, 6000, 700, true));
 		this.scl1 = map(distCircle, -800, 0, 0.005, 0.003, true);
 		//this.scl2 = map(abs(distCircle), 0, 300, 0.003, 0.01, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
@@ -83,12 +84,15 @@ class Mover {
 		this.sat += map(p.x, -this.uvalue, 1, -this.satStep, this.satStep, true);
 		this.sat = this.sat > 100 ? 0 : this.sat < 0 ? 100 : this.sat;
 		this.bri += map(p.y, -1, this.uvalue, this.briStep, -this.briStep, true);
-		this.bri = this.bri > 70 ? 70 : this.bri < 40 ? 40 : this.bri;
+		this.bri = this.bri > 60 ? 60 : this.bri < 30 ? 30 : this.bri;
 
 		this.a = map(distCircle, 0, 3, 100, 0, true);
 
 		if (this.isBordered) {
 			if (distCircle > fxrand() * 8 - 4) {
+				this.hue = this.initHue;
+				this.sat = this.initSat;
+				this.bri = this.initBri;
 				let r = fxrand() * 2 * PI;
 				this.x = this.centerX + cos(r) * random(598, 602);
 				this.y = this.centerY + sin(r) * random(598, 602);
