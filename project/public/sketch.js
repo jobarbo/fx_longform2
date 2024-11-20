@@ -48,9 +48,9 @@ function draw() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.00075, 0.001);
-	scl2 = random(0.00075, 0.001);
-	a1 = int(random(1, 1100) * MULTIPLIER);
+	scl1 = random(0.00075, 0.002);
+	scl2 = random(0.00075, 0.002);
+	a1 = int(random(1, 500) * MULTIPLIER);
 	a2 = int(random(1, 11000) * MULTIPLIER);
 	let hue = random(360);
 	for (let i = 0; i < 100000; i++) {
