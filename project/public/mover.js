@@ -99,7 +99,7 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 		amplitude2 = a2,
 		dx,
 		dy,
-		octave = 1;
+		octave = 6;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
@@ -123,16 +123,16 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
-	let time = millis() * 0.00000001; // Introduce a time variable for dynamic movement
+	let time = millis() * 0.0001; // Introduce a time variable for dynamic movement
 	let noiseScale = 0.00000000000001; // Scale for noise function
 
 	// Modify the calculations to include time and noise
-	let un = sin(ny * scl1 + seed + time) + cos(ny * scl2 + seed + time) + sin(ny * scl1 * 50.05 + seed + time) + oct(ny * scl1 + seed + time, ny * scl2 + seed + time, noiseScale, 2, 1);
-	let vn = sin(nx * scl2 + seed + time) + cos(nx * scl1 + seed + time) + sin(nx * scl2 * 50.05 + seed + time) + oct(nx * scl2 + seed + time, nx * scl1 + seed + time, noiseScale, 3, 1);
+	let un = sin(ny * scl1 + seed + time) + cos(ny * scl2 + seed + time) + sin(ny * scl1 * 0.5 + seed + time) + oct(ny * scl1 + seed + time, ny * scl2 + seed + time, noiseScale, 2, 1);
+	let vn = sin(nx * scl2 + seed + time) + cos(nx * scl1 + seed + time) + sin(nx * scl2 * 120.05 + seed + time) + oct(nx * scl2 + seed + time, nx * scl1 + seed + time, noiseScale, 3, 1);
 
 	let u = map(un, -0.05, 0.0005, -25, 15, true);
 	let v = map(vn, -0.0005, 0.05, -15, 25, true);
 
-	let p = createVector(u, v);
+	let p = createVector(u, u);
 	return p;
 }
