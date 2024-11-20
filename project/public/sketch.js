@@ -50,8 +50,8 @@ function INIT(seed) {
 	movers = [];
 	scl1 = random(0.00075, 0.0025);
 	scl2 = random(0.00075, 0.0025);
-	a1 = int(random(1, 1) * MULTIPLIER);
-	a2 = int(random(1, 2000) * MULTIPLIER);
+	a1 = int(random(1, 1100) * MULTIPLIER);
+	a2 = int(random(1, 11000) * MULTIPLIER);
 	let hue = random(360);
 	for (let i = 0; i < 100000; i++) {
 		let x = random(-0.1, 1.1) * width;
