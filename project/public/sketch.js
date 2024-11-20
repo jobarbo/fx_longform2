@@ -70,7 +70,7 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(40000 / angle1.length);
+let particle_num = Math.floor(10000 / angle1.length);
 
 //let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 let cycle = 10000;
@@ -297,7 +297,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	yoff = random(yoff_l, yoff_h);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(5, 0.6);
+	noiseDetail(5, 0.5);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -323,12 +323,15 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 	//! Jellyfish
-	/* 	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+	let zxoff = ZZ(xoff, 0.001, 0.06, 2.3);
+	let zyoff = ZZ(yoff, 0.001, 0.06, 2.3);
+	let x = mapValue(noise(zxoff, zxoff, zyoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(zyoff, zyoff, zxoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 	//! Jellyfish 2
-	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+
+	/* 	let x = mapValue(noise(zxoff, random([zxoff, yi]), zyoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(zyoff, random([zyoff, yi]), zxoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//! Astral Beings
 	/* let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
