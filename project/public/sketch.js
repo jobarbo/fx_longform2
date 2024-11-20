@@ -287,6 +287,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	for (let s = 0; s < particle_num; s++) {
 		xoff = random(xoff_l, xoff_h);
 		yoff = random(yoff_l, yoff_h);
+		xoff = ZZ(xoff, 10.15, -0.001, 0.001);
+		yoff = ZZ(yoff, 10.15, -0.001, 0.001);
 		//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 		//let ni = map(nd, 1, 6, 0.7, 0.4, true);
 		noiseDetail(4, 0.5);
