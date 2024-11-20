@@ -42,8 +42,8 @@ class Mover {
 		this.y += (p.y / randomGaussian(10.5, 2.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
-		this.s = map(abs(pos), 20, 40, 1, 1, true) * MULTIPLIER;
-		this.a = map(abs(pos), 20, 80, 50, 100, true);
+		this.s = map(abs(pos), 20, 40, 0.1, 1, true) * MULTIPLIER;
+		this.a = map(abs(pos), 20, 80, 10, 100, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
