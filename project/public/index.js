@@ -1197,11 +1197,18 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 3, octave);
-	let vn = oct(nx, ny, scale2, 2, octave);
+	/* 	let un = oct(nx, ny, scale1, 3, octave);
+	let vn = oct(ny, nx, scale2, 2, octave); */
+	let time = millis() * 0.00000001; // Introduce a time variable for dynamic movement
+	let noiseScale = 0.00000000000001; // Scale for noise function
+	let sun = sin(ny * scl1 + seed + time) + cos(ny * scl2 + seed + time) + sin(ny * scl1 * 500.05 + seed + time) + oct(ny * scl1 + seed + time, ny * scl2 + seed + time, noiseScale, 2, 1);
+	let cvn = sin(nx * scl2 + seed + time) + cos(nx * scl1 + seed + time) + sin(nx * scl2 * 10.05 + seed + time) + oct(nx * scl2 + seed + time, nx * scl1 + seed + time, noiseScale, 3, 1);
 
-	let u = mapValue(un, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], true);
-	let v = mapValue(vn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], true);
+	let zun = ZZ(sun, 0.01, 0.5, 1.005);
+	let zvn = ZZ(cvn, 0.01, 0.5, 1.005);
+
+	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], true);
+	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], true);
 
 	return {x: u, y: v};
 }
