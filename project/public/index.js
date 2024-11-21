@@ -513,10 +513,12 @@ function oct(x, y, s, i, octaves = 1) {
 
 // SAVE CANVAS
 // if cmd + s is pressed, save the canvas'
+// if cmd + s is pressed, save the canvas'
 function saveCanvas(event) {
+	console.log("saveCanvas function called");
 	if (event.key === "s" && (event.metaKey || event.ctrlKey)) {
+		console.log("Save shortcut detected");
 		saveArtwork();
-		// Prevent the browser from saving the page
 		event.preventDefault();
 		return false;
 	}
@@ -527,13 +529,21 @@ document.addEventListener("keydown", saveCanvas);
 
 // make a function to save the canvas as a png file with the git branch name and a timestamp
 function saveArtwork() {
-	var dayoftheweek = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-	var monthoftheyear = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+	var dom_spin = document.querySelector(".spin-container");
+	var output_hash = fxhash;
+	console.log(output_hash);
+	var canvas = document.getElementById("defaultCanvas0");
 	var d = new Date();
-	var datestring = d.getDate() + "_" + `${d.getMonth() + 1}` + "_" + d.getFullYear() + "_" + `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+	var datestring = `${d.getMonth() + 1}` + "_" + d.getDate() + "_" + d.getFullYear() + "_" + `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}_${fxhash}`;
+	console.log(canvas);
 	var fileName = datestring + ".png";
+	const imageUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+	const a = document.createElement("a");
+	a.href = imageUrl;
+	a.setAttribute("download", fileName);
+	a.click();
 
-	save(fileName);
+	//dom_spin.classList.remove("active");
 	console.log("saved " + fileName);
 }
 
@@ -543,7 +553,7 @@ urlParams = JSON.parse(urlParams);
 if (!urlParams) urlParams = {};
 
 let fxfeatures;
-let dpi_val = 3;
+let dpi_val = 1;
 
 let movers = [];
 let scl1;
@@ -1083,7 +1093,7 @@ class Mover {
 				: features.theme === "bright" && features.colormode === "monochrome"
 				? [0, 0, 10, 20, 20, 30, 40, 60, 80][Math.floor(fxrand() * 9)]
 				: [40, 40, 60, 70, 70, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
-		this.initAlpha = 10;
+		this.initAlpha = 12;
 		this.initS = 3 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === "monochrome" || features.colormode === "duotone" ? 0 : this.initSat;
@@ -1208,18 +1218,12 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	let vn = oct(ny, nx, scale2, 2, octave); */
 	let timeX = millis() * 0.0000000001; // Introduce a time variable for dynamic movement
 	let timeY = millis() * 0.0000000001; // Introduce a time variable for dynamic movement
-	let noiseScaleX = 0.0002; // Scale for noise function
+	let noiseScaleX = 0.02; // Scale for noise function
 	let noiseScaleY = 0.02; // Scale for noise function
-	let sun =
-		sin(ny * noiseScaleX + seed + timeX) +
-		cos(ny * noiseScaleX + seed + timeX) +
-		sin(ny * noiseScaleX * 5 + seed + timeX) +
-		oct(ny * noiseScaleX + seed + timeX, ny * noiseScaleX + seed + timeX, scl1, 2, octave);
-	let svn =
-		sin(nx * noiseScaleY + seed + timeY) +
-		cos(nx * noiseScaleY + seed + timeY) -
-		sin(nx * noiseScaleY * 5 + seed + timeY) +
-		oct(nx * noiseScaleY + seed + timeY, nx * noiseScaleY + seed + timeY, scl2, 3, octave);
+
+	// Modify the calculations to include time and noise
+	let un = sin(y * scl1 + seed + timeX) + cos(y * scl2 + seed + timeX) + sin(y * scl2 * 1 + seed + timeX) + oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave);
+	let vn = sin(x * scl1 + seed + timeY) + cos(x * scl2 + seed + timeY) + sin(x * scl2 * 1 + seed + timeY) + oct(nx * scl2 + seed + timeY, ny * scl1 + seed + timeY, noiseScaleY, 3, octave);
 
 	// Tighter, more frequent patterns
 	let zun = ZZ(sun, 0.001, 0.8, 1.5);
