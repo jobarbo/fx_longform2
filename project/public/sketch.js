@@ -84,7 +84,7 @@ let renderStart = Date.now();
 let framesRendered = 0;
 let totalElapsedTime = 0;
 
-let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 1700, 2400));
+let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
 let particle_num = Math.floor(10000 / angle1.length);
 
 //let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
@@ -379,7 +379,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true);
 	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 80, true);
 	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 15, true);
-	bri = mapValue(abs(col_cos), 0, 1, 60 - bri_max, 40 - bri_min, true);
+	bri = mapValue(abs(col_cos), 0, 1, 50 - bri_max, 40 - bri_min, true);
 	alpha = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 10, 60, true);
 
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
