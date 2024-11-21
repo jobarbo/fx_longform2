@@ -84,7 +84,7 @@ let renderStart = Date.now();
 let framesRendered = 0;
 let totalElapsedTime = 0;
 
-let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
+let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 1700, 2400));
 let particle_num = Math.floor(10000 / angle1.length);
 
 //let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
@@ -140,8 +140,8 @@ const offValues_h = [
 ];
  */
 const offValues_l = [
-	{low: 2, high: 1.15}, // case 0
-	{low: 1, high: 0.15}, // case 1
+	{low: 2, high: 1.1}, // case 0
+	{low: 1, high: 0.1}, // case 1
 	{low: 2, high: 1.2}, // case 2
 	{low: 3, high: 2.2}, // case 3
 	{low: 4, high: 3.2}, // case 4
@@ -152,8 +152,8 @@ const offValues_l = [
 ];
 
 const offValues_h = [
-	{low: 2.15, high: 1}, // case 0
-	{low: 1.15, high: 0}, // case 1
+	{low: 2.1, high: 1}, // case 0
+	{low: 1.1, high: 0}, // case 1
 	{low: 2.2, high: 1}, // case 2
 	{low: 3.2, high: 2}, // case 3
 	{low: 4.2, high: 3}, // case 4
@@ -295,11 +295,11 @@ function* drawGenerator() {
 function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_val, sin_val, noise_cos, col_cos, off_cos) {
 	xoff = random(xoff_l, xoff_h);
 	yoff = random(yoff_l, yoff_h);
-	xoff = ZZ(xoff, 0.15, 0.15, 0.15);
-	yoff = ZZ(yoff, 0.15, 0.15, 0.15);
+	xoff = ZZ(xoff, 1.15, -0.001, 0.001);
+	yoff = ZZ(yoff, 1.15, -0.001, 0.001);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(4, 0.7);
+	noiseDetail(5, 0.5);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -325,13 +325,13 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 	//! Jellyfish
-	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+	/* 	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//! Jellyfish 2
 	/* 	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
- */
+	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+
 	//! Jellyfish 3
 	/* 		let x = mapValue(noise(xoff, random([xoff, xi]), random([yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([yoff, xi]), random([xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -341,8 +341,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//! Astral Beings 2
-	/* 		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+	let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 	//! Astral Beings 3
 	/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
@@ -380,7 +380,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 80, true);
 	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 15, true);
 	bri = mapValue(abs(col_cos), 0, 1, 60 - bri_max, 40 - bri_min, true);
-	alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 100, 100, true);
+	alpha = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 10, 60, true);
 
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 	drawingContext.fillRect(ab_x, ab_y, elW, elW);
