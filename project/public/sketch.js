@@ -325,13 +325,13 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	//! Jellyfish
 	let zxoff = ZZ(xoff, 0.001, 0.06, 2.3);
 	let zyoff = ZZ(yoff, 0.001, 0.06, 2.3);
-	let x = mapValue(noise(zxoff, zxoff, zyoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(zyoff, zyoff, zxoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+	/* 	let x = mapValue(noise(zxoff, zxoff, zyoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(zyoff, zyoff, zxoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//! Jellyfish 2
 
-	/* 	let x = mapValue(noise(zxoff, random([zxoff, yi]), zyoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(zyoff, random([zyoff, yi]), zxoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+	let x = mapValue(noise(zxoff, random([zxoff, yi]), zyoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(zyoff, random([zyoff, yi]), zxoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 	//! Astral Beings
 	/* let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
