@@ -85,10 +85,11 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(20000 / angle1.length);
+let particle_num = Math.floor(10000 / angle1.length);
 
-let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
+//let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 //let cycle = parseInt(MAX_FRAMES / angle1.length);
+let cycle = 15000;
 
 let nx_scale = 0.00005;
 let ny_scale = 0.00005;
@@ -107,6 +108,11 @@ let yoff_l_init = 0.6;
 let yoff_l = yoff_l_init;
 let yoff_h = 1;
 let cos_val;
+let col_cos;
+let off_cos;
+let noise_cos;
+let sin_val;
+let nd_cos;
 let angle_index = 0;
 
 /* const offValues_l = [
@@ -191,6 +197,7 @@ function setup() {
 	pos_range_x = height * 0.65;
 	pos_range_y = height * 0.65;
 
+	translate(width / 2, height / 2);
 	let sketch = drawGenerator();
 	function animate() {
 		animation = setTimeout(animate, 0);
@@ -203,7 +210,6 @@ function* drawGenerator() {
 	let count = 0;
 	let generator_frameCount = 0;
 	let draw_every = cycle;
-	translate(width / 2, height / 2);
 
 	while (true) {
 		// Draw with p5.js things
@@ -212,6 +218,7 @@ function* drawGenerator() {
 		sin_val = cos(generator_frameCount * 45);
 		noise_cos = sin(generator_frameCount * 170);
 		off_cos = sin(generator_frameCount * 800);
+		col_cos = cos(generator_frameCount * 45);
 		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
@@ -253,14 +260,16 @@ function* drawGenerator() {
 			push();
 			rotate(angle1[i]);
 			scale(scale1);
-			paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val);
-			pop();
+			for (let s = 0; s < particle_num; s++) {
+				paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val, sin_val, noise_cos, col_cos, off_cos);
 
-			if (count >= draw_every) {
-				count = 0;
-				yield;
+				if (count >= draw_every) {
+					count = 0;
+					yield;
+				}
+				count++;
 			}
-			count++;
+			pop();
 		}
 
 		elapsedTime = generator_frameCount - startTime;
@@ -283,100 +292,98 @@ function* drawGenerator() {
 	}
 }
 
-function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_val) {
-	for (let s = 0; s < particle_num; s++) {
-		xoff = random(xoff_l, xoff_h);
-		yoff = random(yoff_l, yoff_h);
-		xoff = ZZ(xoff, 10.15, -0.001, 0.001);
-		yoff = ZZ(yoff, 10.15, -0.001, 0.001);
-		//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
-		//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-		noiseDetail(4, 0.5);
-		//! Simple Block
-		/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_val, sin_val, noise_cos, col_cos, off_cos) {
+	xoff = random(xoff_l, xoff_h);
+	yoff = random(yoff_l, yoff_h);
+	xoff = ZZ(xoff, 0.15, 0.15, 0.15);
+	yoff = ZZ(yoff, 0.15, 0.15, 0.15);
+	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
+	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
+	noiseDetail(4, 0.7);
+	//! Simple Block
+	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-		//! Electron microscope
-		/* let x = mapValue(noise(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//! Electron microscope
+	/* let x = mapValue(noise(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-		/* let x = mapValue(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	/* let x = mapValue(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-		//!block Rect
-		/*let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//!block Rect
+	/*let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		//! block Rect 2
-		/*let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//! block Rect 2
+	/*let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, yoff, xi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
-		//!Drapery Yin Yang
-		/* let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//!Drapery Yin Yang
+	/* let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
-		//!Drapery Equilibrium
-		/* 	let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true); */
-		/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
+	//!Drapery Equilibrium
+	/* 	let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true); */
+	/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
-		//! Jellyfish
-		/* 		let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
+	//! Jellyfish
+	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
-		//! Jellyfish 2
-		let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
-
-		//! Jellyfish 3
-		/* 		let x = mapValue(noise(xoff, random([xoff, xi]), random([yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//! Jellyfish 2
+	/* 	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+ */
+	//! Jellyfish 3
+	/* 		let x = mapValue(noise(xoff, random([xoff, xi]), random([yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([yoff, xi]), random([xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		//! Astral Beings
-		/* 		let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//! Astral Beings
+	/* 		let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		//! Astral Beings 2
-		/* 		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//! Astral Beings 2
+	/* 		let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		//! Astral Beings 3
-		/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//! Astral Beings 3
+	/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		//! astral beings 4
-		/* 		let x = mapValue(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//! astral beings 4
+	/* 		let x = mapValue(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		//! Astral Beings Asymmetrical
-		/* 		let x = mapValue(noise(xoff, random([xoff, yoff, xi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//! Astral Beings Asymmetrical
+	/* 		let x = mapValue(noise(xoff, random([xoff, yoff, xi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		//! Hybrid Drapery Blocks
-		/* 		let x = mapValue(noise(xoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//! Hybrid Drapery Blocks
+	/* 		let x = mapValue(noise(xoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		//!complex organism (aliens)
-		/* 		let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	//!complex organism (aliens)
+	/* 		let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-		let w = mapValue(abs(cos_val), 0, 1, 0.16, 0.26, true);
-		let elW = w * MULTIPLIER;
-		let ab_x = x * MULTIPLIER;
-		let ab_y = y * MULTIPLIER;
+	let w = mapValue(abs(cos_val), 0, 1, 0.26, 0.36, true);
+	let elW = w * MULTIPLIER;
+	let ab_x = x * MULTIPLIER;
+	let ab_y = y * MULTIPLIER;
 
-		/* 		let index = Math.floor(mapValue(abs(noise_cos), 0, 1, 0, palette.length - 1, true));
+	/* 		let index = Math.floor(mapValue(abs(noise_cos), 0, 1, 0, palette.length - 1, true));
 
 		hue = palette[index].h;
 		sat = palette[index].s;
 		b = palette[index].l; */
 
-		hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
-		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true);
-		bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 80, true);
-		bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 15, true);
-		bri = mapValue(abs(sin_val), 0, 1, 50 - bri_max, 40 - bri_min, true);
-		alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 100, 100, true);
+	hue = mapValue(abs(col_cos), 0, 1, 360, 190, true);
+	sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true);
+	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 80, true);
+	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 15, true);
+	bri = mapValue(abs(col_cos), 0, 1, 60 - bri_max, 40 - bri_min, true);
+	alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 100, 100, true);
 
-		drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
-		drawingContext.fillRect(ab_x, ab_y, elW, elW);
-	}
+	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
+	drawingContext.fillRect(ab_x, ab_y, elW, elW);
 }
 
 function showLoadingBar(elapsedTime, MAX_FRAMES, renderStart) {
