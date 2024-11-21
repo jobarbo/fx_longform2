@@ -164,8 +164,8 @@ const bgModeArr = [
 ];
 
 const lazyMorningArr = [
-	[true, 90],
-	[false, 10],
+	[true, 10],
+	[false, 90],
 ];
 composition_params = generate_composition_params();
 // all input parameters are optional, they will be chosen at random if not passed into the function
@@ -1083,8 +1083,8 @@ class Mover {
 				: features.theme === "bright" && features.colormode === "monochrome"
 				? [0, 0, 10, 20, 20, 30, 40, 60, 80][Math.floor(fxrand() * 9)]
 				: [40, 40, 60, 70, 70, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
-		this.initAlpha = 50;
-		this.initS = 1 * MULTIPLIER;
+		this.initAlpha = 10;
+		this.initS = 3 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === "monochrome" || features.colormode === "duotone" ? 0 : this.initSat;
 		this.bri = this.initBri;
@@ -1213,12 +1213,12 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	let sun =
 		sin(ny * noiseScaleX + seed + timeX) +
 		cos(ny * noiseScaleX + seed + timeX) +
-		sin(ny * noiseScaleX * 1 + seed + timeX) +
+		sin(ny * noiseScaleX * 5 + seed + timeX) +
 		oct(ny * noiseScaleX + seed + timeX, ny * noiseScaleX + seed + timeX, scl1, 2, octave);
 	let svn =
 		sin(nx * noiseScaleY + seed + timeY) +
 		cos(nx * noiseScaleY + seed + timeY) -
-		sin(nx * noiseScaleY * 1 + seed + timeY) +
+		sin(nx * noiseScaleY * 5 + seed + timeY) +
 		oct(nx * noiseScaleY + seed + timeY, nx * noiseScaleY + seed + timeY, scl2, 3, octave);
 
 	// Tighter, more frequent patterns
