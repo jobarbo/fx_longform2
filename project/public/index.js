@@ -164,8 +164,8 @@ const bgModeArr = [
 ];
 
 const lazyMorningArr = [
-	[true, 10],
-	[false, 90],
+	[true, 90],
+	[false, 10],
 ];
 composition_params = generate_composition_params();
 // all input parameters are optional, they will be chosen at random if not passed into the function
@@ -543,7 +543,7 @@ urlParams = JSON.parse(urlParams);
 if (!urlParams) urlParams = {};
 
 let fxfeatures;
-let dpi_val = 1;
+let dpi_val = 3;
 
 let movers = [];
 let scl1;
@@ -644,7 +644,7 @@ function setupBundler() {
 		linemodeName,
 		jdlmode,
 		bgmode,
-		skipbreakfast,
+		lazymorning,
 	} = composition_params; // unpacking parameters we need in main.js and turning them into globals
 
 	// decode window location search
@@ -758,8 +758,8 @@ function setupBundler() {
 			bgmode = urlParams.bgmode;
 		}
 
-		if (urlParams.skipbreakfast) {
-			skipbreakfast = urlParams.skipbreakfast;
+		if (urlParams.lazymorning) {
+			lazymorning = urlParams.lazymorning;
 		}
 	}
 
@@ -778,7 +778,7 @@ function setupBundler() {
 		lineMode: linemodeName,
 		jdlmode: jdlmode,
 		bgmode: bgmode,
-		skipbreakfast: skipbreakfast,
+		lazymorning: lazymorning,
 	});
 
 	window.features = {
@@ -794,7 +794,7 @@ function setupBundler() {
 		lineModeValue: linemode,
 		jdlmode: jdlmode,
 		bgmode: bgmode,
-		skipbreakfast: skipbreakfast,
+		lazymorning: lazymorning,
 	};
 }
 
@@ -1208,17 +1208,17 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	let vn = oct(ny, nx, scale2, 2, octave); */
 	let timeX = millis() * 0.0000000001; // Introduce a time variable for dynamic movement
 	let timeY = millis() * 0.0000000001; // Introduce a time variable for dynamic movement
-	let noiseScaleX = 0.02; // Scale for noise function
+	let noiseScaleX = 0.0002; // Scale for noise function
 	let noiseScaleY = 0.02; // Scale for noise function
 	let sun =
 		sin(ny * noiseScaleX + seed + timeX) +
 		cos(ny * noiseScaleX + seed + timeX) +
-		sin(ny * noiseScaleX * 100.05 + seed + timeX) +
+		sin(ny * noiseScaleX * 1 + seed + timeX) +
 		oct(ny * noiseScaleX + seed + timeX, ny * noiseScaleX + seed + timeX, scl1, 2, octave);
 	let svn =
 		sin(nx * noiseScaleY + seed + timeY) +
 		cos(nx * noiseScaleY + seed + timeY) -
-		sin(nx * noiseScaleY * 20.05 + seed + timeY) +
+		sin(nx * noiseScaleY * 1 + seed + timeY) +
 		oct(nx * noiseScaleY + seed + timeY, nx * noiseScaleY + seed + timeY, scl2, 3, octave);
 
 	// Tighter, more frequent patterns
