@@ -563,7 +563,7 @@ let currentFrame = 0;
 
 // viewport
 // if url params has RATIO, use that, else use 3
-let MARGIN = 150;
+let MARGIN = 100;
 let oldMARGIN = MARGIN;
 let frameMargin;
 let RATIO = 3;
@@ -1170,6 +1170,13 @@ class Mover {
 			this.y = this.yMin * height - fxrand() * this.lineWeight;
 			//this.a = 100;
 		}
+
+		//! if out of bounds, reset to random position inside canvas
+		/* 				if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
+					//this.s = 0;
+					this.x = random(this.xMin, this.xMax) * width;
+					this.y = random(this.yMin, this.yMax) * height;
+		} */
 	}
 }
 function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueArr) {
@@ -1199,16 +1206,27 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 
 	/* 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(ny, nx, scale2, 2, octave); */
-	let time = millis() * 0.00000001; // Introduce a time variable for dynamic movement
-	let noiseScale = 0.00000000000001; // Scale for noise function
-	let sun = sin(ny * scl1 + seed + time) + cos(ny * scl2 + seed + time) + sin(ny * scl1 * 500.05 + seed + time) + oct(ny * scl1 + seed + time, ny * scl2 + seed + time, noiseScale, 2, 1);
-	let cvn = sin(nx * scl2 + seed + time) + cos(nx * scl1 + seed + time) + sin(nx * scl2 * 10.05 + seed + time) + oct(nx * scl2 + seed + time, nx * scl1 + seed + time, noiseScale, 3, 1);
+	let timeX = millis() * 0.0000000001; // Introduce a time variable for dynamic movement
+	let timeY = millis() * 0.0000000001; // Introduce a time variable for dynamic movement
+	let noiseScaleX = 0.02; // Scale for noise function
+	let noiseScaleY = 0.02; // Scale for noise function
+	let sun =
+		sin(ny * noiseScaleX + seed + timeX) +
+		cos(ny * noiseScaleX + seed + timeX) +
+		sin(ny * noiseScaleX * 100.05 + seed + timeX) +
+		oct(ny * noiseScaleX + seed + timeX, ny * noiseScaleX + seed + timeX, scl1, 2, octave);
+	let svn =
+		sin(nx * noiseScaleY + seed + timeY) +
+		cos(nx * noiseScaleY + seed + timeY) -
+		sin(nx * noiseScaleY * 20.05 + seed + timeY) +
+		oct(nx * noiseScaleY + seed + timeY, nx * noiseScaleY + seed + timeY, scl2, 3, octave);
 
-	let zun = ZZ(sun, 0.01, 0.5, 1.005);
-	let zvn = ZZ(cvn, 0.01, 0.5, 1.005);
+	// Tighter, more frequent patterns
+	let zun = ZZ(sun, 0.001, 0.8, 1.5);
+	let zvn = ZZ(svn, 0.001, 0.8, 1.5);
 
-	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], true);
-	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], true);
+	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], false);
+	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], false);
 
 	return {x: u, y: v};
 }
