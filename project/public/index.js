@@ -50,6 +50,7 @@ const clampvalueArr = [
 	["0.0015,0.0015,0.015,0.015", 30],
 	["0.0000015,0.0000015,0.025,0.025", 20],
 	["0.0000015,0.0000015,0.0000015,0.0000015", 10],
+	["1,1,1,1", 5],
 ];
 
 const clampNameArr = [
@@ -58,6 +59,7 @@ const clampNameArr = [
 	["original-revert", 20],
 	["drift-revert", 5],
 	["stretch", 40],
+	["smooth", 5],
 ];
 
 const particleBehaviorNameArr = [
@@ -553,7 +555,7 @@ urlParams = JSON.parse(urlParams);
 if (!urlParams) urlParams = {};
 
 let fxfeatures;
-let dpi_val = 1;
+let dpi_val = 3;
 
 let movers = [];
 let scl1;
@@ -1216,14 +1218,14 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 
 	/* 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(ny, nx, scale2, 2, octave); */
-	let timeX = millis() * 0.0000000001; // Introduce a time variable for dynamic movement
-	let timeY = millis() * 0.0000000001; // Introduce a time variable for dynamic movement
-	let noiseScaleX = 0.02; // Scale for noise function
-	let noiseScaleY = 0.02; // Scale for noise function
+	let timeX = millis() * 0.0001; // Introduce a time variable for dynamic movement
+	let timeY = millis() * 0.0001; // Introduce a time variable for dynamic movement
+	let noiseScaleX = 1.7; // Scale for noise function
+	let noiseScaleY = 1.7; // Scale for noise function
 
 	// Modify the calculations to include time and noise
-	let un = sin(y * scl1 + seed + timeX) + cos(y * scl2 + seed + timeX) + sin(y * scl2 * 1 + seed + timeX) + oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave);
-	let vn = sin(x * scl1 + seed + timeY) + cos(x * scl2 + seed + timeY) + sin(x * scl2 * 1 + seed + timeY) + oct(nx * scl2 + seed + timeY, ny * scl1 + seed + timeY, noiseScaleY, 3, octave);
+	let sun = sin(y * scl1 * 1 + seed + timeX) + cos(y * scl2 * 1 + seed + timeX) + sin(y * scl1 * 1 + seed + timeX) + oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave);
+	let svn = sin(x * scl2 * 1 + seed + timeY) + cos(x * scl1 * 1 + seed + timeY) + sin(x * scl2 * 1 + seed + timeY) + oct(nx * scl2 + seed + timeY, ny * scl1 + seed + timeY, noiseScaleY, 3, octave);
 
 	// Tighter, more frequent patterns
 	let zun = ZZ(sun, 0.001, 0.8, 1.5);
