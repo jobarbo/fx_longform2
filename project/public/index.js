@@ -1224,8 +1224,9 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	let noiseScaleY = 1.7; // Scale for noise function
 
 	// Modify the calculations to include time and noise
-	let sun = sin(y * scl1 * 1 + seed + timeX) + cos(y * scl2 * 1 + seed + timeX) + sin(y * scl1 * 1 + seed + timeX) + oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave);
-	let svn = sin(x * scl2 * 1 + seed + timeY) + cos(x * scl1 * 1 + seed + timeY) + sin(x * scl2 * 1 + seed + timeY) + oct(nx * scl2 + seed + timeY, ny * scl1 + seed + timeY, noiseScaleY, 3, octave);
+	//! test between nx/ny and x/y
+	let sun = sin(ny * scl1 * 1 + seed + timeX) + cos(ny * scl2 * 1 + seed + timeX) + sin(ny * scl1 * 1 + seed + timeX) + oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave);
+	let svn = sin(nx * scl2 * 1 + seed + timeY) + cos(nx * scl1 * 1 + seed + timeY) + sin(nx * scl2 * 1 + seed + timeY) + oct(nx * scl2 + seed + timeY, ny * scl1 + seed + timeY, noiseScaleY, 3, octave);
 
 	// Tighter, more frequent patterns
 	let zun = ZZ(sun, 0.001, 0.8, 1.5);
