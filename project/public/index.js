@@ -1228,6 +1228,18 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	let sun = sin(ny * scl1 * 1 + seed + timeX) + cos(ny * scl2 * 1 + seed + timeX) + sin(ny * scl1 * 1 + seed + timeX) + oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave);
 	let svn = sin(nx * scl2 * 1 + seed + timeY) + cos(nx * scl1 * 1 + seed + timeY) + sin(nx * scl2 * 1 + seed + timeY) + oct(nx * scl2 + seed + timeY, ny * scl1 + seed + timeY, noiseScaleY, 3, octave);
 
+	//! interesting comp where lines goes thoward center
+	/* 		let sun =
+		sin(ny * noiseScaleX * 1 + seed + timeX) +
+		cos(ny * noiseScaleY * 1 + seed + timeX) +
+		sin(ny * noiseScaleX * 1 + seed + timeX) +
+		oct(ny * noiseScaleX + seed + timeX, nx * noiseScaleY + seed + timeX, scl1, 2, octave);
+	let svn =
+		sin(nx * noiseScaleY * 1 + seed + timeY) +
+		cos(nx * noiseScaleX * 1 + seed + timeY) +
+		sin(nx * noiseScaleY * 1 + seed + timeY) +
+		oct(nx * noiseScaleY + seed + timeY, ny * noiseScaleX + seed + timeY, scl2, 3, octave);
+ */
 	// Tighter, more frequent patterns
 	let zun = ZZ(sun, 0.001, 0.8, 1.5);
 	let zvn = ZZ(svn, 0.001, 0.8, 1.5);
