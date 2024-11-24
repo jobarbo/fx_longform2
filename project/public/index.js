@@ -555,7 +555,7 @@ urlParams = JSON.parse(urlParams);
 if (!urlParams) urlParams = {};
 
 let fxfeatures;
-let dpi_val = 3;
+let dpi_val = 1;
 
 let movers = [];
 let scl1;
@@ -1013,12 +1013,17 @@ function loadURLParams() {
 		dpi_val = parseInt(window.location.search.split("dpi=")[1]);
 	}
 	if (window.location.search.includes("ratio=")) {
+		if (document.querySelector("span.frame")) {
+			document.querySelector("span.frame").classList.remove("hidden");
+		}
 		if (window.location.search.includes("ratio=a4") || urlParams.ratio == "a4") {
 			RATIO = 1.414;
 			MARGIN = 250;
 		} else if (window.location.search.includes("ratio=skate") || urlParams.ratio == "skate") {
 			RATIO = 3.888;
 			MARGIN = 0;
+			// add a class to the frame
+			document.querySelector("span.frame").classList.add("hidden");
 		} else if (window.location.search.includes("ratio=square") || window.location.search.includes("ratio=1") || urlParams.ratio == "square" || urlParams.ratio == "1") {
 			RATIO = 1;
 			MARGIN = 300;
@@ -1046,7 +1051,7 @@ function drawTexture(hue) {
 		let h = hue + fxrand() * 2 - 1;
 		let s = features.colormode != "monochrome" ? [0, 20, 40, 60, 80, 100][parseInt(fxrand() * 6)] : 0;
 		let b = [0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100][parseInt(fxrand() * 11)];
-		drawingContext.fillStyle = `hsla(${h}, ${s}%, ${b}%, 100%)`;
+		drawingContext.fillStyle = `hsla(${h}, ${s}%, ${b}%, 12%)`;
 		drawingContext.fillRect(x, y, sw, sw);
 	}
 }
@@ -1468,9 +1473,11 @@ function mod_margin_mode() {
 }
 
 function mod_ratio_mode() {
+	document.querySelector("span.frame").classList.remove("hidden");
 	if (RATIO === 3) {
 		RATIO = 3.88;
 		ratio_name = "Skateboard";
+		document.querySelector("span.frame").classList.add("hidden");
 	} else if (RATIO === 3.88) {
 		RATIO = 1;
 		MARGIN = 300;

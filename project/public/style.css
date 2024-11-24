@@ -105,6 +105,10 @@ span.frame.presentation {
 	/* box-shadow: inset 2.8px 2.8px 2.2px rgba(0, 0, 0, 0.05), inset 0px 0px 5px 1px rgba(0, 0, 0, 0.465); */
 }
 
+span.frame.hidden {
+	visibility: hidden !important;
+	opacity: 0 !important;
+}
 span.frame.presentation.horizontal {
 	transform: rotate(90deg);
 }
@@ -271,6 +275,13 @@ hr {
 
 .info-toggle:hover {
 	transform: scale(1.1);
+}
+
+.icon {
+	font-size: 0.8vw;
+	@media all and (max-width: 1024px) {
+		font-size: 16px;
+	}
 }
 
 /* mobile breakpoint */
