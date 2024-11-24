@@ -1218,10 +1218,10 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 
 	/* 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(ny, nx, scale2, 2, octave); */
-	let timeX = millis() * 0.0001; // Introduce a time variable for dynamic movement
-	let timeY = millis() * 0.0001; // Introduce a time variable for dynamic movement
-	let noiseScaleX = 1.7; // Scale for noise function
-	let noiseScaleY = 1.7; // Scale for noise function
+	let timeX = (millis() * 0.000001) / MULTIPLIER;
+	let timeY = (millis() * 0.000001) / MULTIPLIER;
+	let noiseScaleX = 0.01 / MULTIPLIER;
+	let noiseScaleY = 0.01 / MULTIPLIER;
 
 	// Modify the calculations to include time and noise
 	//! test between nx/ny and x/y
