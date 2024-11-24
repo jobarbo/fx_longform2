@@ -1216,17 +1216,17 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	nx += dx * a1;
 	ny += dy * a2;
 
-	/* 	let un = oct(nx, ny, scale1, 3, octave);
-	let vn = oct(ny, nx, scale2, 2, octave); */
-	let timeX = (millis() * 0.000001) / MULTIPLIER;
+	let un = oct(nx, ny, scale1, 3, octave);
+	let vn = oct(ny, nx, scale2, 2, octave);
+	/* 	let timeX = (millis() * 0.000001) / MULTIPLIER;
 	let timeY = (millis() * 0.000001) / MULTIPLIER;
 	let noiseScaleX = 0.01 / MULTIPLIER;
 	let noiseScaleY = 0.01 / MULTIPLIER;
-
+ */
 	// Modify the calculations to include time and noise
 	//! test between nx/ny and x/y
-	let sun = sin(ny * scl1 * 1 + seed + timeX) + cos(ny * scl2 * 1 + seed + timeX) + sin(ny * scl1 * 1 + seed + timeX) + oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave);
-	let svn = sin(nx * scl2 * 1 + seed + timeY) + cos(nx * scl1 * 1 + seed + timeY) + sin(nx * scl2 * 1 + seed + timeY) + oct(nx * scl2 + seed + timeY, ny * scl1 + seed + timeY, noiseScaleY, 3, octave);
+	/* 	let sun = sin(ny * scl1 * 1 + seed + timeX) + cos(ny * scl2 * 1 + seed + timeX) + sin(ny * scl1 * 1 + seed + timeX) + oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave);
+	let svn = sin(nx * scl2 * 1 + seed + timeY) + cos(nx * scl1 * 1 + seed + timeY) + sin(nx * scl2 * 1 + seed + timeY) + oct(nx * scl2 + seed + timeY, ny * scl1 + seed + timeY, noiseScaleY, 3, octave); */
 
 	//! interesting comp where lines goes thoward center
 	/* 		let sun =
@@ -1241,11 +1241,11 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 		oct(nx * noiseScaleY + seed + timeY, ny * noiseScaleX + seed + timeY, scl2, 3, octave);
  */
 	// Tighter, more frequent patterns
-	let zun = ZZ(sun, 0.001, 0.8, 1.5);
-	let zvn = ZZ(svn, 0.001, 0.8, 1.5);
+	/* 	let zun = ZZ(sun, 0.001, 0.8, 1.5);
+	let zvn = ZZ(svn, 0.001, 0.8, 1.5); */
 
-	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], false);
-	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], false);
+	let u = mapValue(un, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], false);
+	let v = mapValue(vn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], false);
 
 	return {x: u, y: v};
 }
