@@ -424,6 +424,7 @@ F = (N, f) => [...Array(N)].map((_, i) => f(i)); // for loop / map / list functi
 
 S = Uint32Array.of(9, 7, 5, 3); // PRNG state
 R = (a = 1) => a * ((a = S[3]), (S[3] = S[2]), (S[2] = S[1]), (a ^= a << 11), (S[0] ^= a ^ (a >>> 8) ^ ((S[1] = S[0]) >>> 19)), S[0] / 2 ** 32); // random function
+F = (N, f) => [...Array(N)].map((_, i) => f(i)); // for loop / map / list function
 [...(seed + "ThxPiter")].map((c) => R((S[3] ^= c.charCodeAt() * 23205))); // seeding the random function
 
 // general noise definitions =============================================
@@ -1065,20 +1066,17 @@ function loadURLParams() {
 }
 
 function drawTexture(hue) {
-	// draw 200000 small rects to create a texture
-
 	for (let i = 0; i < 600000; i++) {
-		let x = fxrand() * width;
-		let y = fxrand() * height;
-		let sw = 0.45 * MULTIPLIER;
+		let x = fxrand() * (width * 1.2) - width * 0.1;
+		let y = fxrand() * (height * 1.2) - height * 0.1;
+		let sw = 3 * MULTIPLIER;
 		let h = hue + fxrand() * 2 - 1;
-		let s = features.colormode != "monochrome" ? [0, 20, 40, 60, 80, 100][parseInt(fxrand() * 6)] : 0;
+		let s = 0;
 		let b = [0, 10, 10, 20, 20, 40, 60, 70, 90, 90, 100][parseInt(fxrand() * 11)];
-		drawingContext.fillStyle = `hsla(${h}, ${s}%, ${b}%, 12%)`;
+		drawingContext.fillStyle = `hsla(${h}, ${s}%, ${b}%, 10%)`;
 		drawingContext.fillRect(x, y, sw, sw);
 	}
 }
-
 function showLoadingBar(elapsedTime, maxFrames, renderStart) {
 	framesRendered++;
 	let currentTime = Date.now();
@@ -1123,7 +1121,7 @@ class Mover {
 				: features.theme === "bright" && features.colormode === "monochrome"
 				? [0, 0, 10, 20, 20, 30, 40, 60, 80][Math.floor(fxrand() * 9)]
 				: [40, 40, 60, 70, 70, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
-		this.initAlpha = 10;
+		this.initAlpha = 12;
 		this.initS = 3 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === "monochrome" || features.colormode === "duotone" ? 0 : this.initSat;
