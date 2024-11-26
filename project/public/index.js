@@ -583,9 +583,9 @@ let DEFAULT_SIZE = 4800 / RATIO;
 let DIM_OBJ = {
 	3: 600,
 	3.88: 800,
-	1: 800,
+	1: 1000,
 	1.414: 1200,
-	2: 1600,
+	2: 1400,
 };
 let W = window.innerWidth;
 let H = window.innerHeight;
@@ -1105,17 +1105,17 @@ class Mover {
 
 		this.initBri =
 			features.theme === "bright" && features.colormode !== "monochrome"
-				? [0, 10, 20, 20, 40, 40, 60, 70, 80, 90, 100][Math.floor(fxrand() * 11)]
+				? [0, 10, 20, 20, 30, 35, 40, 40, 50, 50, 50, 60, 60, 70, 80, 90][Math.floor(fxrand() * 16)]
 				: features.theme === "bright" && features.colormode === "monochrome"
-				? [0, 0, 10, 20, 20, 30, 40, 60, 80][Math.floor(fxrand() * 9)]
-				: [40, 40, 60, 70, 70, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
+				? [0, 0, 10, 20, 20, 30, 40, 50, 60, 70][Math.floor(fxrand() * 10)]
+				: [35, 40, 40, 50, 50, 60, 60, 70, 70, 80, 90][Math.floor(fxrand() * 11)];
 		this.initAlpha = 12;
-		this.initS = 3 * MULTIPLIER;
+		this.initS = 4 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === "monochrome" || features.colormode === "duotone" ? 0 : this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = features.colormode === "monochrome" || features.colormode === "fixed" ? 1 : features.colormode === "dynamic" || features.colormode === "duotone" ? 10 : 20;
+		this.hueStep = features.colormode === "monochrome" || features.colormode === "fixed" ? 1 : features.colormode === "dynamic" || features.colormode === "duotone" ? 5 : 15;
 		this.satStep = features.colorMode === "duotone" ? 0.1 : 1;
 		this.briStep = 0;
 		this.s = this.initS;
@@ -1125,6 +1125,8 @@ class Mover {
 		this.amp2 = amp2;
 		this.xRandDivider = xRandDivider;
 		this.yRandDivider = yRandDivider;
+		this.xRandDividerOffset = 0.01;
+		this.yRandDividerOffset = 0.01;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperVal = 0;
@@ -1158,9 +1160,10 @@ class Mover {
 		this.xRandSkipper = fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) - this.xRandSkipperVal * MULTIPLIER;
 		this.yRandSkipper = fxrand() * (this.xRandSkipperVal * MULTIPLIER * 2) - this.xRandSkipperVal * MULTIPLIER;
 
-		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
-		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
-
+		this.x += (p.x * MULTIPLIER) / randomGaussian(this.xRandDivider, this.xRandDividerOffset);
+		this.y += (p.y * MULTIPLIER) / randomGaussian(this.yRandDivider, this.yRandDividerOffset);
+		this.xRandDividerOffset = mapValue(framesRendered, 0, maxFrames / 2, 0, 0, true);
+		this.yRandDividerOffset = mapValue(framesRendered, 0, maxFrames / 2, 0, 0, true);
 		let pxy = p.x - p.y;
 		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
@@ -1206,8 +1209,8 @@ class Mover {
 	}
 }
 function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueArr) {
-	let nx = x,
-		ny = y,
+	let nx = x + 0,
+		ny = y - 0,
 		a1 = amp1,
 		a2 = amp2,
 		scale1 = scl1,
@@ -1490,19 +1493,19 @@ function mod_ratio_mode() {
 		document.querySelector("span.frame").classList.add("hidden");
 	} else if (RATIO === 3.88) {
 		RATIO = 1;
-		MARGIN = 300;
+		MARGIN = 150;
 		ratio_name = "Square";
 	} else if (RATIO === 1) {
 		RATIO = 1.414;
-		MARGIN = 250;
+		MARGIN = 150;
 		ratio_name = "A4";
 	} else if (RATIO === 1.414) {
 		RATIO = 2;
-		MARGIN = 250;
+		MARGIN = 150;
 		ratio_name = "Univisium";
 	} else if (RATIO === 2) {
 		RATIO = 3;
-		MARGIN = 150;
+		MARGIN = 100;
 		ratio_name = "Bookmark";
 	}
 	dom_dashboard.innerHTML = "Please wait...";
@@ -1531,10 +1534,10 @@ function mod_particle_mode() {
 
 function mod_exposure_mode() {
 	if (maxFrames === 10) {
+		maxFrames = 15;
+	} else if (maxFrames === 15) {
 		maxFrames = 20;
 	} else if (maxFrames === 20) {
-		maxFrames = 30;
-	} else if (maxFrames === 30) {
 		maxFrames = 10;
 	}
 	dom_dashboard.innerHTML = "Please wait...";
