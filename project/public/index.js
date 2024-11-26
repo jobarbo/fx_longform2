@@ -555,7 +555,7 @@ urlParams = JSON.parse(urlParams);
 if (!urlParams) urlParams = {};
 
 let fxfeatures;
-let dpi_val = 3;
+let dpi_val = 1;
 
 let movers = [];
 let scl1;
@@ -580,6 +580,13 @@ let oldMARGIN = MARGIN;
 let frameMargin;
 let RATIO = 3;
 let DEFAULT_SIZE = 4800 / RATIO;
+let DIM_OBJ = {
+	3: 600,
+	3.88: 800,
+	1: 800,
+	1.414: 1200,
+	2: 1600,
+};
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
@@ -851,36 +858,17 @@ function initSketch() {
 	dom_dashboard.innerHTML = "Rendering...";
 	dom_hash.innerHTML = fxhash;
 	dom_spin.classList.add("active");
+	// make DIMENSIONS equal to a minimum value relative to the ratio chosen
+
 	DEFAULT_SIZE = 4800 / RATIO;
-
-	// Define minimum dimensions for each DPI level
-	const minDimensions = {
-		1: DEFAULT_SIZE * 0.5, // Minimum dimension for DPI level 1
-		2: DEFAULT_SIZE * 0.75, // Minimum dimension for DPI level 2
-		3: DEFAULT_SIZE, // Minimum dimension for DPI level 3
-		4: DEFAULT_SIZE * 1.5, // Minimum dimension for DPI level 4
-		5: DEFAULT_SIZE * 2, // Minimum dimension for DPI level 5
-	};
-
-	const maxDimensions = {
-		1: DEFAULT_SIZE * 0.5, // Maximum dimension for DPI level 1
-		2: DEFAULT_SIZE * 0.75, // Maximum dimension for DPI level 2
-		3: DEFAULT_SIZE, // Maximum dimension for DPI level 3
-		4: DEFAULT_SIZE * 1.5, // Maximum dimension for DPI level 4
-		5: DEFAULT_SIZE * 2, // Maximum dimension for DPI level 5
-	};
-
-	console.log(minDimensions[dpi_val], maxDimensions[dpi_val]);
+	console.log(RATIO);
 	// Calculate DIM with a minimum value based on the current DPI level
-	DIM = Math.min(
-		Math.max(windowWidth, windowHeight),
-		Math.max(windowHeight, minDimensions[dpi_val]), // Ensure minimum is either minDimensions or windowHeight
-		maxDimensions[dpi_val]
-	);
-
+	DIM = DIM_OBJ[RATIO];
+	console.log(DIM);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * RATIO);
-	//pixelDensity(dpi(dpi_val));
+	console.log(width, height);
+	pixelDensity(dpi(dpi_val));
 
 	frameMargin = MARGIN * MULTIPLIER;
 	rectMode(CENTER);
@@ -1244,11 +1232,11 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(ny, nx, scale2, 2, octave);
-	/* 	let timeX = (millis() * 0.000001) / MULTIPLIER;
-	let timeY = (millis() * 0.000001) / MULTIPLIER;
+	/* 	let timeX = (millis() * 0.00000000001) / MULTIPLIER;
+	let timeY = (millis() * 0.00000000001) / MULTIPLIER;
 	let noiseScaleX = 0.01 / MULTIPLIER;
-	let noiseScaleY = 0.01 / MULTIPLIER;
- */
+	let noiseScaleY = 0.01 / MULTIPLIER; */
+
 	// Modify the calculations to include time and noise
 	//! test between nx/ny and x/y
 	/* 	let sun = sin(ny * scl1 * 1 + seed + timeX) + cos(ny * scl2 * 1 + seed + timeX) + sin(ny * scl1 * 1 + seed + timeX) + oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave);
@@ -1267,14 +1255,12 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 		oct(nx * noiseScaleY + seed + timeY, ny * noiseScaleX + seed + timeY, scl2, 3, octave);
  */
 	// Tighter, more frequent patterns
-	let zun = abs(ZZ(un, 0.001, 0.3, 0.5));
-	let zvn = abs(ZZ(vn, 0.001, 0.3, 0.5));
+	//! move the last value between 0.1 and below
+	let zun = ZZ(un, 20, 120, 0.005);
+	let zvn = ZZ(vn, 20, 120, 0.005);
 
-	let smoothun = smoothstep(0, 2, zun);
-	let smoothvn = smoothstep(0, 2, zvn);
-
-	let u = mapValue(smoothun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], false);
-	let v = mapValue(smoothvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], false);
+	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], false);
+	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], false);
 
 	return {x: u, y: v};
 }
