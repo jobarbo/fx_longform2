@@ -461,7 +461,6 @@ n3 = (
 		ri(xi + 1, yi + 1, zi) * x * y * (1 - z) +
 		ri(xi + 1, yi + 1, zi + 1) * x * y * z
 );
-
 // 2D value noise function ===============================================
 na = F(99, (_) => R(TAU)); // random noise angles
 ns = na.map(sin);
@@ -555,7 +554,7 @@ urlParams = JSON.parse(urlParams);
 if (!urlParams) urlParams = {};
 
 let fxfeatures;
-let dpi_val = 1;
+let dpi_val = 3;
 
 let movers = [];
 let scl1;
@@ -853,10 +852,34 @@ function initSketch() {
 	dom_spin.classList.add("active");
 	DEFAULT_SIZE = 4800 / RATIO;
 
-	DIM = min(windowWidth, windowHeight);
+	// Define minimum dimensions for each DPI level
+	const minDimensions = {
+		1: DEFAULT_SIZE * 0.5, // Minimum dimension for DPI level 1
+		2: DEFAULT_SIZE * 0.75, // Minimum dimension for DPI level 2
+		3: DEFAULT_SIZE, // Minimum dimension for DPI level 3
+		4: DEFAULT_SIZE * 1.5, // Minimum dimension for DPI level 4
+		5: DEFAULT_SIZE * 2, // Minimum dimension for DPI level 5
+	};
+
+	const maxDimensions = {
+		1: DEFAULT_SIZE * 0.5, // Maximum dimension for DPI level 1
+		2: DEFAULT_SIZE * 0.75, // Maximum dimension for DPI level 2
+		3: DEFAULT_SIZE, // Maximum dimension for DPI level 3
+		4: DEFAULT_SIZE * 1.5, // Maximum dimension for DPI level 4
+		5: DEFAULT_SIZE * 2, // Maximum dimension for DPI level 5
+	};
+
+	console.log(minDimensions[dpi_val], maxDimensions[dpi_val]);
+	// Calculate DIM with a minimum value based on the current DPI level
+	DIM = Math.min(
+		Math.max(windowWidth, windowHeight),
+		Math.max(windowHeight, minDimensions[dpi_val]), // Ensure minimum is either minDimensions or windowHeight
+		maxDimensions[dpi_val]
+	);
+
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * RATIO);
-	pixelDensity(dpi(dpi_val));
+	//pixelDensity(dpi(dpi_val));
 
 	frameMargin = MARGIN * MULTIPLIER;
 	rectMode(CENTER);
@@ -1100,7 +1123,7 @@ class Mover {
 				: features.theme === "bright" && features.colormode === "monochrome"
 				? [0, 0, 10, 20, 20, 30, 40, 60, 80][Math.floor(fxrand() * 9)]
 				: [40, 40, 60, 70, 70, 80, 80, 90, 100][Math.floor(fxrand() * 9)];
-		this.initAlpha = 12;
+		this.initAlpha = 10;
 		this.initS = 3 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === "monochrome" || features.colormode === "duotone" ? 0 : this.initSat;
@@ -1246,11 +1269,14 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 		oct(nx * noiseScaleY + seed + timeY, ny * noiseScaleX + seed + timeY, scl2, 3, octave);
  */
 	// Tighter, more frequent patterns
-	/* 	let zun = ZZ(sun, 0.001, 0.8, 1.5);
-	let zvn = ZZ(svn, 0.001, 0.8, 1.5); */
+	let zun = abs(ZZ(un, 0.001, 0.3, 0.5));
+	let zvn = abs(ZZ(vn, 0.001, 0.3, 0.5));
 
-	let u = mapValue(un, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], false);
-	let v = mapValue(vn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], false);
+	let smoothun = smoothstep(0, 2, zun);
+	let smoothvn = smoothstep(0, 2, zvn);
+
+	let u = mapValue(smoothun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], false);
+	let v = mapValue(smoothvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], false);
 
 	return {x: u, y: v};
 }

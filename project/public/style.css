@@ -61,7 +61,7 @@ canvas {
 	margin-right: auto;
 	margin-top: 0;
 	margin-bottom: 0;
-	height: auto !important;
+	height: 100vh !important;
 	max-width: var(--wContent);
 	max-height: var(--hContent);
 	max-height: 100dvh;
@@ -109,7 +109,7 @@ span.frame.hidden {
 	visibility: hidden !important;
 	opacity: 0 !important;
 }
-span.frame.presentation.horizontal {
+span.frame.horizontal {
 	transform: rotate(90deg);
 }
 
@@ -119,6 +119,7 @@ main.main {
 
 canvas.horizontal {
 	transform: rotate(90deg);
+	height: 100vw !important;
 	max-width: 100dvh;
 	max-height: 100vw;
 }
