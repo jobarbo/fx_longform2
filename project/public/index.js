@@ -124,8 +124,8 @@ const amplitudeLockModeArr = [
 
 const vibrancyModeArr = [
 	["low", 20],
-	["high", 60],
-	["full", 20],
+	["high", 20],
+	["full", 60],
 ];
 
 const lineModeArr = [
@@ -1126,8 +1126,8 @@ class Mover {
 		this.amp2 = amp2;
 		this.xRandDivider = xRandDivider;
 		this.yRandDivider = yRandDivider;
-		this.xRandDividerOffset = 0.01;
-		this.yRandDividerOffset = 0.01;
+		this.xRandDividerOffset = 0.0;
+		this.yRandDividerOffset = 0.0;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperVal = 0;
@@ -1163,10 +1163,10 @@ class Mover {
 
 		this.x += (p.x * MULTIPLIER) / randomGaussian(this.xRandDivider, this.xRandDividerOffset);
 		this.y += (p.y * MULTIPLIER) / randomGaussian(this.yRandDivider, this.yRandDividerOffset);
-		this.xRandDividerOffset = mapValue(elapsedTime, 0, maxFrames / 4, 0.001, 0, true);
-		this.yRandDividerOffset = mapValue(elapsedTime, 0, maxFrames / 4, 0.001, 0, true);
-		this.a = mapValue(elapsedTime, maxFrames / 4, maxFrames, 12, 100, true);
-		this.s = mapValue(elapsedTime, 0, maxFrames / 4, 4, 2, true) * MULTIPLIER;
+		/* 		this.xRandDividerOffset = mapValue(elapsedTime, 0, maxFrames / 4, 0.0, 0, true);
+		this.yRandDividerOffset = mapValue(elapsedTime, 0, maxFrames / 4, 0.0, 0, true);
+		this.a = mapValue(elapsedTime, maxFrames / 4, maxFrames, 12, 25, true);
+		this.s = mapValue(elapsedTime, 0, maxFrames / 4, 4, 1, true) * MULTIPLIER; */
 		let pxy = p.x - p.y;
 		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
@@ -1183,7 +1183,7 @@ class Mover {
 			this.a = 0;
 			this.zombie = true;
 		} else {
-			//this.a = this.zombie ? this.zombieAlpha : this.initAlpha;
+			this.a = this.zombie ? this.zombieAlpha : this.initAlpha;
 		}
 
 		if (this.x < this.xMin * width - this.lineWeight) {
@@ -1212,8 +1212,8 @@ class Mover {
 	}
 }
 function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueArr) {
-	let nx = x - 400,
-		ny = y - 670,
+	let nx = x - 500,
+		ny = y - 970,
 		a1 = amp1,
 		a2 = amp2,
 		scale1 = scl1,
@@ -1262,8 +1262,8 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
  */
 	// Tighter, more frequent patterns
 	//! move the last value between 0.1 and below
-	let zun = ZZ(un, 20, 120, 0.002);
-	let zvn = ZZ(vn, 20, 120, 0.2);
+	let zun = ZZ(un, 20, 120, 0.1);
+	let zvn = ZZ(vn, 20, 120, 0.1);
 
 	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], false);
 	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], false);
