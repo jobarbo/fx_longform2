@@ -1,3 +1,4 @@
+//! winner hash = oodwWhL9sn9RpKdASE9vkH4m9BdZMuc4ikY5jrfJVvAmgYM46S7
 // PARAMS
 //* PARAMS *//
 let fx = $fx;
@@ -64,7 +65,7 @@ const clampNameArr = [
 
 const particleBehaviorNameArr = [
 	["420/69 gas station", 5],
-	["chinati foundation", 5],
+	["chinati foundation", 23823752385624782635],
 	["saint-george pool", 5],
 	["el paisano", 5],
 	["planet marfa", 5],
@@ -88,7 +89,7 @@ const particleBehaviorNameArr = [
 
 const particleBehaviorArr = [
 	["4,4,20,20", 5],
-	["5,5,5,5", 5],
+	["5,5,5,5", 5234437648274827482364734],
 	["5,5,10,10", 5],
 	["5,5,15,15", 5],
 	["5,5,20,20", 5],
@@ -123,8 +124,8 @@ const amplitudeLockModeArr = [
 
 const vibrancyModeArr = [
 	["low", 20],
-	["high", 20],
-	["full", 60],
+	["high", 60],
+	["full", 20],
 ];
 
 const lineModeArr = [
@@ -1030,7 +1031,7 @@ function loadURLParams() {
 		}
 		if (window.location.search.includes("ratio=a4") || urlParams.ratio == "a4") {
 			RATIO = 1.414;
-			MARGIN = 250;
+			MARGIN = 150;
 		} else if (window.location.search.includes("ratio=skate") || urlParams.ratio == "skate") {
 			RATIO = 3.888;
 			MARGIN = 0;
@@ -1038,13 +1039,13 @@ function loadURLParams() {
 			document.querySelector("span.frame").classList.add("hidden");
 		} else if (window.location.search.includes("ratio=square") || window.location.search.includes("ratio=1") || urlParams.ratio == "square" || urlParams.ratio == "1") {
 			RATIO = 1;
-			MARGIN = 300;
+			MARGIN = 150;
 		} else if (window.location.search.includes("ratio=3") || window.location.search.includes("ratio=bookmark") || urlParams.ratio == "bookmark") {
 			RATIO = 3;
-			MARGIN = 150;
+			MARGIN = 100;
 		} else {
 			RATIO = parseInt(window.location.search.split("ratio=")[1]);
-			MARGIN = 200;
+			MARGIN = 150;
 		}
 	}
 
@@ -1115,7 +1116,7 @@ class Mover {
 		this.sat = features.colormode === "monochrome" || features.colormode === "duotone" ? 0 : this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = features.colormode === "monochrome" || features.colormode === "fixed" ? 1 : features.colormode === "dynamic" || features.colormode === "duotone" ? 5 : 15;
+		this.hueStep = features.colormode === "monochrome" || features.colormode === "fixed" ? 1 : features.colormode === "dynamic" || features.colormode === "duotone" ? 10 : 20;
 		this.satStep = features.colorMode === "duotone" ? 0.1 : 1;
 		this.briStep = 0;
 		this.s = this.initS;
@@ -1162,8 +1163,10 @@ class Mover {
 
 		this.x += (p.x * MULTIPLIER) / randomGaussian(this.xRandDivider, this.xRandDividerOffset);
 		this.y += (p.y * MULTIPLIER) / randomGaussian(this.yRandDivider, this.yRandDividerOffset);
-		this.xRandDividerOffset = mapValue(framesRendered, 0, maxFrames / 2, 0, 0, true);
-		this.yRandDividerOffset = mapValue(framesRendered, 0, maxFrames / 2, 0, 0, true);
+		this.xRandDividerOffset = mapValue(elapsedTime, 0, maxFrames / 4, 0.001, 0, true);
+		this.yRandDividerOffset = mapValue(elapsedTime, 0, maxFrames / 4, 0.001, 0, true);
+		this.a = mapValue(elapsedTime, maxFrames / 4, maxFrames, 12, 100, true);
+		this.s = mapValue(elapsedTime, 0, maxFrames / 4, 4, 2, true) * MULTIPLIER;
 		let pxy = p.x - p.y;
 		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
@@ -1180,7 +1183,7 @@ class Mover {
 			this.a = 0;
 			this.zombie = true;
 		} else {
-			this.a = this.zombie ? this.zombieAlpha : this.initAlpha;
+			//this.a = this.zombie ? this.zombieAlpha : this.initAlpha;
 		}
 
 		if (this.x < this.xMin * width - this.lineWeight) {
@@ -1201,16 +1204,16 @@ class Mover {
 		}
 
 		//! if out of bounds, reset to random position inside canvas
-		/* 				if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
-					//this.s = 0;
-					this.x = random(this.xMin, this.xMax) * width;
-					this.y = random(this.yMin, this.yMax) * height;
+		/* 		if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
+			//this.s = 0;
+			this.x = random(this.xMin, this.xMax) * width;
+			this.y = random(this.yMin, this.yMax) * height;
 		} */
 	}
 }
 function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueArr) {
-	let nx = x + 0,
-		ny = y - 0,
+	let nx = x - 400,
+		ny = y - 670,
 		a1 = amp1,
 		a2 = amp2,
 		scale1 = scl1,
@@ -1233,8 +1236,8 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	nx += dx * a1;
 	ny += dy * a2;
 
-	let un = oct(nx, ny, scale1, 3, octave);
-	let vn = oct(ny, nx, scale2, 2, octave);
+	let un = oct(nx, ny, scale1, 4, octave);
+	let vn = oct(ny, nx, scale2, 1, octave);
 	/* 	let timeX = (millis() * 0.00000000001) / MULTIPLIER;
 	let timeY = (millis() * 0.00000000001) / MULTIPLIER;
 	let noiseScaleX = 0.01 / MULTIPLIER;
@@ -1259,8 +1262,8 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
  */
 	// Tighter, more frequent patterns
 	//! move the last value between 0.1 and below
-	let zun = ZZ(un, 20, 120, 0.005);
-	let zvn = ZZ(vn, 20, 120, 0.005);
+	let zun = ZZ(un, 20, 120, 0.002);
+	let zvn = ZZ(vn, 20, 120, 0.2);
 
 	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], false);
 	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], false);
@@ -1534,11 +1537,13 @@ function mod_particle_mode() {
 
 function mod_exposure_mode() {
 	if (maxFrames === 10) {
+		maxFrames = 12;
+	} else if (maxFrames === 12) {
 		maxFrames = 15;
 	} else if (maxFrames === 15) {
+		maxFrames = 18;
+	} else if (maxFrames === 18) {
 		maxFrames = 20;
-	} else if (maxFrames === 20) {
-		maxFrames = 10;
 	}
 	dom_dashboard.innerHTML = "Please wait...";
 	dom_frameNum.innerHTML = `${maxFrames} Frames`;
