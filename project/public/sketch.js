@@ -13,7 +13,7 @@ let palette = [
 	{name: "Vivid sky blue", hex: "4cc9f0", rgb: [76, 201, 240], cmyk: [68, 16, 0, 6], hsb: [194, 68, 94], hsl: [194, 85, 62], lab: [76, -22, -29]},
 ];
 
-let maxDPI = 3;
+let maxDPI = 1;
 let RATIO = 1;
 
 let W = window.innerWidth;
