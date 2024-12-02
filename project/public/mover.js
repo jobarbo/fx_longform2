@@ -110,8 +110,8 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	//let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
 	//let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) - sin(x * scl2 * 0.2 + seed);
 
-	let u = map(zun, -0.0005, 0.0005, -25, 15, true);
-	let v = map(zvn, -0.0005, 0.0005, -15, 25, true);
+	let u = map(zun, -0.05, 0.0005, -25, 15, true);
+	let v = map(zvn, -0.0005, 0.05, -15, 25, true);
 	let p = createVector(u, v);
 	return p;
 }
