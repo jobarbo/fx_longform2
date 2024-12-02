@@ -997,8 +997,8 @@ function INIT_MOVERS() {
 	}
 
 	//* create a random dividing number to add a bit of randomness to the particle movement.
-	let xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
-	let yRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
+	let xRandDivider = random([0.05]);
+	let yRandDivider = random([0.05]);
 
 	//* convert the margin to a percentage of the width
 	xMarg = frameMargin / width;
@@ -1109,7 +1109,10 @@ class Mover {
 				? [0, 10, 20, 20, 30, 35, 40, 40, 50, 50, 50, 60, 60, 70, 80, 90][Math.floor(fxrand() * 16)]
 				: features.theme === "bright" && features.colormode === "monochrome"
 				? [0, 0, 10, 20, 20, 30, 40, 50, 60, 70][Math.floor(fxrand() * 10)]
-				: [35, 40, 40, 50, 50, 60, 60, 70, 70, 80, 90][Math.floor(fxrand() * 11)];
+				: features.theme === "dark" && features.colormode !== "monochrome"
+				? [50, 50, 50, 50, 60, 60, 70, 80, 90, 100][Math.floor(fxrand() * 10)]
+				: [60, 60, 70, 80, 80, 90, 90, 100, 100, 100][Math.floor(fxrand() * 10)];
+
 		this.initAlpha = 12;
 		this.initS = 4 * MULTIPLIER;
 		this.hue = this.initHue;
@@ -1163,10 +1166,10 @@ class Mover {
 
 		this.x += (p.x * MULTIPLIER) / randomGaussian(this.xRandDivider, this.xRandDividerOffset);
 		this.y += (p.y * MULTIPLIER) / randomGaussian(this.yRandDivider, this.yRandDividerOffset);
-		/* 		this.xRandDividerOffset = mapValue(elapsedTime, 0, maxFrames / 4, 0.0, 0, true);
+		this.xRandDividerOffset = mapValue(elapsedTime, 0, maxFrames / 4, 0.0, 0, true);
 		this.yRandDividerOffset = mapValue(elapsedTime, 0, maxFrames / 4, 0.0, 0, true);
-		this.a = mapValue(elapsedTime, maxFrames / 4, maxFrames, 12, 25, true);
-		this.s = mapValue(elapsedTime, 0, maxFrames / 4, 4, 1, true) * MULTIPLIER; */
+		this.a = mapValue(elapsedTime, maxFrames / 4, maxFrames, 12, 35, true);
+		this.s = mapValue(elapsedTime, 0, maxFrames / 4, 4, 3.5, true) * MULTIPLIER;
 		let pxy = p.x - p.y;
 		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
@@ -1183,7 +1186,7 @@ class Mover {
 			this.a = 0;
 			this.zombie = true;
 		} else {
-			this.a = this.zombie ? this.zombieAlpha : this.initAlpha;
+			//this.a = this.zombie ? this.zombieAlpha : this.initAlpha;
 		}
 
 		if (this.x < this.xMin * width - this.lineWeight) {
@@ -1238,15 +1241,23 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 
 	let un = oct(nx, ny, scale1, 4, octave);
 	let vn = oct(ny, nx, scale2, 1, octave);
-	/* 	let timeX = (millis() * 0.00000000001) / MULTIPLIER;
-	let timeY = (millis() * 0.00000000001) / MULTIPLIER;
-	let noiseScaleX = 0.01 / MULTIPLIER;
-	let noiseScaleY = 0.01 / MULTIPLIER; */
+	let timeX = (millis() * 0.000001) / MULTIPLIER;
+	let timeY = (millis() * 0.000001) / MULTIPLIER;
+	let noiseScaleX = 2 / MULTIPLIER;
+	let noiseScaleY = 2 / MULTIPLIER;
 
 	// Modify the calculations to include time and noise
 	//! test between nx/ny and x/y
-	/* 	let sun = sin(ny * scl1 * 1 + seed + timeX) + cos(ny * scl2 * 1 + seed + timeX) + sin(ny * scl1 * 1 + seed + timeX) + oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave);
-	let svn = sin(nx * scl2 * 1 + seed + timeY) + cos(nx * scl1 * 1 + seed + timeY) + sin(nx * scl2 * 1 + seed + timeY) + oct(nx * scl2 + seed + timeY, ny * scl1 + seed + timeY, noiseScaleY, 3, octave); */
+	let sun =
+		sin(ny * scl1 * 1 + seed + timeX) +
+		cos(ny * scl2 * 1 + seed + timeX) +
+		sin(ny * scl1 * 1 + seed + timeX) +
+		oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave) * MULTIPLIER;
+	let svn =
+		sin(nx * scl2 * 1 + seed + timeY) +
+		cos(nx * scl1 * 1 + seed + timeY) +
+		sin(nx * scl2 * 1 + seed + timeY) +
+		oct(nx * scl2 + seed + timeY, ny * scl1 + seed + timeY, noiseScaleY, 3, octave) * MULTIPLIER;
 
 	//! interesting comp where lines goes thoward center
 	/* 		let sun =
@@ -1262,11 +1273,12 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
  */
 	// Tighter, more frequent patterns
 	//! move the last value between 0.1 and below
-	let zun = ZZ(un, 20, 120, 0.1);
-	let zvn = ZZ(vn, 20, 120, 0.1);
+	//! move the first value between 20 and 0.00001
+	let zun = ZZ(sun, 20, 120, 0.1);
+	let zvn = ZZ(svn, 20, 120, 0.1);
 
-	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], false);
-	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], false);
+	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], true);
+	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], true);
 
 	return {x: u, y: v};
 }
