@@ -104,13 +104,17 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
-	let u = map(un, -0.05, 0.0005, -25, 15, true);
-	let v = map(vn, -0.0005, 0.05, -15, 25, true);
+
+	let zun = ZZ(un, 20, 120, 0.01);
+	let zvn = ZZ(vn, 20, 120, 0.2);
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
 	//let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
 	//let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) - sin(x * scl2 * 0.2 + seed);
+
+	let u = map(zun, -0.05, 0.0005, -25, 15, true);
+	let v = map(zvn, -0.0005, 0.05, -15, 25, true);
 	let p = createVector(u, v);
 	return p;
 }
