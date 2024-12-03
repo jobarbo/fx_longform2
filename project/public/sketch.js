@@ -58,5 +58,5 @@ function INIT(seed) {
 		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, a1, a2, seed));
 	}
 
-	background(30, 5, 100);
+	background(30, 3, 100);
 }
