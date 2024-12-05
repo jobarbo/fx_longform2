@@ -1,4 +1,18 @@
 let features = "";
+let movers = [];
+let startTime;
+let maxFrames = 20;
+let frameIterator = 0;
+let currentFrame = 0;
+
+let elapsedTime = 0;
+let renderStart = Date.now();
+let framesRendered = 0;
+let totalElapsedTime = 0;
+let particleNum = 150000;
+let drawing = true;
+let renderMode = 1;
+let cycle = parseInt((maxFrames * particleNum) / 1170);
 
 let DEFAULT_SIZE = 2600;
 let W = window.innerWidth;
@@ -9,39 +23,60 @@ let frameCount = 0;
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
-
+	elapsedTime = 0;
+	framesRendered = 0;
+	startTime = frameCount;
 	// canvas setup
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1);
+	c = createCanvas(DIM, DIM * 1.41);
 	pixelDensity(2);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
+
 	INIT();
+
+	renderStart = Date.now();
+	let sketch = drawGenerator();
+	function animate() {
+		animation = setTimeout(animate, 0);
+		sketch.next();
+	}
+
+	animate();
 }
 
-function draw() {
-	blendMode(ADD);
-	for (let i = 0; i < movers.length; i++) {
-		for (let t = 0; t < 1; t++) {
-			movers[i].show();
-			movers[i].move();
+function* drawGenerator() {
+	let count = 0;
+	let frameCount = 0;
+	let draw_every = cycle;
+	let looptime = 0;
+	while (true) {
+		blendMode(ADD);
+		for (let i = 0; i < particleNum; i++) {
+			const mover = movers[i];
+
+			mover.show();
+			mover.move();
+			if (count > draw_every) {
+				count = 0;
+				yield;
+			}
+			count++;
 		}
-	}
 
-	if (frameCount > 100) {
-		noLoop();
-	}
+		elapsedTime = frameCount - startTime;
 
-	frameCount++;
+		showLoadingBar(elapsedTime, maxFrames, renderStart);
 
-	exporting = true;
-	if (!exporting && bleed > 0) {
-		stroke(0, 100, 100);
-		noFill();
-		strokeWeight(10);
-		rect(bleed, bleed, trimWidth, trimHeight);
+		frameCount++;
+		if (elapsedTime > maxFrames && drawing) {
+			drawing = false;
+			$fx.preview();
+			document.complete = true;
+			return;
+		}
 	}
 }
 
@@ -52,11 +87,34 @@ function INIT(seed) {
 	a1 = int(random(1, 2000) * MULTIPLIER);
 	a2 = int(random(1, 2000) * MULTIPLIER);
 	let hue = random(360);
-	for (let i = 0; i < 150000; i++) {
+	for (let i = 0; i < particleNum; i++) {
 		let x = random(-0.1, 1.1) * width;
 		let y = random(-0.1, 1.1) * height;
 		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, a1, a2, seed));
 	}
 
 	background(30, 5, 5);
+}
+
+function showLoadingBar(elapsedTime, maxFrames, renderStart) {
+	framesRendered++;
+	let currentTime = Date.now();
+	totalElapsedTime = currentTime - renderStart;
+
+	let percent = (elapsedTime / maxFrames) * 100;
+	if (percent > 100) percent = 100;
+
+	let averageFrameTime = totalElapsedTime / framesRendered;
+
+	let remainingFrames = maxFrames - framesRendered;
+	console.log(remainingFrames);
+	let estimatedTimeRemaining = averageFrameTime * remainingFrames;
+
+	console.log(estimatedTimeRemaining);
+
+	// Convert milliseconds to seconds
+	let timeLeftSec = Math.round(estimatedTimeRemaining / 1000);
+
+	// put the percent in the title of the page
+	document.title = percent.toFixed(0) + "% - Time left : " + timeLeftSec + "s";
 }
