@@ -9,7 +9,7 @@ let elapsedTime = 0;
 let renderStart = Date.now();
 let framesRendered = 0;
 let totalElapsedTime = 0;
-let particleNum = 150000;
+let particleNum = 250000;
 let drawing = true;
 let renderMode = 1;
 let cycle = parseInt((maxFrames * particleNum) / 1170);
@@ -53,12 +53,12 @@ function* drawGenerator() {
 	let draw_every = cycle;
 	let looptime = 0;
 	while (true) {
-		blendMode(ADD);
+		blendMode(SCREEN);
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
 
 			mover.show();
-			mover.move();
+			mover.move(elapsedTime, maxFrames);
 			if (count > draw_every) {
 				count = 0;
 				yield;

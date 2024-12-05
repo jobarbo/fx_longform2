@@ -31,7 +31,7 @@ class Mover {
 		ellipse(this.x, this.y, this.s);
 	}
 
-	move() {
+	move(elapsedTime, maxFrames) {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.a1, this.a2, this.seed);
 
 		let pos = abs(p.x) + abs(p.y);
@@ -70,23 +70,26 @@ class Mover {
 		} */
 
 		// if out of bounds, reset to random position inside canvas
-		if (this.x < -0.1 * width || this.x > 1.1 * width || this.y < -0.1 * height || this.y > 1.1 * height) {
-			this.s = 0;
-			this.x = random(-0.1, 1.1) * width;
-			this.y = random(-0.1, 1.1) * height;
-		}
 
-		/* 		// Check if out of bounds and reposition to the opposite side
-		if (this.x < -0.1 * width) {
-			this.x = 1.1 * width; // Move to the right side
-		} else if (this.x > 1.1 * width) {
-			this.x = -0.1 * width; // Move to the left side
+		if (elapsedTime < maxFrames / 2) {
+			if (this.x < -0.1 * width || this.x > 1.1 * width || this.y < -0.1 * height || this.y > 1.1 * height) {
+				this.s = 0;
+				this.x = random(-0.1, 1.1) * width;
+				this.y = random(-0.1, 1.1) * height;
+			}
+		} else {
+			// Check if out of bounds and reposition to the opposite side
+			if (this.x < -0.012 * width) {
+				this.x = random(1.01, 1.012) * width; // Move to the right side
+			} else if (this.x > 1.012 * width) {
+				this.x = random(-0.012, -0.01) * width; // Move to the left side
+			}
+			if (this.y < -0.012 * height) {
+				this.y = random(1.01, 1.012) * height; // Move to the bottom side
+			} else if (this.y > 1.012 * height) {
+				this.y = random(-0.012, -0.01) * height; // Move to the top side
+			}
 		}
-		if (this.y < -0.1 * height) {
-			this.y = 1.1 * height; // Move to the bottom side
-		} else if (this.y > 1.1 * height) {
-			this.y = -0.1 * height; // Move to the top side
-		} */
 	}
 }
 
