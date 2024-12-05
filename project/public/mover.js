@@ -6,7 +6,7 @@ class Mover {
 		this.hue = hue;
 		this.sat = 0;
 		this.bri = 100;
-		this.a = 100;
+		this.a = 10;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
 		this.s = 1 * MULTIPLIER;
 		this.scl1 = scl1;
@@ -130,8 +130,11 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	let un = sin(y * scl1 + seed + time) + cos(y * scl2 + seed + time) + sin(y * scl2 * 50.5 + seed + time) + oct(ny * scl1 + seed + time, nx * scl2 + seed + time, noiseScale, 2, 1);
 	let vn = sin(x * scl1 + seed + time) + cos(x * scl2 + seed + time) - sin(x * scl2 * 0.05 + seed + time) + oct(nx * scl2 + seed + time, ny * scl1 + seed + time, noiseScale, 3, 1);
 
-	let u = map(un, -0.05, 0.0005, -25, 15, true);
-	let v = map(vn, -0.0005, 0.05, -15, 25, true);
+	let zun = ZZ(un, 10, 120, 0.1);
+	let zvn = ZZ(vn, 10, 120, 0.1);
+
+	let u = map(zun, -1.05, 1.0005, -25, 15, false);
+	let v = map(zvn, -1.0005, 1.05, -15, 25, false);
 
 	let p = createVector(u, v);
 	return p;
