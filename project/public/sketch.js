@@ -1,5 +1,5 @@
-let config_type = parseInt(fxrand() * 3 + 1);
-//let config_type = 2;
+//let config_type = parseInt(fxrand() * 3 + 1);
+let config_type = 1;
 console.log(config_type);
 
 let features = "";
@@ -38,7 +38,7 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(1.0);
+		pixelDensity(3.0);
 	}
 
 	C_WIDTH = min(windowWidth, windowHeight);
@@ -82,11 +82,11 @@ function draw() {
 }
 
 function INIT(seed) {
-	scl1 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
+	scl1 = random([0.005]);
 	scl2 = scl1;
 
-	ang1 = 1;
-	ang2 = 1;
+	ang1 = 120;
+	ang2 = 120;
 
 	//xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	xRandDivider = 0.1;

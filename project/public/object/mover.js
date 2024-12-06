@@ -11,7 +11,7 @@ class Mover {
 				? random([0, 0, 10, 20, 20, 30, 40, 60, 80])
 				: random([40, 60, 70, 70, 80, 80, 80, 90, 100]);
 		this.initAlpha = 100;
-		this.initS = 0.22 * MULTIPLIER;
+		this.initS = 0.15 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = random([0, 0, 0, 10, 10, 10, 80, 100, 100, 100, 100, 100, 100]);
 		this.sat = 0;
@@ -44,8 +44,8 @@ class Mover {
 		//this.lineWeight = 0.1 * MULTIPLIER;
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [35, 35, 1, 1];
-		this.nvalue = [0.5, 0.5, 0.5, 0.5];
-		this.nlimit = 1.5;
+		this.nvalue = [0.05, 0.05, 0.05, 0.05];
+		this.nlimit = 0.5;
 		this.satDir = 2;
 
 		this.nvalueDir = [-1, -1, -1, -1];
@@ -65,7 +65,7 @@ class Mover {
 			if (config_type === 1) {
 				//! STARMAP CONFIGURATION
 				this.uvalue[i] /= 1.001 * this.uvalueDir[i];
-				this.nvalue[i] += 0.005 * this.nvalueDir[i];
+				this.nvalue[i] += 0.0000015 * this.nvalueDir[i];
 			} else if (config_type === 2) {
 				//! Equilibrium CONFIGURATION
 				this.uvalue[i] *= 1.015 * this.uvalueDir[i];
@@ -83,7 +83,7 @@ class Mover {
 				this.nvalueDir[i] *= -1;
 				this.lineWeight += 0.1 * MULTIPLIER;
 			} */
-			/* 
+			/*
 			if (this.uvalue[i] <= -200 || this.uvalue[i] >= 200) {
 				this.uvalue[i] = this.uvalue[i] > 200 ? 200 : this.uvalue[i] < -200 ? -200 : this.uvalue[i];
 				this.uvalueDir[i] *= -1;
