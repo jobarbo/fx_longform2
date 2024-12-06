@@ -53,7 +53,7 @@ function* drawGenerator() {
 	let draw_every = cycle;
 	let looptime = 0;
 	while (true) {
-		blendMode(SCREEN);
+		blendMode(ADD);
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
 
