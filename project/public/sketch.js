@@ -43,7 +43,7 @@ function setup() {
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1200;
-	c = createCanvas(C_WIDTH, C_WIDTH);
+	c = createCanvas(C_WIDTH, C_WIDTH * 1.41);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
@@ -82,11 +82,11 @@ function draw() {
 }
 
 function INIT(seed) {
-	scl1 = random([0.005]);
+	scl1 = random([0.0025]);
 	scl2 = scl1;
 
-	ang1 = 120;
-	ang2 = 120;
+	ang1 = 500;
+	ang2 = 500;
 
 	//xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	xRandDivider = 0.1;

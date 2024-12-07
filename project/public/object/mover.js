@@ -64,7 +64,7 @@ class Mover {
 		for (let i = 0; i < this.nvalue.length; i++) {
 			if (config_type === 1) {
 				//! STARMAP CONFIGURATION
-				this.uvalue[i] /= 1.001 * this.uvalueDir[i];
+				this.uvalue[i] /= 1.00001 * this.uvalueDir[i];
 				this.nvalue[i] += 0.0000015 * this.nvalueDir[i];
 			} else if (config_type === 2) {
 				//! Equilibrium CONFIGURATION
