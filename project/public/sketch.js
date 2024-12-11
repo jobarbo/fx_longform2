@@ -14,7 +14,7 @@ function setup() {
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * 1.4);
-	pixelDensity(1);
+	pixelDensity(2);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
@@ -46,10 +46,10 @@ function draw() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.00075, 0.0025);
-	scl2 = random(0.00075, 0.0025);
-	a1 = int(random(1, 2000) * MULTIPLIER);
-	a2 = int(random(1, 2000) * MULTIPLIER);
+	scl1 = random(0.000075, 0.00025);
+	scl2 = random(0.000075, 0.00025);
+	a1 = int(random(1, 1) * MULTIPLIER);
+	a2 = int(random(1, 5100) * MULTIPLIER);
 	let hue = random(360);
 	for (let i = 0; i < 150000; i++) {
 		let x = random(-0.1, 1.1) * width;
