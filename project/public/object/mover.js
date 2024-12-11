@@ -1,7 +1,7 @@
 class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features) {
 		this.x = x;
-		this.y = 0;
+		this.y = height * MULTIPLIER;
 		this.initHue = 201;
 		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
 		this.initBri = 100;
@@ -105,11 +105,15 @@ class Mover {
 			this.y = this.yMax * height + fxrand() * this.lineWeight;
 			this.x = this.x + fxrand() * this.lineWeight;
 			//this.a = 100;
+			//this.lineWeight /= 1.021;
+			//this.s *= 1.01;
 		}
 		if (this.y > this.yMax * height + this.lineWeight) {
 			this.y = this.yMin * height - fxrand() * this.lineWeight;
 			this.x = this.x + fxrand() * this.lineWeight;
 			//this.a = 100;
+			this.lineWeight /= 1.021;
+			this.s *= 1.01;
 		}
 
 		let pxy = abs(p.x) + abs(p.y);
@@ -150,7 +154,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, seed, octave, nvalue, uvalue) 
 	let vn = oct(nx, ny, scale2, 1, octave);
 
 	let u = map(un, -nvalue[0], nvalue[1], -uvalue[0], uvalue[1], true);
-	let v = map(vn, -nvalue[2], nvalue[3], -uvalue[2], -uvalue[3], true);
+	let v = map(vn, -nvalue[2], nvalue[3], uvalue[2], uvalue[3], true);
 
 	let p = createVector(u, v);
 	return p;

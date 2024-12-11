@@ -15,7 +15,7 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 600;
+let maxFrames = 900;
 let C_WIDTH;
 let MULTIPLIER;
 
@@ -82,11 +82,11 @@ function draw() {
 }
 
 function INIT(seed) {
-	scl1 = random([0.0025]);
+	scl1 = random([0.0055]);
 	scl2 = scl1;
 
-	ang1 = 500;
-	ang2 = 500;
+	ang1 = 1;
+	ang2 = 1;
 
 	//xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	xRandDivider = 0.1;
