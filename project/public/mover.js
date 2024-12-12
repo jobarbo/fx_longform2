@@ -38,8 +38,8 @@ class Mover {
 		/* 		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
-		this.x += (p.x / randomGaussian(0.02, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
-		this.y += (p.y / randomGaussian(1.1, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
+		this.x += (p.x / randomGaussian(0.04, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
+		this.y += (p.y / randomGaussian(0.9, 0.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		this.s = map(abs(pos), 20, 40, 0.2, 1, true) * MULTIPLIER;
@@ -71,7 +71,7 @@ class Mover {
 
 		// if out of bounds, reset to random position inside canvas
 
-		if (elapsedTime < maxFrames / 2) {
+		if (elapsedTime < maxFrames / 1.5) {
 			if (this.x < -0.1 * width || this.x > 1.1 * width || this.y < -0.1 * height || this.y > 1.1 * height) {
 				this.s = 0;
 				this.x = random(-0.1, 1.1) * width;
@@ -81,8 +81,12 @@ class Mover {
 			// Check if out of bounds and reposition to the opposite side
 			if (this.x < -0.012 * width) {
 				this.x = random(1.01, 1.012) * width; // Move to the right side
+				/* 				this.hue = 190;
+				this.sat = 100; */
 			} else if (this.x > 1.012 * width) {
 				this.x = random(-0.012, -0.01) * width; // Move to the left side
+				/* 				this.hue = 35;
+				this.sat = 100; */
 			}
 			if (this.y < -0.012 * height) {
 				this.y = random(1.01, 1.012) * height; // Move to the bottom side
@@ -127,17 +131,22 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
 	let time = millis() * 0.00000001; // Introduce a time variable for dynamic movement
-	let noiseScale = 0.1; // Scale for noise function
+	let noiseScale = 0.00001; // Scale for noise function
 
 	// Modify the calculations to include time and noise
-	let un = sin(y * scl1 + seed + time) + cos(y * scl2 + seed + time) + sin(y * scl2 * 2.5 + seed + time) + oct(ny * scl1 + seed + time, nx * scl2 + seed + time, noiseScale, 2, 6);
-	let vn = sin(x * scl1 + seed + time) + cos(x * scl2 + seed + time) - sin(x * scl2 * 0.05 + seed + time) + oct(nx * scl2 + seed + time, ny * scl1 + seed + time, noiseScale, 3, 6);
+	let un = sin(y * scl1 + seed + time) + cos(y * scl2 + seed + time) + sin(y * scl2 * 6.5 + seed + time) + oct(ny * scl1 + seed + time, nx * scl2 + seed + time, noiseScale, 2, 6);
+	let vn = sin(x * scl1 + seed + time) + cos(x * scl2 + seed + time) - sin(x * scl2 * 2.05 + seed + time) + oct(nx * scl2 + seed + time, ny * scl1 + seed + time, noiseScale, 3, 6);
 
-	let zun = ZZ(un, 10, 120, 0.1);
-	let zvn = ZZ(vn, 10, 120, 0.1);
+	//! brutalism config (with or without ZZ)
+	let zun = ZZ(un, 10, 120, 0.27);
+	let zvn = ZZ(vn, 10, 120, 0.27);
 
-	let u = map(zun, -1.05, 1.0005, -25, 15, false);
-	let v = map(zvn, -1.0005, 1.05, -15, 25, false);
+	let u = map(zun, -0.05, 0.0005, -25, 15, true);
+	let v = map(zvn, -0.0005, 0.05, -15, 25, true);
+
+	//! really cool wavey config
+	/* 	let u = map(un, -1.05, 1.0005, -25, 15, true);
+	let v = map(zvn, -1.0005, 1.05, -15, 25, true); */
 
 	let p = createVector(u, v);
 	return p;
