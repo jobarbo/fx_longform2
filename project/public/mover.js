@@ -20,6 +20,8 @@ class Mover {
 		this.yRandOffset = random(-0.1, 3.1) * MULTIPLIER;
 		this.minSat = random(1, 20);
 		this.minBri = random(1, 20);
+		this.gaussianOffsetX = 1;
+		this.gaussianOffsetY = 1;
 	}
 
 	show() {
@@ -38,12 +40,17 @@ class Mover {
 		/* 		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
-		this.x += (p.x / randomGaussian(60.02, 15.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
-		this.y += (p.y / randomGaussian(60.1, 15.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
+		this.x += (p.x / randomGaussian(60.1, this.gaussianOffsetX)) * MULTIPLIER;
+		this.y += (p.y / randomGaussian(60.1, this.gaussianOffsetY)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		this.s = map(abs(pos), 20, 40, 1, 1, true) * MULTIPLIER;
 		this.a = map(abs(pos), 20, 40, 100, 100, true);
+
+		this.gaussianOffsetX = map(elapsedTime, 0, maxFrames / 1.2, 10.0001, 0.00001, true);
+		this.gaussianOffsetY = map(elapsedTime, 0, maxFrames / 1.2, 10.0001, 0.00001, true);
+		/* 		this.gaussianOffsetX = map(abs(pos), 0, 5120, 10.1, 0.00001, true);
+		this.gaussianOffsetY = map(abs(pos), 0, 5120, 10.1, 0.00001, true); */
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
@@ -71,7 +78,7 @@ class Mover {
 
 		// if out of bounds, reset to random position inside canvas
 
-		if (elapsedTime < maxFrames / 1.3) {
+		if (elapsedTime < maxFrames / 1) {
 			if (this.x < -0.1 * width || this.x > 1.1 * width || this.y < -0.1 * height || this.y > 1.1 * height) {
 				this.s = 0;
 				this.x = random(-0.1, 1.1) * width;
