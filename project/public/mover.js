@@ -125,7 +125,7 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	let vn = oct(nx, ny, scale2, 2, octave);
 
 	let zun = ZZ(un, 20, 120, 0.01);
-	let zvn = ZZ(vn, 20, 120, 0.7);
+	let zvn = ZZ(vn, 20, 120, 0.3);
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
