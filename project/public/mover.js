@@ -20,6 +20,16 @@ class Mover {
 		this.yRandOffset = random(-0.1, 3.1) * MULTIPLIER;
 		this.minSat = random(1, 20);
 		this.minBri = random(1, 20);
+
+		this.initVar = {
+			a: 10,
+			b: 28,
+			c: 88 / 41.001,
+			x: 0.02,
+			y: 0.02,
+			z: 0,
+			dt: 0.001,
+		};
 	}
 
 	show() {
@@ -32,7 +42,7 @@ class Mover {
 	}
 
 	move(elapsedTime, maxFrames) {
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.a1, this.a2, this.seed);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.a1, this.a2, this.seed, this.initVar);
 
 		let pos = abs(p.x) + abs(p.y);
 		/* 		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
@@ -97,7 +107,7 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, a1, a2, seed) {
+function superCurve(x, y, scl1, scl2, a1, a2, seed, initVar) {
 	let nx = x,
 		ny = y,
 		scale1 = scl1,
@@ -106,6 +116,7 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 		amplitude2 = a2,
 		dx,
 		dy,
+		init_var = initVar,
 		octave = 1;
 
 	dx = oct(nx, ny, scale1, 0, octave);
@@ -141,12 +152,26 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	let zun = ZZ(un, 10, 120, 0.27);
 	let zvn = ZZ(vn, 10, 120, 0.27);
 
-	let u = map(zun, -0.05, 0.0005, -25, 15, true);
-	let v = map(zvn, -0.0005, 0.05, -15, 25, true);
+	//let u = map(zun, -0.05, 0.0005, -25, 15, true);
+	//let v = map(zvn, -0.0005, 0.05, -15, 25, true);
 
 	//! really cool wavey config
 	/* 	let u = map(un, -1.05, 1.0005, -25, 15, true);
 	let v = map(zvn, -1.0005, 1.05, -15, 25, true); */
+
+	// Calculate Lorenz-like values
+	init_var.x = zun;
+	init_var.y = zvn;
+	let dir_x = init_var.a * (init_var.y - init_var.x) * init_var.dt;
+	let dir_y = (init_var.b * init_var.x - init_var.c * init_var.y) * init_var.dt;
+
+	// Modify the final u and v calculations to incorporate the Lorenz values
+	let u = map(dir_x, -0.05, 0.0005, -25, 15, true);
+	let v = map(dir_y, -0.0005, 0.05, -15, 25, true);
+
+	// Or alternatively, blend them multiplicatively:
+	// let u = map(zun * (1 + abs(dir_x)), -0.05, 0.0005, -25, 15, true);
+	// let v = map(zvn * (1 + abs(dir_y)), -0.0005, 0.05, -15, 25, true);
 
 	let p = createVector(u, v);
 	return p;
