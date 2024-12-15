@@ -1,5 +1,5 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, seed) {
+	constructor(x, y, hue, scl1, scl2, a1, a2, seed) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
