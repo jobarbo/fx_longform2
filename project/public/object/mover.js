@@ -1,7 +1,7 @@
 class Mover {
 	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features) {
 		this.x = x;
-		this.y = height * MULTIPLIER;
+		this.y = 1 * height;
 		this.initHue = 201;
 		this.initSat = random([0, 10, 20, 20, 20, 30, 40, 40, 60, 80, 80, 90]);
 		this.initBri = 100;
