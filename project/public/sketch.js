@@ -12,7 +12,6 @@ let palette = [
 	{name: "Chefchaouen Blue", hex: "4895ef", rgb: [72, 149, 239], cmyk: [70, 38, 0, 6], hsb: [212, 70, 94], hsl: [212, 84, 61], lab: [61, 5, -52]},
 	{name: "Vivid sky blue", hex: "4cc9f0", rgb: [76, 201, 240], cmyk: [68, 16, 0, 6], hsb: [194, 68, 94], hsl: [194, 85, 62], lab: [76, -22, -29]},
 ];
-
 let maxDPI = 1;
 let RATIO = 1;
 
@@ -70,7 +69,8 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(10000 / angle1.length);
+let start_particle_num = Math.floor(10000 / angle1.length);
+let particle_num = start_particle_num;
 
 //let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 let cycle = 10000;
@@ -119,48 +119,48 @@ const offValues_h = [
 ];
  */
 const offValues_l = [
-	{low: 1, high: 0.042}, // case 0
-	{low: 2, high: 1.042}, // case 1
-	{low: 3, high: 2.042}, // case 2
-	{low: 2, high: 1.042}, // case 3
-	{low: 1, high: 0.042}, // case 4
-	{low: 2, high: 1.042}, // case 5
-	{low: 3, high: 2.042}, // case 6
-	{low: 2, high: 1.042}, // case 7
-	{low: 1, high: 0.042}, // case 8
-	{low: 2, high: 1.042}, // case 9
-	{low: 3, high: 2.042}, // case 10
-	{low: 2, high: 1.042}, // case 11
-	{low: 1, high: 0.042}, // case 12
-	{low: 2, high: 1.042}, // case 13
-	{low: 3, high: 2.042}, // case 14
-	{low: 2, high: 1.042}, // case 15
-	{low: 1, high: 0.042}, // case 16
-	{low: 2, high: 1.042}, // case 17
-	{low: 1, high: 0.042}, // case 18
+	{low: 1, high: 0.076}, // case 0
+	{low: 2, high: 1.076}, // case 1
+	{low: 3, high: 2.076}, // case 2
+	{low: 2, high: 1.076}, // case 3
+	{low: 1, high: 0.076}, // case 4
+	{low: 2, high: 1.076}, // case 5
+	{low: 3, high: 2.076}, // case 6
+	{low: 2, high: 1.076}, // case 7
+	{low: 1, high: 0.076}, // case 8
+	{low: 2, high: 1.076}, // case 9
+	{low: 3, high: 2.076}, // case 10
+	{low: 2, high: 1.076}, // case 11
+	{low: 1, high: 0.076}, // case 12
+	{low: 2, high: 1.076}, // case 13
+	{low: 3, high: 2.076}, // case 14
+	{low: 2, high: 1.076}, // case 15
+	{low: 1, high: 0.076}, // case 16
+	{low: 2, high: 1.076}, // case 17
+	{low: 1, high: 0.076}, // case 18
 	// Add more if needed
 ];
 
 const offValues_h = [
-	{low: 1.042, high: 0}, // case 0
-	{low: 2.042, high: 1}, // case 1
-	{low: 3.042, high: 2}, // case 2
-	{low: 2.042, high: 1}, // case 3
-	{low: 1.042, high: 0}, // case 4
-	{low: 2.042, high: 1}, // case 5
-	{low: 3.042, high: 2}, // case 6
-	{low: 2.042, high: 1}, // case 7
-	{low: 1.042, high: 0}, // case 8
-	{low: 2.042, high: 1}, // case 9
-	{low: 3.042, high: 2}, // case 10
-	{low: 2.042, high: 1}, // case 11
-	{low: 1.042, high: 0}, // case 12
-	{low: 2.042, high: 1}, // case 13
-	{low: 3.042, high: 2}, // case 14
-	{low: 2.042, high: 1}, // case 15
-	{low: 1.042, high: 0}, // case 16
-	{low: 2.042, high: 1}, // case 17
-	{low: 1.042, high: 0}, // case 18
+	{low: 1.076, high: 0}, // case 0
+	{low: 2.076, high: 1}, // case 1
+	{low: 3.076, high: 2}, // case 2
+	{low: 2.076, high: 1}, // case 3
+	{low: 1.076, high: 0}, // case 4
+	{low: 2.076, high: 1}, // case 5
+	{low: 3.076, high: 2}, // case 6
+	{low: 2.076, high: 1}, // case 7
+	{low: 1.076, high: 0}, // case 8
+	{low: 2.076, high: 1}, // case 9
+	{low: 3.076, high: 2}, // case 10
+	{low: 2.076, high: 1}, // case 11
+	{low: 1.076, high: 0}, // case 12
+	{low: 2.076, high: 1}, // case 13
+	{low: 3.076, high: 2}, // case 14
+	{low: 2.076, high: 1}, // case 15
+	{low: 1.076, high: 0}, // case 16
+	{low: 2.076, high: 1}, // case 17
+	{low: 1.076, high: 0}, // case 18
 	// Add more if needed
 ];
 
@@ -188,8 +188,8 @@ function setup() {
 	//background(45, 0, 100);
 	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
-	gradient.addColorStop(0.5, "hsl(25, 100%, 95%)");
-	gradient.addColorStop(0.8, "hsl(36, 100%, 95%)");
+	gradient.addColorStop(0.5, "hsl(0, 100%, 95%)");
+	gradient.addColorStop(0.8, "hsl(10, 100%, 96%)");
 	drawingContext.fillStyle = gradient;
 	drawingContext.fillRect(0, 0, width, height);
 
@@ -214,11 +214,11 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 45);
-		sin_val = cos(generator_frameCount * 45);
-		noise_cos = sin(generator_frameCount * 170);
+		cos_val = cos(generator_frameCount * 30);
+		sin_val = cos(generator_frameCount * 30);
+		noise_cos = sin(generator_frameCount * 40);
 		off_cos = sin(generator_frameCount * 800);
-		col_cos = cos(generator_frameCount * 45);
+		col_cos = cos(generator_frameCount * 50);
 		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
@@ -272,6 +272,8 @@ function* drawGenerator() {
 			pop();
 		}
 
+		//particle_num = mapValue(elapsedTime, MAX_FRAMES / 20, MAX_FRAMES / 19, start_particle_num, start_particle_num / 40, true);
+
 		elapsedTime = generator_frameCount - startTime;
 
 		showLoadingBar(elapsedTime, MAX_FRAMES, renderStart);
@@ -323,8 +325,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 	//! Jellyfish
-	let zxoff = ZZ(xoff, 0.001, 0.06, 2.3);
-	let zyoff = ZZ(yoff, 0.001, 0.06, 2.3);
+	let zxoff = ZZ(xoff, 20, 120, 0.001);
+	let zyoff = ZZ(yoff, 20, 120, 0.001);
 	/* 	let x = mapValue(noise(zxoff, zxoff, zyoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(zyoff, zyoff, zxoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
