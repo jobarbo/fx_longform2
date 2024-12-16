@@ -1,18 +1,18 @@
 let features = "";
 
 let palette = [
-	{name: "Rose", hex: "f72585", rgb: [247, 37, 133], cmyk: [0, 85, 46, 3], hsb: [333, 85, 97], hsl: [333, 93, 56], lab: [55, 79, 1]},
-	{name: "Fandango", hex: "b5179e", rgb: [181, 23, 158], cmyk: [0, 87, 13, 29], hsb: [309, 87, 71], hsl: [309, 77, 40], lab: [43, 70, -34]},
-	{name: "Grape", hex: "7209b7", rgb: [114, 9, 183], cmyk: [38, 95, 0, 28], hsb: [276, 95, 72], hsl: [276, 91, 38], lab: [32, 66, -66]},
-	{name: "Chrysler blue", hex: "560bad", rgb: [86, 11, 173], cmyk: [50, 94, 0, 32], hsb: [268, 94, 68], hsl: [268, 88, 36], lab: [27, 60, -68]},
-	{name: "Dark blue", hex: "480ca8", rgb: [72, 12, 168], cmyk: [57, 93, 0, 34], hsb: [263, 93, 66], hsl: [263, 87, 35], lab: [25, 58, -69]},
-	{name: "Zaffre", hex: "3a0ca3", rgb: [58, 12, 163], cmyk: [64, 93, 0, 36], hsb: [258, 93, 64], hsl: [258, 86, 34], lab: [23, 55, -70]},
-	{name: "Palatinate blue", hex: "3f37c9", rgb: [63, 55, 201], cmyk: [69, 73, 0, 21], hsb: [243, 73, 79], hsl: [243, 57, 50], lab: [34, 48, -74]},
-	{name: "Neon blue", hex: "4361ee", rgb: [67, 97, 238], cmyk: [72, 59, 0, 7], hsb: [229, 72, 93], hsl: [229, 83, 60], lab: [47, 36, -74]},
-	{name: "Chefchaouen Blue", hex: "4895ef", rgb: [72, 149, 239], cmyk: [70, 38, 0, 6], hsb: [212, 70, 94], hsl: [212, 84, 61], lab: [61, 5, -52]},
-	{name: "Vivid sky blue", hex: "4cc9f0", rgb: [76, 201, 240], cmyk: [68, 16, 0, 6], hsb: [194, 68, 94], hsl: [194, 85, 62], lab: [76, -22, -29]},
+	{name: "Engineering orange", hex: "d00000", rgb: [208, 0, 0], cmyk: [0, 100, 100, 18], hsb: [0, 100, 82], hsl: [0, 100, 41], lab: [43, 69, 58]},
+	{name: "Selective yellow", hex: "ffba08", rgb: [255, 186, 8], cmyk: [0, 27, 97, 0], hsb: [43, 97, 100], hsl: [43, 100, 52], lab: [80, 13, 81]},
+	{name: "Mindaro", hex: "cbff8c", rgb: [203, 255, 140], cmyk: [20, 0, 45, 0], hsb: [87, 45, 100], hsl: [87, 100, 77], lab: [94, -35, 49]},
+	{name: "Light green", hex: "8fe388", rgb: [143, 227, 136], cmyk: [37, 0, 40, 11], hsb: [115, 40, 89], hsl: [115, 62, 71], lab: [83, -43, 37]},
+	{name: "Persian green", hex: "1b998b", rgb: [27, 153, 139], cmyk: [82, 0, 9, 40], hsb: [173, 82, 60], hsl: [173, 70, 35], lab: [57, -36, -2]},
+	{name: "Azure", hex: "3185fc", rgb: [49, 133, 252], cmyk: [81, 47, 0, 1], hsb: [215, 81, 99], hsl: [215, 97, 59], lab: [57, 17, -66]},
+	{name: "Tekhelet", hex: "5d2e8c", rgb: [93, 46, 140], cmyk: [34, 67, 0, 45], hsb: [270, 67, 55], hsl: [270, 51, 36], lab: [30, 40, -44]},
+	{name: "Tekhelet", hex: "46237a", rgb: [70, 35, 122], cmyk: [43, 71, 0, 52], hsb: [264, 71, 48], hsl: [264, 55, 31], lab: [23, 36, -44]},
+	{name: "Rose Pompadour", hex: "ff7b9c", rgb: [255, 123, 156], cmyk: [0, 52, 39, 0], hsb: [345, 52, 100], hsl: [345, 100, 74], lab: [68, 53, 6]},
+	{name: "Coral pink", hex: "ff9b85", rgb: [255, 155, 133], cmyk: [0, 39, 48, 0], hsb: [11, 48, 100], hsl: [11, 100, 76], lab: [74, 35, 27]},
 ];
-let maxDPI = 1;
+let maxDPI = 3;
 let RATIO = 1;
 
 let W = window.innerWidth;
@@ -119,48 +119,48 @@ const offValues_h = [
 ];
  */
 const offValues_l = [
-	{low: 1, high: 0.076}, // case 0
-	{low: 2, high: 1.076}, // case 1
-	{low: 3, high: 2.076}, // case 2
-	{low: 2, high: 1.076}, // case 3
-	{low: 1, high: 0.076}, // case 4
-	{low: 2, high: 1.076}, // case 5
-	{low: 3, high: 2.076}, // case 6
-	{low: 2, high: 1.076}, // case 7
-	{low: 1, high: 0.076}, // case 8
-	{low: 2, high: 1.076}, // case 9
-	{low: 3, high: 2.076}, // case 10
-	{low: 2, high: 1.076}, // case 11
-	{low: 1, high: 0.076}, // case 12
-	{low: 2, high: 1.076}, // case 13
-	{low: 3, high: 2.076}, // case 14
-	{low: 2, high: 1.076}, // case 15
-	{low: 1, high: 0.076}, // case 16
-	{low: 2, high: 1.076}, // case 17
-	{low: 1, high: 0.076}, // case 18
+	{low: 1, high: 0.123}, // case 0
+	{low: 2, high: 1.123}, // case 1
+	{low: 3, high: 2.123}, // case 2
+	{low: 2, high: 1.123}, // case 3
+	{low: 1, high: 0.123}, // case 4
+	{low: 2, high: 1.123}, // case 5
+	{low: 3, high: 2.123}, // case 6
+	{low: 2, high: 1.123}, // case 7
+	{low: 1, high: 0.123}, // case 8
+	{low: 2, high: 1.123}, // case 9
+	{low: 3, high: 2.123}, // case 10
+	{low: 2, high: 1.123}, // case 11
+	{low: 1, high: 0.123}, // case 12
+	{low: 2, high: 1.123}, // case 13
+	{low: 3, high: 2.123}, // case 14
+	{low: 2, high: 1.123}, // case 15
+	{low: 1, high: 0.123}, // case 16
+	{low: 2, high: 1.123}, // case 17
+	{low: 1, high: 0.123}, // case 18
 	// Add more if needed
 ];
 
 const offValues_h = [
-	{low: 1.076, high: 0}, // case 0
-	{low: 2.076, high: 1}, // case 1
-	{low: 3.076, high: 2}, // case 2
-	{low: 2.076, high: 1}, // case 3
-	{low: 1.076, high: 0}, // case 4
-	{low: 2.076, high: 1}, // case 5
-	{low: 3.076, high: 2}, // case 6
-	{low: 2.076, high: 1}, // case 7
-	{low: 1.076, high: 0}, // case 8
-	{low: 2.076, high: 1}, // case 9
-	{low: 3.076, high: 2}, // case 10
-	{low: 2.076, high: 1}, // case 11
-	{low: 1.076, high: 0}, // case 12
-	{low: 2.076, high: 1}, // case 13
-	{low: 3.076, high: 2}, // case 14
-	{low: 2.076, high: 1}, // case 15
-	{low: 1.076, high: 0}, // case 16
-	{low: 2.076, high: 1}, // case 17
-	{low: 1.076, high: 0}, // case 18
+	{low: 1.123, high: 0}, // case 0
+	{low: 2.123, high: 1}, // case 1
+	{low: 3.123, high: 2}, // case 2
+	{low: 2.123, high: 1}, // case 3
+	{low: 1.123, high: 0}, // case 4
+	{low: 2.123, high: 1}, // case 5
+	{low: 3.123, high: 2}, // case 6
+	{low: 2.123, high: 1}, // case 7
+	{low: 1.123, high: 0}, // case 8
+	{low: 2.123, high: 1}, // case 9
+	{low: 3.123, high: 2}, // case 10
+	{low: 2.123, high: 1}, // case 11
+	{low: 1.123, high: 0}, // case 12
+	{low: 2.123, high: 1}, // case 13
+	{low: 3.123, high: 2}, // case 14
+	{low: 2.123, high: 1}, // case 15
+	{low: 1.123, high: 0}, // case 16
+	{low: 2.123, high: 1}, // case 17
+	{low: 1.123, high: 0}, // case 18
 	// Add more if needed
 ];
 
@@ -195,8 +195,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = height * 0.95;
-	pos_range_y = height * 0.95;
+	pos_range_x = width * 0.5;
+	pos_range_y = height * 0.5;
 	translate(width / 2, height / 2);
 	let sketch = drawGenerator();
 	function animate() {
@@ -297,6 +297,8 @@ function* drawGenerator() {
 function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_val, sin_val, noise_cos, col_cos, off_cos) {
 	xoff = random(xoff_l, xoff_h);
 	yoff = random(yoff_l, yoff_h);
+	//xoff = ZZ(xoff, 20, 120, 0.002);
+	//yoff = ZZ(yoff, 20, 120, 0.002);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
 	noiseDetail(5, 0.5);
@@ -304,8 +306,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 	//! Electron microscope
-	/* 	let x = mapValue(noise(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+	/* let x = mapValue(noise(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+		let y = mapValue(noise(yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 	/* let x = mapValue(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 	//!block Rect
@@ -321,32 +323,33 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		let y = mapValue(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 	//!Drapery Equilibrium
-	/* 	let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
+	/* 	let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true); */
+	/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 	//! Jellyfish
-	let zxoff = ZZ(xoff, 20, 120, 0.001);
-	let zyoff = ZZ(yoff, 20, 120, 0.001);
-	/* 	let x = mapValue(noise(zxoff, zxoff, zyoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(zyoff, zyoff, zxoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+	/* 	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//! Jellyfish 2
+	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
-	let x = mapValue(noise(zxoff, random([zxoff, yi]), zyoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(zyoff, random([zyoff, yi]), zxoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
-
+	//! Jellyfish 3
+	/* 	let x = mapValue(noise(xoff, random([xoff, xi]), random([yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, random([yoff, xi]), random([xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+ */
 	//! Astral Beings
-	/* let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-
+	/* 	let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+ */
 	//! Astral Beings 2
 	/* 	let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-
+	let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+ */
 	//! Astral Beings 3
 	/* 	let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-
+	let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+ */
 	//! astral beings 4
 	/* 		let x = mapValue(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -377,9 +380,9 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 
 	/* 	hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
 	sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true); */
-	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 80, true);
-	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 15, true);
-	bri = mapValue(abs(col_cos), 0, 1, b - bri_max, b - bri_min, true);
+	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1.14, 0, 80, true);
+	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1.14, 0, 5, true);
+	bri = mapValue(abs(col_cos), 0.6, 1, b - bri_max, b - bri_min, true);
 	alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 50, 50, true);
 
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
