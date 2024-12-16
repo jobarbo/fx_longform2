@@ -381,8 +381,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	/* 	hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
 	sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true); */
 	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1.14, 0, 80, true);
-	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1.14, 0, 5, true);
-	bri = mapValue(abs(col_cos), 0.6, 1, b - bri_max, b - bri_min, true);
+	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1.14, 0, 0, true);
+	bri = mapValue(abs(col_cos), 0.75, 1, b - bri_max, b - bri_min, true);
 	alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 50, 50, true);
 
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
