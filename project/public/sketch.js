@@ -119,48 +119,48 @@ const offValues_h = [
 ];
  */
 const offValues_l = [
-	{low: 1, high: 0.123}, // case 0
-	{low: 2, high: 1.123}, // case 1
-	{low: 3, high: 2.123}, // case 2
-	{low: 2, high: 1.123}, // case 3
-	{low: 1, high: 0.123}, // case 4
-	{low: 2, high: 1.123}, // case 5
-	{low: 3, high: 2.123}, // case 6
-	{low: 2, high: 1.123}, // case 7
-	{low: 1, high: 0.123}, // case 8
-	{low: 2, high: 1.123}, // case 9
-	{low: 3, high: 2.123}, // case 10
-	{low: 2, high: 1.123}, // case 11
-	{low: 1, high: 0.123}, // case 12
-	{low: 2, high: 1.123}, // case 13
-	{low: 3, high: 2.123}, // case 14
-	{low: 2, high: 1.123}, // case 15
-	{low: 1, high: 0.123}, // case 16
-	{low: 2, high: 1.123}, // case 17
-	{low: 1, high: 0.123}, // case 18
+	{low: 1, high: 0.048}, // case 0
+	{low: 2, high: 1.048}, // case 1
+	{low: 3, high: 2.048}, // case 2
+	{low: 2, high: 1.048}, // case 3
+	{low: 1, high: 0.048}, // case 4
+	{low: 2, high: 1.048}, // case 5
+	{low: 3, high: 2.048}, // case 6
+	{low: 2, high: 1.048}, // case 7
+	{low: 1, high: 0.048}, // case 8
+	{low: 2, high: 1.048}, // case 9
+	{low: 3, high: 2.048}, // case 10
+	{low: 2, high: 1.048}, // case 11
+	{low: 1, high: 0.048}, // case 12
+	{low: 2, high: 1.048}, // case 13
+	{low: 3, high: 2.048}, // case 14
+	{low: 2, high: 1.048}, // case 15
+	{low: 1, high: 0.048}, // case 16
+	{low: 2, high: 1.048}, // case 17
+	{low: 1, high: 0.048}, // case 18
 	// Add more if needed
 ];
 
 const offValues_h = [
-	{low: 1.123, high: 0}, // case 0
-	{low: 2.123, high: 1}, // case 1
-	{low: 3.123, high: 2}, // case 2
-	{low: 2.123, high: 1}, // case 3
-	{low: 1.123, high: 0}, // case 4
-	{low: 2.123, high: 1}, // case 5
-	{low: 3.123, high: 2}, // case 6
-	{low: 2.123, high: 1}, // case 7
-	{low: 1.123, high: 0}, // case 8
-	{low: 2.123, high: 1}, // case 9
-	{low: 3.123, high: 2}, // case 10
-	{low: 2.123, high: 1}, // case 11
-	{low: 1.123, high: 0}, // case 12
-	{low: 2.123, high: 1}, // case 13
-	{low: 3.123, high: 2}, // case 14
-	{low: 2.123, high: 1}, // case 15
-	{low: 1.123, high: 0}, // case 16
-	{low: 2.123, high: 1}, // case 17
-	{low: 1.123, high: 0}, // case 18
+	{low: 1.048, high: 0}, // case 0
+	{low: 2.048, high: 1}, // case 1
+	{low: 3.048, high: 2}, // case 2
+	{low: 2.048, high: 1}, // case 3
+	{low: 1.048, high: 0}, // case 4
+	{low: 2.048, high: 1}, // case 5
+	{low: 3.048, high: 2}, // case 6
+	{low: 2.048, high: 1}, // case 7
+	{low: 1.048, high: 0}, // case 8
+	{low: 2.048, high: 1}, // case 9
+	{low: 3.048, high: 2}, // case 10
+	{low: 2.048, high: 1}, // case 11
+	{low: 1.048, high: 0}, // case 12
+	{low: 2.048, high: 1}, // case 13
+	{low: 3.048, high: 2}, // case 14
+	{low: 2.048, high: 1}, // case 15
+	{low: 1.048, high: 0}, // case 16
+	{low: 2.048, high: 1}, // case 17
+	{low: 1.048, high: 0}, // case 18
 	// Add more if needed
 ];
 
@@ -195,8 +195,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width * 0.75;
-	pos_range_y = height * 0.75;
+	pos_range_x = width * 0.5;
+	pos_range_y = height * 0.5;
 	translate(width / 2, height / 2);
 	let sketch = drawGenerator();
 	function animate() {
@@ -332,13 +332,13 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 	//! Jellyfish
-	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+	/* 	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//! Jellyfish 2
-	/* 	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
- */
+
 	//! Jellyfish 3
 	/* 	let x = mapValue(noise(xoff, random([xoff, xi]), random([yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([yoff, xi]), random([xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
