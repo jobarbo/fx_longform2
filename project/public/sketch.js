@@ -119,48 +119,48 @@ const offValues_h = [
 ];
  */
 const offValues_l = [
-	{low: 0.9999, high: 0.048}, // case 0
-	{low: 1.9999, high: 1.048}, // case 1
-	{low: 2.9999, high: 2.048}, // case 2
-	{low: 1.9999, high: 1.048}, // case 3
-	{low: 0.9999, high: 0.048}, // case 4
-	{low: 1.9999, high: 1.048}, // case 5
-	{low: 2.9999, high: 2.048}, // case 6
-	{low: 1.9999, high: 1.048}, // case 7
-	{low: 0.9999, high: 0.048}, // case 8
-	{low: 1.9999, high: 1.048}, // case 9
-	{low: 2.9999, high: 2.048}, // case 10
-	{low: 1.9999, high: 1.048}, // case 11
-	{low: 0.9999, high: 0.048}, // case 12
-	{low: 1.9999, high: 1.048}, // case 13
-	{low: 2.9999, high: 2.048}, // case 14
-	{low: 1.9999, high: 1.048}, // case 15
-	{low: 0.9999, high: 0.048}, // case 16
-	{low: 1.9999, high: 1.048}, // case 17
-	{low: 0.9999, high: 0.048}, // case 18
+	{low: 1, high: 0.048}, // case 0
+	{low: 2, high: 1.048}, // case 1
+	{low: 3, high: 2.048}, // case 2
+	{low: 2, high: 1.048}, // case 3
+	{low: 1, high: 0.048}, // case 4
+	{low: 2, high: 1.048}, // case 5
+	{low: 3, high: 2.048}, // case 6
+	{low: 2, high: 1.048}, // case 7
+	{low: 1, high: 0.048}, // case 8
+	{low: 2, high: 1.048}, // case 9
+	{low: 3, high: 2.048}, // case 10
+	{low: 2, high: 1.048}, // case 11
+	{low: 1, high: 0.048}, // case 12
+	{low: 2, high: 1.048}, // case 13
+	{low: 3, high: 2.048}, // case 14
+	{low: 2, high: 1.048}, // case 15
+	{low: 1, high: 0.048}, // case 16
+	{low: 2, high: 1.048}, // case 17
+	{low: 1, high: 0.048}, // case 18
 	// Add more if needed
 ];
 
 const offValues_h = [
-	{low: 1.048, high: 0.0001}, // case 0
-	{low: 2.048, high: 1.0001}, // case 1
-	{low: 3.048, high: 2.0001}, // case 2
-	{low: 2.048, high: 1.0001}, // case 3
-	{low: 1.048, high: 0.0001}, // case 4
-	{low: 2.048, high: 1.0001}, // case 5
-	{low: 3.048, high: 2.0001}, // case 6
-	{low: 2.048, high: 1.0001}, // case 7
-	{low: 1.048, high: 0.0001}, // case 8
-	{low: 2.048, high: 1.0001}, // case 9
-	{low: 3.048, high: 2.0001}, // case 10
-	{low: 2.048, high: 1.0001}, // case 11
-	{low: 1.048, high: 0.0001}, // case 12
-	{low: 2.048, high: 1.0001}, // case 13
-	{low: 3.048, high: 2.0001}, // case 14
-	{low: 2.048, high: 1.0001}, // case 15
-	{low: 1.048, high: 0.0001}, // case 16
-	{low: 2.048, high: 1.0001}, // case 17
-	{low: 1.048, high: 0.0001}, // case 18
+	{low: 1.048, high: 0}, // case 0
+	{low: 2.048, high: 1}, // case 1
+	{low: 3.048, high: 2}, // case 2
+	{low: 2.048, high: 1}, // case 3
+	{low: 1.048, high: 0}, // case 4
+	{low: 2.048, high: 1}, // case 5
+	{low: 3.048, high: 2}, // case 6
+	{low: 2.048, high: 1}, // case 7
+	{low: 1.048, high: 0}, // case 8
+	{low: 2.048, high: 1}, // case 9
+	{low: 3.048, high: 2}, // case 10
+	{low: 2.048, high: 1}, // case 11
+	{low: 1.048, high: 0}, // case 12
+	{low: 2.048, high: 1}, // case 13
+	{low: 3.048, high: 2}, // case 14
+	{low: 2.048, high: 1}, // case 15
+	{low: 1.048, high: 0}, // case 16
+	{low: 2.048, high: 1}, // case 17
+	{low: 1.048, high: 0}, // case 18
 	// Add more if needed
 ];
 
@@ -215,7 +215,7 @@ function* drawGenerator() {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
 		cos_val = cos(generator_frameCount * 30);
-		sin_val = sin(generator_frameCount * 30);
+		sin_val = cos(generator_frameCount * 30);
 		noise_cos = sin(generator_frameCount * 40);
 		off_cos = sin(generator_frameCount * 800);
 		col_cos = cos(generator_frameCount * 50);
@@ -237,8 +237,8 @@ function* drawGenerator() {
 		//35+26 together with low noise ;)
 
 		let scale1 = 1;
-		/* 		let xoff_l_high = 1;
-		let xoff_l_low = 0.28; */
+		let xoff_l_high;
+		let xoff_l_low;
 		for (let i = 0; i < angle1.length; i++) {
 			xoff_l_high = mapValue(abs(noise_cos), 0, 1, offValues_h[i].low, offValues_h[i].high, true);
 			xoff_l_low = mapValue(abs(noise_cos), 0, 1, offValues_l[i].low, offValues_l[i].high, true);
@@ -301,7 +301,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	//yoff = ZZ(yoff, 20, 120, 0.002);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(5, 0.6);
+	noiseDetail(5, 0.5);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -333,8 +333,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 
 	//! Jellyfish
 	/* 	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
- */
+	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+
 	//! Jellyfish 2
 	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
@@ -387,7 +387,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true); */
 	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 100, true);
 	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 0, true);
-	bri = mapValue(abs(col_cos), 0.9, 1, b - bri_max, b - bri_min, true);
+	bri = mapValue(abs(col_cos), 0.85, 1, b - bri_max, b - bri_min, true);
 	alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 50, 50, true);
 
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
