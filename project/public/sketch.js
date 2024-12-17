@@ -3,8 +3,8 @@ let features = "";
 let palette = [
 	{name: "Engineering orange", hex: "d00000", rgb: [208, 0, 0], cmyk: [0, 100, 100, 18], hsb: [0, 100, 82], hsl: [0, 100, 41], lab: [43, 69, 58]},
 	{name: "Selective yellow", hex: "ffba08", rgb: [255, 186, 8], cmyk: [0, 27, 97, 0], hsb: [43, 97, 100], hsl: [43, 100, 52], lab: [80, 13, 81]},
-	{name: "Mindaro", hex: "cbff8c", rgb: [203, 255, 140], cmyk: [20, 0, 45, 0], hsb: [87, 45, 100], hsl: [87, 100, 77], lab: [94, -35, 49]},
-	{name: "Light green", hex: "8fe388", rgb: [143, 227, 136], cmyk: [37, 0, 40, 11], hsb: [115, 40, 89], hsl: [115, 62, 71], lab: [83, -43, 37]},
+	{name: "Mauve", hex: "9f86c0", rgb: [159, 134, 192], cmyk: [17, 30, 0, 25], hsb: [263, 30, 75], hsl: [263, 31, 64], lab: [59, 19, -27]},
+	{name: "Powder blue", hex: "bcd4e6", rgb: [188, 212, 230], cmyk: [18, 8, 0, 10], hsb: [206, 18, 90], hsl: [206, 48, 82], lab: [84, -4, -13]},
 	{name: "Persian green", hex: "1b998b", rgb: [27, 153, 139], cmyk: [82, 0, 9, 40], hsb: [173, 82, 60], hsl: [173, 70, 35], lab: [57, -36, -2]},
 	{name: "Azure", hex: "3185fc", rgb: [49, 133, 252], cmyk: [81, 47, 0, 1], hsb: [215, 81, 99], hsl: [215, 97, 59], lab: [57, 17, -66]},
 	{name: "Tekhelet", hex: "5d2e8c", rgb: [93, 46, 140], cmyk: [34, 67, 0, 45], hsb: [270, 67, 55], hsl: [270, 51, 36], lab: [30, 40, -44]},
@@ -214,8 +214,8 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 30);
-		sin_val = cos(generator_frameCount * 30);
+		cos_val = cos(generator_frameCount * 50);
+		sin_val = cos(generator_frameCount * 50);
 		noise_cos = sin(generator_frameCount * 40);
 		off_cos = sin(generator_frameCount * 800);
 		col_cos = cos(generator_frameCount * 50);
@@ -301,7 +301,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	//yoff = ZZ(yoff, 20, 120, 0.002);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(5, 0.5);
+	noiseDetail(5, 0.6);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -336,13 +336,13 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//! Jellyfish 2
-	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	/* 	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
-
-	//! Jellyfish 3
-	/* 	let x = mapValue(noise(xoff, random([xoff, xi]), random([yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, random([yoff, xi]), random([xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
  */
+	//! Jellyfish 3
+	let x = mapValue(noise(xoff, random([xoff, xi]), random([yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, random([yoff, xi]), random([xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+
 	//! Astral Beings
 	/* 	let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
