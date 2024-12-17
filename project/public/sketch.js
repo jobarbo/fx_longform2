@@ -119,48 +119,48 @@ const offValues_h = [
 ];
  */
 const offValues_l = [
-	{low: 0.72, high: 0.048}, // case 0
-	{low: 1.72, high: 1.048}, // case 1
-	{low: 2.72, high: 2.048}, // case 2
-	{low: 1.72, high: 1.048}, // case 3
-	{low: 0.72, high: 0.048}, // case 4
-	{low: 1.72, high: 1.048}, // case 5
-	{low: 2.72, high: 2.048}, // case 6
-	{low: 1.72, high: 1.048}, // case 7
-	{low: 0.72, high: 0.048}, // case 8
-	{low: 1.72, high: 1.048}, // case 9
-	{low: 2.72, high: 2.048}, // case 10
-	{low: 1.72, high: 1.048}, // case 11
-	{low: 0.72, high: 0.048}, // case 12
-	{low: 1.72, high: 1.048}, // case 13
-	{low: 2.72, high: 2.048}, // case 14
-	{low: 1.72, high: 1.048}, // case 15
-	{low: 0.72, high: 0.048}, // case 16
-	{low: 1.72, high: 1.048}, // case 17
-	{low: 0.72, high: 0.048}, // case 18
+	{low: 0.9999, high: 0.048}, // case 0
+	{low: 1.9999, high: 1.048}, // case 1
+	{low: 2.9999, high: 2.048}, // case 2
+	{low: 1.9999, high: 1.048}, // case 3
+	{low: 0.9999, high: 0.048}, // case 4
+	{low: 1.9999, high: 1.048}, // case 5
+	{low: 2.9999, high: 2.048}, // case 6
+	{low: 1.9999, high: 1.048}, // case 7
+	{low: 0.9999, high: 0.048}, // case 8
+	{low: 1.9999, high: 1.048}, // case 9
+	{low: 2.9999, high: 2.048}, // case 10
+	{low: 1.9999, high: 1.048}, // case 11
+	{low: 0.9999, high: 0.048}, // case 12
+	{low: 1.9999, high: 1.048}, // case 13
+	{low: 2.9999, high: 2.048}, // case 14
+	{low: 1.9999, high: 1.048}, // case 15
+	{low: 0.9999, high: 0.048}, // case 16
+	{low: 1.9999, high: 1.048}, // case 17
+	{low: 0.9999, high: 0.048}, // case 18
 	// Add more if needed
 ];
 
 const offValues_h = [
-	{low: 1.048, high: 0.72}, // case 0
-	{low: 2.048, high: 1.72}, // case 1
-	{low: 3.048, high: 2.72}, // case 2
-	{low: 2.048, high: 1.72}, // case 3
-	{low: 1.048, high: 0.72}, // case 4
-	{low: 2.048, high: 1.72}, // case 5
-	{low: 3.048, high: 2.72}, // case 6
-	{low: 2.048, high: 1.72}, // case 7
-	{low: 1.048, high: 0.72}, // case 8
-	{low: 2.048, high: 1.72}, // case 9
-	{low: 3.048, high: 2.72}, // case 10
-	{low: 2.048, high: 1.72}, // case 11
-	{low: 1.048, high: 0.72}, // case 12
-	{low: 2.048, high: 1.72}, // case 13
-	{low: 3.048, high: 2.72}, // case 14
-	{low: 2.048, high: 1.72}, // case 15
-	{low: 1.048, high: 0.72}, // case 16
-	{low: 2.048, high: 1.72}, // case 17
-	{low: 1.048, high: 0.72}, // case 18
+	{low: 1.048, high: 0.0001}, // case 0
+	{low: 2.048, high: 1.0001}, // case 1
+	{low: 3.048, high: 2.0001}, // case 2
+	{low: 2.048, high: 1.0001}, // case 3
+	{low: 1.048, high: 0.0001}, // case 4
+	{low: 2.048, high: 1.0001}, // case 5
+	{low: 3.048, high: 2.0001}, // case 6
+	{low: 2.048, high: 1.0001}, // case 7
+	{low: 1.048, high: 0.0001}, // case 8
+	{low: 2.048, high: 1.0001}, // case 9
+	{low: 3.048, high: 2.0001}, // case 10
+	{low: 2.048, high: 1.0001}, // case 11
+	{low: 1.048, high: 0.0001}, // case 12
+	{low: 2.048, high: 1.0001}, // case 13
+	{low: 3.048, high: 2.0001}, // case 14
+	{low: 2.048, high: 1.0001}, // case 15
+	{low: 1.048, high: 0.0001}, // case 16
+	{low: 2.048, high: 1.0001}, // case 17
+	{low: 1.048, high: 0.0001}, // case 18
 	// Add more if needed
 ];
 
@@ -214,11 +214,11 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 20);
-		sin_val = sin(generator_frameCount * 20);
+		cos_val = cos(generator_frameCount * 30);
+		sin_val = sin(generator_frameCount * 30);
 		noise_cos = sin(generator_frameCount * 40);
 		off_cos = sin(generator_frameCount * 800);
-		col_cos = cos(generator_frameCount * 20);
+		col_cos = cos(generator_frameCount * 50);
 		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
@@ -252,8 +252,8 @@ function* drawGenerator() {
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
-			xoff_l = mapValue(cos_val, -1, 1, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, -1, 1, xoff_l_low, xoff_l_high, true);
+			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true);
 
 			/* 			xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
 			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true); */
@@ -301,7 +301,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	//yoff = ZZ(yoff, 20, 120, 0.002);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(2, 0.5);
+	noiseDetail(5, 0.6);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -332,13 +332,13 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 	//! Jellyfish
-	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	/* 	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
-
-	//! Jellyfish 2
-	/* 	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
  */
+	//! Jellyfish 2
+	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+
 	//! Jellyfish 3
 	/* 	let x = mapValue(noise(xoff, random([xoff, xi]), random([yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([yoff, xi]), random([xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
