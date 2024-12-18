@@ -47,7 +47,7 @@ let displacement2 = 100;
 
 //let angle1 = [45, 105, 165, 225, 285, 345];
 /* let angle1 = [0, 45, 90, 135, 180, 225, 270, 315]; */
-/* let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5]; */
+let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5];
 /* let angle1 = [45, 225]; */
 //let angle1 = [45, 135, 225, 315];
 //let angle1 = [0, 90, 180, 270];
@@ -59,10 +59,10 @@ let displacement2 = 100;
 //let angle1 = [5, 25, 45, 65, 85, 105, 125, 145, 165, 185, 205, 225, 245, 265, 285, 305, 325, 345];
 // let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 // 32 angles array
-let angle1 = [
+/* let angle1 = [
 	0, 11.25, 22.5, 33.75, 45, 56.25, 67.5, 78.75, 90, 101.25, 112.5, 123.75, 135, 146.25, 157.5, 168.75, 180, 191.25, 202.5, 213.75, 225, 236.25, 247.5, 258.75, 270, 281.25, 292.5, 303.75, 315, 326.25,
 	337.5, 348.75,
-];
+]; */
 console.log(angle1.length);
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 //let angle1 = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 315, 320, 325, 330, 335, 340, 345, 350, 355] ;
@@ -99,119 +99,49 @@ let yoff_h = 1;
 let cos_val;
 let angle_index = 0;
 
-/* const offValues_l = [
-	{low: 2, high: 1.101}, // case 0
-	{low: 1, high: 0.101}, // case 1
-	{low: 2, high: 1.101}, // case 2
-	{low: 3, high: 2.101}, // case 3
-	{low: 4, high: 3.101}, // case 4
-	{low: 5, high: 4.101}, // case 5
-	{low: 4, high: 3.101}, // case 6
-	{low: 3, high: 2.101}, // case 7
-	// Add more if needed
-];
+function generateUpDownPattern(maxPatternValue) {
+	const pattern = [];
 
-const offValues_h = [
-	{low: 2.101, high: 1}, // case 0
-	{low: 1.101, high: 0}, // case 1
-	{low: 2.101, high: 1}, // case 2
-	{low: 3.101, high: 2}, // case 3
-	{low: 4.101, high: 3}, // case 4
-	{low: 5.101, high: 4}, // case 5
-	{low: 4.101, high: 3}, // case 6
-	{low: 3.101, high: 2}, // case 7
-	// Add more if needed
-]; */
+	// Create the up-down pattern
+	for (let i = 1; i <= maxPatternValue; i++) {
+		pattern.push(i);
+	}
+	for (let i = maxPatternValue - 1; i > 1; i--) {
+		pattern.push(i);
+	}
 
-const offValues_l = [
-	{low: 1, high: 0.048}, // case 0
-	{low: 2, high: 1.048}, // case 1
-	{low: 3, high: 2.048}, // case 2
-	{low: 2, high: 1.048}, // case 3
-	{low: 1, high: 0.048}, // case 4
-	{low: 2, high: 1.048}, // case 5
-	{low: 3, high: 2.048}, // case 6
-	{low: 2, high: 1.048}, // case 7
-	{low: 1, high: 0.048}, // case 8
-	{low: 2, high: 1.048}, // case 9
-	{low: 3, high: 2.048}, // case 10
-	{low: 2, high: 1.048}, // case 11
-	{low: 1, high: 0.048}, // case 12
-	{low: 2, high: 1.048}, // case 13
-	{low: 3, high: 2.048}, // case 14
-	{low: 2, high: 1.048}, // case 15
-	{low: 1, high: 0.048}, // case 16
-	{low: 2, high: 1.048}, // case 17
-	{low: 3, high: 2.048}, // case 18
-	{low: 2, high: 1.048}, // case 19
-	{low: 1, high: 0.048}, // case 20
-	{low: 2, high: 1.048}, // case 21
-	{low: 3, high: 2.048}, // case 22
-	{low: 2, high: 1.048}, // case 23
-	{low: 1, high: 0.048}, // case 24
-	{low: 2, high: 1.048}, // case 25
-	{low: 3, high: 2.048}, // case 26
-	{low: 2, high: 1.048}, // case 27
-	{low: 1, high: 0.048}, // case 28
-	{low: 2, high: 1.048}, // case 29
-	{low: 3, high: 2.048}, // case 30
-	{low: 2, high: 1.048}, // case 31
-	{low: 1, high: 0.048}, // case 32
-	{low: 2, high: 1.048}, // case 33
-	{low: 3, high: 2.048}, // case 34
-	{low: 2, high: 1.048}, // case 35
-	{low: 1, high: 0.048}, // case 36
-	{low: 2, high: 1.048}, // case 37
-	{low: 3, high: 2.048}, // case 38
-	{low: 2, high: 1.048}, // case 39
-	{low: 1, high: 0.048}, // case 40
-	// Add more if needed
-];
+	return pattern;
+}
 
-const offValues_h = [
-	{low: 1.048, high: 0}, // case 0
-	{low: 2.048, high: 1}, // case 1
-	{low: 3.048, high: 2}, // case 2
-	{low: 2.048, high: 1}, // case 3
-	{low: 1.048, high: 0}, // case 4
-	{low: 2.048, high: 1}, // case 5
-	{low: 3.048, high: 2}, // case 6
-	{low: 2.048, high: 1}, // case 7
-	{low: 1.048, high: 0}, // case 8
-	{low: 2.048, high: 1}, // case 9
-	{low: 3.048, high: 2}, // case 10
-	{low: 2.048, high: 1}, // case 11
-	{low: 1.048, high: 0}, // case 12
-	{low: 2.048, high: 1}, // case 13
-	{low: 3.048, high: 2}, // case 14
-	{low: 2.048, high: 1}, // case 15
-	{low: 1.048, high: 0}, // case 16
-	{low: 2.048, high: 1}, // case 17
-	{low: 3.048, high: 2}, // case 18
-	{low: 2.048, high: 1}, // case 19
-	{low: 1.048, high: 0}, // case 20
-	{low: 2.048, high: 1}, // case 21
-	{low: 3.048, high: 2}, // case 22
-	{low: 2.048, high: 1}, // case 23
-	{low: 1.048, high: 0}, // case 24
-	{low: 2.048, high: 1}, // case 25
-	{low: 3.048, high: 2}, // case 26
-	{low: 2.048, high: 1}, // case 27
-	{low: 1.048, high: 0}, // case 28
-	{low: 2.048, high: 1}, // case 29
-	{low: 3.048, high: 2}, // case 30
-	{low: 2.048, high: 1}, // case 31
-	{low: 1.048, high: 0}, // case 32
-	{low: 2.048, high: 1}, // case 33
-	{low: 3.048, high: 2}, // case 34
-	{low: 2.048, high: 1}, // case 35
-	{low: 1.048, high: 0}, // case 36
-	{low: 2.048, high: 1}, // case 37
-	{low: 3.048, high: 2}, // case 38
-	{low: 2.048, high: 1}, // case 39
-	{low: 1.048, high: 2}, // case 40
-	// Add more if needed
-];
+function generateSymmetricOffValues(numCases, baseLow, baseHigh, maxPatternValue) {
+	const offValues = [];
+	const pattern = generateUpDownPattern(maxPatternValue);
+	const increment = 1;
+
+	for (let i = 0; i < numCases; i++) {
+		const patternIndex = i % pattern.length;
+		const low = baseLow + (pattern[patternIndex] - 1) * increment;
+		const high = baseHigh + (pattern[patternIndex] - 1) * increment;
+		offValues.push({low, high});
+	}
+
+	return offValues;
+}
+console.log(angle1.length);
+const numCases = angle1.length; // Number of cases you want
+const baseLow_l = 1;
+const baseHigh_l = 0.048;
+const maxPatternValue_l = 3; // Maximum value in the pattern
+
+const baseLow_h = 1.048;
+const baseHigh_h = 0;
+const maxPatternValue_h = 3; // Maximum value in the pattern
+
+const offValues_l = generateSymmetricOffValues(numCases, baseLow_l, baseHigh_l, maxPatternValue_l);
+const offValues_h = generateSymmetricOffValues(numCases, baseLow_h, baseHigh_h, maxPatternValue_h);
+
+console.log(offValues_l);
+console.log(offValues_h);
 
 function setup() {
 	features = $fx.getFeatures();
@@ -247,6 +177,7 @@ function setup() {
 	pos_range_x = width * 0.5;
 	pos_range_y = height * 0.5;
 	translate(width / 2, height / 2);
+	rotate(45);
 	let sketch = drawGenerator();
 	function animate() {
 		animation = setTimeout(animate, 0);
