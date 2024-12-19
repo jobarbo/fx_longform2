@@ -195,11 +195,11 @@ function* drawGenerator() {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
 		//! try zz here
-		cos_val = cos(generator_frameCount * 4); //! lower when col_cos is {sin} ex 12
-		sin_val = sin(generator_frameCount * 4); //! lower when col_cos is {sin} ex 12
-		noise_cos = cos(generator_frameCount * 40); //! try cos for different pattern
+		cos_val = cos(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
+		sin_val = sin(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
+		noise_cos = sin(generator_frameCount * 40); //! try cos for different pattern
 		off_cos = sin(generator_frameCount * 800);
-		col_cos = sin(generator_frameCount * 50); //!change to sin for different color
+		col_cos = cos(generator_frameCount * 50); //!change to sin for different color
 		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
@@ -223,9 +223,10 @@ function* drawGenerator() {
 		for (let i = 0; i < angle1.length; i++) {
 			xoff_l_high = mapValue(abs(noise_cos), 0, 1, offValues_h[i].low, offValues_h[i].high, true);
 			xoff_l_low = mapValue(abs(noise_cos), 0, 1, offValues_l[i].low, offValues_l[i].high, true);
-			/* xoff_l_high = mapValue(noise_cos, -1, 1, offValues_h[i].low, offValues_h[i].high, true);
+			//! OG config
+			/* 			xoff_l_high = mapValue(noise_cos, -1, 1, offValues_h[i].low, offValues_h[i].high, true);
 			xoff_l_low = mapValue(noise_cos, -1, 1, offValues_l[i].low, offValues_l[i].high, true); */
-			/* xoff_l_high = mapValue(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
+			/* 			xoff_l_high = mapValue(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
 			xoff_l_low = mapValue(noise_cos, -1, 1, offValues_h[i].high, offValues_h[i].low, true); */
 
 			xoff_h = xoff_l_high + 0.000001;
@@ -282,7 +283,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	//yoff = ZZ(yoff, 20, 120, 0.002);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(2, 0.6);
+	noiseDetail(2, 0.9);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -353,7 +354,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//let w = mapValue(abs(cos_val), 0, 1, 0.16, 0.26, true);
-	let w = mapValue(abs(cos_val), 0, 1, 0.32, 0.46, true);
+	let w = mapValue(abs(cos_val), 0, 1, 0.16, 0.26, true);
 
 	let elW = w * MULTIPLIER;
 	let ab_x = constrain(x, -width / 2.95, width / 2.95) * MULTIPLIER;
@@ -369,7 +370,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 100, true);
 	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 0, true);
 	bri = mapValue(abs(cos_val), 0.9, 1, b - bri_max, b - bri_min, true);
-	alpha = mapValue(abs(cos_val), 0.9, 1, 50, 100, true);
+	alpha = mapValue(abs(cos_val), 0.9, 1, 100, 100, true);
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 	drawingContext.fillRect(ab_x, ab_y, elW, elW);
 }
