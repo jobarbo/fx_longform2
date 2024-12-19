@@ -194,6 +194,7 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
+		//! try zz here
 		cos_val = cos(generator_frameCount * 4); //! lower when col_cos is {sin} ex 12
 		sin_val = sin(generator_frameCount * 4); //! lower when col_cos is {sin} ex 12
 		noise_cos = cos(generator_frameCount * 40); //! try cos for different pattern
