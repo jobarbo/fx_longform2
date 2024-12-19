@@ -130,10 +130,10 @@ function generateSymmetricOffValues(numCases, baseLow, baseHigh, maxPatternValue
 console.log(angle1.length);
 const numCases = angle1.length; // Number of cases you want
 const baseLow_l = 1;
-const baseHigh_l = 0.048;
+const baseHigh_l = 0.148;
 const maxPatternValue_l = 3; // Maximum value in the pattern
 
-const baseLow_h = 1.048;
+const baseLow_h = 1.148;
 const baseHigh_h = 0;
 const maxPatternValue_h = 3; // Maximum value in the pattern
 
@@ -194,11 +194,11 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 2.5);
-		sin_val = cos(generator_frameCount * 2.5);
-		noise_cos = sin(generator_frameCount * 40);
+		cos_val = cos(generator_frameCount * 4); //! lower when col_cos is {sin} ex 12
+		sin_val = sin(generator_frameCount * 4); //! lower when col_cos is {sin} ex 12
+		noise_cos = cos(generator_frameCount * 40); //! try cos for different pattern
 		off_cos = sin(generator_frameCount * 800);
-		col_cos = cos(generator_frameCount * 50);
+		col_cos = sin(generator_frameCount * 50); //!change to sin for different color
 		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
@@ -227,8 +227,8 @@ function* drawGenerator() {
 			/* xoff_l_high = mapValue(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
 			xoff_l_low = mapValue(noise_cos, -1, 1, offValues_h[i].high, offValues_h[i].low, true); */
 
-			xoff_h = xoff_l_high + 0.001;
-			yoff_h = xoff_l_high + 0.001;
+			xoff_h = xoff_l_high + 0.000001;
+			yoff_h = xoff_l_high + 0.000001;
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
@@ -281,7 +281,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	//yoff = ZZ(yoff, 20, 120, 0.002);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(6, 0.6);
+	noiseDetail(2, 0.6);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -368,8 +368,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 100, true);
 	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 0, true);
 	bri = mapValue(abs(cos_val), 0.9, 1, b - bri_max, b - bri_min, true);
-	alpha = mapValue(elapsedTime, MAX_FRAMES / 2, MAX_FRAMES / 1, 50, 50, true);
-
+	alpha = mapValue(abs(cos_val), 0.9, 1, 50, 100, true);
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 	drawingContext.fillRect(ab_x, ab_y, elW, elW);
 }
