@@ -354,7 +354,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//let w = mapValue(abs(cos_val), 0, 1, 0.16, 0.26, true);
-	let w = mapValue(abs(cos_val), 0, 1, 0.16, 0.26, true);
+	let w = mapValue(abs(cos_val), 0, 1, 0.32, 0.46, true);
 
 	let elW = w * MULTIPLIER;
 	let ab_x = constrain(x, -width / 2.95, width / 2.95) * MULTIPLIER;
@@ -370,7 +370,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 100, true);
 	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 0, true);
 	bri = mapValue(abs(cos_val), 0.9, 1, b - bri_max, b - bri_min, true);
-	alpha = mapValue(abs(cos_val), 0.9, 1, 100, 100, true);
+	alpha = mapValue(abs(cos_val), 0.9, 1, 50, 100, true);
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 	drawingContext.fillRect(ab_x, ab_y, elW, elW);
 }
