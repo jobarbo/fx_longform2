@@ -997,8 +997,8 @@ function INIT_MOVERS() {
 	}
 
 	//* create a random dividing number to add a bit of randomness to the particle movement.
-	let xRandDivider = random([0.05]);
-	let yRandDivider = random([0.05]);
+	let xRandDivider = random([0.05]) * MULTIPLIER;
+	let yRandDivider = random([0.05]) * MULTIPLIER;
 
 	//* convert the margin to a percentage of the width
 	xMarg = frameMargin / width;
