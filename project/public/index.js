@@ -13,9 +13,9 @@ let composition_params;
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
 const complexityArr = [
-	["1", 40],
+	["1", 60],
 	["2", 35],
-	["6", 25],
+	["6", 5],
 ];
 
 const themeArr = [
@@ -32,17 +32,17 @@ const colorModeArr = [
 ];
 
 const scaleValueArr = [
-	["0.0001, 0.0008", 25],
-	["0.0008, 0.002", 25],
-	["0.002, 0.005", 25],
-	["0.005, 0.01", 25],
+	["0.0001, 0.0008", 80],
+	["0.0008, 0.002", 10],
+	["0.002, 0.005", 5],
+	["0.005, 0.01", 5],
 ];
 
 const scaleValueNameArr = [
-	["macro", 35],
-	["close", 25],
-	["mid", 25],
-	["far", 15],
+	["macro", 80],
+	["close", 10],
+	["mid", 5],
+	["far", 5],
 ];
 
 const clampvalueArr = [
@@ -65,7 +65,7 @@ const clampNameArr = [
 
 const particleBehaviorNameArr = [
 	["420/69 gas station", 5],
-	["chinati foundation", 23823752385624782635],
+	["chinati foundation", 5],
 	["saint-george pool", 5],
 	["el paisano", 5],
 	["planet marfa", 5],
@@ -89,7 +89,7 @@ const particleBehaviorNameArr = [
 
 const particleBehaviorArr = [
 	["4,4,20,20", 5],
-	["5,5,5,5", 5234437648274827482364734],
+	["5,5,5,5", 5],
 	["5,5,10,10", 5],
 	["5,5,15,15", 5],
 	["5,5,20,20", 5],
@@ -167,8 +167,8 @@ const bgModeArr = [
 ];
 
 const lazyMorningArr = [
-	[true, 10],
-	[false, 90],
+	[true, 5],
+	[false, 95],
 ];
 composition_params = generate_composition_params();
 // all input parameters are optional, they will be chosen at random if not passed into the function
@@ -1114,7 +1114,7 @@ class Mover {
 				: [60, 60, 70, 80, 80, 90, 90, 100, 100, 100][Math.floor(fxrand() * 10)];
 
 		this.initAlpha = 12;
-		this.initS = 4 * MULTIPLIER;
+		this.initS = 1 * MULTIPLIER;
 		this.hue = this.initHue;
 		this.sat = features.colormode === "monochrome" || features.colormode === "duotone" ? 0 : this.initSat;
 		this.bri = this.initBri;
@@ -1168,8 +1168,8 @@ class Mover {
 		this.y += (p.y * MULTIPLIER) / randomGaussian(this.yRandDivider, this.yRandDividerOffset);
 		this.xRandDividerOffset = mapValue(elapsedTime, 0, maxFrames / 4, 0.0, 0, true);
 		this.yRandDividerOffset = mapValue(elapsedTime, 0, maxFrames / 4, 0.0, 0, true);
-		this.a = mapValue(elapsedTime, maxFrames / 4, maxFrames, 12, 35, true);
-		this.s = mapValue(elapsedTime, 0, maxFrames / 4, 4, 3.5, true) * MULTIPLIER;
+		this.a = mapValue(elapsedTime, maxFrames / 4, maxFrames, 100, 100, true);
+		this.s = mapValue(elapsedTime, 0, maxFrames / 4, 1.25, 1.25, true) * MULTIPLIER;
 		let pxy = p.x - p.y;
 		this.hue += mapValue(pxy, -this.uvalue * 2, this.uvalue * 2, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
@@ -1215,8 +1215,8 @@ class Mover {
 	}
 }
 function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueArr) {
-	let nx = x - 500,
-		ny = y - 970,
+	let nx = x - 1,
+		ny = y - 1,
 		a1 = amp1,
 		a2 = amp2,
 		scale1 = scl1,
@@ -1235,32 +1235,32 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	ny += dy * a2;
 
 	dx = oct(nx, ny, scale1, 1, octave);
-	dy = oct(nx, ny, scale2, 2, octave);
+	dy = oct(nx, ny, scale2, 5, octave);
 	nx += dx * a1;
 	ny += dy * a2;
 
 	let un = oct(nx, ny, scale1, 4, octave);
-	let vn = oct(ny, nx, scale2, 1, octave);
-	let timeX = (millis() * 0.000001) / MULTIPLIER;
-	let timeY = (millis() * 0.000001) / MULTIPLIER;
-	let noiseScaleX = 2 / MULTIPLIER;
-	let noiseScaleY = 2 / MULTIPLIER;
+	let vn = oct(ny, nx, scale2, 6, octave);
+	let timeX = (millis() * 0.0000000000001) / MULTIPLIER;
+	let timeY = (millis() * 0.0000000000001) / MULTIPLIER;
+	let noiseScaleX = 0.1 / MULTIPLIER;
+	let noiseScaleY = 0.1 / MULTIPLIER;
 
 	// Modify the calculations to include time and noise
 	//! test between nx/ny and x/y
-	let sun =
-		sin(ny * scl1 * 1 + seed + timeX) +
-		cos(ny * scl2 * 1 + seed + timeX) +
-		sin(ny * scl1 * 1 + seed + timeX) +
-		oct(ny * scl1 + seed + timeX, nx * scl2 + seed + timeX, noiseScaleX, 2, octave) * MULTIPLIER;
+	/* 	let sun =
+		sin(y * scl1 * 1 + seed + timeX) +
+		cos(y * scl2 * 1 + seed + timeX) +
+		sin(y * scl1 * 1 + seed + timeX) +
+		oct(vn * scl1 + seed + timeX, un * scl2 + seed + timeX, noiseScaleX, 2, octave) * MULTIPLIER;
 	let svn =
-		sin(nx * scl2 * 1 + seed + timeY) +
-		cos(nx * scl1 * 1 + seed + timeY) +
-		sin(nx * scl2 * 1 + seed + timeY) +
-		oct(nx * scl2 + seed + timeY, ny * scl1 + seed + timeY, noiseScaleY, 3, octave) * MULTIPLIER;
-
+		sin(x * scl2 * 1 + seed + timeY) +
+		cos(x * scl1 * 1 + seed + timeY) +
+		sin(x * scl2 * 1 + seed + timeY) +
+		oct(un * scl2 + seed + timeY, vn * scl1 + seed + timeY, noiseScaleY, 3, octave) * MULTIPLIER;
+ */
 	//! interesting comp where lines goes thoward center
-	/* 		let sun =
+	/* 	let sun =
 		sin(ny * noiseScaleX * 1 + seed + timeX) +
 		cos(ny * noiseScaleY * 1 + seed + timeX) +
 		sin(ny * noiseScaleX * 1 + seed + timeX) +
@@ -1274,11 +1274,11 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	// Tighter, more frequent patterns
 	//! move the last value between 0.1 and below
 	//! move the first value between 20 and 0.00001
-	let zun = ZZ(sun, 20, 120, 0.1);
-	let zvn = ZZ(svn, 20, 120, 0.1);
+	let zun = ZZ(un, 20, 120, 0.5);
+	let zvn = ZZ(vn, 20, 120, 0.007);
 
-	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], true);
-	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], true);
+	let u = mapValue(zun, -1.000000001, 0.000000001, -10, 10, true);
+	let v = mapValue(zvn, -0.000000001, 1.000000001, -10, 10, true);
 
 	return {x: u, y: v};
 }
