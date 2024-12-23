@@ -1277,8 +1277,8 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	let zun = ZZ(un, 20, 120, 0.5);
 	let zvn = ZZ(vn, 20, 120, 0.007);
 
-	let u = mapValue(zun, -1.000000001, 0.000000001, -10, 10, true);
-	let v = mapValue(zvn, -0.000000001, 1.000000001, -10, 10, true);
+	let u = mapValue(zun, -1.000000001, 0.000000001, -10, 5, true);
+	let v = mapValue(zvn, -0.000000001, 1.000000001, -5, 10, true);
 
 	return {x: u, y: v};
 }
