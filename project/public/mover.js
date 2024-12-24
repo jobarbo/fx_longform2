@@ -47,7 +47,7 @@ class Mover {
 		/* 		this.gaussianOffsetX = map(abs(pos), 0, 5120, 10.1, 0.00001, true);
 		this.gaussianOffsetY = map(abs(pos), 0, 5120, 10.1, 0.00001, true); */
 
-		this.s = map(pos, 0, 500, 0.5 * MULTIPLIER, 0, true);
+		this.s = map(pos, 19, 19.01, 0.5 * MULTIPLIER, 0, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
@@ -132,8 +132,8 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	//let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
 	//let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) - sin(x * scl2 * 0.2 + seed);
 
-	let u = map(zun, -1.05, 1.0001, -1500, 1000, true);
-	let v = map(zvn, -0.0005, 1.05, 0, 0, true);
+	let u = map(zun, -1.05, 0.0005, -15, 25, true);
+	let v = map(zvn, -0.0005, 1.05, 0, 1, true);
 	let p = createVector(u, v);
 	return p;
 }

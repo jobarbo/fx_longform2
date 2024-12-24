@@ -82,10 +82,11 @@ function* drawGenerator() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = 0.001;
-	scl2 = 0.001;
-	a1 = 320;
-	a2 = 320;
+	scl1 = random(0.000175, 0.001);
+	scl2 = random(0.000175, 0.001);
+	a1 = int(random(1, 400) * MULTIPLIER);
+	a2 = int(random(1, 400) * MULTIPLIER);
+
 	let hue = random(360);
 	for (let i = 0; i < particleNum; i++) {
 		let x = random(-0.1, 1.1) * width;
