@@ -47,7 +47,8 @@ class Mover {
 		/* 		this.gaussianOffsetX = map(abs(pos), 0, 5120, 10.1, 0.00001, true);
 		this.gaussianOffsetY = map(abs(pos), 0, 5120, 10.1, 0.00001, true); */
 
-		this.s = map(pos, 19, 19.01, 0.5 * MULTIPLIER, 0, true);
+		//!invert the two values after pos to invert the curve
+		this.s = map(pos, 24.01, 24, 0.5 * MULTIPLIER, 0, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
