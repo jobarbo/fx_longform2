@@ -54,11 +54,8 @@ function* drawGenerator() {
 	while (true) {
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
-
-			if (elapsedTime > 2) {
-				mover.show();
-				mover.move(elapsedTime, maxFrames);
-			}
+			mover.show();
+			mover.move(elapsedTime, maxFrames);
 			if (count > draw_every) {
 				count = 0;
 				yield;
@@ -84,8 +81,8 @@ function INIT(seed) {
 	movers = [];
 	scl1 = random(0.000175, 0.001);
 	scl2 = random(0.000175, 0.001);
-	a1 = int(random(1, 400) * MULTIPLIER);
-	a2 = int(random(1, 400) * MULTIPLIER);
+	a1 = int(random(50, 400) * MULTIPLIER);
+	a2 = int(random(50, 400) * MULTIPLIER);
 
 	let hue = random(360);
 	for (let i = 0; i < particleNum; i++) {

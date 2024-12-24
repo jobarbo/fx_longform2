@@ -7,7 +7,7 @@ class Mover {
 		this.sat = 0;
 		this.bri = 0;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 0 * MULTIPLIER;
+		this.s = 1 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.a1 = a1;
@@ -19,14 +19,16 @@ class Mover {
 		this.yRandOffset = random(-0.1, 3.1) * MULTIPLIER;
 		this.minSat = random(1, 20);
 		this.minBri = random(1, 20);
-		this.gaussianOffsetX = 1;
-		this.gaussianOffsetY = 1;
+		this.gaussianOffsetX = 0.00001;
+		this.gaussianOffsetY = 0.00001;
+		this.rdnGaussianValueX = 0.1;
+		this.rdnGaussianValueY = 10.3;
 	}
 
 	show() {
 		//
 		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, 100);
+		fill(this.hue, this.sat, this.bri, 30);
 		//stroke(34, 40, 90,80);
 		noStroke();
 		ellipse(this.x, this.y, this.s);
@@ -39,8 +41,8 @@ class Mover {
 		/* 		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
-		this.x += (p.x / randomGaussian(0.1, this.gaussianOffsetX) + randomGaussian(0, 0.000001)) * MULTIPLIER;
-		this.y += (p.y / randomGaussian(10.03, this.gaussianOffsetY) + randomGaussian(0, 0.000001)) * MULTIPLIER;
+		this.x += (p.x / randomGaussian(this.rdnGaussianValueX, this.gaussianOffsetX) + randomGaussian(0, 0.000001)) * MULTIPLIER;
+		this.y += (p.y / randomGaussian(this.rdnGaussianValueY, this.gaussianOffsetY) + randomGaussian(0, 0.000001)) * MULTIPLIER;
 
 		this.gaussianOffsetX = map(elapsedTime, 0, maxFrames / 3, 0.00001, 0.00001, true);
 		this.gaussianOffsetY = map(elapsedTime, 0, maxFrames / 3, 0.00001, 0.00001, true);
@@ -48,7 +50,7 @@ class Mover {
 		this.gaussianOffsetY = map(abs(pos), 0, 5120, 10.1, 0.00001, true); */
 
 		//!invert the two values after pos to invert the curve
-		this.s = map(pos, 24.01, 24, 0.5 * MULTIPLIER, 0, true);
+		this.s = map(pos, 24.01, 24, 2 * MULTIPLIER, 0, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
@@ -76,16 +78,16 @@ class Mover {
 
 		// if out of bounds, reset to random position inside canvas
 		if (elapsedTime < maxFrames / 2) {
-			if (this.x < -0.1 * width || this.x > 1.1 * width || this.y < -0.1 * height || this.y > 1.1 * height) {
-				this.x = random(-0.1, 1.1) * width;
+			if (this.x < -0.42 * width || this.x > 1.01 * width || this.y < -0.1 * height || this.y > 1.1 * height) {
+				this.x = random(-0.42, -0.01) * width;
 				this.y = random(-0.1, 1.1) * height;
 			}
 		} else {
 			// Check if out of bounds and reposition to the opposite side
-			if (this.x < -0.012 * width) {
-				this.x = random(1.01, 1.0101) * width; // Move to the right side
-			} else if (this.x > 1.012 * width) {
-				this.x = random(-0.012, -0.0101) * width; // Move to the left side
+			if (this.x < -0.22 * width) {
+				this.x = random(1.2, 1.201) * width; // Move to the right side
+			} else if (this.x > 1.22 * width) {
+				this.x = random(-0.2, -0.201) * width; // Move to the left side
 			}
 			if (this.y < -0.012 * height) {
 				this.y = random(1.01, 1.0101) * height; // Move to the bottom side
