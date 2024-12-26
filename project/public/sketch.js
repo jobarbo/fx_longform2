@@ -35,7 +35,7 @@ function setup() {
 	} else {
 		pixelDensity(2);
 	}
-	createCanvas(16 * 100, 16 * 100);
+	createCanvas(10 * 100, 16 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000000000);
 	randomSeed(seed);
@@ -67,9 +67,9 @@ function INIT(seed) {
 	scl2 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
 	scl3 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]); */
 
-	scl1 = 0.01;
-	scl2 = 0.01;
-	scl3 = 0.01;
+	scl1 = 0.001;
+	scl2 = 0.001;
+	scl3 = 0.001;
 
 	/* 	scl1 = 0.4;
 	scl2 = 0.002;
