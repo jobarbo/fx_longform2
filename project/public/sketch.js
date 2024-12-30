@@ -129,12 +129,12 @@ function generateSymmetricOffValues(numCases, baseLow, baseHigh, maxPatternValue
 }
 console.log(angle1.length);
 const numCases = angle1.length; // Number of cases you want
-const baseLow_l = 0.1;
+const baseLow_l = 0.148;
 const baseHigh_l = 0;
 const maxPatternValue_l = 1; // Maximum value in the pattern
 
 const baseLow_h = 0;
-const baseHigh_h = 0.1;
+const baseHigh_h = 0.148;
 const maxPatternValue_h = 1; // Maximum value in the pattern
 
 const offValues_l = generateSymmetricOffValues(numCases, baseLow_l, baseHigh_l, maxPatternValue_l);
