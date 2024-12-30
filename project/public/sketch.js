@@ -46,7 +46,7 @@ let displacement1 = 0;
 let displacement2 = 100;
 
 //let angle1 = [45, 105, 165, 225, 285, 345];
-/* let angle1 = [0, 45, 90, 135, 180, 225, 270, 315]; */
+let angle1 = [45, 135, 225, 315];
 /* let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5]; */
 /* let angle1 = [45, 225]; */
 //let angle1 = [45, 135, 225, 315];
@@ -59,10 +59,10 @@ let displacement2 = 100;
 //let angle1 = [5, 25, 45, 65, 85, 105, 125, 145, 165, 185, 205, 225, 245, 265, 285, 305, 325, 345];
 // let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 // 32 angles array
-let angle1 = [
+/* let angle1 = [
 	0, 11.25, 22.5, 33.75, 45, 56.25, 67.5, 78.75, 90, 101.25, 112.5, 123.75, 135, 146.25, 157.5, 168.75, 180, 191.25, 202.5, 213.75, 225, 236.25, 247.5, 258.75, 270, 281.25, 292.5, 303.75, 315, 326.25,
 	337.5, 348.75,
-];
+]; */
 console.log(angle1.length);
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 //let angle1 = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 315, 320, 325, 330, 335, 340, 345, 350, 355] ;
@@ -129,13 +129,13 @@ function generateSymmetricOffValues(numCases, baseLow, baseHigh, maxPatternValue
 }
 console.log(angle1.length);
 const numCases = angle1.length; // Number of cases you want
-const baseLow_l = 1;
-const baseHigh_l = 0.148;
-const maxPatternValue_l = 3; // Maximum value in the pattern
+const baseLow_l = 0.148;
+const baseHigh_l = 1;
+const maxPatternValue_l = 1; // Maximum value in the pattern
 
-const baseLow_h = 1.148;
-const baseHigh_h = 0;
-const maxPatternValue_h = 3; // Maximum value in the pattern
+const baseLow_h = 0;
+const baseHigh_h = 1.148;
+const maxPatternValue_h = 1; // Maximum value in the pattern
 
 const offValues_l = generateSymmetricOffValues(numCases, baseLow_l, baseHigh_l, maxPatternValue_l);
 const offValues_h = generateSymmetricOffValues(numCases, baseLow_h, baseHigh_h, maxPatternValue_h);
@@ -195,9 +195,9 @@ function* drawGenerator() {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
 		//! try zz here
-		cos_val = cos(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
-		sin_val = sin(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
-		noise_cos = sin(generator_frameCount * 40); //! try cos for different pattern
+		cos_val = cos(generator_frameCount * 50);
+		sin_val = cos(generator_frameCount * 50);
+		noise_cos = sin(generator_frameCount * 40);
 		off_cos = sin(generator_frameCount * 800);
 		col_cos = cos(generator_frameCount * 50); //!change to sin for different color
 		//nd_cos = sin(generator_frameCount * 5);
@@ -283,7 +283,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	//yoff = ZZ(yoff, 20, 120, 0.002);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(2, 0.9);
+	noiseDetail(5, 0.6);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -314,16 +314,16 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 	//! Jellyfish
-	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+	/* 	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//! Jellyfish 2
 	/* 	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
  */
 	//! Jellyfish 3
-	/* 	let x = mapValue(noise(xoff, random([xoff, xi]), random([yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, random([yoff, xi]), random([xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+	let x = mapValue(noise(xoff, random([xoff, xi]), random([yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, random([yoff, xi]), random([xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 	//! Astral Beings
 	/* 	let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
@@ -357,8 +357,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let w = mapValue(abs(cos_val), 0, 1, 0.32, 0.46, true);
 
 	let elW = w * MULTIPLIER;
-	let ab_x = constrain(x, -width / 2.95, width / 2.95) * MULTIPLIER;
-	let ab_y = constrain(y, -height / 2.95, height / 2.95) * MULTIPLIER;
+	let ab_x = constrain(x, -width / 1.95, width / 1.95) * MULTIPLIER;
+	let ab_y = constrain(y, -height / 1.95, height / 1.95) * MULTIPLIER;
 	let index = Math.floor(mapValue(abs(col_cos), 0, 1, 0, palette.length - 1, true));
 
 	hue = palette[index].hsl[0];
