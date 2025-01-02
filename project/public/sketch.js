@@ -149,12 +149,12 @@ const baseHigh_h = 1.148;
 const maxPatternValue_h = 1; */
 
 // !high pattern / eidolons
-/* const baseLow_l = 0.1;
+/*const baseLow_l = 0.5;
 const baseHigh_l = 0;
 const maxPatternValue_l = 3;
 
 const baseLow_h = 0;
-const baseHigh_h = 0.1;
+const baseHigh_h = 0.5;
 const maxPatternValue_h = 3;*/
 
 //! 2 fold symmetry to create eidolons
@@ -222,6 +222,9 @@ function* drawGenerator() {
 		noise_cos = sin(generator_frameCount * 40); //! try cos for different pattern
 		off_cos = sin(generator_frameCount * 800);
 		col_cos = cos(generator_frameCount * 50); //!change to sin for different color
+
+		x_val = sin(generator_frameCount * 20);
+		y_val = sin(generator_frameCount * 20);
 		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
@@ -340,9 +343,9 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
 
 	//! Jellyfish
-	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	/* 	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
-
+ */
 	//! Jellyfish 2
 	/* 	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
@@ -378,6 +381,10 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	//!complex organism (aliens)
 	/* 	let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+
+	//! noise affected jellyfish
+	let x = mapValue(noise(xoff, x_val, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, y_val, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 	//let w = mapValue(abs(cos_val), 0, 1, 0.16, 0.26, true);
 	let w = mapValue(abs(cos_val), 0, 1, 0.32, 0.46, true);
