@@ -40,11 +40,11 @@ function draw() {
 }
 
 function paint(xoff, yoff, woff, particle_num, xi, yi) {
-	let cos_val = cos(frameCount * random([30, 30, 30, 30, 30, 30, 30, 30, 30, 5])),
-		sin_val = cos(frameCount * random([30, 30, 30, 30, 30, 30, 30, 30, 30, 5]));
+	let cos_val = cos(frameCount * 280),
+		sin_val = cos(frameCount * 280);
 	for (let s = 0; s < particle_num; s++) {
 		(xoff = random()), (yoff = random()), (woff = random());
-		noiseDetail(2, 0.3);
+		noiseDetail(4, 0.3);
 		let x = map(noise(xoff, cos_val, random([yoff, yoff, xi])), 0, 1.5, -n_range, n_range, true);
 		let y = map(noise(yoff, sin_val, random([xoff, xoff, xi])), 0, 1.5, -n_range, n_range, true);
 		let elW = 0.15 * MULTIPLIER;
