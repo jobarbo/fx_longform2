@@ -10,7 +10,7 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = 100;
-		this.s = random([0.75]);
+		this.s = random([0.5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -26,7 +26,8 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.isBordered = isBordered;
+		this.isBordered = true;
+		this.maxFrame = 100;
 	}
 
 	show() {
@@ -64,17 +65,32 @@ class Mover {
 		this.y = this.y < -this.s ? height + this.s : this.y > height + this.s ? -this.s : this.y; */
 
 		if (this.isBordered) {
-			if (this.x < (this.xMin - 0.015) * width) {
-				this.x = (this.xMax - 0.015) * width;
-			}
-			if (this.x > (this.xMax + 0.015) * width) {
-				this.x = (this.xMin + 0.015) * width;
-			}
-			if (this.y < (this.yMin - 0.015) * height) {
-				this.y = (this.yMax - 0.015) * height;
-			}
-			if (this.y > (this.yMax + 0.015) * height) {
-				this.y = (this.yMin + 0.015) * height;
+			if (frameCount < this.maxFrame / 4) {
+				if (this.x < -0.2 * width) {
+					this.x = random(1.2, 1.01) * width;
+				}
+				if (this.y < -0.2 * height) {
+					this.y = random(1.2, 1.01) * height;
+				}
+				if (this.x > 1.2 * width) {
+					this.x = random(-0.01, 1.2) * width;
+				}
+				if (this.y > 1.2 * height) {
+					this.y = random(-0.01, 1.2) * height;
+				}
+			} else {
+				if (this.x < (this.xMin - 0.015) * width) {
+					this.x = (this.xMax - 0.015) * width;
+				}
+				if (this.x > (this.xMax + 0.015) * width) {
+					this.x = (this.xMin + 0.015) * width;
+				}
+				if (this.y < (this.yMin - 0.015) * height) {
+					this.y = (this.yMax - 0.015) * height;
+				}
+				if (this.y > (this.yMax + 0.015) * height) {
+					this.y = (this.yMin + 0.015) * height;
+				}
 			}
 		}
 	}
@@ -90,8 +106,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
 		noiseScale1 = 1,
-		noiseScale2 = 1,
-		noiseScale3 = 111,
+		noiseScale2 = 2,
+		noiseScale3 = 1,
 		nseed = seed;
 	un = sin(nx * (scale1 * scaleOffset1) + nseed) + cos(nx * (scale2 * scaleOffset2) + nseed) - sin(nx * (scale3 * scaleOffset3) + nseed);
 	vn = cos(ny * (scale1 * scaleOffset1) + nseed) + sin(ny * (scale2 * scaleOffset2) + nseed) - cos(ny * (scale3 * scaleOffset3) + nseed);
@@ -143,8 +159,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	let zu = ZZ(u, 20, 120, 0.1);
-	let zv = ZZ(v, 20, 120, 0.1);
+	let zu = ZZ(u, 20, 120, 0.06);
+	let zv = ZZ(v, 20, 120, 0.07);
 	let p = createVector(zu, zv);
 	return p;
 }
