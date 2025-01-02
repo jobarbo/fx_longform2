@@ -29,29 +29,25 @@ function setup() {
 	background(45, 5, 100);
 	xi = random(1e12);
 	yi = random(1e12);
-	n_range = width / 2.55;
+	n_range = width / 1.1;
 }
 
 function draw() {
-	translate(width / 2, height / 2);
-
-	let angle = int(random([0, 45, 90, 135, 180, 225, 270, 315]));
+	translate(width / 2, height / 0.85);
+	let angle = int(random([45]));
 	rotate(angle);
 	paint(xoff, yoff, woff, particle_num, xi, yi);
 }
 
 function paint(xoff, yoff, woff, particle_num, xi, yi) {
-	cos_val = cos(frameCount * 20);
-	sin_val = sin(frameCount * 20);
-
+	let cos_val = cos(frameCount * random([30, 30, 30, 30, 30, 30, 30, 30, 30, 5])),
+		sin_val = cos(frameCount * random([30, 30, 30, 30, 30, 30, 30, 30, 30, 5]));
 	for (let s = 0; s < particle_num; s++) {
-		xoff = random();
-		yoff = random();
-		woff = random();
-		noiseDetail(1, 0.75);
-		let x = map(noise(xoff, cos_val, random([yoff, yoff, xi])), 0, 1, -n_range, n_range, true);
-		let y = map(noise(yoff, cos_val, random([xoff, xoff, xi])), 0, 1, -n_range, n_range, true);
-		let elW = 0.25 * MULTIPLIER;
+		(xoff = random()), (yoff = random()), (woff = random());
+		noiseDetail(2, 0.3);
+		let x = map(noise(xoff, cos_val, random([yoff, yoff, xi])), 0, 1.5, -n_range, n_range, true);
+		let y = map(noise(yoff, sin_val, random([xoff, xoff, xi])), 0, 1.5, -n_range, n_range, true);
+		let elW = 0.15 * MULTIPLIER;
 		noStroke();
 		fill(0, 75, 10, 100);
 		ellipse(x, y, elW, elW);
