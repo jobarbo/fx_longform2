@@ -1,3 +1,65 @@
+function generateUpDownPattern(maxPatternValue) {
+	const pattern = [];
+	for (let i = 1; i <= maxPatternValue; i++) pattern.push(i);
+	for (let i = maxPatternValue - 1; i > 1; i--) pattern.push(i);
+	return pattern;
+}
+function generateSymmetricOffValues(numCases, baseLow, baseHigh, maxPatternValue) {
+	const offValues = [],
+		pattern = generateUpDownPattern(maxPatternValue),
+		increment = 1;
+	for (let i = 0; i < numCases; i++) {
+		const patternIndex = i % pattern.length,
+			low = baseLow + (pattern[patternIndex] - 1) * increment,
+			high = baseHigh + (pattern[patternIndex] - 1) * increment;
+		offValues.push({low, high});
+	}
+	return offValues;
+}
+
+// url search params
+const sp = new URLSearchParams(window.location.search);
+
+let features = "",
+	maxDPI = 3,
+	MAX_FRAMES = 800,
+	RATIO = 1,
+	W = window.innerWidth,
+	H = window.innerHeight,
+	CM = 1,
+	DEFAULT_SIZE = 600,
+	DIM,
+	MULTIPLIER,
+	particle_num = 15000,
+	xoff = 0.6,
+	yoff = 0.001,
+	woff = 0.3,
+	xi = Math.random() * 1e12,
+	yi = Math.random() * 1e12,
+	n_range,
+	xoff_l_init = 0.6,
+	xoff_l = xoff_l_init,
+	xoff_h = 1,
+	yoff_l_init = 0.6,
+	yoff_l = yoff_l_init,
+	yoff_h = 1,
+	numCases = 1,
+	baseLow_l = 1,
+	baseHigh_l = 0.148,
+	maxPatternValue_l = 1,
+	baseLow_h = 1.148,
+	baseHigh_h = 0,
+	maxPatternValue_h = 1,
+	offValues_l = generateSymmetricOffValues(numCases, baseLow_l, baseHigh_l, maxPatternValue_l),
+	offValues_h = generateSymmetricOffValues(numCases, baseLow_h, baseHigh_h, maxPatternValue_h),
+	n_range_min = 0,
+	n_range_max = 1,
+	pos_range_x,
+	pos_range_y;
+let cos_val, sin_val, noise_cos, off_cos, col_cos, x_val, y_val;
+DIM = Math.min(window.innerWidth * CM, window.innerHeight * CM);
+MULTIPLIER = DIM / DEFAULT_SIZE;
+
 function setup() {
 	createCanvas(DIM, DIM * RATIO);
 	pixelDensity(dpi(maxDPI));
