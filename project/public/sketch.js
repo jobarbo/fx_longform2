@@ -1,57 +1,42 @@
-let features = "",
-	maxDPI = 3,
-	RATIO = 1,
-	W = window.innerWidth,
-	H = window.innerHeight,
-	CM = 1,
-	DEFAULT_SIZE = 600,
-	DIM,
-	MULTIPLIER,
-	particle_num = 5000,
-	xoff = 0.6,
-	yoff = 0.001,
-	woff = 0.3,
-	xi = Math.random() * 1e12,
-	yi = Math.random() * 1e12,
-	n_range;
-
 function setup() {
-	features = $fx.getFeatures();
-	DIM = min(windowWidth * CM, windowHeight * CM);
-	MULTIPLIER = DIM / DEFAULT_SIZE;
 	createCanvas(DIM, DIM * RATIO);
-	pixelDensity(dpi(3));
+	pixelDensity(dpi(maxDPI));
 	colorMode(HSB, 360, 100, 100, 100);
-	randomSeed(fxrand() * 10000);
-	noiseSeed(fxrand() * 10000);
-	rectMode(CENTER);
 	angleMode(DEGREES);
 	background(45, 5, 100);
 	xi = random(1e12);
 	yi = random(1e12);
-	n_range = width / 1.1;
+	pos_range_x = width * 0.35;
+	pos_range_y = height * 0.35;
 }
-
 function draw() {
-	translate(width / 2, height / 0.85);
-	let angle = int(random([45]));
-	rotate(angle);
-	paint(xoff, yoff, woff, particle_num, xi, yi);
+	if (frameCount > MAX_FRAMES) noLoop();
+	translate(width / 2, height / 2);
+	rotate(int(random([45])));
+	paint(xoff, yoff, particle_num, xi, yi);
 }
-
-function paint(xoff, yoff, woff, particle_num, xi, yi) {
-	let cos_val = cos(frameCount * 280),
-		sin_val = cos(frameCount * 280);
+function paint(xoff, yoff, particle_num, xi, yi) {
+	let xoff_l_high = mapValue(abs(sin(frameCount * 40)), 0, 1, offValues_h[0].low, offValues_h[0].high, 1),
+		xoff_l_low = mapValue(abs(sin(frameCount * 40)), 0, 1, offValues_l[0].low, offValues_l[0].high, 1),
+		xoff_l = mapValue(cos(frameCount * 12), -1, 0, xoff_l_high, xoff_l_low, 1),
+		yoff_l = mapValue(cos(frameCount * 12), 0, 1, xoff_l_low, xoff_l_high, 1);
 	for (let s = 0; s < particle_num; s++) {
-		(xoff = random()), (yoff = random()), (woff = random());
-		noiseDetail(4, 0.3);
-		let x = map(noise(xoff, cos_val, random([yoff, yoff, xi])), 0, 1.5, -n_range, n_range, true);
-		let y = map(noise(yoff, sin_val, random([xoff, xoff, xi])), 0, 1.5, -n_range, n_range, true);
-		let elW = 0.15 * MULTIPLIER;
-		noStroke();
-		fill(0, 75, 10, 100);
-		ellipse(x, y, elW, elW);
+		xoff = random(xoff_l, xoff_l_high + 1e-6);
+		yoff = random(yoff_l, xoff_l_high + 1e-6);
+		noiseDetail(6, 0.5);
+		let x = map(noise(xoff, cos(frameCount * 20), random([yoff, yoff, xi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, 1),
+			y = map(noise(yoff, cos(frameCount * 20), random([xoff, xoff, xi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, 1),
+			elW = mapValue(abs(cos(frameCount * 12)), 0, 1, 0.1, 0.05, 1) * MULTIPLIER,
+			ab_x = constrain(x, -width, width) * MULTIPLIER,
+			ab_y = constrain(y, -height, height) * MULTIPLIER,
+			bri_min = mapValue(frameCount, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 100, 1),
+			bri_max = mapValue(frameCount, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 0, 1),
+			bri = mapValue(abs(cos(frameCount * 12)), 0.9, 1, 20 - bri_max, 20 - bri_min, 1),
+			alpha = mapValue(abs(cos(frameCount * 12)), 0, 1, 50, 100, 1);
+		drawingContext.fillStyle = `hsla(0, 0%, ${bri}%, ${alpha}%)`;
+		drawingContext.fillRect(ab_x, ab_y, elW, elW);
 		xi += 1e-17;
 		yi += 1e-17;
 	}
 }
+// ! LE FIN
