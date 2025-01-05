@@ -1,5 +1,5 @@
-let config_type = parseInt(fxrand() * 3 + 1);
-//let config_type = 2;
+///let config_type = parseInt(fxrand() * 3 + 1);
+let config_type = 2;
 console.log(config_type);
 
 let features = "";
@@ -50,18 +50,20 @@ function setup() {
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1200;
-	c = createCanvas(C_WIDTH, C_WIDTH * 1.33);
+	c = createCanvas(C_WIDTH, C_WIDTH * 1);
+	angleMode(DEGREES);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
 	colorMode(HSB, 360, 100, 100, 100);
 	startTime = frameCount;
 	//noCursor();
-
+	translate(width / 2, height / 2);
 	centerX = width / 2;
 	centerY = height / 2;
 	borderX = features.composition === "compressed" ? width / 3.5 : features.composition === "constrained" ? width / 3 : features.composition === "semiconstrained" ? width / 2.35 : width / 1.9;
 	borderY = features.composition === "compressed" ? height / 2.75 : features.composition === "constrained" ? height / 2.5 : features.composition === "semiconstrained" ? height / 2.25 : height / 1.9;
+	rotate(40);
 	INIT(rseed);
 }
 
@@ -90,7 +92,7 @@ function draw() {
 }
 
 function INIT(seed) {
-	scl1 = 0.005;
+	scl1 = 0.0015;
 	scl2 = scl1;
 
 	ang1 = 1;
