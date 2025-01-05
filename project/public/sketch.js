@@ -106,7 +106,7 @@ function INIT() {
 
 	console.log(scl1, scl2, amp1, amp2);
 
-	let xRandDivider = 0.1;
+	let xRandDivider = 0.01;
 	let yRandDivider = xRandDivider;
 
 	xMin = 0.05;

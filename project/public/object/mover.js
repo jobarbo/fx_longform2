@@ -10,8 +10,8 @@ class Mover {
 		this.initS = 0.5 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
-		this.sat = this.initSat;
-		this.bri = 60;
+		this.sat = 0;
+		this.bri = 30;
 		this.a = this.initAlpha;
 		this.hueStep = 1;
 		this.satStep = 2;
@@ -66,8 +66,8 @@ class Mover {
 		this.scl2 = map(distCircle, -1300, -2, 0.002, 0.001, true);
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		this.xRandDivider = fxrand() * 1;
-		this.yRandDivider = fxrand() * 1;
+		this.xRandDivider = randomGaussian(0.15, 1.5);
+		this.yRandDivider = randomGaussian(0.15, 1.5);
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
@@ -75,10 +75,10 @@ class Mover {
 		let pxy = p.x - p.y;
 		this.hue += map(p.y, -1, this.uvalue, this.hueStep, -this.hueStep, true);
 		this.hue = this.hue > 360 ? 0 : this.hue < 0 ? 360 : this.hue;
-		this.sat += map(p.x, -this.uvalue, 1, -this.satStep, this.satStep, true);
-		this.sat = this.sat > 100 ? 100 : this.sat < 0 ? 0 : this.sat;
+		/* this.sat += map(p.x, -this.uvalue, 1, -this.satStep, this.satStep, true);
+		this.sat = this.sat > 100 ? 100 : this.sat < 0 ? 0 : this.sat; */
 		this.bri += map(p.y, -1, this.uvalue, this.briStep, -this.briStep, true);
-		this.bri = this.bri > 100 ? 0 : this.bri < 0 ? 100 : this.bri;
+		this.bri = this.bri > 40 ? 0 : this.bri < 0 ? 40 : this.bri;
 
 		this.a = map(abs(distCircle), 0, 200, 100, 0, true);
 
@@ -121,9 +121,10 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 
 	/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
 	let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
-
-	let u = map(un, -0.5, 0.5, -15, 15, true);
-	let v = map(vn, -0.5, 0.5, -15, 15, true);
+	let zun = ZZ(un, 100, 120, 0.001);
+	let zvn = ZZ(vn, 100, 120, 0.001);
+	let u = map(zun, -0.5, 0.5, -15, 15, true);
+	let v = map(zvn, -0.5, 0.5, -15, 15, true);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
