@@ -8,7 +8,7 @@ class Mover {
 		this.bri = 100;
 		this.a = 100;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 1 * MULTIPLIER;
+		this.s = 0.01 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.a1 = a1;
@@ -43,7 +43,7 @@ class Mover {
 		this.y += (p.y / randomGaussian(10.5, this.gaussianOffset) + randomGaussian(0, 1.000001)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
-		this.s = map(abs(pos), 20, 40, 0.1, 1.2, true) * MULTIPLIER;
+		this.s = map(abs(pos), 20, 40, 0.01, 0.4, true) * MULTIPLIER;
 		this.a = map(abs(pos), 20, 80, 10, 100, true);
 
 		this.gaussianOffset = map(frameCount, 0, 50, 10, 0.0, true);
@@ -130,11 +130,14 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	let noiseScale = 0.00000000000001; // Scale for noise function
 
 	// Modify the calculations to include time and noise
-	let un = sin(ny * scl1 + seed + time) + cos(ny * scl2 + seed + time) + sin(ny * scl1 * 500.05 + seed + time) + oct(ny * scl1 + seed + time, ny * scl2 + seed + time, noiseScale, 2, 1);
-	let vn = sin(nx * scl2 + seed + time) + cos(nx * scl1 + seed + time) + sin(nx * scl2 * 10.05 + seed + time) + oct(nx * scl2 + seed + time, nx * scl1 + seed + time, noiseScale, 3, 1);
+	let un = sin(ny * scl1 + seed + time) + cos(ny * scl2 + seed + time) + sin(ny * scl1 * 1 + seed + time) + oct(ny * scl1 + seed + time, ny * scl2 + seed + time, noiseScale, 2, 1);
+	let vn = sin(nx * scl2 + seed + time) + cos(nx * scl1 + seed + time) + sin(nx * scl2 * 1 + seed + time) + oct(nx * scl2 + seed + time, nx * scl1 + seed + time, noiseScale, 3, 1);
 
-	let u = map(un, -0.05, 0.0005, -25, 15, true);
-	let v = map(vn, -0.0005, 0.05, -15, 15, true);
+	let zun = ZZ(un, 20, 120, 0.1);
+	let zvn = ZZ(vn, 20, 120, 0.1);
+
+	let u = map(zun, -0.05, 0.0005, -25, 15, true);
+	let v = map(zvn, -0.0005, 0.05, -15, 15, true);
 
 	let p = createVector(u, v);
 	return p;
