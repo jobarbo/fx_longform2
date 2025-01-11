@@ -13,9 +13,9 @@ let composition_params;
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
 const complexityArr = [
-	["1", 40],
+	["1", 60],
 	["2", 35],
-	["6", 25],
+	["6", 5],
 ];
 
 const themeArr = [
@@ -32,17 +32,17 @@ const colorModeArr = [
 ];
 
 const scaleValueArr = [
-	["0.0001, 0.0008", 25],
-	["0.0008, 0.002", 25],
-	["0.002, 0.005", 25],
-	["0.005, 0.01", 25],
+	["0.0001, 0.0008", 60],
+	["0.0008, 0.002", 35],
+	["0.002, 0.005", 5],
+	["0.005, 0.01", 0],
 ];
 
 const scaleValueNameArr = [
-	["macro", 35],
-	["close", 25],
-	["mid", 25],
-	["far", 15],
+	["macro", 60],
+	["close", 35],
+	["mid", 5],
+	["far", 0],
 ];
 
 const clampvalueArr = [
@@ -65,7 +65,7 @@ const clampNameArr = [
 
 const particleBehaviorNameArr = [
 	["420/69 gas station", 5],
-	["chinati foundation", 23823752385624782635],
+	["chinati foundation", 5],
 	["saint-george pool", 5],
 	["el paisano", 5],
 	["planet marfa", 5],
@@ -89,7 +89,7 @@ const particleBehaviorNameArr = [
 
 const particleBehaviorArr = [
 	["4,4,20,20", 5],
-	["5,5,5,5", 5234437648274827482364734],
+	["5,5,5,5", 5],
 	["5,5,10,10", 5],
 	["5,5,15,15", 5],
 	["5,5,20,20", 5],
@@ -556,7 +556,7 @@ urlParams = JSON.parse(urlParams);
 if (!urlParams) urlParams = {};
 
 let fxfeatures;
-let dpi_val = 1;
+let dpi_val = 3;
 
 let movers = [];
 let scl1;
@@ -579,7 +579,7 @@ let currentFrame = 0;
 let MARGIN = 100;
 let oldMARGIN = MARGIN;
 let frameMargin;
-let RATIO = 3;
+let RATIO = 1;
 let DEFAULT_SIZE = 4800 / RATIO;
 let DIM_OBJ = {
 	3: 600,
@@ -997,8 +997,8 @@ function INIT_MOVERS() {
 	}
 
 	//* create a random dividing number to add a bit of randomness to the particle movement.
-	let xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
-	let yRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
+	let xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]) / MULTIPLIER;
+	let yRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]) / MULTIPLIER;
 
 	//* convert the margin to a percentage of the width
 	xMarg = frameMargin / width;
@@ -1262,8 +1262,8 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
  */
 	// Tighter, more frequent patterns
 	//! move the last value between 0.1 and below
-	let zun = ZZ(un, 20, 120, 0.1);
-	let zvn = ZZ(vn, 20, 120, 0.1);
+	let zun = ZZ(un, 20, 120, 0.01);
+	let zvn = ZZ(vn, 20, 120, 0.01);
 
 	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], false);
 	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], false);
