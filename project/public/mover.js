@@ -7,7 +7,8 @@ class Mover {
 		this.sat = 0;
 		this.bri = 0;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 1.5 * MULTIPLIER;
+		this.s = 0.1 * MULTIPLIER;
+		this.a = 100;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.seed = seed;
@@ -22,7 +23,7 @@ class Mover {
 	show() {
 		//
 		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, 10);
+		fill(this.hue, this.sat, this.bri, this.a);
 		//stroke(34, 40, 90,80);
 		noStroke();
 		ellipse(this.x, this.y, this.s);
@@ -37,7 +38,8 @@ class Mover {
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
 		this.x += (p.x / randomGaussian(0.1, 0.00000000000000001) + randomGaussian(0, 0.00000000000000001)) * MULTIPLIER;
 		this.y += (p.y / randomGaussian(0.1, 0.00000000000000001) + randomGaussian(0, 0.00000000000000001)) * MULTIPLIER;
-		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
+		this.s = map(abs(pos), 20, 50, 0.5, 0.5, true) * MULTIPLIER;
+		this.a = map(abs(pos), 20, 50, 100, 100, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
