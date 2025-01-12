@@ -1,7 +1,7 @@
 let features = "";
 let movers = [];
 let startTime;
-let maxFrames = 20;
+let maxFrames = 50;
 let frameIterator = 0;
 let currentFrame = 0;
 
@@ -29,7 +29,7 @@ function setup() {
 	// canvas setup
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1.41);
+	c = createCanvas(DIM, DIM * 1);
 	pixelDensity(2);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);

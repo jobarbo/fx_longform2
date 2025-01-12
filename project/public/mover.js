@@ -8,20 +8,20 @@ class Mover {
 		this.bri = 100;
 		this.a = 5;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 6 * MULTIPLIER;
+		this.s = 0.1 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.a1 = a1;
 		this.a2 = a2;
 		this.seed = seed;
-		this.xRandDivider = random(0.0001, 2.01) * MULTIPLIER;
-		this.yRandDivider = random(0.0001, 2.01) * MULTIPLIER;
-		this.xRandOffset = random(-3.1, 0.1) * MULTIPLIER;
-		this.yRandOffset = random(-0.1, 3.1) * MULTIPLIER;
+		this.xRandDivider = random(0.0001, TAU) * MULTIPLIER;
+		this.yRandDivider = random(0.0001, TAU) * MULTIPLIER;
+		this.xRandOffset = random(-TAU, TAU) * MULTIPLIER;
+		this.yRandOffset = random(-TAU, TAU) * MULTIPLIER;
 		this.minSat = random(1, 20);
 		this.minBri = random(1, 20);
-		this.gaussianOffsetX = 1;
-		this.gaussianOffsetY = 1;
+		this.gaussianOffsetX = TAU;
+		this.gaussianOffsetY = TAU;
 	}
 
 	show() {
@@ -40,15 +40,15 @@ class Mover {
 		/* 		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
-		this.x += (p.x / randomGaussian(60.1, this.gaussianOffsetX)) * MULTIPLIER;
-		this.y += (p.y / randomGaussian(60.1, this.gaussianOffsetY)) * MULTIPLIER;
+		this.x += (p.x / randomGaussian(TAU, this.gaussianOffsetX)) * MULTIPLIER;
+		this.y += (p.y / randomGaussian(TAU, this.gaussianOffsetY)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
-		this.s = map(abs(pos), 20, 40, 1, 1, true) * MULTIPLIER;
+		this.s = map(abs(pos), 20, 40, 0.5, 0.5, true) * MULTIPLIER;
 		this.a = map(abs(pos), 20, 40, 100, 100, true);
 
-		this.gaussianOffsetX = map(elapsedTime, 0, maxFrames / 1.2, 10.0001, 0.00001, true);
-		this.gaussianOffsetY = map(elapsedTime, 0, maxFrames / 1.2, 10.0001, 0.00001, true);
+		this.gaussianOffsetX = map(elapsedTime, 0, maxFrames / 1.2, TAU, -0, true);
+		this.gaussianOffsetY = map(elapsedTime, 0, maxFrames / 1.2, TAU, -0, true);
 		/* 		this.gaussianOffsetX = map(abs(pos), 0, 5120, 10.1, 0.00001, true);
 		this.gaussianOffsetY = map(abs(pos), 0, 5120, 10.1, 0.00001, true); */
 
@@ -134,17 +134,17 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
 	let time = millis() * 0.00000001; // Introduce a time variable for dynamic movement
-	let noiseScale = 1.1; // Scale for noise function
+	let noiseScale = TAU; // Scale for noise function
 
 	// Modify the calculations to include time and noise
-	let un = sin(y * scl1 + seed + time) + cos(y * scl2 + seed + time) + sin(y * scl2 * 4.0015 + seed + time) + oct(ny * scl1 + seed + time, nx * scl2 + seed + time, noiseScale, 2, 1);
-	let vn = sin(x * scl1 + seed + time) + cos(x * scl2 + seed + time) + sin(x * scl2 * 4.0015 + seed + time) + oct(nx * scl2 + seed + time, ny * scl1 + seed + time, noiseScale, 3, 1);
+	let un = sin(y * scl1 + seed + time) + cos(y * scl2 + seed + time) + sin(y * scl2 * TAU + seed + time) + oct(ny * scl1 + seed + time, nx * scl2 + seed + time, noiseScale, 2, 1);
+	let vn = sin(x * scl1 + seed + time) + cos(x * scl2 + seed + time) + sin(x * scl2 * TAU + seed + time) + oct(nx * scl2 + seed + time, ny * scl1 + seed + time, noiseScale, 3, 1);
 
-	let zun = ZZ(un, 20, 120, 0.6);
-	let zvn = ZZ(vn, 20, 120, 0.6);
+	let zun = ZZ(un, TAU, TAU, TAU);
+	let zvn = ZZ(vn, TAU, TAU, TAU);
 
-	let u = map(zun, -0.05, 0.0005, -25, 15, false);
-	let v = map(zvn, -0.0005, 0.05, -15, 25, false);
+	let u = map(zun, -0.05, 0.05, -TAU, TAU, false);
+	let v = map(zvn, -0.05, 0.05, -TAU, TAU, false);
 
 	let p = createVector(u, v);
 	return p;
