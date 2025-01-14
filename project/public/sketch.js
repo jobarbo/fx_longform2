@@ -29,7 +29,13 @@ function draw() {
 		}
 	}
 
-	if (frameCount > 100) {
+	if (frameCount == 490) {
+		stroke(0, 0, 0, 100);
+		fill(0, 100, 100, 100);
+		ellipse(random(100, width - 100), random(100, height - 100), 160, 160);
+	}
+
+	if (frameCount > 500) {
 		noLoop();
 	}
 
@@ -49,7 +55,7 @@ function INIT(seed) {
 	scl1 = random(0.0015, 0.00175);
 	scl2 = random(0.0015, 0.00175);
 	let hue = random(360);
-	for (let i = 0; i < 100000; i++) {
+	for (let i = 0; i < 2000; i++) {
 		let x = random(-0.1, 1.1) * width;
 		let y = random(-0.1, 1.1) * height;
 		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, seed));

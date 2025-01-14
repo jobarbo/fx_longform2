@@ -1,7 +1,11 @@
 class Mover {
 	constructor(x, y, hue, scl1, scl2, seed) {
-		this.x = x;
-		this.y = y;
+		this.x1 = x;
+		this.y1 = y;
+		this.x2 = x + randomGaussian(0.00001, 0.01) * width;
+		this.y2 = y + randomGaussian(0.00001, 0.01) * height;
+		this.x3 = x + randomGaussian(0.00001, 0.01) * width;
+		this.y3 = y + randomGaussian(0.00001, 0.01) * height;
 		this.initHue = hue;
 		this.hue = hue;
 		this.sat = 0;
@@ -22,21 +26,26 @@ class Mover {
 	show() {
 		//
 		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, 10);
-		//stroke(34, 40, 90,80);
-		noStroke();
-		ellipse(this.x, this.y, this.s);
+		//noFill();
+		fill(random(0, 30), random(30, 70), 100, 100);
+		stroke(this.hue, this.sat, this.bri, 100);
+		//noStroke();
+		triangle(this.x1, this.y1, this.x2, this.y2, this.x3, this.y3);
 	}
 
 	move() {
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.seed);
+		let p = superCurve(this.x1, this.y1, this.scl1, this.scl2, this.seed);
 
 		let pos = abs(p.x) + abs(p.y);
 		/* 		this.hue = map(pos, 0, 8, this.hue - 3, this.hue + 3, true);
 		this.sat = map(pos, 0, 8, this.sat + 3, this.sat - 3, true);
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
-		this.x += (p.x / randomGaussian(0.1, 0.0000000001) + randomGaussian(0.1, 0.00000000000000001)) * MULTIPLIER;
-		this.y += (p.y / randomGaussian(0.1, 0.0000000001) + randomGaussian(0.1, 0.00000000000000001)) * MULTIPLIER;
+		this.x1 += (p.x / randomGaussian(0.01, 0.01) + randomGaussian(0.1, 0.00000000000000001)) * MULTIPLIER;
+		this.y1 += (p.y / randomGaussian(0.01, 0.01) + randomGaussian(0.1, 0.00000000000000001)) * MULTIPLIER;
+		this.x2 = this.x1 + randomGaussian(0.01, 0.01) * width;
+		this.y2 = this.y1 + randomGaussian(0.01, 0.01) * height;
+		this.x3 = this.x1 + randomGaussian(0.01, 0.01) * width;
+		this.y3 = this.y1 + randomGaussian(0.01, 0.01) * height;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		/* 		if (this.hue < 0) {
@@ -64,9 +73,13 @@ class Mover {
 		} */
 
 		// if out of bounds, reset to random position inside canvas
-		if (this.x < -0.1 * width || this.x > 1.1 * width || this.y < -0.1 * height || this.y > 1.1 * height) {
-			this.x = random(-0.1, 1.1) * width;
-			this.y = random(-0.1, 1.1) * height;
+		if (this.x1 < -0.1 * width || this.x1 > 1.1 * width || this.y1 < -0.1 * height || this.y1 > 1.1 * height) {
+			this.x1 = random(-0.1, 1.1) * width;
+			this.y1 = random(-0.1, 1.1) * height;
+			this.x2 = this.x1 + randomGaussian(0.01, 0.01) * width;
+			this.y2 = this.y1 + randomGaussian(0.01, 0.01) * height;
+			this.x3 = this.x1 + randomGaussian(0.01, 0.01) * width;
+			this.y3 = this.y1 + randomGaussian(0.01, 0.01) * height;
 		}
 	}
 }
@@ -74,13 +87,13 @@ class Mover {
 function superCurve(x, y, scl1, scl2, seed) {
 	let nx = x,
 		ny = y,
-		a1 = 120,
-		a2 = 1,
+		a1 = 233,
+		a2 = 233,
 		scale1 = scl1,
 		scale2 = scl2,
 		dx,
 		dy,
-		octave = 1;
+		octave = 6;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
@@ -99,8 +112,8 @@ function superCurve(x, y, scl1, scl2, seed) {
 
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
-	let u = map(un, -1.05, 1.05, -100, 100, true);
-	let v = map(vn, -1.05, 1.05, -100, 100, true);
+	let u = map(un, -1.05, 1.05, -2, 2, true);
+	let v = map(vn, -1.05, 1.05, -2, 2, true);
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
