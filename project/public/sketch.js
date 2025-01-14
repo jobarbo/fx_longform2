@@ -29,10 +29,10 @@ function draw() {
 		}
 	}
 
-	if (frameCount == 490) {
+	if (frameCount == 480) {
 		stroke(0, 0, 0, 100);
-		fill(0, 100, 100, 100);
-		ellipse(random(100, width - 100), random(100, height - 100), 160, 160);
+		fill(random(0, 30), random(60, 100), 100, 100);
+		ellipse(random(100, width - 100), random(100, height - 100), 860, 860);
 	}
 
 	if (frameCount > 500) {
