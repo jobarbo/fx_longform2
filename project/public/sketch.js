@@ -9,7 +9,7 @@ let elapsedTime = 0;
 let renderStart = Date.now();
 let framesRendered = 0;
 let totalElapsedTime = 0;
-let particleNum = 150000;
+let particleNum = 550000;
 let drawing = true;
 let renderMode = 1;
 let cycle = parseInt((maxFrames * particleNum) / 1170);
@@ -29,7 +29,7 @@ function setup() {
 	// canvas setup
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1.41);
+	c = createCanvas(DIM, DIM * 1);
 	pixelDensity(2);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -79,10 +79,10 @@ function* drawGenerator() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.000175, 0.001);
-	scl2 = random(0.000175, 0.001);
-	a1 = int(random(50, 400) * MULTIPLIER);
-	a2 = int(random(50, 400) * MULTIPLIER);
+	scl1 = random(0.002, 0.002);
+	scl2 = random(0.002, 0.002);
+	a1 = int(random(50, 1000) * MULTIPLIER);
+	a2 = int(random(50, 1000) * MULTIPLIER);
 
 	let hue = random(360);
 	for (let i = 0; i < particleNum; i++) {
@@ -91,7 +91,7 @@ function INIT(seed) {
 		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, a1, a2, seed));
 	}
 
-	background(35, 5, 100);
+	background(35, 0, 100);
 }
 function showLoadingBar(elapsedTime, maxFrames, renderStart) {
 	framesRendered++;

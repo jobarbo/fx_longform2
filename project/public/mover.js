@@ -7,7 +7,7 @@ class Mover {
 		this.sat = 0;
 		this.bri = 0;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 1 * MULTIPLIER;
+		this.s = 0 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.a1 = a1;
@@ -28,7 +28,7 @@ class Mover {
 	show() {
 		//
 		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, 30);
+		fill(this.hue, this.sat, this.bri, 100);
 		//stroke(34, 40, 90,80);
 		noStroke();
 		ellipse(this.x, this.y, this.s);
@@ -50,7 +50,7 @@ class Mover {
 		this.gaussianOffsetY = map(abs(pos), 0, 5120, 10.1, 0.00001, true); */
 
 		//!invert the two values after pos to invert the curve
-		this.s = map(pos, 24.01, 24, 2 * MULTIPLIER, 0, true);
+		this.s = map(pos, 22.01, 22, 2 * MULTIPLIER, 0, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
@@ -84,15 +84,28 @@ class Mover {
 			}
 		} else {
 			// Check if out of bounds and reposition to the opposite side
+
 			if (this.x < -0.22 * width) {
-				this.x = random(1.2, 1.201) * width; // Move to the right side
+				this.x = random(1.2, 1.204) * width; // Move to the right side
+				this.hue = 0;
+				this.sat = 0;
+				this.bri = 100;
 			} else if (this.x > 1.22 * width) {
-				this.x = random(-0.2, -0.201) * width; // Move to the left side
+				this.x = random(-0.2, -0.204) * width; // Move to the left side
+				this.hue = 0;
+				this.sat = 0;
+				this.bri = 100;
 			}
 			if (this.y < -0.012 * height) {
 				this.y = random(1.01, 1.0101) * height; // Move to the bottom side
+				this.hue = 0;
+				this.sat = 0;
+				this.bri = 100;
 			} else if (this.y > 1.012 * height) {
 				this.y = random(-0.012, -0.0101) * height; // Move to the top side
+				this.hue = 0;
+				this.sat = 0;
+				this.bri = 100;
 			}
 		}
 	}
@@ -127,8 +140,8 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let zun = ZZ(un, 20, 120, 0.01);
-	let zvn = ZZ(vn, 20, 120, 0.3);
+	let zun = ZZ(un, 20, 120, 0.04);
+	let zvn = ZZ(vn, 20, 120, 100);
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
