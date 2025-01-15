@@ -7,8 +7,7 @@ class Mover {
 		this.sat = 0;
 		this.bri = 0;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 0.1 * MULTIPLIER;
-		this.a = 100;
+		this.s = 2.5 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.seed = seed;
@@ -23,7 +22,7 @@ class Mover {
 	show() {
 		//
 		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, this.a);
+		fill(this.hue, this.sat, this.bri, 10);
 		//stroke(34, 40, 90,80);
 		noStroke();
 		ellipse(this.x, this.y, this.s);
@@ -38,8 +37,7 @@ class Mover {
 		this.bri = map(pos, 0, 8, this.bri - 3, this.bri + 3, true); */
 		this.x += (p.x / randomGaussian(0.1, 0.00000000000000001) + randomGaussian(0, 0.00000000000000001)) * MULTIPLIER;
 		this.y += (p.y / randomGaussian(0.1, 0.00000000000000001) + randomGaussian(0, 0.00000000000000001)) * MULTIPLIER;
-		this.s = map(abs(pos), 20, 50, 0.5, 0.5, true) * MULTIPLIER;
-		this.a = map(abs(pos), 20, 50, 100, 100, true);
+		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
@@ -84,7 +82,7 @@ function superCurve(x, y, scl1, scl2, seed) {
 		dy,
 		octave = 1;
 
-	dx = oct(nx, ny, scale1, 0, octave);
+	/* 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
 	ny += dy * a2;
@@ -98,19 +96,16 @@ function superCurve(x, y, scl1, scl2, seed) {
 	dy = oct(nx, ny, scale2, 2, octave);
 	nx += dx * a1;
 	ny += dy * a2;
-	/*
+
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave); */
 	//let u = map(un, -0.05, 0.0005, -45, 25, true);
 	//let v = map(vn, -0.0005, 0.05, -25, 45, true);
 
-	let time = millis() * 0.00000001; // Introduce a time variable for dynamic movement
-	let noiseScale = 0.0000000001; // Scale for noise function
-
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
-	let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed) + oct(ny * scl2 + seed + time, nx * scl1 + seed + time, noiseScale, 3, 1);
-	let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) + sin(x * scl2 * 0.2 + seed) + oct(nx * scl1 + seed + time, ny * scl2 + seed + time, noiseScale, 1, 1);
+	let u = sin(y * scl1 + seed) + cos(y * scl2 + seed) + sin(y * scl2 * 0.2 + seed);
+	let v = sin(x * scl1 + seed) + cos(x * scl2 + seed) + sin(x * scl2 * 0.2 + seed);
 	let ux = map(u, -0.05, 0.05, -15, 25, true);
 	let vx = map(v, -0.05, 0.05, -25, 15, true);
 

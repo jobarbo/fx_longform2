@@ -22,7 +22,6 @@ function setup() {
 }
 
 function draw() {
-	document.title = "Sketch running";
 	for (let i = 0; i < movers.length; i++) {
 		for (let t = 0; t < 1; t++) {
 			movers[i].show();
@@ -31,9 +30,6 @@ function draw() {
 	}
 
 	if (frameCount > 100) {
-		console.log("sketch stopped");
-		// change the title
-		document.title = "Sketch stopped";
 		noLoop();
 	}
 
@@ -59,5 +55,5 @@ function INIT(seed) {
 		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, seed));
 	}
 
-	background(30, 6, 100);
+	background(0, 0, 100);
 }
