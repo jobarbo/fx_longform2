@@ -1,32 +1,16 @@
 class Mover {
-	constructor(
-		x,
-		y,
-		hue,
-		scl1,
-		scl2,
-		scl3,
-		sclOffset1,
-		sclOffset2,
-		sclOffset3,
-		xMin,
-		xMax,
-		yMin,
-		yMax,
-		isBordered,
-		seed
-	) {
+	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0, 0, 5, 10]);
-		this.initBri = random([0, 10, 20, 30, 40]);
+		this.initSat = 0;
+		this.initBri = 100;
 		this.initAlpha = random(60, 100);
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
-		this.a = 100;
-		this.s = random([1]);
+		this.a = 10;
+		this.s = random([0.5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -36,8 +20,8 @@ class Mover {
 		this.seed = seed;
 		this.xRandDivider = 0.01;
 		this.yRandDivider = 0.01;
-		this.xRandSkipper = 0;
-		this.yRandSkipper = 0;
+		this.xRandSkipper = 0.01;
+		this.yRandSkipper = 0.01;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -54,17 +38,7 @@ class Mover {
 	}
 
 	move() {
-		let p = superCurve(
-			this.x,
-			this.y,
-			this.scl1,
-			this.scl2,
-			this.scl3,
-			this.sclOffset1,
-			this.sclOffset2,
-			this.sclOffset3,
-			this.seed
-		);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.seed);
 		// after 1 second, change the scale
 
 		//! crayon effect too
@@ -74,12 +48,14 @@ class Mover {
 		/* 		this.xRandSkipper = random(-1.001, 1.001);
 		this.yRandSkipper = random(-1.001, 1.001);
  */
-		this.x += p.x / this.xRandDivider + this.xRandSkipper;
-		this.y += p.y / this.yRandDivider + this.yRandSkipper;
+		this.x += p.x / this.xRandDivider + random(-this.xRandSkipper, this.xRandSkipper);
+		this.y += p.y / this.yRandDivider + random(-this.yRandSkipper, this.yRandSkipper);
 
-		//shortand for if this.x is less than 0, set this.x to width and vice versa
-		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
-		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y;
+		//if the particle is out of bounds, put it back in a random position
+		if (this.x < this.xMin * width || this.x > this.xMax * width || this.y < this.yMin * height || this.y > this.yMax * height) {
+			this.x = random(this.xMin * width, this.xMax * width);
+			this.y = random(this.yMin * height, this.yMax * height);
+		}
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {
@@ -111,14 +87,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		noiseScale2 = 0.05,
 		noiseScale3 = 0.05,
 		nseed = seed;
-	un =
-		sin(nx * (scale1 * scaleOffset1) + nseed) +
-		cos(nx * (scale2 * scaleOffset2) + nseed) -
-		sin(nx * (scale3 * scaleOffset3) + nseed);
-	vn =
-		cos(ny * (scale1 * scaleOffset1) + nseed) +
-		sin(ny * (scale2 * scaleOffset2) + nseed) -
-		cos(ny * (scale3 * scaleOffset3) + nseed);
+	un = sin(nx * (scale1 * scaleOffset1) + nseed) + cos(nx * (scale2 * scaleOffset2) + nseed) + sin(nx * (scale3 * scaleOffset3) + nseed);
+	vn = cos(ny * (scale1 * scaleOffset1) + nseed) + sin(ny * (scale2 * scaleOffset2) + nseed) + cos(ny * (scale3 * scaleOffset3) + nseed);
 
 	//! center focused
 	/* 	let maxU = map(ny, 0, height, 3, -3, true);
@@ -167,28 +137,29 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = map(noise(nx * (scale3 * scaleOffset1) + nseed), 0, 1, -3, 0, true); */
 
 	//! Crayon mode
-	/* 	let maxU = random(0.001, 4);
-	let maxV = random(0.001, 4);
-	let minU = random(-4, -0.001);
-	let minV = random(-4, -0.001); */
+	this.gaussOffset = map(frameCount, 0, 20, 0.1, 0.00000000001, true);
+	let maxU = randomGaussian(1, this.gaussOffset);
+	let maxV = randomGaussian(1, this.gaussOffset);
+	let minU = randomGaussian(-1, this.gaussOffset);
+	let minV = randomGaussian(-1, this.gaussOffset);
 
 	//! Standard Mode
-	let maxU = 1;
+	/* 	let maxU = 1;
 	let maxV = 1;
 	let minU = -1;
-	let minV = -1;
+	let minV = -1; */
 
 	//! Introverted
 	/* 	let u = map(vn, map(nx, 0, width, -0.0001, -0.0000001), map(nx, 0, width, 0.0000001, 0.0001), minU, maxU, true);
 	let v = map(un, map(ny, 0, height, -0.0001, -0.0000001), map(ny, 0, height, 0.0000001, 0.0001), minV, maxV, true); */
 
 	//! Extroverted
-	/* 	let u = map(vn, map(ny, 0, width, -5.4, -0.0001), map(ny, 0, width, 0.0001, 5.4), minU, maxU, true);
-	let v = map(un, map(nx, 0, height, -5.4, -0.0001), map(nx, 0, height, 0.0001, 5.4), minV, maxV, true); */
+	let u = map(vn, map(ny, 0, width, -0.0001, -0.01), map(ny, 0, width, 0.01, 0.0001), minU, maxU, true);
+	let v = map(un, map(nx, 0, height, -0.0001, -0.01), map(nx, 0, height, 0.01, 0.0001), minV, maxV, true);
 
 	//! Equilibrium
-	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
-	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true);
+	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
+	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 
 	let p = createVector(u, v);
 	return p;
