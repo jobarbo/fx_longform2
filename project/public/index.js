@@ -1241,8 +1241,8 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 
 	let un = oct(nx, ny, scale1, 4, octave);
 	let vn = oct(ny, nx, scale2, 1, octave);
-	let timeX = (millis() * 0.000001) / MULTIPLIER;
-	let timeY = (millis() * 0.000001) / MULTIPLIER;
+	let timeX = (millis() * 0.000000001) / MULTIPLIER;
+	let timeY = (millis() * 0.000000001) / MULTIPLIER;
 	let noiseScaleX = 2 / MULTIPLIER;
 	let noiseScaleY = 2 / MULTIPLIER;
 
