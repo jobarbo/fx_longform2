@@ -1274,8 +1274,8 @@ function superCurve(x, y, scl1, scl2, amp1, amp2, octave, clampvalueArr, uvalueA
 	// Tighter, more frequent patterns
 	//! move the last value between 0.1 and below
 	//! move the first value between 20 and 0.00001
-	let zun = ZZ(sun, 20, 120, 0.1);
-	let zvn = ZZ(svn, 20, 120, 0.1);
+	let zun = ZZ(sun, 20, 120, 0.04);
+	let zvn = ZZ(svn, 20, 120, 0.04);
 
 	let u = mapValue(zun, -clampvalueArr[0], clampvalueArr[1], -uvalueArr[0], uvalueArr[1], true);
 	let v = mapValue(zvn, -clampvalueArr[2], clampvalueArr[3], -uvalueArr[2], uvalueArr[3], true);
