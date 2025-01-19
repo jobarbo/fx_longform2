@@ -40,7 +40,7 @@ function setup() {
 	//pixelDensity(dpi(4));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM * 2, DIM);
+	c = createCanvas(DIM * 1, DIM);
 	//A4 is 1.4142
 
 	/*
@@ -54,10 +54,10 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 
 	frameIterator = maxFrames / maxFrames;
-	scl1 = fxrand() * (0.0022 - 0.001) + 0.001;
-	scl2 = fxrand() * (0.0022 - 0.001) + 0.001;
-	ang1 = parseInt(fxrand() * (500, 1200) + 500);
-	ang2 = parseInt(fxrand() * (1000, 1200) + 1000);
+	scl1 = fxrand() * (0.00072 - 0.0005) + 0.0005;
+	scl2 = fxrand() * (0.00072 - 0.0005) + 0.0005;
+	ang1 = parseInt(fxrand() * (1500, 2200) + 500);
+	ang2 = parseInt(fxrand() * (1000, 2200) + 1000);
 
 	// change how drastically it changes with the SDF
 	scl1Zone = 600;
@@ -140,14 +140,14 @@ function INIT() {
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 	let hue = fxrand() * 360;
-	xMin = 0.02;
+	/* 	xMin = 0.02;
 	xMax = 0.98;
 	yMin = 0.04;
-	yMax = 0.96;
-	/* 	xMin = -0.01;
+	yMax = 0.96; */
+	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
-	yMax = 1.01; */
+	yMax = 1.01;
 
 	for (let i = 0; i < particleNum; i++) {
 		let x = fxrand() * (xMax - xMin) * width + xMin * width;
