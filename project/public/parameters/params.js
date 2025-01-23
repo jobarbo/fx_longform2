@@ -1,19 +1,24 @@
 //* PARAMS *//
 // put global settings here if needed
-
+fx = $fx;
+fxrand = $fx.rand;
+rand = fxrand;
+fxhash = $fx.hash;
+seed = fxrand() * 1000000;
+//* COMPOSITION TYPE DEFINITION *//
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
 const paletteArr = [
 	//['broadleaf', 10],
 	//['lava', 10],
-	['blackwhite', 12.5],
-	['redblack', 12.5],
-	['yellowblack', 12.5],
-	['vintage', 12.5],
-	['pop', 12.5],
-	['shagg', 12.5],
-	['neon', 12.5],
+	["blackwhite", 12.5],
+	["redblack", 12.5],
+	["yellowblack", 12.5],
+	["vintage", 12.5],
+	["pop", 12.5],
+	["shagg", 11212.5],
+	["neon", 12.5],
 ];
 
 let palettes = {
@@ -123,16 +128,19 @@ let palettes = {
 		14: [28, 14, 95],
 	},
 	shagg: {
-		1: [25, 45, 96],
-		2: [5, 94, 97],
-		3: [27, 87, 98],
-		4: [359, 97, 37],
-		5: [25, 45, 96],
-		6: [359, 97, 37],
-		7: [27, 87, 98],
-		8: [5, 94, 97],
-		9: [25, 45, 96],
-		10: [359, 97, 37],
+		1: [25, 10, 96],
+		2: [20, 25, 96],
+		3: [15, 45, 96],
+		4: [10, 65, 96],
+		5: [5, 85, 97],
+		6: [11, 82, 87],
+		7: [16, 80, 77],
+		8: [21, 78, 67],
+		9: [27, 76, 57],
+		10: [32, 74, 37],
+		11: [37, 72, 27],
+		12: [42, 70, 17],
+		13: [47, 68, 7],
 	},
 	neon: {
 		1: [30, 10, 98],

@@ -51,23 +51,23 @@ class Cell {
 			dx,
 			dy;
 
-		dx = oct(nx, ny, sc, 3, 1);
-		dy = oct(ny, nx, sc2, 1, 1);
+		dx = oct(nx, ny, sc, 3, 5);
+		dy = oct(ny, nx, sc2, 1, 5);
 		nx += dx * a;
 		ny += dy * a2;
 
-		dx = oct(nx, ny, sc, 2, 1);
-		dy = oct(ny, nx, sc2, 0, 1);
+		dx = oct(nx, ny, sc, 2, 5);
+		dy = oct(ny, nx, sc2, 0, 5);
 		nx += dx * a2;
 		ny += dy * a2;
 
-		dx = oct(nx, ny, sc, 1, 1);
-		dy = oct(ny, nx, sc2, 2, 1);
+		dx = oct(nx, ny, sc, 1, 5);
+		dy = oct(ny, nx, sc2, 2, 5);
 		nx += dx * a;
 		ny += dy * a2;
 
-		let un = oct(nx, ny, sc, 1, 1);
-		let vn = oct(nx, ny, sc2, 3, 1);
+		let un = oct(nx, ny, sc, 1, 5);
+		let vn = oct(nx, ny, sc2, 3, 5);
 
 		let u = map(un, -0.5, 0.5, -0.5, 0.5);
 		let v = map(vn, -0.5, 0.5, -0.5, 0.5);

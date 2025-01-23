@@ -1,4 +1,4 @@
-let features = '';
+let features = "";
 
 let bleed = 0;
 let inc = 0.02;
@@ -40,7 +40,7 @@ function setup() {
 	let palette = features.biomeColorList;
 
 	//let cellSize = features.cellSize;
-	let cellSize = 10;
+	let cellSize = 1;
 
 	// Calculate the number of cells that can fit in the screen according to cellSize
 	let cellCountX = floor(width / cellSize);
@@ -52,12 +52,14 @@ function setup() {
 
 	let margin = -1;
 
-	amp1 = random([1, 2, 3, 4, 5, 10]);
-	amp2 = random([1000, 1500, 2000]);
-	scale1 = random([0.0025, 0.005, 0.007, 0.01]);
-	scale2 = random([0.001, 0.0005, 0.0001, 0.00005, 0.00001]);
+	amp1 = random([200, 250, 300, 350, 400, 450, 500]);
+	amp2 = random([2000, 3500, 5000]);
+	scale1 = 0.003;
+	scale2 = 0.001;
 	yoff = random(100000);
 	xoff = random(100000);
+
+	console.log(amp1, amp2, scale1, scale2);
 
 	// create a grid of cells that fill the sreen and is relative to the width and height of the screen
 	//noiseDetail(5, 0.55);
@@ -73,7 +75,7 @@ function init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palett
 		let result = grid.next();
 		framePassed++;
 		if (result.done) {
-			console.log('done');
+			console.log("done");
 			// stop the interval
 			clearInterval(interval);
 			init(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, palette);
@@ -89,21 +91,7 @@ function* drawNoise(cellCountX, cellCountY, cellWidth, cellHeight, margin, inc, 
 		for (let gridX = 0; gridX < cellCountX; gridX++) {
 			let posX = cellWidth * gridX;
 			let posY = cellHeight * gridY;
-			let cell = new Cell(
-				posX,
-				posY,
-				cellWidth,
-				cellHeight,
-				amp1,
-				amp2,
-				scale1,
-				scale2,
-				margin,
-				xoff,
-				yoff,
-				inc,
-				palette
-			);
+			let cell = new Cell(posX, posY, cellWidth, cellHeight, amp1, amp2, scale1, scale2, margin, xoff, yoff, inc, palette);
 			cells.push(cell);
 			cell.display(inc);
 
