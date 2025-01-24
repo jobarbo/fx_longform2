@@ -9,12 +9,12 @@ let elapsedTime = 0;
 let renderStart = Date.now();
 let framesRendered = 0;
 let totalElapsedTime = 0;
-let particleNum = 250000;
+let particleNum = 550000;
 let drawing = true;
 let renderMode = 1;
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 
-let DEFAULT_SIZE = 2600;
+let DEFAULT_SIZE = 3200;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
@@ -29,7 +29,7 @@ function setup() {
 	// canvas setup
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1.41);
+	c = createCanvas(DIM, DIM * 1);
 	pixelDensity(2);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -53,7 +53,7 @@ function* drawGenerator() {
 	let draw_every = cycle;
 	let looptime = 0;
 	while (true) {
-		blendMode(SCREEN);
+		//blendMode(SCREEN);
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
 
@@ -88,12 +88,12 @@ function INIT(seed) {
 	a2 = int(random(1, 2000) * MULTIPLIER);
 	let hue = random(360);
 	for (let i = 0; i < particleNum; i++) {
-		let x = random(-0.1, 1.1) * width;
-		let y = random(-0.1, 1.1) * height;
+		let x = random(-0.01, 1.01) * width;
+		let y = random(-0.01, 1.01) * height;
 		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, a1, a2, seed));
 	}
 
-	background(30, 5, 5);
+	background(30, 5, 100);
 }
 
 function showLoadingBar(elapsedTime, maxFrames, renderStart) {
