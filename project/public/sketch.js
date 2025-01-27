@@ -46,7 +46,7 @@ let displacement1 = 0;
 let displacement2 = 100;
 
 //let angle1 = [45, 105, 165, 225, 285, 345];
-let angle1 = [45, 135, 225, 315];
+//let angle1 = [45, 135, 225, 315];
 /* let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5]; */
 /* let angle1 = [45, 225]; */
 //let angle1 = [45, 135, 225, 315];
@@ -59,10 +59,10 @@ let angle1 = [45, 135, 225, 315];
 //let angle1 = [5, 25, 45, 65, 85, 105, 125, 145, 165, 185, 205, 225, 245, 265, 285, 305, 325, 345];
 // let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
 // 32 angles array
-/* let angle1 = [
+let angle1 = [
 	0, 11.25, 22.5, 33.75, 45, 56.25, 67.5, 78.75, 90, 101.25, 112.5, 123.75, 135, 146.25, 157.5, 168.75, 180, 191.25, 202.5, 213.75, 225, 236.25, 247.5, 258.75, 270, 281.25, 292.5, 303.75, 315, 326.25,
 	337.5, 348.75,
-]; */
+];
 console.log(angle1.length);
 //let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
 //let angle1 = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 315, 320, 325, 330, 335, 340, 345, 350, 355] ;
@@ -131,11 +131,11 @@ console.log(angle1.length);
 const numCases = angle1.length; // Number of cases you want
 const baseLow_l = 0.1;
 const baseHigh_l = 0;
-const maxPatternValue_l = 1; // Maximum value in the pattern
+const maxPatternValue_l = 2; // Maximum value in the pattern
 
 const baseLow_h = 0;
 const baseHigh_h = 0.1;
-const maxPatternValue_h = 1; // Maximum value in the pattern
+const maxPatternValue_h = 2; // Maximum value in the pattern
 
 const offValues_l = generateSymmetricOffValues(numCases, baseLow_l, baseHigh_l, maxPatternValue_l);
 const offValues_h = generateSymmetricOffValues(numCases, baseLow_h, baseHigh_h, maxPatternValue_h);
@@ -234,8 +234,8 @@ function* drawGenerator() {
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
-			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true);
+			xoff_l = mapValue(cos_val, -1, 3, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, -3, 1, xoff_l_low, xoff_l_high, true);
 
 			/* 			xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
 			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true); */
