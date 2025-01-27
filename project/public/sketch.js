@@ -56,9 +56,10 @@ function* drawGenerator() {
 		//blendMode(SCREEN);
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
-
-			mover.show();
 			mover.move(elapsedTime, maxFrames);
+			if (frameCount > 1) {
+				mover.show();
+			}
 			if (count > draw_every) {
 				count = 0;
 				yield;
@@ -88,8 +89,8 @@ function INIT(seed) {
 	a2 = int(random(1, 2000) * MULTIPLIER);
 	let hue = random(360);
 	for (let i = 0; i < particleNum; i++) {
-		let x = random(-0.01, 1.01) * width;
-		let y = random(-0.01, 1.01) * height;
+		let x = random(0.35, 0.65) * width;
+		let y = random(0.35, 0.65) * height;
 		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, a1, a2, seed));
 	}
 
