@@ -57,9 +57,9 @@ function* drawGenerator() {
 		for (let i = 0; i < particleNum; i++) {
 			const mover = movers[i];
 			mover.move(elapsedTime, maxFrames);
-			if (frameCount > 1) {
-				mover.show();
-			}
+
+			mover.show();
+
 			if (count > draw_every) {
 				count = 0;
 				yield;

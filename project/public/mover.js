@@ -76,8 +76,8 @@ class Mover {
 				this.s = 0;
 				/* this.x = random(0.02, 0.98) * width;
 				this.y = random(0.02, 0.98) * height; */
-				this.x = random(0.3, 0.7) * width;
-				this.y = random(0.3, 0.7) * height;
+				this.x = random(0.35, 0.65) * width;
+				this.y = random(0.35, 0.65) * height;
 			}
 		} else {
 			// Check if out of bounds and reposition to the opposite side
