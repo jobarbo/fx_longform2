@@ -41,7 +41,3 @@ canvas.p5Canvas {
 	max-height: 100vh;
 	width: auto !important;
 }
-
-svg {
-	transform: scale(3);
-}
