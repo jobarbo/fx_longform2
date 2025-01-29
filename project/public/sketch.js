@@ -1,4 +1,4 @@
-let features = '';
+let features = "";
 let movers = [];
 let scl1;
 let scl2;
@@ -11,6 +11,12 @@ let xMax;
 let yMin;
 let yMax;
 let isBordered = false;
+let scrollSpeed = 2;
+let scrollOffset = 0;
+
+let xi = 0;
+let yi = 0;
+
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
@@ -27,25 +33,42 @@ function setup() {
 	} else {
 		pixelDensity(3);
 	}
-	createCanvas(16 * 100, 22 * 100);
+	createCanvas(16 * 100, 16 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000);
 	randomSeed(seed);
 	INIT(seed);
+	background(0, 0, 95);
 }
 
 function draw() {
+	// Add a subtle fade effect
+
+	// Update scroll offset
+	scrollOffset += scrollSpeed;
+
 	for (let i = 0; i < movers.length; i++) {
 		for (let t = 0; t < 1; t++) {
 			movers[i].show();
-			movers[i].move();
+			movers[i].move(scrollOffset);
+
+			// Check if particle needs to be recycled
+			if (movers[i].y > height + 50) {
+				// Reset particle to top with some randomness
+				movers[i].y = -100;
+				movers[i].x = random(width * xMin, width * xMax);
+				// Slightly vary the hue for more interest
+				movers[i].hue = (movers[i].initHue + random(-10, 10)) % 360;
+			}
 		}
 	}
-	if (frameCount > 1500) {
-		console.log('done');
+
+	if (frameCount > 25500) {
+		console.log("done");
 		noLoop();
 	}
 }
+
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 	INIT(seed);
@@ -65,18 +88,18 @@ function INIT(seed) {
 	let sclOffset2 = int(random(10) + 1);
 	let sclOffset3 = int(random(10) + 1);
 
-	console.log('sclOffset1', sclOffset1);
-	console.log('sclOffset2', sclOffset2);
-	console.log('sclOffset3', sclOffset3);
+	console.log("sclOffset1", sclOffset1);
+	console.log("sclOffset2", sclOffset2);
+	console.log("sclOffset3", sclOffset3);
 
-	console.log('scl1', scl1);
-	console.log('scl2', scl2);
-	console.log('scl3', scl3);
+	console.log("scl1", scl1);
+	console.log("scl2", scl2);
+	console.log("scl3", scl3);
 
-	xMin = 0.1;
-	xMax = 0.9;
-	yMin = 0.05;
-	yMax = 0.95;
+	xMin = -0.01;
+	xMax = 1.01;
+	yMin = -0.01;
+	yMax = 1.01;
 	/* 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
@@ -96,26 +119,6 @@ function INIT(seed) {
 		let hueOffset = random(-20, 20);
 		let initHue = hue + hueOffset;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(
-			new Mover(
-				x,
-				y,
-				initHue,
-				scl1,
-				scl2,
-				scl3,
-				sclOffset1,
-				sclOffset2,
-				sclOffset3,
-				xMin,
-				xMax,
-				yMin,
-				yMax,
-				isBordered,
-				seed
-			)
-		);
+		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix('#000', '#FAE8E0', 0.938);
-	background(bgCol);
 }

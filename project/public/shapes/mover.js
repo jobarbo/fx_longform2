@@ -1,21 +1,5 @@
 class Mover {
-	constructor(
-		x,
-		y,
-		hue,
-		scl1,
-		scl2,
-		scl3,
-		sclOffset1,
-		sclOffset2,
-		sclOffset3,
-		xMin,
-		xMax,
-		yMin,
-		yMax,
-		isBordered,
-		seed
-	) {
+	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
@@ -54,35 +38,18 @@ class Mover {
 		circle(this.x, this.y, this.s);
 	}
 
-	move() {
-		let p = superCurve(
-			this.x,
-			this.y,
-			this.scl1,
-			this.scl2,
-			this.scl3,
-			this.sclOffset1,
-			this.sclOffset2,
-			this.sclOffset3,
-			this.seed
-		);
-		// after 1 second, change the scale
-
-		//! crayon effect too
-		/* 		this.xRandDivider = random(0.1, 1.1);
-		this.yRandDivider = random(0.1, 1.1); */
-		/* 		this.xRandDivider = 0.1;
-		this.yRandDivider = 0.1; */
+	move(scrollOffset) {
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.seed);
 
 		this.xRandSkipper = random(-0.01, 0.01);
 		this.yRandSkipper = random(-0.01, 0.01);
 
+		// Add scrolling motion to the y component
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
-		this.y += p.y / this.yRandDivider + this.yRandSkipper;
+		this.y += p.y / this.yRandDivider + this.yRandSkipper + 1; // Add constant upward motion
 
-		//shortand for if this.x is less than 0, set this.x to width and vice versa
+		// Modified wrapping behavior to work with scrolling
 		this.x = this.x < 0 ? width : this.x > width ? 0 : this.x;
-		this.y = this.y < 0 ? height : this.y > height ? 0 : this.y;
 
 		if (this.isBordered) {
 			if (this.x < (this.xMin - 0.015) * width) {
@@ -90,12 +57,6 @@ class Mover {
 			}
 			if (this.x > (this.xMax + 0.015) * width) {
 				this.x = (this.xMin - 0.015) * width;
-			}
-			if (this.y < (this.yMin - 0.015) * height) {
-				this.y = (this.yMax + 0.015) * height;
-			}
-			if (this.y > (this.yMax + 0.015) * height) {
-				this.y = (this.yMin - 0.015) * height;
 			}
 		}
 	}
@@ -114,14 +75,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff1, sclOff1, seed) {
 		noiseScale2 = 0.05,
 		noiseScale3 = 0.05,
 		nseed = seed;
-	un =
-		sin(nx * (scale1 * scaleOffset1) + nseed) +
-		cos(nx * (scale2 * scaleOffset2) + nseed) -
-		sin(nx * (scale3 * scaleOffset3) + nseed);
-	vn =
-		cos(ny * (scale1 * scaleOffset1) + nseed) +
-		sin(ny * (scale2 * scaleOffset2) + nseed) -
-		cos(ny * (scale3 * scaleOffset3) + nseed);
+	un = sin(nx * (scale1 * scaleOffset1) + nseed) + cos(nx * (scale2 * scaleOffset2) + nseed) - sin(nx * (scale3 * scaleOffset3) + nseed);
+	vn = cos(ny * (scale1 * scaleOffset1) + nseed) + sin(ny * (scale2 * scaleOffset2) + nseed) - cos(ny * (scale3 * scaleOffset3) + nseed);
 
 	//! center focused
 	/* 	let maxU = map(ny, 0, height, 3, -3, true);
