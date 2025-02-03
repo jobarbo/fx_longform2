@@ -96,8 +96,8 @@ class Mover {
 		this.xRandDivider = randMultX;
 		this.yRandDivider = randMultY;
 
-		this.xRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 1, 0.1, true);
-		this.yRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0.1, 1, true);
+		this.xRandSkipperVal = map(frameCount, 0, this.maxFrames / 4, 1, 0.1, true);
+		this.yRandSkipperVal = map(frameCount, 0, this.maxFrames / 4, 0.1, 1, true);
 
 		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
 		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
@@ -114,7 +114,7 @@ class Mover {
 			let alpha_max = map(frameCount, 0, this.maxFrames / 2, 40, 100, true); */
 
 			//!complexion standard (vegetation variant)
-			this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS * 2, true);
+			this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS * 1, true);
 			this.a = mapValue(this.speed, 2, 2.01, 40, 100, true);
 
 			//!complexion inverser (goldenfold variant)
@@ -127,7 +127,7 @@ class Mover {
 		}
 
 		//!goldenfold variant
-		if (this.speed < 1) {
+		if (this.speed < 2) {
 			this.hue = 0;
 			this.sat = this.initSat + 80;
 			this.bri = this.initBri + random(-20, 60);
