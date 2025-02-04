@@ -31,16 +31,16 @@ let elapsedTime = 0;
 
 let drawing = true;
 let renderMode = 1;
-let cycle = (maxFrames * particleNum) / 600;
+let cycle = (maxFrames * particleNum) / 10;
 let divider = 1.5;
 console.log(cycle);
 
 function setup() {
 	console.time("setup");
-	//pixelDensity(dpi(4));
+	pixelDensity(dpi(3));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 2);
+	c = createCanvas(DIM, DIM * 1);
 	//A4 is 1.4142
 
 	/*
@@ -108,7 +108,7 @@ function* drawGenerator() {
 				count = 0;
 				yield;
 			}
-			draw_every = (maxFrames * particleNum) / 600;
+			draw_every = (maxFrames * particleNum) / 3600;
 
 			count++;
 		}
@@ -140,8 +140,8 @@ function INIT() {
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 	let hue = fxrand() * 360;
-	xMin = 0.04;
-	xMax = 0.96;
+	xMin = 0.02;
+	xMax = 0.98;
 	yMin = 0.02;
 	yMax = 0.98;
 	/* 	xMin = -0.01;

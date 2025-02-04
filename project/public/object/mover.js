@@ -91,13 +91,13 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		let randMultX = map(frameCount, 0, this.maxFrames / 2, 12, 0.0001, true);
-		let randMultY = map(frameCount, 0, this.maxFrames / 2, 0.0001, 12, true);
+		let randMultX = map(frameCount, 0, this.maxFrames / 2, 0.0001, 12, true);
+		let randMultY = map(frameCount, 0, this.maxFrames / 2, 12, 0.0001, true);
 		this.xRandDivider = randMultX;
 		this.yRandDivider = randMultY;
 
-		this.xRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 1, 0.1, true);
-		this.yRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0.1, 1, true);
+		this.xRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0.1, 1, true);
+		this.yRandSkipperVal = map(frameCount, 0, this.maxFrames / 2, 0, -10, true);
 
 		this.speedX = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipperVal;
 		this.speedY = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipperVal;
@@ -223,8 +223,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 
 	/* 	let u = mapValue(un, -0.5, 0.5, -aValue, bValue);
 	let v = mapValue(vn, -0.5, 0.5, -bValue, aValue);*/
-	let u = mapValue(sun, 0, 1, -0, 1);
-	let v = mapValue(svn, 0, 1, -200, 200);
+	let u = mapValue(sun, 0, 1, -200, 200);
+	let v = mapValue(svn, 0, 1, -1, 0);
 
 	//let p = createVector(u, v);
 	return {x: u, y: v};
