@@ -209,8 +209,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let sun = smoothstep(-0.15, 0.00000015, un);
-	let svn = smoothstep(-0.000000015, 0.15, vn);
+	let sun = smoothstep(-0.00000015, 0.15, un);
+	let svn = smoothstep(-0.15, 0.00000015, vn);
 
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */
