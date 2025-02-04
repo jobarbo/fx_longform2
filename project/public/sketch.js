@@ -17,13 +17,15 @@ let nodes = [];
 let branches = [];
 
 class Node {
-	constructor(x, y, isCommit = false, depth = 0) {
+	constructor(x, y, isCommit = false, depth = 0, isMerge = false, branchLength = 100) {
 		this.x = x;
 		this.y = y;
 		this.isCommit = isCommit;
+		this.isMerge = isMerge;
 		this.depth = depth;
+		this.branchLength = branchLength; // Store the length of incoming branch
 		this.children = [];
-		this.parent = null;
+		this.parents = [];
 	}
 
 	display() {
@@ -32,29 +34,41 @@ class Node {
 		strokeWeight(2);
 		fill(255);
 
-		// Calculate sizes based on depth
-		// Start with larger sizes and reduce by each level
-		let baseCircleSize = 30;
-		let baseSquareSize = 20;
-		let squareReductionPerLevel = 4;
-		let circleReductionPerLevel = 6;
+		// Calculate sizes based on branch length and depth
+		// Base sizes are proportional to branch length
+		let baseCircleSize = this.branchLength * 0.3; // 30% of branch length
+		let baseSquareSize = this.branchLength * 0.2; // 20% of branch length
 
-		// Ensure minimum sizes
-		let circleSize = max(baseCircleSize - this.depth * circleReductionPerLevel, 8);
-		let squareSize = max(baseSquareSize - this.depth * squareReductionPerLevel, 6);
+		// Reduction per level is also proportional to base size
+		let circleReductionPerLevel = baseCircleSize * 0.2; // 20% reduction per level
+		let squareReductionPerLevel = baseSquareSize * 0.2; // 20% reduction per level
+
+		// Ensure minimum and maximum sizes
+		let circleSize = constrain(baseCircleSize - this.depth * circleReductionPerLevel, 8, 30);
+		let squareSize = constrain(baseSquareSize - this.depth * squareReductionPerLevel, 6, 20);
 
 		if (this.isCommit) {
 			rectMode(CENTER);
 			rect(this.x, this.y, squareSize, squareSize);
 		} else {
-			ellipse(this.x, this.y, circleSize, circleSize);
+			// Draw merge nodes as diamonds
+			if (this.isMerge) {
+				push();
+				translate(this.x, this.y);
+				rotate(45);
+				rectMode(CENTER);
+				rect(0, 0, circleSize * 0.8, circleSize * 0.8);
+				pop();
+			} else {
+				ellipse(this.x, this.y, circleSize, circleSize);
+			}
 		}
 		pop();
 	}
 
 	addChild(child) {
 		this.children.push(child);
-		child.parent = this;
+		child.parents.push(this);
 	}
 }
 
@@ -103,7 +117,7 @@ class Branch {
 		strokeWeight(2);
 
 		// Update control points with noise
-		let wobbleAmount = 55;
+		let wobbleAmount = 1;
 		let t = frameCount * 0.01;
 
 		let offset1X = map(noise(this.noiseOffsetX1 + t), 0, 1, -wobbleAmount, wobbleAmount);
@@ -171,6 +185,9 @@ function createCladogram() {
 	// Random starting angle for the first branch
 	let startingAngle = random(0, 360);
 
+	// Calculate initial branch length based on canvas size
+	let initialLength = min(width, height) * 0.2; // 20% of the smallest canvas dimension
+
 	let angles = [];
 	let angleStep = 360 / numInitialBranches;
 
@@ -178,37 +195,38 @@ function createCladogram() {
 		angles.push(startingAngle + i * angleStep);
 	}
 
-	// Create branches at calculated angles
+	// Create branches at calculated angles with canvas-relative length
 	for (let angle of angles) {
-		createBranch(startNode, 3, angle, 200, angle - 15, angle + 15, true);
+		createBranch(startNode, 4, angle, initialLength, angle - 15, angle + 15, true);
 	}
 }
 
 function createBranch(parent, depth, startAngle, length, minAngle, maxAngle, isInitialBranch = false) {
 	if (depth <= 0) return;
 
+	// Calculate angle variation at the start so it's available throughout the function
+	let baseVariation = 30;
+	let reductionPerLevel = 5;
+	let maxDepth = 3;
+	let angleVariation = max(baseVariation - (maxDepth - depth) * reductionPerLevel, 5);
+
 	if (isInitialBranch) {
 		let endX = parent.x + cos(startAngle) * length;
 		let endY = parent.y + sin(startAngle) * length;
 
-		// Create end node with depth 1
-		let newNode = new Node(endX, endY, false, 1);
+		// Create end node with depth 1 and pass branch length
+		let newNode = new Node(endX, endY, false, 1, false, length);
 		nodes.push(newNode);
 		parent.addChild(newNode);
 
 		branches.push(new Branch(parent, newNode));
 
 		if (depth > 1) {
-			createBranch(newNode, depth - 1, startAngle, length * 0.8, startAngle - 25, startAngle + 25, false);
+			let newLength = length * 0.5; // Consistent length reduction
+			createBranch(newNode, depth - 1, startAngle, newLength, startAngle - 25, startAngle + 25, false);
 		}
 	} else {
 		let numBranches = floor(random(1, 4));
-
-		// Reduce angle variation based on depth
-		let baseVariation = 30;
-		let reductionPerLevel = 8;
-		let maxDepth = 3;
-		let angleVariation = max(baseVariation - (maxDepth - depth) * reductionPerLevel, 5);
 
 		for (let i = 0; i < numBranches; i++) {
 			let angleOffset = map(i, 0, numBranches - 1, -angleVariation, angleVariation);
@@ -217,15 +235,16 @@ function createBranch(parent, depth, startAngle, length, minAngle, maxAngle, isI
 			let endX = parent.x + cos(angle) * length;
 			let endY = parent.y + sin(angle) * length;
 
-			// Create new node with incremented depth
-			let newNode = new Node(endX, endY, false, parent.depth + 1);
+			// Create new node with incremented depth and pass branch length
+			let newNode = new Node(endX, endY, false, parent.depth + 1, false, length);
 			nodes.push(newNode);
 			parent.addChild(newNode);
 
 			branches.push(new Branch(parent, newNode));
 
 			if (depth > 1) {
-				createBranch(newNode, depth - 1, angle, length * 0.8, angle - angleVariation / 2, angle + angleVariation / 2, false);
+				let newLength = length * 0.8; // Consistent length reduction
+				createBranch(newNode, depth - 1, angle, newLength, angle - angleVariation / 2, angle + angleVariation / 2, false);
 			}
 		}
 	}
