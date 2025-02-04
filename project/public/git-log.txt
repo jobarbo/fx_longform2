@@ -1,0 +1,1345 @@
+* af71384 afee2ba added relative sizing
+* afee2ba b5bfbb8 wobbly lines
+* b5bfbb8 4b2dafd cladogram init
+| * 856bb66 428cad9 inverted smoothstep
+| * 428cad9 ff8a00f fixed artowkr css orientation so it can stand straight now
+| | * 16dc749 4b2dafd artwork ready
+| |/  
+|/|   
+* | 4b2dafd 92501fd main minimal
+| | * b4e0a85 ff8a00f artwork ready
+| |/  
+| * ff8a00f 9a2a544 css fix
+| * 9a2a544 4943546 capital wasteland
+| | * 7e81974 e2934e3 infinite scroll
+| | * e2934e3 9bff360 back to expo version
+| | * 9bff360 97fe54a Expo similation revert
+| | * 97fe54a c74917c lib
+| | | * 11699d6 de16234 artwork ready
+| | | | * 5ffa066 86cdb82 artwork ready
+| | | | | * dbe3505 3d8a41a small modifications
+| | | | | * 3d8a41a ad5a7a0 artwork ready
+| | | | | * ad5a7a0 f866d46 artwork ready
+| | | | | | * 08c9e8f c82c4fb artwork ready
+| | | | | | * c82c4fb 93e2f33 oct conversion
+| | | | | | | * 2c6eda6 11b149e update
+| | | | | | | | * 85c41f0 ff1cac5 artwork ready
+| | | | | | | | * ff1cac5 86679ec bump
+| | | | | | | | * 86679ec 280fcc5 small(ish) update
+| | | | | | | | | * c9c22e5 d8154db artwork ready
+| | | | | | | | | * d8154db 3d95d85 ADDED X_VAL,Y_VAL
+| | | | | | | | | | * f39112f 8de089b update
+| | | | | | | | | | * 8de089b 8de572c artwork ready
+| | | | | | | | | | | * f2427f1 05a3823 artwork ready
+| | | | | | | | | | | | * 3f5efaa 8e38648 artwork ready
+| | | | | | | | | | | | * 8e38648 e517d99 Some ease of use stuff, better particle concentration on all sides
+| | | | | | | | | | | | * e517d99 979564f Inverted (profondeur but better)
+| | | | | | | | | | | | * 979564f ad9c7e5 What I always wanted (nice negative space)
+| | | | | | | | | | | | * ad9c7e5 468746d Effet de profondeur
+| | | | | | | | | | | | * 468746d 85e3503 some change for more interesting output overall
+| | | | | | | | | | | | * 85e3503 d70788d added generator
+| | | | | | | | | | | | * d70788d 21fed89 groovy
+| | | | | | | | | | | | * 21fed89 12dc566 Lines are back on the menu boys
+| | | | | | | | | | | | * 12dc566 7b2645b fixed git ignore
+| | | | | | | | | | | | | * 1ebf973 a418851 Revert to before genuary
+| | | | | | | | | | | | | * a418851 ce33ff3 artwork subdivision
+| | | | | | | | | | | | | * ce33ff3 599b9d2 artwork ready
+| | | | | | | | | | | | | | * 01089a2 599b9d2 artwork subdivision
+| | | | | | | | | | | | | |/  
+| | | | | | | | | | | | | | * d97fd6f 23fc0c5 added color
+| | | | | | | | | | | | | | * 23fc0c5 544c9b2 artwork ready
+| | | | | | | | | | | | | | * 544c9b2 599b9d2 threads but in a new way using random gaussian
+| | | | | | | | | | | | | |/  
+| | | | | | | | | | | | | * 599b9d2 7a195fc jeu de grille but more complex?
+| | | | | | | | | | | | | | * 013dd37 70e89cf artwork ready
+| | | | | | | | | | | | | | * 70e89cf 332f265 variable gaussian offset
+| | | | | | | | | | | | | | * 332f265 5565357 Interesting blur with sharp noise
+| | | | | | | | | | | | | | | * ff6fc63 6775a58 artwork ready
+| | | | | | | | | | | | | | | | * 48c97f7 69b650d artwork ready
+| | | | | | | | | | | | | | | | * 69b650d 1008a11 Highly textile 1 octave noise
+| | | | | | | | | | | | | | | | * 1008a11 3e39c66 Beautiful scratchu texture on oct 6
+| | | | | | | | | | | | | | | | * 3e39c66 069b96d changes to agent's size
+| | | | | | | | | | | | | | | | * 069b96d 41ec54c really dope pattern here
+| | | | | | | | | | | | | | | | * 41ec54c bba6e52 init
+| | | | | | | | | | | | | | | | | * b2911a5 b6ada58 artwork ready
+| | | | | | | | | | | | | | | | | | * 085199e e805d7a artwork ready
+| | | | | | | | | | | | | | | | | | * e805d7a 78e7cc8 v1.1
+| | | | | | | | | | | | | | | | | | * 78e7cc8 d5b4009 ATOMOS - COSMIC HORROR
+| | | | | | | | | | | | | | | | | | * d5b4009 b335124 first commit
+| | | | | | | | | | | | | | | | | | | * 09171d3 7e516d7 put bag globals
+| | | | | | | | | | | | | | | | | | | * 7e516d7 9aed057 Done!
+| | | | | | | | | | | | | | | | | | | * 9aed057 bfe7e3e Single entity
+| | | | | | | | | | | | | | | | | | | * bfe7e3e 8fc3790 only 42 lines of code
+| | | | | | | | | | | | | | | | | | | * 8fc3790 08a5583 some maintenance
+| | | | | | | | | | | | | | | | | | | * 08a5583 19c1772 genuary 03 real first commit
+| | | | | | | | | | | | | | | | | | | * 19c1772 4d5b6d0 genuary 03 first commit
+| | | | | | | | | | | | | | | | | | | | * 1abe54c da7efcf genuary 02 done
+| | | | | | | | | | | | | | | | | | | | * da7efcf 4edec12 added ZZ
+| | | | | | | | | | | | | | | | | | | | * 4edec12 5ac3200 reverted to before shattered
+| | | | | | | | | | | | | | | | | | | | | * 462db93 3d95d85 genuary 01
+| | | | | | | | | | |_|_|_|_|_|_|_|_|_|_|/  
+| | | | | | | | | |/| | | | | | | | | | |   
+| | | | | | | | | * | | | | | | | | | | | 3d95d85 f2d7b58 reverted to early december but kept new config commented
+| | | | | | | | | * | | | | | | | | | | | f2d7b58 86cdb82 Clean geometrical config
+| | | | | |_|_|_|/ / / / / / / / / / / /  
+| | | | |/| | | | | | | | | | | | | | |   
+| | | | * | | | | | | | | | | | | | | | 86cdb82 4aa46dd new config, kind of more angular, great eidolon with this one
+| | | | * | | | | | | | | | | | | | | | 4aa46dd 4ab6bee inverted config
+| | | | * | | | | | | | | | | | | | | | 4ab6bee 1705f2b Revert particle sizes
+| | | | * | | | | | | | | | | | | | | | 1705f2b 46f77ee Beautiful colors, smaller particles, addedcomment for og config
+| | | | * | | | | | | | | | | | | | | | 46f77ee 57126b3 zz notice
+| | | | * | | | | | | | | | | | | | | | 57126b3 8db5405 handrawn config
+| | | | * | | | | | | | | | | | | | | | 8db5405 152f6c6 Added constraint
+| | | | * | | | | | | | | | | | | | | | 152f6c6 ea8938d New xoff_l xoff_h manager
+| | | | * | | | | | | | | | | | | | | | ea8938d c00f764 added more angles
+| | | | * | | | | | | | | | | | | | | | c00f764 b1a194e Hand drawn configuration
+| | | | * | | | | | | | | | | | | | | | b1a194e dc331f8 Tropical layout/ high detail
+| | | | * | | | | | | | | | | | | | | | dc331f8 cb590eb Flower state primo
+| | | | * | | | | | | | | | | | | | | | cb590eb c17aaa0 Sun state configuration
+| | | | * | | | | | | | | | | | | | | | c17aaa0 5dd8519 Sweet color scheme with off_l and off_h
+| | | | * | | | | | | | | | | | | | | | 5dd8519 0f6a969 Jellyfish 2
+| | | | * | | | | | | | | | | | | | | | 0f6a969 bafdccf small changes (brightness, and jelly)
+| | | | * | | | | | | | | | | | | | | | bafdccf 941a982 harsher switch to black
+| | | | * | | | | | | | | | | | | | | | 941a982 d1311c9 Reduced max dpi
+| | | | * | | | | | | | | | | | | | | | d1311c9 4d847b8 New color scheme and new management of dark particles
+| | | | * | | | | | | | | | | | | | | | 4d847b8 ba8fd34 Added new cycles to manage particle num (inactive)
+| | | | * | | | | | | | | | | | | | | | ba8fd34 501c0f2 testing deploy
+| | | | * | | | | | | | | | | | | | | | 501c0f2 83249ff DPI 1
+| | | | * | | | | | | | | | | | | | | | 83249ff bccee11 some changes
+| | | | * | | | | | | | | | | | | | | | bccee11 d287962 Added ZZ
+| | | | * | | | | | | | | | | | | | | | d287962 1ebb943 More particle, removed fade effect
+| | | | * | | | | | | | | | | | | | | | 1ebb943 ac12ccf Jellyfish 2 + fade in on particle alpha
+| | | | * | | | | | | | | | | | | | | | ac12ccf 653da4a removed frame
+| | | | * | | | | | | | | | | | | | | | 653da4a 0cc2e21 removed frame
+| | | | * | | | | | | | | | | | | | | | 0cc2e21 08ecc96 back to symmetry
+| | | | * | | | | | | | | | | | | | | | 08ecc96 42b63b1 no symettry, thighter area
+| | | | * | | | | | | | | | | | | | | | 42b63b1 163ac63 Testing assymetry - demo for poka
+| | | | * | | | | | | | | | | | | | | | 163ac63 8c2bb43 small changes on offValues arrays
+| | | | * | | | | | | | | | | | | | | | 8c2bb43 7cdc2f0 Made the canvas fit the screen
+| | | | * | | | | | | | | | | | | | | | 7cdc2f0 722da70 cycle to 10 000
+| | | | * | | | | | | | | | | | | | | | 722da70 7b3d666 removed some particle to speed up generation
+| | | | * | | | | | | | | | | | | | | | 7b3d666 a34ead2 added palette
+| | | | * | | | | | | | | | | | | | | | a34ead2 953f299 added col cos to use with palettes - to test -
+| | | | * | | | | | | | | | | | | | | | 953f299 e7e1c1f start tiling
+| | | | | | | | | | | | | | | | | | | | * 3f3e67c be52181 added multiplier to rand_divider
+| | | | | | | | | | | | | | | | | | | | * be52181 294be49 more stable ?
+| | | | | | | | | | | | | | | | | | | | * 294be49 8de572c Cool config, need more testing
+| | | | | | | | | | |_|_|_|_|_|_|_|_|_|/  
+| | | | | | | | | |/| | | | | | | | | |   
+| | | | | | | | | * | | | | | | | | | | 8de572c 6775a58 testing sine
+| | | | | | | | | | |_|_|_|/ / / / / /  
+| | | | | | | | | |/| | | | | | | | |   
+| | | | | | | | | * | | | | | | | | | 6775a58 79c5a18 reverting to something more neutral to help test the overall variations
+| | | | | | | | | * | | | | | | | | | 79c5a18 aada55d winning hash with winning setup. needed to bookmark this one
+| | | | | | | | | * | | | | | | | | | aada55d ef8cd35 Update base DIM_OBJ, more saturated color over bright, slower hue change, randomGaussian on randDiv, Margin tune up, Exposure tune up
+| | | | | | | | | * | | | | | | | | | ef8cd35 62295f8 Interesting ZZ (finally), Fixed size according to dimensions
+| | | | | | | | | * | | | | | | | | | 62295f8 0d4a40f texture fix
+| | | | | | | | | * | | | | | | | | | 0d4a40f b0f4f69 Fixed css andmin size + trying smoothstep
+| | | | | | | | | * | | | | | | | | | b0f4f69 005ad97 Fixed skateboard ratio having a frame
+| | | | | | | | | * | | | | | | | | | 005ad97 2228045 Revert to old, so I can fix the agnosticism
+| | | | | | | | | * | | | | | | | | | 2228045 95da62b testing agnosticism
+| | | | | | | | | * | | | | | | | | | 95da62b 39d4705 added a commented block of code with intersting center centric comp
+| | | | | | | | | * | | | | | | | | | 39d4705 cba2f54 changed sun/svn to nx/ny instead of x/y
+| | | | | | | | | * | | | | | | | | | cba2f54 88c71a4 Added dpi, added multiplier in all sin cos, boosted milis for smooth cloudy texture sometimes
+| | | | | | | | | * | | | | | | | | | 88c71a4 1a0723f some changes to sin noise
+| | | | | | | | | * | | | | | | | | | 1a0723f ccd697b Bigger particles, lower alpha
+| | | | | | | | | * | | | | | | | | | ccd697b df35204 set basis for multiplier in noise function to 1, set dpi to 3 and margin to 100
+| | | | | | | | | * | | | | | | | | | df35204 101edd4 Some tune up with the noise function
+| | | | | | | | | * | | | | | | | | | 101edd4 cc8e861 ex-libris 2.0 start
+| | | | | | | | | * | | | | | | | | | cc8e861 3ad01df update lib
+| | | | | | | | | * | | | | | | | | | 3ad01df 9faba4b update lib
+| | | | | | | | | * | | | | | | | | | 9faba4b a3bec04 working on dashboard
+| | | | | | | | | * | | | | | | | | | a3bec04 903d6ef Fixed hash and fxhash.js file ( now hash fit with mints)
+| | | | | | | | | * | | | | | | | | | 903d6ef 163434f lib
+| | | | | | | | | * | | | | | | | | | 163434f b34258b lib update
+| | | | | | | | | * | | | | | | | | | b34258b d6d024a git ignore modification
+| | | | | | | | | * | | | | | | | | | d6d024a 2861a73 mod lib
+| | | | | | | | | * | | | | | | | | |   2861a73 3c57e3a c2a360d Merge branch 'EXLIBRIS/minified' into EXLIBRIS/final
+| | | | | | | | | |\ \ \ \ \ \ \ \ \ \  
+| | | | | | | | | | | | | | | | | | | | * 8499e2e 1a855ea  cleaned up code
+| | | | | | | | | | | | | | | | | | | | * 1a855ea 62580b2 small changes
+| | | | | | | | | | | | | | | | | | | | * 62580b2 74c0e4c From top to bottom
+| | | | | | | | | | | | | | | | | | | | * 74c0e4c ab31eed brighter
+| | | | | | | | | | | | | | | | | | | | * ab31eed 4dbfc35 A4 ratio
+| | | | | | | | | | | | | | | | | | | | * 4dbfc35 ac85e4f to zanarkand
+| | | | | | | | | | | | | | | | | | | | | * 635ec95 d311ddc fixed missing parameter in mover
+| | | | | | | | | | | | | | | | | | | | | * d311ddc 0025950 testing deploy
+| | | | | | | | | | | | | | | | | | | | | * 0025950 17f8a4d testing deploy
+| | | | | | | | | | | | | | | | | | | | | * 17f8a4d 811c474 revert
+| | | | | | | | | | | | | | | | | | | | | *   811c474 eeadca9 7b2645b Merge branch 'wip/jdl2' of github.com:jobarbo/fx_longform2 into wip/jdl2
+| | | | | | | | | | | | | | | | | | | | | |\  
+| | | | | | | | | | | | | |_|_|_|_|_|_|_|_|/  
+| | | | | | | | | | | | |/| | | | | | | | |   
+| | | | | | | | | | | | * | | | | | | | | | 7b2645b cbb1325 added back asymetry
+| | | | | | | | | | | | * | | | | | | | | | cbb1325 776442a dpi 1
+| | | | | | | | | | | | * | | | | | | | | | 776442a 4def0ff zz factor
+| | | | | | | | | | | | | | | | | | | | | | * a93286f f866d46 added lorenz attractor modifier
+| | | | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | | |/| | | | | | | | | | | | | | | |   
+| | | | | * | | | | | | | | | | | | | | | | f866d46 5565357 added colors (commented, tested back urbanism (remove zz), added some comments
+| | | | | | |_|_|_|_|_|_|_|/ / / / / / / /  
+| | | | | |/| | | | | | | | | | | | | | |   
+| | | | | * | | | | | | | | | | | | | | | 5565357 e948e29 added lines!
+| | | | | * | | | | | | | | | | | | | | | e948e29 afd9100 Added generator mode + testing oct 6 (dope)
+| | | | | * | | | | | | | | | | | | | | | afd9100 bba6e52 added zz
+| | | | | | |_|_|_|_|_|_|_|/ / / / / / /  
+| | | | | |/| | | | | | | | | | | | | |   
+| | | | | * | | | | | | | | | | | | | | bba6e52 204fbe1 added piter noise
+| | | | | * | | | | | | | | | | | | | | 204fbe1 93292b1 dark variant
+| | | | | * | | | | | | | | | | | | | | 93292b1 b0a2f08 added some grit, it looks great
+| | | | | * | | | | | | | | | | | | | | b0a2f08 15d609c added alpha and smaller dpi
+| | | | | * | | | | | | | | | | | | | | 15d609c 99be2ed Square ratio
+| | | | | * | | | | | | | | | | | | | | 99be2ed da03e05 building like
+| | | | | * | | | | | | | | | | | | | | da03e05 eeadca9 similar to jeu de sine but seems more precise? will merge at one point
+| | | | | | |_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | | |/| | | | | | | | | | | | |   
+| | | | | * | | | | | | | | | | | | | eeadca9 4def0ff very interesting shapes, tribal,orca
+| | | | | | |_|_|_|_|_|/ / / / / / /  
+| | | | | |/| | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | | * cb47c6f c7688e0 Crate cities
+| | | | | | | | | | | | | | | | | | * c7688e0 4c95db0 moved some code up, no visual change
+| | | | | | | | | | | | | | | | | | * 4c95db0 5526d93 bump
+| | | | | | | | | | | | | | | | | | * 5526d93 9f2aad5 added dynamic colors
+| | | | | | | | | | | | | | | | | | * 9f2aad5 5d48590 trying to push
+| | | | | | | | | | | | | | | | | | * 5d48590 795a220 ppushing
+| | | | | | | | | | | | | | | | | | * 795a220 9b53058 added HiDPI
+| | | | | | | | | | | | | | | | | | * 9b53058 3bebde9 new title
+| | | | | | | | | | | | | | | | | | * 3bebde9 31e8888 goldenrod_start
+| | | | | | | | | | | | | | | | | | | * 99745de 0d7d6a2 Reverted brightness and total frame
+| | | | | | | | | | | | | | | | | | | * 0d7d6a2 e79a3b5 Texture fine tuning
+| | | | | | | | | | | | | | | | | | | * e79a3b5 58397e6 Added col_value
+| | | | | | | | | | | | | | | | | | | * 58397e6 2bde4a0 Jellyfish 3
+| | | | | | | | | | | | | | | | | | | *   2bde4a0 ffd1732 582918e Merge branch 'wip/geom_astra' of github.com:jobarbo/fx_longform2 into wip/geom_astra
+| | | | | | | | | | | | | | | | | | | |\  
+| | | | | | | | | | | | | | | | | | | | * 582918e e7e1c1f Jellyfish 2
+| | | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | |/| | | | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | | | * ffd1732 e7e1c1f added zz
+| | | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | |/| | | | | | | | | | | | | |   
+| | | | * | | | | | | | | | | | | | | e7e1c1f 2ea0d8c translate fix
+| | | | * | | | | | | | | | | | | | | 2ea0d8c be88df6 The Many-Faced Stranger
+| | | | * | | | | | | | | | | | | | | be88df6 233ff48 new xoff_l_high & xoff_l_low mapping configuration
+| | | | * | | | | | | | | | | | | | | 233ff48 70afd2b reverted offValues arr
+| | | | * | | | | | | | | | | | | | | 70afd2b 3423e45 reverted some change but kept them commented
+| | | | * | | | | | | | | | | | | | | 3423e45 f8a8c42 new values low | high array
+| | | | * | | | | | | | | | | | | | | f8a8c42 0fbb6d7 palette deep orange and blue purple
+| | | | * | | | | | | | | | | | | | | 0fbb6d7 9dc0f4d new cool palette
+| | | | * | | | | | | | | | | | | | | 9dc0f4d 8e9602f really cool color scheme
+| | | | * | | | | | | | | | | | | | | 8e9602f 8d6ca90 Testing out some new idea with the nd_cos
+| | | | * | | | | | | | | | | | | | | 8d6ca90 e97b5c2 stable unstable
+| | | | * | | | | | | | | | | | | | | e97b5c2 5071161 Ratio change
+| | | | * | | | | | | | | | | | | | | 5071161 769b733 added some variance on noise detail
+| | | | * | | | | | | | | | | | | | | 769b733 88532c4 new combo v2
+| | | | * | | | | | | | | | | | | | | 88532c4 d32aeb0 Testing new combo
+| | | | * | | | | | | | | | | | | | | d32aeb0 dccc88b Face emergence
+| | | | * | | | | | | | | | | | | | | dccc88b adf6f9a Dope creatures "tribal"
+| | | | * | | | | | | | | | | | | | | adf6f9a 8b39cce Dope creatures
+| | | | * | | | | | | | | | | | | | | 8b39cce 2e0e2c0 starting working on traits
+| | | | * | | | | | | | | | | | | | | 2e0e2c0 e25a97a close-up ornate
+| | | | * | | | | | | | | | | | | | | e25a97a 3ca6a38 Back to entities
+| | | | * | | | | | | | | | | | | | | 3ca6a38 74ef343 revert organic hue
+| | | | * | | | | | | | | | | | | | | 74ef343 4d05177 some change on bright generation
+| | | | * | | | | | | | | | | | | | | 4d05177 d3fcab7 Testing color palette
+| | | | * | | | | | | | | | | | | | | d3fcab7 bc8feca la grande débarque
+| | | | * | | | | | | | | | | | | | | bc8feca a1a5d8c great flowy comp
+| | | | * | | | | | | | | | | | | | | a1a5d8c 6f68285 Asymmetric (éclat)
+| | | | | | | | | | | | | | | | | | | * ac6058d ad2cbac variable rand div
+| | | | | | | | | | | | | | | | | | | * ad2cbac b1e7daf More consisten hue, Better angles
+| | | | | | | | | | | | | | | | | | | * b1e7daf 84ed208 Added back the distortion
+| | | | | | | | | | | | | | | | | | | * 84ed208 c8456dc 100 frames instead of 72
+| | | | | | | | | | | | | | | | | | | * c8456dc d55bdb5 More reliefs
+| | | | | | | | | | | | | | | | | | | * d55bdb5 316b2af Made some modification to keep colors and still have nice light effect
+| | | | | | | | | | | | | | | | | | | * 316b2af e30e747 Close up
+| | | | | | | | | | | | | | | | | | | * e30e747 4690d3c angle and sat change
+| | | | | | | | | | | | | | | | | | | * 4690d3c b335124 more natural feel
+| | | | | | | | | | | | | | | |_|_|_|/  
+| | | | | | | | | | | | | | |/| | | |   
+| | | | | | | | | | | | | | * | | | | b335124 0a072ad Reverted back to earlier style
+| | | | | | | | | | | | | | * | | | | 0a072ad e2a675e Fixed and trying to make it less flat
+| | | | | | | | | | | | | | * | | | | e2a675e d97a1db new index
+| | | | | | | | | | | | | | * | | | | d97a1db 100dadf lib update but not working
+| | | | | | | | | | | | | | * | | | | 100dadf 8b69973 color to p.y
+| | | | | | | | | | | | | | * | | | | 8b69973 0374891 lib changes
+| | | | | | | | | | | | | | * | | | | 0374891 3c75b8c fixed bug
+| | | | | | | | | | | | | | * | | | | 3c75b8c 9e4052e removed min
+| | | | | | | | | | | | | | * | | | | 9e4052e 9f0e42e ang1 to amp1
+| | | | | | | | | | | | | | * | | | | 9f0e42e 445034b adjusting ang
+| | | | | | | | | | | | | | * | | | | 445034b 879539e agnostic
+| | | | | | | | | | | | | | * | | | | 879539e 7f3ee1f lower scale, higher ang
+| | | | | | | | | | | | | | * | | | | 7f3ee1f 01be8f9 update last
+| | | | | | | | | | | | | | * | | | | 01be8f9 65fe7e0 update
+| | | | | | | | | | | | | | * | | | | 65fe7e0 9f6908f no scale
+| | | | | | | | | | | | | | * | | | | 9f6908f 96861a9 minor change
+| | | | | | | | | | | | | | * | | | | 96861a9 1b06332 done for today
+| | | | | | | | | | | | | | * | | | | 1b06332 dfea04c working planets
+| | | | | | | | | | | | | | | | | | | * 19ada71 51040c6 removed sat
+| | | | | | | | | | | | | | | | | | | * 51040c6 2c68bad Sweet Sweet textures
+| | | | | | | | | | | | | | | | | | | * 2c68bad 198f20d uncertain perspective
+| | | | | | | | | | | | | | | | | | | * 198f20d f0826ea charcoal noise bump
+| | | | | | | | | | | | | | | | | | | | * a8c433f 1884b26 blend mode screen on black
+| | | | | | | | | | | | | | | | | | | | | * 1927708 f3f6d6f horizontal ratio
+| | | | | | | | | | | | | | | | | | | | | * f3f6d6f 6070e50 updated css and ratio
+| | | | | | | | | | | | | | | | | | | | | * 6070e50 2f7f7e0 canyons starting point
+| | | | | | | | | | | | | | | | | | | | | | * 09cb28f 7a195fc 9411b92 WIP on wip/jdl2: 7a195fc Markings (tribal kind of)
+| | | | | | | | | | | | | |_|_|_|_|_|_|_|_|/| 
+| | | | | | | | | | | | |/| | | | | | | | | | 
+| | | | | | | | | | | | | | | | | | | | | | * 9411b92 7a195fc index on wip/jdl2: 7a195fc Markings (tribal kind of)
+| | | | | | | | | | | | | |_|_|_|_|_|_|_|_|/  
+| | | | | | | | | | | | |/| | | | | | | | |   
+| | | | | | | | | | | | | | | | | | | | | | * 4743976 4def0ff rocky mountainy thing but using gaussian instead
+| | | | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | | |/| | | | | | | | | | | | | | | |   
+| | | | | * | | | | | | | | | | | | | | | | 4def0ff c1405b4 variable amplitude
+| | | | | * | | | | | | | | | | | | | | | | c1405b4 e7c54f3 agnostic (a1+a2)
+| | | | | * | | | | | | | | | | | | | | | | e7c54f3 6580a0e push to netlify
+| | | | | * | | | | | | | | | | | | | | | | 6580a0e 7a195fc Nice form
+| | | | | | |_|_|_|_|_|/ / / / / / / / / /  
+| | | | | |/| | | | | | | | | | | | | | |   
+| | | | | * | | | | | | | | | | | | | | | 7a195fc e6a171e Markings (tribal kind of)
+| | | | | * | | | | | | | | | | | | | | | e6a171e 9e6e421 testing octave 6
+| | | | | * | | | | | | | | | | | | | | | 9e6e421 7b3c68e Pareidolia achieve, lot of texture
+| | | | | * | | | | | | | | | | | | | | | 7b3c68e c97e74c smaller brush
+| | | | | * | | | | | | | | | | | | | | | c97e74c 79c3e41 testing (got old man)
+| | | | | * | | | | | | | | | | | | | | | 79c3e41 0984824 pareidolia generator, ready to draw on ipad
+| | | | | * | | | | | | | | | | | | | | | 0984824 e60c668 first commit
+| | | | | | | | | | | | | | | | | | | | | * 3029b52 63c998d oktober - burton
+| | | | | | | | | | | | | | | | | | | | | * 63c998d 5b48201 lib update
+| | | | | | | | | | | | | | | | | | | | | * 5b48201 6e08302 update
+| | | | | | | | | | | | | | | | | | | | | * 6e08302 dc34db9 more bold
+| | | | | | | | | | | | | | | | | | | | | * dc34db9 08957ad a bit more fluid
+| | | | | | | | | | | | | | | | | | | | | | * 5ba6ef2 ea2e81e new divider values changing through mapping
+| | | | | | | | | | | | | | | | | | | | | | * ea2e81e 35363ff added new config
+| | | | | | | | | | | | | | | | | | | | | | * 35363ff 5ac3200 Shatter first commit
+| | | | | | | | | | | | | | | | |_|_|_|_|_|/  
+| | | | | | | | | | | | | | | |/| | | | | |   
+| | | | | | | | | | | | | | | * | | | | | | 5ac3200 ff1873b Found Shattered again
+| | | | | | | | | | | | | | | * | | | | | | ff1873b 0d26b53 rodeo - Err, lost in cache
+| | | | | | | | | | | | | | | * | | | | | | 0d26b53 a9b95d1 cadrillé
+| | | | | | | | | | | | | | | * | | | | | | a9b95d1 f130bdd Event distribution of scale and movement
+| | | | | | | | | | | | | | | * | | | | | | f130bdd b304d89 change ratio for now, more test to do
+| | | | | | | | | | | | | | | * | | | | | | b304d89 82241fb first commit
+| | | | | | | | | | | | | | | * | | | | | | 82241fb a855c2a Exploring variable configuration: cool stuff
+| | | | | | | | | | | | | | | * | | | | | | a855c2a ee883f5 introverted test
+| | | | | | | | | | | | | | | * | | | | | | ee883f5 7094a0c Small changes
+| | | | | | | | | | | | | | | * | | | | | | 7094a0c 05a3823 bump
+| | | | | | | | | | | | |_|_|/ / / / / / /  
+| | | | | | | | | | | |/| | | | | | | | |   
+| | | | | | | | | | | | | | | | | | | | | * d6c1a85 3ea0cc2 monochrome tryout
+| | | | | | | | | | | | | | | | | | | | | * 3ea0cc2 2a5750f larger xy_min
+| | | | | | | | | | | | | | | | | | | | | * 2a5750f 1d52318 back to square ratio
+| | | | | | | | | | | | | | | | | | | | | * 1d52318 c367497 Texture testing
+| | | | | | | | | | | | | | | | | | | | | * c367497 9263b77 fixed slowness and better generator function
+| | | | | | | | | | | | | | | | | | | | | * 9263b77 8c22783 interesting randomness
+| | | | | | | | | | | | | | | | | | | | | * 8c22783 e9ba784 fix style of the frame css
+| | | | | | | | | | | | | | | | | | | | | * e9ba784 2395226 testing colours
+| | | | | | | | | | | | | | | | | | | | | * 2395226 280fcc5 init project
+| | | | | | | | | |_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | | | | | |/| | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | | | | | * d1d7b34 92501fd done
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | | | | | | | 92501fd 4a9bcc7 test again
+* | | | | | | | | | | | | | | | | | | | | 4a9bcc7 3d5a8c1 revert to base
+* | | | | | | | | | | | | | | | | | | | | 3d5a8c1 2bf7031 new test both
+* | | | | | | | | | | | | | | | | | | | | 2bf7031 b2f6e66 two svgs
+* | | | | | | | | | | | | | | | | | | | | b2f6e66 cff6938 svg change
+* | | | | | | | | | | | | | | | | | | | | cff6938 e9003ad svg change
+* | | | | | | | | | | | | | | | | | | | | e9003ad 10a96e4 svg change
+* | | | | | | | | | | | | | | | | | | | | 10a96e4 2d4296c bigger icon
+* | | | | | | | | | | | | | | | | | | | | 2d4296c de16234 testing svg
+| |_|/ / / / / / / / / / / / / / / / / /  
+|/| | | | | | | | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | | | | * 438f74c e60c668 Some modification, less speed less scale, better color
+| | | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | |/| | | | | | | | | | | | | | |   
+| | | | * | | | | | | | | | | | | | | | e60c668 ee751c0 updated
+| | | | | | | | | | | | | | | | | | | | * fcef4ac 01ef6e8 new animation settings
+| | | | | | | | | | | | | | | | | | | | | * 0546ac8 27fdb7f Some changes for DEMO
+| | | | | | | | | | | | | | | | | | | | | * 27fdb7f 75a4acc 10 second clip
+| | | | | | | | | | | | | | | | | | | | | * 75a4acc 1c0d6ba some modification in the ratio and made the frame and animation fit with the duration of the video
+| | | | | | | | | | | | | | | | | | | | | * 1c0d6ba bd86d0d bump it up
+| | | | | | | | | | | | | | | | | | | | | | * b53c012 99d4e5c found it againg!
+| | | | | | | | | | | | | | | | | | | | | | | * 4433035 cb1c073 some modification to movers and the bordered function thingy
+| | | | | | | | | | | | | | | | | | | | | | | * cb1c073 e383f05 added new render using sin_cos stuff
+| | | | | | | | | | | | | | | | | | | | | | | | * f398e79 fa79c97 time compression
+| | | | | | | | | | | | | | | | | | | | | | | | * fa79c97 4f10218 test monochroma
+| | | | | | | | | | | | | | | | | | | | | | | | * 4f10218 3dfd8b8 UP for RGBMTL
+| | | | | | | | | | | | | | | | | | | | | | | | | * c548ee5 5f0db4a added comments for exploration
+| | | | | | | | | | | | | | | | | | | | | | | | | * 5f0db4a dbb680f insane texturing
+| | | | | | | | | | | | | | | | | | | | | | | | | * dbb680f fe5bba1 automatic ratio
+| | | | | | | | | | | | | | | | | | | | | | | | | * fe5bba1 8f58043 Dope looking yoyo
+| | | | | | | | | | | | | | | | | | | | | | | | | * 8f58043 3644ab7 Testing without angles
+| | | | | | | | | | | | | | | | | | | | | | | | | * 3644ab7 2f58a1c pulsar 3 (tourbillon wip)
+| | | | | | | | | | | | | | | | | | | | | | | | | * 2f58a1c 4557d7b vw core
+| | | | | | | | | | | | | | | | | | | | | | | | | * 4557d7b 473fe77 High pulsar 2
+| | | | | | | | | | | | | | | | | | | | | | | | | * 473fe77 307245c Pulsating terrain
+| | | | | | | | | | | | | | | | | | | | | | | | | * 307245c 5d6f070 High intensity pulsar mode
+| | | | | | | | | | | | | | | | | | | | | | | | | * 5d6f070 06fecae added note
+| | | | | | | | | | | | | | | | | | | | | | | | | * 06fecae 2dd8b5f Reset to what was earlier.
+| | | | | | | | | | | | | | | | | | | | | | | | | * 2dd8b5f a023bcd smaller particles
+| | | | | | | | | | | | | | | | | | | | | | | | | * a023bcd dbce284 ULTRAWIDE TEST
+| | | | | | | | | | | | | | | | | | | | | | | | | * dbce284 fa219fa config 3 changes
+| | | | | | | | | | | | | | | | | | | | | | | | | * fa219fa 170df17 step foward
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 1f2000a 34daa29 more minimal composition
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 34daa29 6f68285 first commit, forked from eidolons
+| | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | |/| | | | | | | | | | | | | | | | | | | | | |   
+| | | * | | | | | | | | | | | | | | | | | | | | | | 6f68285 24667b5 symbols
+| | | * | | | | | | | | | | | | | | | | | | | | | | 24667b5 10dfd51 bigger stroke, new setups for noise
+| | | * | | | | | | | | | | | | | | | | | | | | | | 10dfd51 7b745bf larger ranger
+| | | * | | | | | | | | | | | | | | | | | | | | | | 7b745bf 03ca6fa Speed optimisation ( canvas rendering + mapvalue), added off_cos too
+| | | * | | | | | | | | | | | | | | | | | | | | | | 03ca6fa 2ba2c3d testing array
+| | | * | | | | | | | | | | | | | | | | | | | | | | 2ba2c3d 45acb95 alternating pattern
+| | | * | | | | | | | | | | | | | | | | | | | | | | 45acb95 99a981a added some tips for variability
+| | | * | | | | | | | | | | | | | | | | | | | | | | 99a981a c875016 Alternating case config
+| | | * | | | | | | | | | | | | | | | | | | | | | | c875016 bf4f354 Boom config
+| | | * | | | | | | | | | | | | | | | | | | | | | | bf4f354 7553792 Use a switch case to make each rotation more chaotic
+| | | * | | | | | | | | | | | | | | | | | | | | | | 7553792 0ad892d added block rect 2, a new tan() var + cleanup
+| | | * | | | | | | | | | | | | | | | | | | | | | | 0ad892d 912bd54 dash of chaos + cleaning code a bit
+| | | * | | | | | | | | | | | | | | | | | | | | | | 912bd54 6164fee small fix in noise detail
+| | | * | | | | | | | | | | | | | | | | | | | | | | 6164fee 66ad331 miss noise
+| | | * | | | | | | | | | | | | | | | | | | | | | | 66ad331 8f80f0b New shapes, really cool +frame
+| | | * | | | | | | | | | | | | | | | | | | | | | | 8f80f0b dcaa1f4 Really cool shapes from low noise details
+| | | * | | | | | | | | | | | | | | | | | | | | | | dcaa1f4 efe4eab color change minor
+| | | * | | | | | | | | | | | | | | | | | | | | | | efe4eab bda0c6e added new angles
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 24b37a8 b61ae90 rgbmtl init
+| | | | | | | | | | | | | | | | | | | | | | | | | | * b61ae90 bea2e0b small changes more fluid motion ( organic )
+| | | | | | | | | | | | | | | | | | | | | | | | | | * bea2e0b 6e2269e remove some particles for performance
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 6e2269e 17d003f fix movement
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 17d003f ad76fe8 Removed FPS counter
+| | | | | | | | | | | | | | | | | | | | | | | | | | * ad76fe8 c3d12a3 default bg
+| | | | | | | | | | | | | | | | | | | | | | | | | | * c3d12a3 734c2d6 background params working
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 734c2d6 c47e99d updated gitignore/ fixed entry point / loading params
+| | | | | | | | | | | | | | | | | | | | | | | | | | * c47e99d 4a3f568 Testing
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 4a3f568 bfe306e revert
+| | | | | | | | | | | | | | | | | | | | | | | | | | * bfe306e 03e0358 testing nick code with the index.js
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 03e0358 225126e removed path
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 225126e 4d1921b removed new index.js
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 4d1921b 2444e62 put the index back to where it needed to be
+| | | | | | | | | | | | | | | | | | | | | | | | | | | * a674b96 725b3ce lib change
+| | | | | | | | | | | | | | | | | | | | | | | | | | | * 725b3ce b594d02 bump
+| | | | | | | | | | | | | | | | | | | | | | | | | | | * b594d02 ed7dbfc wroking
+| | | | | | | | | | | | | | | | | | | | | | | | | | | * ed7dbfc 05a3823 publish
+| | | | | | | | | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | | | | | | | |/| | | | | | | | | | | | | | | |   
+| | | | | | | | | | * | | | | | | | | | | | | | | | | 05a3823 330249f searching for jdl blonks
+| | | | | | | | | | * | | | | | | | | | | | | | | | | 330249f a22d541 Hybride jdl texture
+| | | | | | | | | | * | | | | | | | | | | | | | | | | a22d541 c3c5b66 forms
+| | | | | | | | | | * | | | | | | | | | | | | | | | | c3c5b66 fcc8f36 central feature
+| | | | | | | | | | * | | | | | | | | | | | | | | | | fcc8f36 95508dc 2nd commit
+| | | | | | | | | | * | | | | | | | | | | | | | | | | 95508dc 350d4ee commit
+| | | | | | | | | | | | | | | | | | | | | | | | | | | * 4011282 efbeee7 small modifications
+| | | | | | | | | | | | | | | | | | | | | | | | | | | * efbeee7 7be2016 Return to inky original style
+| | | | | | | | | | | | | | | | | | | | | | | | | | | * 7be2016 2f7f7e0 The great western trail
+| | | | | | | | | | | | | | | | | | | |_|_|_|_|_|_|_|/  
+| | | | | | | | | | | | | | | | | | |/| | | | | | | |   
+| | | | | | | | | | | | | | | | | | * | | | | | | | | 2f7f7e0 e00349a Ridges and Canyons
+| | | | | | | | | | | | | | | | | | * | | | | | | | | e00349a a9d69b7 ** Highgarden
+| | | | | | | | | | | | | | | | | | * | | | | | | | | a9d69b7 e67aa30 sw change
+| | | | | | | | | | | | | | | | | | * | | | | | | | | e67aa30 a73afe8 css fix
+| | | | | | | | | | | | | | | | | | * | | | | | | | | a73afe8 f195345 css fix
+| | | | | | | | | | | | | | | | | | * | | | | | | | | f195345 280fcc5 init project
+| | | | | | | | |_|_|_|_|_|_|_|_|_|/ / / / / / / / /  
+| | | | | | | |/| | | | | | | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | | | | | | | | | | * bd83bf6 7210b28 dual colors
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 7210b28 3704344 more organic texturing
+| | | | | | | | | | | | | | | | | | | | | | | | | | * 3704344 4943546 removed some particles
+| | |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| |/| | | | | | | | | | | | | | | | | | | | | | | |   
+| * | | | | | | | | | | | | | | | | | | | | | | | | 4943546 3044abe Jeu de colonne
+| * | | | | | | | | | | | | | | | | | | | | | | | | 3044abe 280fcc5 something unexpected
+| | |_|_|_|_|/ / / / / / / / / / / / / / / / / / /  
+| |/| | | | | | | | | | | | | | | | | | | | | | |   
+| * | | | | | | | | | | | | | | | | | | | | | | | 280fcc5 b471ee4 Trying optimisation by splicing
+| * | | | | | | | | | | | | | | | | | | | | | | | b471ee4 61e41e1 Trying an idea where I spline a certain number of particles as time goes on
+| * | | | | | | | | | | | | | | | | | | | | | | | 61e41e1 ac80de7 Small change in zero alpha conditions
+| * | | | | | | | | | | | | | | | | | | | | | | | ac80de7 2c1904f small change to this.s complexion inverser + css changes
+| * | | | | | | | | | | | | | | | | | | | | | | | 2c1904f a34998f params
+| * | | | | | | | | | | | | | | | | | | | | | | | a34998f a087f08 Pushing format for test + presentation css
+| | | | | | | | | | | | | | | | | | | | | | | | | * 0d3fcd8 81ca2ee Style velouté
+| | | | | | | | | | | | | | | | | | | | | | | | | * 81ca2ee 0d3baa0 Alien Cities
+| | | | | | | | | | | | | | | | | | | | | | | | | * 0d3baa0 d1985af Minor changes
+| | | | | | | | | | | | | | | | | | | | | | | | | * d1985af 607a8cb bump
+| | | | | | | | | | | | | | | | | | | | | | | | | * 607a8cb 5884a03 title change
+| | | | | | | | | | | | | | | | | | | | | | | | | * 5884a03 b6ada58 lib update
+| | | | | | | | | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | | | | | | | |/| | | | | | | | | | | | | |   
+| | | | | | | | | | * | | | | | | | | | | | | | | b6ada58 170df17 Flora Machina
+| | | | | | | | | | | |_|_|_|_|_|_|_|_|_|_|_|/ /  
+| | | | | | | | | | |/| | | | | | | | | | | | |   
+| | | | | | | | | | * | | | | | | | | | | | | | 170df17 714c81d New voidwarden starting point, monochrome, 1:1
+| | | | | | | | | | | | | | | | | | | | | | | | * 51e8e00 e383f05 test phase
+| | | | | | | | | | | | | | | | | | | | | | |_|/  
+| | | | | | | | | | | | | | | | | | | | | |/| |   
+| | | | | | | | | | | | | | | | | | | | | * | | e383f05 3203c66 Safegard lush
+| | | | | | | | | | | | | | | | | | | | | * | | 3203c66 583e975 Bare rocks variant
+| | | | | | | | | | | | | | | | | | | | | * | | 583e975 581a93c Trying texturing colors
+| | | | | | | | | | | | | | | | | | | | | * | | 581a93c 43723bd A bit more free (out of bounds)
+| | | | | | | | | | | | | | | | | | | | | * | | 43723bd 851ce5d Contained and border radius
+| | | | | | | | | | | | | | | | | | | | | * | | 851ce5d 360c73f Better grass
+| | | | | | | | | | | | | | | | | | | | | * | | 360c73f 7e0ef7a larger back_movers
+| | | | | | | | | | | | | | | | | | | | | * | | 7e0ef7a f0826ea added colors
+| | | | | | | | | | | | | | | | |_|_|_|_|/ / /  
+| | | | | | | | | | | | | | | |/| | | | | | |   
+| | | | | | | | | | | | | | | * | | | | | | | f0826ea fba1ecf screamer canyon
+| | | | | | | | | | | | | | | * | | | | | | | fba1ecf 7dc941e Noise texture study
+| | | | | | | | | | | | | | | * | | | | | | | 7dc941e 99d4e5c toupet
+| | | | | | | | | | | | | | | | |_|_|_|/ / /  
+| | | | | | | | | | | | | | | |/| | | | | |   
+| | | | | | | | | | | | | | | | | | | | | | * ecfce4e 430d3e7 trying out rotation, also not sure
+| | | | | | | | | | | | | | | | | | | | | | | * 67d2be4 430d3e7 trying with translate but not sure at all
+| | | | | | | | | | | | | | | | | | | | | | |/  
+| | | | | | | | | | | | | | | | | | | | | | * 430d3e7 bda0c6e premier jet
+| | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | |/| | | | | | | | | | | | | | | | | |   
+| | | * | | | | | | | | | | | | | | | | | | bda0c6e a1488d3 even particle size
+| | | * | | | | | | | | | | | | | | | | | | a1488d3 f5f1614 more detail
+| | | * | | | | | | | | | | | | | | | | | | f5f1614 61dad74 revert to test
+| | | * | | | | | | | | | | | | | | | | | | 61dad74 854c5cf More detail and outline
+| | | * | | | | | | | | | | | | | | | | | | 854c5cf 826ad92 small color updates
+| | | * | | | | | | | | | | | | | | | | | | 826ad92 d0e7f03 full spectrum color
+| | | * | | | | | | | | | | | | | | | | | | d0e7f03 d78a774 fixed angle, colours, size and a bunch of other stuff
+| | | * | | | | | | | | | | | | | | | | | | d78a774 8b53242 Jellyfish
+| | | * | | | | | | | | | | | | | | | | | | 8b53242 6c648e2 diminished stroke weight a bit
+| | | * | | | | | | | | | | | | | | | | | | 6c648e2 4b9db67 back to flower color
+| | | * | | | | | | | | | | | | | | | | | | 4b9db67 e94506b Test with noise details
+| | | * | | | | | | | | | | | | | | | | | | e94506b 4089c79 galarneau 2
+| | | * | | | | | | | | | | | | | | | | | | 4089c79 e0165c1 Galarneau
+| | | * | | | | | | | | | | | | | | | | | | e0165c1 0a77907 removed console.log
+| | | * | | | | | | | | | | | | | | | | | | 0a77907 a688ffe Major change: added loading in title, generator function and tested textures
+| | | * | | | | | | | | | | | | | | | | | | a688ffe 866ae0f Textured occurian
+| | | * | | | | | | | | | | | | | | | | | | 866ae0f 9b103d7 Testing shading
+| | | * | | | | | | | | | | | | | | | | | | 9b103d7 9652436 Added asymmetry
+| | | * | | | | | | | | | | | | | | | | | | 9652436 09b4844 Shading changes, added a for loop to render each rotation part together
+| | | * | | | | | | | | | | | | | | | | | | 09b4844 64ab215 small change on yoff_l 0.8 > 0.7
+| | | * | | | | | | | | | | | | | | | | | | 64ab215 6a3278a trying out te yoyo method
+| | | * | | | | | | | | | | | | | | | | | | 6a3278a 39078ac Better outline and started the work to have rotation animation
+| | | * | | | | | | | | | | | | | | | | | | 39078ac 76db45f Upgrade the way the angle render, put them in an array befor init
+| | | * | | | | | | | | | | | | | | | | | | 76db45f 413795a some progress
+| | | * | | | | | | | | | | | | | | | | | | 413795a c8797e0 Some progress on outline and color
+| | | * | | | | | | | | | | | | | | | | | | c8797e0 9e3230d Milestones (outlines, new color)
+| | | * | | | | | | | | | | | | | | | | | | 9e3230d 91d179e outline test
+| | | * | | | | | | | | | | | | | | | | | | 91d179e c76659d done for the day (exploration)
+| | | * | | | | | | | | | | | | | | | | | | c76659d 8bbb88d tests
+| | | * | | | | | | | | | | | | | | | | | | 8bbb88d 1525138 changesn wq
+| | | * | | | | | | | | | | | | | | | | | | 1525138 70d1c44 update in libs
+| | | * | | | | | | | | | | | | | | | | | | 70d1c44 0261c8b cross style
+| | | * | | | | | | | | | | | | | | | | | | 0261c8b 8fecfe7 Sigils
+| | | * | | | | | | | | | | | | | | | | | | 8fecfe7 5422096 added paper gradient
+| | | * | | | | | | | | | | | | | | | | | | 5422096 9016459 Added scale change to custom noise
+| | | * | | | | | | | | | | | | | | | | | | 9016459 d9088fe change to particle num
+| | | * | | | | | | | | | | | | | | | | | | d9088fe a13a92b oct, tryout, changes in rendering
+| | | * | | | | | | | | | | | | | | | | | | a13a92b 7a9a2d5 HELIOS
+| | | * | | | | | | | | | | | | | | | | | | 7a9a2d5 12d04fe totally in love
+| | | * | | | | | | | | | | | | | | | | | | 12d04fe 472d8cb gitignore fix
+| | | * | | | | | | | | | | | | | | | | | |   472d8cb 9f2c1d3 a5f21c5 Merge branch 'main' into wip/geom_astra
+| | | |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  
+| | | * | | | | | | | | | | | | | | | | | | | 9f2c1d3 3ad96a2 webpack config
+| | | * | | | | | | | | | | | | | | | | | | | 3ad96a2 c36c95e webpack dev
+| | | * | | | | | | | | | | | | | | | | | | | c36c95e ea6c2d7 webpack update prod
+| | | * | | | | | | | | | | | | | | | | | | | ea6c2d7 4d5b6d0 progress
+| | | | |_|_|_|_|_|_|_|_|/ / / / / / / / / /  
+| | | |/| | | | | | | | | | | | | | | | | |   
+| | | * | | | | | | | | | | | | | | | | | | 4d5b6d0 2d04307 inzanne
+| | | | | | | | | | | | | | | | | | | | | | * 557d22a 1fd0be3 TEST2
+| | | | | | | | | | | | | | | | | | | | | | * 1fd0be3 de16234 test
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | | | | | | | | de16234 c5db879 lib update
+| | | | | | | | | | | | | | | | | | | | | | * 92402c8 eee49a2 bump
+| | | | | | | | | | | | | | | | | | | | | | * eee49a2 9fc6202 safegarding gold mine
+| | | | | | | | | | | | | | | | | | | | | | | * 0072369 0dcdd0a Bump
+| | | | | | | | | | | | | | | | | | | | | | | * 0dcdd0a 0a226de updates
+| | | | | | | | | | | | | | | | | | | | | | | * 0a226de 9fc6202 modified dimensions
+| | | | | | | | | | | | | | | | | | | | | | |/  
+| | | | | | | | | | | | | | | | | | | | | | * 9fc6202 11b149e safegarding gold mine
+| | | | | | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | | | | |/| | | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | | | | | | * b4b646f a087f08 New idea, maybe I'll merge them back at one point
+| | |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| |/| | | | | | | | | | | | | | | | | | | |   
+| * | | | | | | | | | | | | | | | | | | | | a087f08 f6b6359 lib update
+| * | | | | | | | | | | | | | | | | | | | | f6b6359 0f2ce09 progress
+| * | | | | | | | | | | | | | | | | | | | | 0f2ce09 b69c89c update lib
+| * | | | | | | | | | | | | | | | | | | | | b69c89c fdc9ced lib change
+| * | | | | | | | | | | | | | | | | | | | | fdc9ced 303028a hexagon sdf
+| * | | | | | | | | | | | | | | | | | | | | 303028a ac876cd sdf octo part 1
+| * | | | | | | | | | | | | | | | | | | | | ac876cd 187550f added smoothstep
+| * | | | | | | | | | | | | | | | | | | | | 187550f efcbc59 Malachite variant
+| * | | | | | | | | | | | | | | | | | | | | efcbc59 09d1ce9 vegetation variant
+| * | | | | | | | | | | | | | | | | | | | | 09d1ce9 aa6cbea lib update and removed minification
+| * | | | | | | | | | | | | | | | | | | | | aa6cbea 30356fb ajout complexion, glodenfold
+| * | | | | | | | | | | | | | | | | | | | | 30356fb e24ce8e lib update
+| * | | | | | | | | | | | | | | | | | | | | e24ce8e 93888c2 freeing hash and putting back the supercurve function
+| * | | | | | | | | | | | | | | | | | | | | 93888c2 49a710f New formart, and mostly agnostic
+| * | | | | | | | | | | | | | | | | | | | | 49a710f 028a8dc freed hash
+| * | | | | | | | | | | | | | | | | | | | | 028a8dc 31ed581 moved the supercurve function
+| * | | | | | | | | | | | | | | | | | | | | 31ed581 1384e4c middle ground between smooth and harsh
+| | | | | | | | | | | | | | | | | | | | | | * 6bf9c83 ef737ce Mountain range, unsure, maybe add a p.graphics or something
+| | | | | | | | | | | | | | | | | | | | | | * ef737ce 347c5fd update
+| | | | | | | | | | | | | | | | | | | | | | * 347c5fd e1cdc2a update HM
+| | | | | | | | | | | | | | | | | | | | | | * e1cdc2a c3fa34f removed window resized
+| | | | | | | | | | | | | | | | | | | | | | * c3fa34f d518ea4 fixed ascpect ratio
+| | | | | | | | | | | | | | | | | | | | | | * d518ea4 4f1eb4d fixing pixel density
+| | | | | | | | | | | | | | | | | | | | | | * 4f1eb4d af80d5f Title+gitignore
+| | | | | | | | | | | | | | | | | | | | | | * af80d5f b5eabaf ready
+| | | | | | | | | | | | | | | | | | | | | | * b5eabaf 11b149e new idea
+| | | | | | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | | | | |/| | | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | | | | | | * d8ef55e 5dde17f lib
+| | | | | | | | | | | | | | | | | | | | | | * 5dde17f 3900406 stainless idea
+| | | | | | | | | | | | | | | | | | | | | | | * c4fd63c 363f350 reset xi position
+| | | | | | | | | | | | | | | | | | | | | | | * 363f350 78d4d88 config unlocked
+| | | | | | | | | | | | | | | | | | | | | | | * 78d4d88 df85333 Color variation working with velocity, Fixed randomness to look like a sphere and not a square
+| | | | | | | | | | | | | | | | | | | | | | | * df85333 c0ac898 Variable brightness
+| | | | | | | | | | | | | | | | | | | | | | | * c0ac898 b2f5fea testing
+| | | | | | | | | | | | | | | | | | | | | | | * b2f5fea 57f7683 title
+| | | | | | | | | | | | | | | | | | | | | | | * 57f7683 14ccf22 evolution
+| | | | | | | | | | | | | | | | | | | | | | | | * bee73c4 43228cd new color
+| | | | | | | | | | | | | | | | | | | | | | | | * 43228cd 9ccde72 added random() instead of fxrand
+| | | | | | | | | | | | | | | | | | | | | | | | * 9ccde72 47104f0 found the original again
+| | | | | | | | | | | | | | | | | | | | | | | | * 47104f0 b805934 Added ulow and uhigh to var
+| | | | | | | | | | | | | | | | | | | | | | | | * b805934 14ccf22 publish
+| | | | | | | | | | | | | | | | | | | | | | | |/  
+| | | | | | | | | | | | | | | | | | | | | | | * 14ccf22 9e92a96 smaller dpi
+| | | | | | | | | | | | | | | | | | | | | | | * 9e92a96 5b148ed Variable Divider, More bright, Saturation, Hue change slower
+| | | | | | | | | | | | | | | | | | | | | | | * 5b148ed d8a3926 added back ADD
+| | | | | | | | | | | | | | | | | | | | | | | * d8a3926 a51c3a7 back to SCREEN
+| | | | | | | | | | | | | | | | | | | | | | | * a51c3a7 2cae4dd added note, back to add
+| | | | | | | | | | | | | | | | | | | | | | | * 2cae4dd 714c81d slower mode 3, better luminance, add to screen,ratio
+| | | | | | | | | | | | |_|_|_|_|_|_|_|_|_|_|/  
+| | | | | | | | | | | |/| | | | | | | | | | |   
+| | | | | | | | | | | * | | | | | | | | | | | 714c81d 786cae6 added luminance
+| | | | | | | | | | | * | | | | | | | | | | | 786cae6 8e3b43b lib update
+| | | | | | | | | | | | | | | | | | | | | | | * f80f09c 56bf5fd new title
+| | | | | | | | | | | | | | | | | | | | | | | * 56bf5fd 2ebd2b4 power plant init
+| | | | | | | | | | | | | | | | | | | | | | | | * c5b8f29 31e8888 Testing stuff, not sure
+| | | | | | | | | | | | | | | |_|_|_|_|_|_|_|_|/  
+| | | | | | | | | | | | | | |/| | | | | | | | |   
+| | | | | | | | | | | | | | * | | | | | | | | | 31e8888 2ebd2b4 Top -> bottom
+| | | | | | | | | | | | | | | |_|_|_|_|_|_|_|/  
+| | | | | | | | | | | | | | |/| | | | | | | |   
+| | | | | | | | | | | | | | * | | | | | | | | 2ebd2b4 ea83cd8 on arrete
+| | | | | | | | | | | | | | * | | | | | | | | ea83cd8 ac85e4f pixel density
+| | | | | | | | | | | | | |/ / / / / / / / /  
+| | | | | | | | | | | | | * / / / / / / / / ac85e4f 8e3b43b Midgar idea
+| | | | | | | | | | | | |/ / / / / / / / /  
+| | | | | | | | | | | |/| | | | | | | | |   
+| | | | | | | | | | | * | | | | | | | | | 8e3b43b 79fc74a Revert
+| | | | | | | | | | | | | | | | | | | | | * a3f7033 c5db879 init
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | | | | | | | c5db879 a5f21c5 git ignore fix
+| |_|_|/ / / / / / / / / / / / / / / / /  
+|/| | | | | | | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | | | | | | a5f21c5 b9c4a50 Fixed Main
+* | | | | | | | | | | | | | | | | | | | b9c4a50 3208c44 fixed prod config
+* | | | | | | | | | | | | | | | | | | | 3208c44 511c445 fixed main config
+* | | | | | | | | | | | | | | | | | | | 511c445 cca4551 fix config dev
+* | | | | | | | | | | | | | | | | | | | cca4551 080617b fixed index.html
+* | | | | | | | | | | | | | | | | | | | 080617b ed4e082 fixed git ignore
+* | | | | | | | | | | | | | | | | | | | ed4e082 2d04307 reverted to old package.json
+| |_|/ / / / / / / / / / / / / / / / /  
+|/| | | | | | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | | | | | 2d04307 7aac996 fxstudio working
+| | | | | | | | | | | | | | | | | | | * 46bf137 7ee08ad lib update
+| | | | | | | | | | | | | | | | | | | * 7ee08ad a6d45d3 solidify
+| | | | | | | | | | | | | | | | | | | * a6d45d3 79fc74a soul themed
+| | | | | | | | | | |_|_|_|_|_|_|_|_|/  
+| | | | | | | | | |/| | | | | | | | |   
+| | | | | | | | | * | | | | | | | | | 79fc74a 3900406 Upward (test)
+| | | | | | | | | | |_|_|_|_|_|_|_|/  
+| | | | | | | | | |/| | | | | | | |   
+| | | | | | | | | * | | | | | | | | 3900406 d4fd16b pixelDensity 1
+| | | | | | | | | * | | | | | | | | d4fd16b 04cb491 back to oct1 and 1200 size
+| | | | | | | | | * | | | | | | | | 04cb491 ed8b130 remove cl, new bounce back noise
+| | | | | | | | | * | | | | | | | | ed8b130 46040f8 Playing with color, random, grain and lineweight
+| | | | | | | | | * | | | | | | | | 46040f8 874bcdf lib change
+| | | | | | | | | | | | | | | | | | * 068efa4 c2a360d mod lib
+| | | | | | | | |_|_|_|_|_|_|_|_|_|/  
+| | | | | | | |/| | | | | | | | | |   
+| | | | | | | * | | | | | | | | | | c2a360d d32bac5 removed unused file
+| | | | | | | * | | | | | | | | | | d32bac5 774e886 complementary
+| | | | | | | * | | | | | | | | | | 774e886 85616f6 complementary
+| | | | | | | * | | | | | | | | | | 85616f6 3c57e3a min
+| | | | | | |/ / / / / / / / / / /  
+| | | | | | * | | | | | | | | | | 3c57e3a 9e9ec8a Final Final
+| | | | | | * | | | | | | | | | | 9e9ec8a e070a62 removed multiple files, fixed mobile layout
+| | | | | | * | | | | | | | | | | e070a62 a29b27a testing on fx
+| | | | | | * | | | | | | | | | | a29b27a 437f757 updated for fxpreview
+| | | | | | * | | | | | | | | | | 437f757 8c416e9 wrapping it up
+| | | | | | * | | | | | | | | | | 8c416e9 2b8feac x2
+| | | | | | * | | | | | | | | | | 2b8feac 23ee586 Maxdpi mobile
+| | | | | | * | | | | | | | | | | 23ee586 7582da6 1.3
+| | | | | | * | | | | | | | | | | 7582da6 a05b3fb New DPI for mobile
+| | | | | | * | | | | | | | | | | a05b3fb 283a524 lazy
+| | | | | | * | | | | | | | | | | 283a524 81b2fe9 Added alzy morning and smaller margin
+| | | | | | * | | | | | | | | | | 81b2fe9 afc2b74 new location name
+| | | | | | * | | | | | | | | | | afc2b74 e6aa696 param and css fix
+| | | | | | * | | | | | | | | | | e6aa696 9b02f28 Trimming
+| | | | | | * | | | | | | | | | | 9b02f28 d5ea40d dpi mobile
+| | | | | | * | | | | | | | | | | d5ea40d 92a13aa mobile DPI
+| | | | | | * | | | | | | | | | | 92a13aa c9be9f8 maxdpi safari
+| | | | | | * | | | | | | | | | | c9be9f8 cd44617 uncommented safari lock
+| | | | | | * | | | | | | | | | | cd44617 d4cc0d9 changed z-index
+| | | | | | * | | | | | | | | | | d4cc0d9 747f7d7 added amplitude lock mode
+| | | | | | * | | | | | | | | | |   747f7d7 d720e09 36dd82f Merge branch 'EXLIBRIS/fix' into EXLIBRIS/final
+| | | | | | |\ \ \ \ \ \ \ \ \ \ \  
+| | | | | | | * | | | | | | | | | | 36dd82f 86d20dc Merging new amp mode
+| | | | | | * | | | | | | | | | | | d720e09 da26592 lib mod
+| | | | | | * | | | | | | | | | | | da26592 7efb1ba fix
+| | | | | | * | | | | | | | | | | | 7efb1ba 86d20dc Testing new amp code
+| | | | | | |/ / / / / / / / / / /  
+| | | | | | * | | | | | | | | | | 86d20dc cff1151 Slight change in params
+| | | | | | * | | | | | | | | | | cff1151 e222237 fixed css
+| | | | | | * | | | | | | | | | | e222237 2caa194 changed hover
+| | | | | | * | | | | | | | | | | 2caa194 b47237b New transition on the dashboard
+| | | | | | * | | | | | | | | | | b47237b a760fca removed log
+| | | | | | * | | | | | | | | | | a760fca cfb1db9 Added time estimate
+| | | | | | * | | | | | | | | | | cfb1db9 d9f92e8 mobile adaptation
+| | | | | | * | | | | | | | | | | d9f92e8 1d7a945 Mobile version
+| | | | | | * | | | | | | | | | | 1d7a945 a499376 tsting mobile
+| | | | | | * | | | | | | | | | | a499376 2b89be4 added dvh
+| | | | | | * | | | | | | | | | | 2b89be4 4d4e4a6 added vanilla js save
+| | | | | | * | | | | | | | | | | 4d4e4a6 9699677 changed the icon
+| | | | | | * | | | | | | | | | | 9699677 543c856 I think I'm done with presentation mode
+| | | | | | * | | | | | | | | | | 543c856 2af3c99 changed particle num
+| | | | | | * | | | | | | | | | | 2af3c99 4991dff Added mobile control
+| | | | | | * | | | | | | | | | | 4991dff 932d023 added toggle info mode and presentation mode
+| | | | | | * | | | | | | | | | | 932d023 4676212 commented debug mode
+| | | | | | * | | | | | | | | | | 4676212 2b2ed20 Sauvegarde deub mode
+| | | | | | * | | | | | | | | | | 2b2ed20 2cb6644 new mgmt of amplitude_mode
+| | | | | | * | | | | | | | | | | 2cb6644 dcc12df added new amplitude mode
+| | | | | | * | | | | | | | | | | dcc12df 1ef2194 added new dpi settings
+| | | | | | * | | | | | | | | | | 1ef2194 7d8ecea margin 300 in 1:1
+| | | | | | * | | | | | | | | | | 7d8ecea fc1e2c9 m fix
+| | | | | | * | | | | | | | | | | fc1e2c9 13b486e variable scale
+| | | | | | * | | | | | | | | | | 13b486e c6e5c60 Removed bug where width would create weird line
+| | | | | | * | | | | | | | | | | c6e5c60 ec58e4d margin fix
+| | | | | | * | | | | | | | | | | ec58e4d 5642be8 fixed margin on square
+| | | | | | * | | | | | | | | | | 5642be8 c67173e removed log
+| | | | | | * | | | | | | | | | | c67173e 8a75cf5 added bgcolormode and jdlmode
+| | | | | | * | | | | | | | | | | 8a75cf5 ffdf3a2 fixed size
+| | | | | | * | | | | | | | | | | ffdf3a2 8a2c220 comment for size
+| | | | | | * | | | | | | | | | | 8a2c220 2fa42d1 margin change
+| | | | | | * | | | | | | | | | | 2fa42d1 d9ca7e5 added keyboard control
+| | | | | | * | | | | | | | | | | d9ca7e5 c9d4167 final setup befor minting
+| | | | | | * | | | | | | | | | | c9d4167 df02ae8 added margin as params
+| | | | | | * | | | | | | | | | | df02ae8 3cbe02d changed size
+| | | | | | * | | | | | | | | | | 3cbe02d e31081e changed default size and zombie mode
+| | | | | | * | | | | | | | | | | e31081e a416fce black bg
+| | | | | | * | | | | | | | | | | a416fce 7f942eb reverted particle num to 300k and 20 frames
+| | | | | | * | | | | | | | | | | 7f942eb 47020bc Removed landscape mode and fixed line on multiple ratio
+| | | | | | * | | | | | | | | | | 47020bc 244c786 added line mode
+| | | | | | * | | | | | | | | | | 244c786 89e496e added bookmark as a ratio
+| | | | | | * | | | | | | | | | | 89e496e 28819fb cleanup particle behavior
+| | | | | | * | | | | | | | | | | 28819fb afd83a8 added vibrancy mode
+| | | | | | * | | | | | | | | | | afd83a8 abd4347 amp feature + param value url
+| | | | | | * | | | | | | | | | | abd4347 6800108 margin fixing
+| | | | | | * | | | | | | | | | | 6800108 31d0266 fixing margin
+| | | | | | * | | | | | | | | | | 31d0266 7148fc3 lib
+| | | | | | * | | | | | | | | | | 7148fc3 92b196c fixed not loading
+| | | | | | * | | | | | | | | | | 92b196c 04e84c2 not working
+| | | | | | * | | | | | | | | | | 04e84c2 c216ec8 fixed with new s params
+| | | | | | * | | | | | | | | | | c216ec8 971356d more aggresive duotone
+| | | | | | * | | | | | | | | | | 971356d 24101f5 Added noise step variable and feature
+| | | | | | * | | | | | | | | | | 24101f5 7fe2dad New scale model+ angle mapping and clamp
+| | | | | | * | | | | | | | | | | 7fe2dad 6b3caf0 editable params on url
+| | | | | | * | | | | | | | | | | 6b3caf0 8a73aed clean up in clamp value
+| | | | | | * | | | | | | | | | | 8a73aed 4ba4a89 added introverted stuff to test
+| | | | | | * | | | | | | | | | | 4ba4a89 e1495b5 xrand skipper + varable max amp
+| | | | | | * | | | | | | | | | | e1495b5 d04f7a5 variable angle and scale
+| | | | | | * | | | | | | | | | | d04f7a5 fee611a Added traits overall
+| | | | | | * | | | | | | | | | | fee611a 095a762 lib mod
+| | | | | | * | | | | | | | | | | 095a762 2fae022 added int cycle
+| | | | | | * | | | | | | | | | | 2fae022 06a388f added features
+| | | | | | * | | | | | | | | | | 06a388f 14f937e removed minification, updated lib, removed some logs
+| | | | | | * | | | | | | | | | | 14f937e dedcf21 added new fxhashVersion
+| | | | | | * | | | | | | | | | | dedcf21 e5bcb03 grainy is due to dpi settings
+| | | | | | * | | | | | | | | | | e5bcb03 75bb629 less frames
+| | | | | | * | | | | | | | | | | 75bb629 1966846 added generator
+| | | | | | * | | | | | | | | | | 1966846 0aaf803 added base params
+| | | | | | * | | | | | | | | | | 0aaf803 89f97b9 agnosticism
+| | | | | | * | | | | | | | | | | 89f97b9 8caf2c4 lib update
+| | | | | | * | | | | | | | | | | 8caf2c4 709a64c fixed gitignore
+| | | | | | * | | | | | | | | | | 709a64c c16475c oct 1
+| | | | | | | | | | | | | | | | | * 968b33c 452a130 donezo
+| | | | | | | | | | | | | | | | | * 452a130 7aac996 Genuary 23 done
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | | | 7aac996 c743a7e barebone
+| | | | | | | | | | | | | | | | | * 8b0701d c743a7e done
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | | | c743a7e e97e628 vanish pointb base
+| | | | | | | | | | | | | | | | | * 22e44f9 e97e628 donezo
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | * 31512ef e97e628 genuary 20 done
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | * d6a5703 5398093 flocking done
+| | | | | | | | | | | | | | | | | * 5398093 e97e628 done
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | * 0295dd0 e97e628 done
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | * a4dd75a 08957ad done
+| | | | | | | | | | | | | |_|_|_|/  
+| | | | | | | | | | | | |/| | | |   
+| | | | | | | | | | | | * | | | | 08957ad ce42e9c Working
+| | | | | | | | | | | | * | | | | ce42e9c 9b7f44b removed min
+| | | | | | | | | | | | * | | | | 9b7f44b b7674f2 TIM BURTON
+| | | | | | | | | | | | * | | | | b7674f2 aa4433c first commit (found it again)
+| | | | | | | | | | | | | | | | | * 4a66f0c 52d878b update lib
+| | | | | | | | | | | | | | | | | *   52d878b 273bf7a 2444e62 Merge branch 'wip/sartoro-live' into wip/startoro-live-test
+| | | | | | | | | | | | | | | | | |\  
+| | | | | | | | | | | | | | | | | |/  
+| | | | | | | | | | | | | | | | |/|   
+| | | | | | | | | | | | | | | | * | 2444e62 ce186a6 273bf7a Merge branch 'wip/startoro-live-test' into wip/sartoro-live
+| | | | | | | | | | | | | | | | |\| 
+| | | | | | | | | | | | | | | | | * 273bf7a a46cfab Added seed change to params.js instead and added a css animation
+| | | | | | | | | | | | | | | | | | * 7cb1327 e97e628 done
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | | * faaf8e2 283ef2e 4k vertical
+| | | | | | | | | | | | | | | | | | | * 3d176fe 62b8f07 done
+| | | | | | | | | | | | | | | | | | | * 62b8f07 abeddca done!
+| | | | | | | | | | | | | | | | | | | * abeddca bca7098 works on ipad mini
+| | | | | | | | | | | | | | | | | | | * bca7098 08ff6dc annie albers
+| | | | | | | | | | | | | | | | | | | * 08ff6dc e97e628 Vera done
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | | | | | e97e628 50972bb gitignore assets
+| | | | | | | | | | | | | | | | | | | * e49e14b 0e8a277 lavalamp done
+| | | | | | | | | | | | | | | | | | | * 0e8a277 9ae2d21 in progress
+| | | | | | | | | | | | | | | | | | | * 9ae2d21 f3d9a96 Genuary 9 done
+| | | | | | | | | | | | | | | | | | | * f3d9a96 53cf556 fixed oct
+| | | | | | | | | | | | | | | | | | | * 53cf556 591d7f5 modif to lib
+| | | | | | | | | | | | | | | | | | | * 591d7f5 b268258 lavalamp modifications + capture.js
+| | | | | | | | | | | | | | | | | | | * b268258 90ca5af finally got the thing I was looking for
+| | | | | | | | | | | | | | | | | | | *   90ca5af ef53c51 93e2f33 Merge branch 'wip/grid-uneven' into wip/grid
+| | | | | | | | | | | | | | | | | | | |\  
+| | | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | |/| | | | | | | | | | | | | | |   
+| | | | * | | | | | | | | | | | | | | | 93e2f33 d07486b test
+| | | | | | | | | | | | | | | | | | | * ef53c51 9749125 reverted old starting params
+| | | | | | | | | | | | | | | | | | | * 9749125 03a09c0 added stuff from other sketches
+| | | | | | | | | | | | | | | | | | | * 03a09c0 89e6536 test
+| | | | | | | | | | | | | | | | | | | * 89e6536 a4e8129 lavalamp style
+| | | | | | | | | | | | | | | | | | | * a4e8129 d07486b center scale
+| | | | | |_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | | |/| | | | | | | | | | | | | |   
+| | | | * | | | | | | | | | | | | | | d07486b bf18ba3 removed cell from sketch.js
+| | | | * | | | | | | | | | | | | | | bf18ba3 d95f877 removed folder from git ignore
+| | | | * | | | | | | | | | | | | | | d95f877 7ec4c52 moving
+| | | | * | | | | | | | | | | | | | | 7ec4c52 3f4e941 more or less ready
+| | | | | | | | | | | | | | | | | | | * 7094a02 874bcdf lib + genuary
+| | | | | | | | | |_|_|_|_|_|_|_|_|_|/  
+| | | | | | | | |/| | | | | | | | | |   
+| | | | | | | | * | | | | | | | | | | 874bcdf 8773232 added diffuse light
+| | | | | | | | * | | | | | | | | | | 8773232 3c6db07 Testing specific scale and amplitude
+| | | | | | | | * | | | | | | | | | | 3c6db07 dfc44b9 idnex update
+| | | | | | | | * | | | | | | | | | | dfc44b9 61e44ca update lib
+| | | | | | | | * | | | | | | | | | | 61e44ca 0010a22 small changes
+| | | | | | | | * | | | | | | | | | | 0010a22 3f60bba darker bg
+| | | | | | | | * | | | | | | | | | | 3f60bba 9cac2c2 fixed the mapping issue
+| | | | | | | | * | | | | | | | | | | 9cac2c2 7a67c4c removed min + fxhash in lib
+| | | | | | | | * | | | | | | | | | | 7a67c4c a843cff freed hash
+| | | | | | | | * | | | | | | | | | | a843cff 4d6cbaa new hash
+| | | | | | | | * | | | | | | | | | | 4d6cbaa 63ed2c7 push
+| | | | | | | | * | | | | | | | | | | 63ed2c7 be58bc9 lower res
+| | | | | | | | * | | | | | | | | | | be58bc9 6249383 The startmap
+| | | | | | | | * | | | | | | | | | | 6249383 411bc04 Freed the hash
+| | | | | | | | * | | | | | | | | | | 411bc04 d221674 fixed gitignore
+| | | | | | | | * | | | | | | | | | | d221674 b80c195 breakthrough and types
+| | | | | | | | * | | | | | | | | | | b80c195 8a639ba phase 2
+| | | | | | | | * | | | | | | | | | | 8a639ba c948874 first commit of something great
+| | | | | | | | | | | | | | | | | | | * 4111833 283ef2e genuary 07 done
+| | | | | | | | | | | | | | | | | | |/  
+| | | | | | | | | | | | | | | | | | | * f199da9 283ef2e lib + genuary done
+| | | | | | | | | | | | | | | | | | |/  
+| | | | | | | | | | | | | | | | | | * 283ef2e 1884b26 first commit
+| | | | | | | | | | | | |_|_|_|_|_|/  
+| | | | | | | | | | | |/| | | | | |   
+| | | | | | | | | | | * | | | | | | 1884b26 c74917c first commit, dancing silhouette
+| | | |_|_|_|_|_|_|_|/ / / / / / /  
+| | |/| | | | | | | | | | | | | |   
+| | * | | | | | | | | | | | | | | c74917c 7045f31 full screen
+| | * | | | | | | | | | | | | | | 7045f31 3004bba working good
+| | * | | | | | | | | | | | | | | 3004bba 547503c removed window resized
+| | * | | | | | | | | | | | | | | 547503c 00b7b84 fixing pixel density
+| | * | | | | | | | | | | | | | | 00b7b84 aef6ed5 title change
+| | * | | | | | | | | | | | | | | aef6ed5 69cb08f test
+| | * | | | | | | | | | | | | | | 69cb08f 06e26e2 update on submodules
+| | * | | | | | | | | | | | | | | 06e26e2 5e2e90c found it
+| | * | | | | | | | | | | | | | | 5e2e90c b120b15 crayon
+| | | | | | | | | | | | | | | | | * b7681c4 79d6576 done
+| | | | | | | | | | | | | | | | | * 79d6576 50972bb droste effect
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | | | 50972bb 3d146f0 done
+* | | | | | | | | | | | | | | | | 3d146f0 9f4a070 fixed spectral link + dimensions
+* | | | | | | | | | | | | | | | | 9f4a070 32e9d67 fixed dpi
+* | | | | | | | | | | | | | | | | 32e9d67 5866050 main framework
+* | | | | | | | | | | | | | | | | 5866050 0642440 Simple mountain
+* | | | | | | | | | | | | | | | | 0642440 3cda6d6 working
+* | | | | | | | | | | | | | | | | 3cda6d6 b1beec0 updated main
+| | | | | | | | | | | | | | | | | * 4eb7580 ee751c0 done
+| | | | |_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | |/| | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | * 93a3560 54ae1fa added blender
+| | | | | | | | | | | | | | | | | * 54ae1fa ee751c0 genuary01
+| | | | |_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | |/| | | | | | | | | | | | |   
+| | | * | | | | | | | | | | | | | ee751c0 200200d updated
+| | | * | | | | | | | | | | | | | 200200d 0cb89d8 done for the day
+| | | * | | | | | | | | | | | | | 0cb89d8 b1beec0 fur init
+| |_|/ / / / / / / / / / / / / /  
+|/| | | | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | * 632f411 9f3216b Updated and working now
+| | | | | | | | | | | | | | | | * 9f3216b 06cb7d5 make it work?
+| | | | | | | | | | | | | | | | * 06cb7d5 51e41e3 changement noise
+| | | | | | | | | | | | | | | | * 51e41e3 50cbee1 fixing pixel density
+| | | | | | | | | | | | | | | | * 50cbee1 09e7ac7 changed page title
+| | | | | | | | | | | | | | | | * 09e7ac7 d15f76e removed line in gitignore
+| | | | | | | | | | | | | | | | * d15f76e 485a978 gitmodules back
+| | | | | | | | | | | | | | | | * 485a978 e6b3a97 redeploy
+| | | | | | | | | | | | | | | | * e6b3a97 5dfd7cf changed git module
+| | | | | | | | | | | | | | | | * 5dfd7cf 52e6e62 removed ext lib
+| | | | | | | | | | | | | | | | * 52e6e62 384f0a9 commit
+| | | | | | | | | | | | | | | | * 384f0a9 1551322 sunset coast ready
+| | | | | | | | | | | | | | | | | * 3d0c266 742faeb comment for size
+| | | | | | | | | | | | | | | | | * 742faeb c16475c marfa archive
+| | | | | | |_|_|_|_|_|_|_|_|_|_|/  
+| | | | | |/| | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | * 5341129 3f4e941 working params
+| | | | |_|_|_|_|_|_|_|_|_|_|_|_|/  
+| | | |/| | | | | | | | | | | | |   
+| | | | | | | | | | | | | | | | | * b38d1e1 ce186a6 trying trying
+| | | | | | | | | | | | | | | |_|/  
+| | | | | | | | | | | | | | |/| |   
+| | | | | | | | | | | | | | * | | ce186a6 a46cfab moved index.js to top of sketch.js + somewhat working fetch
+| | | | | | | | | | | | | | |/ /  
+| | | | | | | | | | | | | | * | a46cfab 7464ed4 added some parameters to the json
+| | | | | | | | | | | | | | * | 7464ed4 07207d3 reorder
+| | | | | | | | | | | | | | * | 07207d3 9b91f5b removed unused log script
+| | | | | | | | | | | | | | * | 9b91f5b a004c51 Migrated fx variable to index.html
+| | | | | | | | | | | | | | * | a004c51 d355cf6 added json
+| | | | | | | | | | | | | | * | d355cf6 d74d2ad revert
+| | | | | | | | | | | | | | * | d74d2ad 8f07f94 trying to use bezier curve instead
+| | | | | | | | | | | | | | * | 8f07f94 1288587 remove create vector and p5.map
+| | | | | | | | | | | | | | * | 1288587 512e46e No performance gain
+| | | | | | | | | | | | | | * | 512e46e e9fefc2 even less res
+| | | | | | | | | | | | | | * | e9fefc2 205e0af testing lower resolution
+| | | | | | | | | | | | | | * | 205e0af acfd8ac testing done
+| | | | | | | | | | | | | | * | acfd8ac e223571 removed move
+| | | | | | | | | | | | | | * | e223571 0592fb2 removed show
+| | | | | | | | | | | | | | * | 0592fb2 ef6b6de less oct
+| | | | | | | | | | | | | | * | ef6b6de adab7eb revert to original
+| | | | | | | | | | | | | | * | adab7eb 36f72bd added max fps and min fps
+| | | | | | | | | | | | | | * | 36f72bd 65bccf4 testing generation
+| | | | | | | | | | | | | | * | 65bccf4 a22d4be test smaller particle
+| | | | | | | | | | | | | | * | a22d4be 9466910 brighter lines
+| | | | | | | | | | | | | | * | 9466910 dcd0b72 revert
+| | | | | | | | | | | | | | * | dcd0b72 4282ab0 test modulo
+| | | | | | | | | | | | | | * | 4282ab0 8d0d796 removed Blend
+| | | | | | | | | | | | | | * | 8d0d796 0f6a055 remove ADD
+| | | | | | | | | | | | | | * | 0f6a055 90f8c7a revert
+| | | | | | | | | | | | | | * | 90f8c7a 33d6088 test
+| | | | | | | | | | | | | | * | 33d6088 277faab was only 5fps faster on iphone
+| | | | | | | | | | | | | | * | 277faab df03c5c trying hard line performance
+| | | | | | | | | | | | | | * | df03c5c 0cd87ee Added framerate and thicker lines
+| | | | | | | | | | | | | | * | 0cd87ee 4232630 Major optimisation plus centralisation of lines
+| | | | | | | | | | | | | | * |   4232630 fec54d3 548f4b3 Merge branch 'wip/sartoro-live' of github.com:pipemind-com/sartoro-genart into wip/sartoro-live
+| | | | | | | | | | | | | | |\ \  
+| | | | | | | | | | | | | | | * | 548f4b3 2c369ae fix(.github): on push needs to use github.ref
+| | | | | | | | | | | | | | | * | 2c369ae 6665ba4 fix(.github): deploy hooks for all 3 branches
+| | | | | | | | | | | | | | * | | fec54d3 6665ba4 update fluidity + color
+| | | | | | | | | | | | | | |/ /  
+| | | | | | | | | | | | | | * | 6665ba4 b9644b8 testing
+| | | | | | | | | | | | | | * | b9644b8 29634e1 updated lib
+| | | | | | | | | | | | | | * | 29634e1 7023213 changed amplitude
+| | | | | | | | | | | | | | * | 7023213 621252b updated utils
+| | | | | | | | | | | | | | * | 621252b 9721189 Nice movement
+| | | | | | | | | | | | | | * | 9721189 d569ffd nice lines
+| | | | | | | | | | | | | | * | d569ffd 389bfc7 lib modification
+| | | | | | | | | | | | | | * |   389bfc7 7dff6da 010d0b2 Merge branch 'wip/sartoro-live' of github.com:pipemind-com/sartoro-genart into wip/sartoro-live
+| | | | | | | | | | | | | | |\ \  
+| | | | | | | | | | | | | | | * | 010d0b2 c898c7e lines
+| | | | | | | | | | | | | | | * | c898c7e cfd78af having lines but not top
+| | | | | | | | | | | | | | | * | cfd78af 8fc2040 added circle
+| | | | | | | | | | | | | | | * | 8fc2040 f6452e3 some lib change
+| | | | | | | | | | | | | | | * | f6452e3 46f919b scl1
+| | | | | | | | | | | | | | | * | 46f919b ab68af9 removed some logs
+| | | | | | | | | | | | | | | * | ab68af9 8a9c5a2 testing lines inside comp,
+| | | | | | | | | | | | | | * | | 7dff6da 8a9c5a2 updated submodule
+| | | | | | | | | | | | | | |/ /  
+| | | | | | | | | | | | | | * |   8a9c5a2 08e9e4b f9c628a Merge remote-tracking branch 'pipemind/wip/sartoro-live' into wip/sartoro-live
+| | | | | | | | | | | | | | |\ \  
+| | | | | | | | | | | | | | | * \   f9c628a 44002f8 219eb01 Merge branch 'wip/sartoro-live' of github.com:pipemind-com/sartoro-genart into wip/sartoro-live
+| | | | | | | | | | | | | | | |\ \  
+| | | | | | | | | | | | | | | * | | 44002f8 9d44cce added autodeploy
+| | | | | | | | | | | | | | * | | | 08e9e4b 219eb01 removed mention of fxlens
+| | | | | | | | | | | | | | | |/ /  
+| | | | | | | | | | | | | | |/| |   
+| | | | | | | | | | | | | | * | | 219eb01 7f67c6e readme modification
+| | | | | | | | | | | | | | * | | 7f67c6e beaed72 readme modifications
+| | | | | | | | | | | | | | * | | beaed72 9d44cce Changed readme for pm and removed fx(lens)
+| | | | | | | | | | | | | | |/ /  
+| | | | | | | | | | | | | | * | 9d44cce 54d5785 done for the day
+| | | | | | | | | | | | | | * | 54d5785 c3c12d5 change size + changed with on strings
+| | | | | | | | | | | | | | * | c3c12d5 5c90f10 background color on webpage
+| | | | | | | | | | | | | | * | 5c90f10 a43e6e4 more contrast
+| | | | | | | | | | | | | | * | a43e6e4 1c7af1c live
+| | | | | | | | | | | | | | * | 1c7af1c 9112d3d Faster. more vanilla js
+| | | | | | | | | | | | | | * | 9112d3d bd86d0d with generator function i'm really close to live
+| | | | | | | | | | | | | |/ /  
+| | | | | | | | | | | | |/| |   
+| | | | | | | | | | | | * | | bd86d0d 4c9edf3 rendu video slingshot
+| | | | | | | | | | | | * | | 4c9edf3 7434443 New test
+| | | | | | | | | | | | * | | 7434443 c1504eb new resolution
+| | | | | | | | | | | | * | | c1504eb b16f0db new test
+| | | | | | | | | | | | * | | b16f0db 465774b new init
+| | | | | | | | | | | | * | | 465774b 7e44293 reverted
+| | | | | | | | | | | | * | | 7e44293 265efc1 added oct
+| | | | | | | | | | | | * | | 265efc1 2df7ff6 testing
+| | | | | | | | | | | | * | | 2df7ff6 a0f26c3 smoother
+| | | | | | | | | | | | * | | a0f26c3 30c53f0 nice hash
+| | | | | | | | | | | | * | | 30c53f0 f1de6ef added xi yi
+| | | | | | | | | | | | * | | f1de6ef e5953ac smaller grain
+| | | | | | | | | | | | * | |   e5953ac 5dead48 49ec544 Merge branch 'wip/jdl-fast' into wip/jdl-animated
+| | | | | | | | | | | | |\ \ \  
+| | | | | | | | | | | | * | | | 5dead48 178939b stopped video
+| | | | | | | | | | | | * | | | 178939b 1c33fde testing
+| | | | | | | | | | | | * | | | 1c33fde 95e88cf removed background
+| | | | | | | | | | | | * | | | 95e88cf d1403a4 setup config
+| | | | | | | | | | | | * | | | d1403a4 1e038ad global init
+| | | | | | | | | | | | * | | | 1e038ad 1947587 test
+| | | | | | | | | | | | * | | | 1947587 98ea8e7 smaller part numb
+| | | | | | | | | | | | * | | | 98ea8e7 c948874 first commit
+| | | | | | | | |_|_|_|/ / / /  
+| | | | | | | |/| | | | | | |   
+| | | | | | | | | | | | | | | * 2d87c35 b1beec0 test work
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | b1beec0 8009f06 new title
+* | | | | | | | | | | | | | | 8009f06 9a4fd17 fixed main
+* | | | | | | | | | | | | | | 9a4fd17 642f871 removed minifcation + added new fxhash file
+| | | | | | | | | | | | | | | * 1bfd3d2 6a21a9d finsihed
+| | | | | | | | | | | | | | | * 6a21a9d 1e04f3a not working, need fixin
+| | | | | | | | | | | | | | | * 1e04f3a 642f871 moon mask working
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | 642f871 5b7ef81 remove the shapes
+| | | | | | | | | | | | | | | * 92f5a10 5b7ef81 first commit using arc();
+| |_|_|_|_|_|_|_|_|_|_|_|_|_|/  
+|/| | | | | | | | | | | | | |   
+* | | | | | | | | | | | | | | 5b7ef81 3f4e941 new main
+| |_|/ / / / / / / / / / / /  
+|/| | | | | | | | | | | | |   
+| | | | | | | | | | | | | | * 273cd22 421c707 75000 draw
+| | | | | | | | | | | | | | * 421c707 89c0ddb freeing the hash
+| | | | | | | | | | | | | | * 89c0ddb 543ac6f good in between
+| | | | | | | | | | | | | | * 543ac6f b451b72 10 sec 2
+| | | | | | | | | | | | | | * b451b72 26cdabc 10 second
+| | | | | | | | | | | | | | * 26cdabc 1384e4c test line
+| | |_|_|_|_|_|_|_|_|_|_|_|/  
+| |/| | | | | | | | | | | |   
+| * | | | | | | | | | | | | 1384e4c 16a7cb2 added generator to try stuff
+| * | | | | | | | | | | | | 16a7cb2 2c1caa8 smoother brush
+| * | | | | | | | | | | | | 2c1caa8 4844c13 good contrast
+| * | | | | | | | | | | | | 4844c13 cae7d67 lighter bg
+| * | | | | | | | | | | | | cae7d67 643e5f7 natural circle sdf
+| * | | | | | | | | | | | | 643e5f7 dfea04c Testing the circle SDF
+| | |_|_|_|_|/ / / / / / /  
+| |/| | | | | | | | | | |   
+| * | | | | | | | | | | | dfea04c 5284590 SDF circle now
+| * | | | | | | | | | | | 5284590 2c98b44 Canyon mode
+| * | | | | | | | | | | | 2c98b44 9fd4504 progress sdf square
+| * | | | | | | | | | | | 9fd4504 2835b81 SDF working
+| * | | | | | | | | | | | 2835b81 86f2093 new mode
+| * | | | | | | | | | | | 86f2093 00fc84f hue variation
+| * | | | | | | | | | | | 00fc84f 348818b new rendering
+| * | | | | | | | | | | | 348818b 3cbbe83 lib change
+| * | | | | | | | | | | | 3cbbe83 4bf69c2 Optimizing
+| * | | | | | | | | | | | 4bf69c2 506ded3 1px
+| * | | | | | | | | | | | 506ded3 39ec534 smaller particles
+| * | | | | | | | | | | | 39ec534 29cef22 removed the eye for now
+| * | | | | | | | | | | | 29cef22 296c63e eye
+| * | | | | | | | | | | | 296c63e b8b70a1 added loading bar to tab title
+| * | | | | | | | | | | | b8b70a1 24505ea fixed non agnostic angle and scale
+| * | | | | | | | | | | | 24505ea c41e53d added bgcol
+| * | | | | | | | | | | | c41e53d 93227a7 added globals
+| * | | | | | | | | | | | 93227a7 34d0fd1 added key mapping for particle num
+| | | | | | | | | | | | | * d632aa3 814c200 update lib
+| | | | | | | | | | | | | * 814c200 aa4433c update
+| | | | | | | | | |_|_|_|/  
+| | | | | | | | |/| | | |   
+| | | | | | | | * | | | | aa4433c 153f798 Jeff loves it  🖤
+| | | | | | | | * | | | | 153f798 e9a63fc SUPER MINIMAL
+| | | | | | | | * | | | | e9a63fc 350d4ee new test
+| | | | | | |_|/ / / / /  
+| | | | | |/| | | | | |   
+| | | | | * | | | | | | 350d4ee bb4e4a9 first commit
+| | | | | * | | | | | | bb4e4a9 dabb550 change to lib
+| | | | | * | | | | | | dabb550 321301d removed window resized
+| | | | | * | | | | | | 321301d 00d2562 fixing pixel density
+| | | | | * | | | | | | 00d2562 1b5fdec title change
+| | | | | * | | | | | | 1b5fdec b120b15 submodules update
+| | | |_|/ / / / / / /  
+| | |/| | | | | | | |   
+| | * | | | | | | | | b120b15 85bd770 lib + expo
+| | * | | | | | | | | 85bd770 d339d55 fixes and updates
+| | * | | | | | | | | d339d55 a8d0f45 added alpha
+| | * | | | | | | | | a8d0f45 c3f29b4 noted a couple of modes
+| | * | | | | | | | | c3f29b4 39a3e6e Crayons madness
+| | * | | | | | | | | 39a3e6e 9e38f5c wobly noise
+| | * | | | | | | | | 9e38f5c 3a85f58 squarish 2
+| | * | | | | | | | | 3a85f58 aedd074 Squarish variability
+| | * | | | | | | | | aedd074 11e58b1 start over
+| | * | | | | | | | | 11e58b1 618b08b start over
+| | * | | | | | | | | 618b08b 7eca497 changed ratio
+| | * | | | | | | | | 7eca497 c33c997 horixontal;
+| | * | | | | | | | | c33c997 f784cd5 removed limit
+| | * | | | | | | | | f784cd5 f4f1fcb ready for print
+| | * | | | | | | | | f4f1fcb 71b7abe removed frame cap
+| | * | | | | | | | | 71b7abe 47487a0 Tue day done
+| | * | | | | | | | | 47487a0 9aebf37 bigger canvas
+| | * | | | | | | | | 9aebf37 697ae22 finer agents
+| | * | | | | | | | | 697ae22 0383ae9 squared
+| | * | | | | | | | | 0383ae9 eb3dd55 goldilocks
+| | * | | | | | | | | eb3dd55 3569b78 new offset tesrt
+| | * | | | | | | | | 3569b78 507df59 new scale
+| | * | | | | | | | | 507df59 b72761c test
+| | * | | | | | | | | b72761c f24aec2 Reverted
+| | * | | | | | | | | f24aec2 3c0fc00 trying to see if it works without the .git
+| | * | | | | | | | | 3c0fc00 7afe286 added test.js
+| | * | | | | | | | | 7afe286 ef0de68 reverded webpack configs
+| | * | | | | | | | | ef0de68 3e10c2e changed index path
+| | * | | | | | | | | 3e10c2e f2c3b39 added rule to webpack
+| | * | | | | | | | | f2c3b39 ffd88c3 adde app
+| | * | | | | | | | | ffd88c3 838571a added lib
+| | * | | | | | | | | 838571a 19db998 changed
+| | * | | | | | | | | 19db998 cd82772 removed .git folder from build
+| | * | | | | | | | | cd82772 cd9245f removed .git in dist
+| | * | | | | | | | | cd9245f eaba4f0 built dist
+| | * | | | | | | | | eaba4f0 c77663f removed dist
+| | * | | | | | | | | c77663f 4fb4969 new try
+| | * | | | | | | | | 4fb4969 cbb72ef added dist folder
+| | * | | | | | | | | cbb72ef 7a3a9a9 upped utils for weighted choice
+| | * | | | | | | | | 7a3a9a9 fd40138 trying to fix
+| | * | | | | | | | | fd40138 7b50639 added third scale and random arrays
+| | * | | | | | | | | 7b50639 e3f82f6 blackhole mode
+| | * | | | | | | | | e3f82f6 3f4e941 working and looking nice
+| |/ / / / / / / / /  
+|/| | | | | | | | |   
+| | | | | | | | | | * cfb0580 eb7b313 lib change
+| | | | | | | | | | * eb7b313 b63c18b debugging
+| | | | | | | | | | * b63c18b b221760 testing
+| | | | | | | | | | * b221760 827f6ee testijng
+| | | | | | | | | | * 827f6ee eaa578f added new fxhash var
+| | | | | | | | | | * eaa578f ffeb0f0 fixed lib
+| | | | | | | | | | * ffeb0f0 34d0fd1 trying out generators
+| | |_|_|_|_|_|_|_|/  
+| |/| | | | | | | |   
+| * | | | | | | | | 34d0fd1 1f84ef3 lighter bg
+| * | | | | | | | | 1f84ef3 f56c32a fixed gitignore and freed hash
+| * | | | | | | | | f56c32a ca92b53 Rachat
+| * | | | | | | | | ca92b53 38274e9 added scale zone
+| * | | | | | | | | 38274e9 3363b8a New size agnostic based on AB
+| * | | | | | | | | 3363b8a 5363aeb Added topo UI
+| * | | | | | | | | 5363aeb 70af54b Perida
+| * | | | | | | | | 70af54b ac13aab reduced density
+| * | | | | | | | | ac13aab cfc644a Lost City
+| * | | | | | | | | cfc644a 496eee3 alien landscapes
+| * | | | | | | | | 496eee3 34c0607 removing color for now
+| * | | | | | | | | 34c0607 dd487a3 added colours but ang and scl is not agnostic
+| * | | | | | | | | dd487a3 5f04859 oct 6
+| * | | | | | | | | 5f04859 ae653ba HORUS
+| * | | | | | | | | ae653ba 9e5cf71 removed console.log
+| * | | | | | | | | 9e5cf71 678fc4a windswept configuration
+| * | | | | | | | | 678fc4a 18d7a2b testing central feature and variable scale and amplitude
+| * | | | | | | | | 18d7a2b d8b6c26 crater
+| * | | | | | | | | d8b6c26 c16475c commit
+| | |/ / / / / / /  
+| |/| | | | | | |   
+| * | | | | | | | c16475c d8082ff bookmark init
+| * | | | | | | | d8082ff 54a72b0 safeguarding of ideas
+| | | | | | | | | * abd9114 49ec544 updated lib
+| | | | | | | |_|/  
+| | | | | | |/| |   
+| | | | | | * | | 49ec544 799cfcf updated
+| | | | | | * | | 799cfcf 1c0b8a7 update
+| | | | | | * | | 1c0b8a7 a818a60 full width
+| | | | | | * | | a818a60 84f3e9a longer
+| | | | | | * | | 84f3e9a ef0fb96 smoother
+| | | | | | * | | ef0fb96 5d65616 thin
+| | | | | | * | | 5d65616 3c12ea4 fitignore
+| | | | | | * | | 3c12ea4 c948874 first commit
+| | | | |_|/ / /  
+| | | |/| | | |   
+| | | * | | | | c948874 03ac04e revert
+| | | * | | | | 03ac04e a9e9b60 console save
+| | | * | | | | a9e9b60 ce82238 converted to fxparams
+| | | * | | | | ce82238 55d1c37 reformat
+| | | * | | | | 55d1c37 e947c1a testing for 256
+| | | * | | | | e947c1a 1c457ef milestone
+| | | * | | | | 1c457ef bb01944 added framed conditioning
+| | | * | | | | bb01944 13d86e6 removed unused code
+| | | * | | | | 13d86e6 53a0cc8 fixed resolution
+| | | * | | | | 53a0cc8 94fec2d revert
+| | | * | | | | 94fec2d 22faa34 added video capture
+| | | * | | | | 22faa34 57e90a1 added comment
+| | | * | | | | 57e90a1 a21f879 Minimalist grid + new map function
+| | | * | | | | a21f879 04ba1dd nice comp wispy
+| | | * | | | | 04ba1dd 54a72b0 wispy output
+| | |/ / / / /  
+| |/| | | | |   
+| * | | | | | 54a72b0 a3ccafb finer pen
+| * | | | | | a3ccafb 43c5b12 new basic
+| * | | | | | 43c5b12 8cf6ef1 developped on composition
+| * | | | | | 8cf6ef1 4cfa5c3 commiting this anomaly
+| | | | | | | * e972165 508598d update
+| | | | | | | * 508598d 9cac01e Stone
+| | | | | | | * 9cac01e 5fb2a41 flower
+| | | | | | | * 5fb2a41 e73a40e No S
+| | | | | | | * e73a40e db37f5d done with the S
+| | | | | | | * db37f5d b643804 new update
+| | | | | | | * b643804 339a67d fix gitignore
+| | | | | | | * 339a67d 0eb3bb9 1000x1000
+| | | | | | | * 0eb3bb9 7880be2 deploy
+| | | | | | | * 7880be2 74e260c got something
+| | | | | | | * 74e260c 7c8c248 added arrival
+| | | | | | | * 7c8c248 e03254e working sort of
+| | | | | | | * e03254e aacaffd path following
+| | | | | | | * aacaffd 3f4e941 test 12
+| |_|_|_|_|_|/  
+|/| | | | | |   
+| | | | | | | * cc17eee f5baa19 lib mod
+| | | | | | | * f5baa19 952d29a fixed oct lib
+| | | | | | | * 952d29a bfe99a2 lib
+| | | | | | | | * efcd8df 71dd84a added clear not really owrking
+| | | | | | | | * 71dd84a 33f06be added stroke
+| | | | | | | | * 33f06be 6fa7093 loop
+| | | | | | | | * 6fa7093 3f4e941 first commit
+| |_|_|_|_|_|_|/  
+|/| | | | | | |   
+| | | | | | | | * f150999 3f4e941 first commit
+| |_|_|_|_|_|_|/  
+|/| | | | | | |   
+| | | | | | | | * 35a9e9d 3dfd8b8 animation tryout
+| | | | | | |_|/  
+| | | | | |/| |   
+| | | | | * | | 3dfd8b8 6e148a6 fixed oct
+| | | | | * | | 6e148a6 7926e42 added animation options
+| | | | | * | | 7926e42 01ef6e8 testing
+| | | | |/ / /  
+| | | | * | | 01ef6e8 38ae2ac step motion
+| | | | | | | * 0dad9ef 17524ee finished
+| | | | | | | * 17524ee 2cbf83c final 3
+| | | | | | | * 2cbf83c e5b6a06 final 2
+| | | | | | | * e5b6a06 3f4e941 final
+| |_|_|_|_|_|/  
+|/| | | | | |   
+| | | | | | | * a527e08 50ad584 updated
+| | | | | | | * 50ad584 ba7977a minor changes, might revert
+| | | | | | | * ba7977a f9e3c37 save
+| | | | | | | * f9e3c37 5fc9ffe lib update
+| | | | | | | * 5fc9ffe 4ea3124 fix
+| | | | | | | * 4ea3124 cf6ede2 col
+| | | | | | | * cf6ede2 7ff1dfb fix
+| | | | | | | * 7ff1dfb 9111a30 sum fix
+| | | | | | | * 9111a30 fa3e175 optim
+| | | | | | | * fa3e175 48d9083 Removed window resizing
+| | | | | | | * 48d9083 4e18e39 test pd 2
+| | | | | | | * 4e18e39 d82085f test pd
+| | | | | | | * d82085f 136d41c pixel density fix
+| | | | | | | * 136d41c 7c749c9 pixel density 3
+| | | | | | | * 7c749c9 816e107 pix density test
+| | | | | | | * 816e107 3122dbf test
+| | | | | | | * 3122dbf b2523f5 lib change
+| | | | | | | * b2523f5 d852174 removed gitignore
+| | | | | | | * d852174 bfe99a2 ready
+| | | | | | |/  
+| | | | | | * bfe99a2 8d0b863 new stars
+| | | | | | * 8d0b863 f7149f8 added mystery function to pnoise
+| | | | | | * f7149f8 c1d86b5 functional
+| | | | | | * c1d86b5 df218dc added alpha
+| | | | | | * df218dc 407260c new colours
+| | | | | | * 407260c 0f07a39 new dope colors
+| | | | | | * 0f07a39 a082111 update background color
+| | | | | | * a082111 e039da1 updated gitignore
+| | | | | | * e039da1 a695580 fixed pnoise
+| | | | | | * a695580 be547a8 piter noise landscapes
+| | | | | | | * 6edb6c8 b3df807 fixed oct function
+| | | | | | | * b3df807 53ae1fd removed resize canvas
+| | | | | | | | * 3fffdb2 68d3af6 update
+| | | | | | | | * 68d3af6 9308fc8 trying something
+| | | | | | | | * 9308fc8 174ce54 remove folder from git ignore
+| | | | | | | | * 174ce54 3f4e941 shader
+| |_|_|_|_|_|_|/  
+|/| | | | | | |   
+| | | | | | | | * 91eb70c 7a3d5be some changes
+| | | | | | | | * 7a3d5be 136bc85 ang fix
+| | | | | | | | * 136bc85 0c3abb8 ang
+| | | | | | | | * 0c3abb8 e4ff4ee rand ang
+| | | | | | | | * e4ff4ee 9b3a241 up bright
+| | | | | | | | * 9b3a241 2e2afa2 optim + removed window resized
+| | | | | | | | * 2e2afa2 40acfaa fixing pixel density
+| | | | | | | | * 40acfaa 69295db Title+gitignore
+| | | | | | | | * 69295db 53ae1fd ready
+| | | | | | | |/  
+| | | | | | | | * 59c7b13 bfed3ec update
+| | | | | | | | * bfed3ec b72a3a8 less objkt
+| | | | | | | | * b72a3a8 d9711c4 pd less edit
+| | | | | | | | * d9711c4 599b5be pixel density and some fix
+| | | | | | | | * 599b5be 364b301 ang
+| | | | | | | | * 364b301 4fd4c92 and +
+| | | | | | | | * 4fd4c92 54dee17 up bright
+| | | | | | | | * 54dee17 e8f52d0 removed window resized + hue fix
+| | | | | | | | * e8f52d0 2efaca7 fixing pixel density
+| | | | | | | | * 2efaca7 8500018 Title change + Gitignore
+| | | | | | | | * 8500018 53ae1fd ready
+| | | | | | | |/  
+| | | | | | | * 53ae1fd 5e913d9 removed collisition
+| | | | | | | * 5e913d9 7903dbb new array
+| | | | | | | * 7903dbb 38ae2ac finer grain
+| | | | | |_|/  
+| | | | |/| |   
+| | | | * | | 38ae2ac 4cfa5c3 some addons
+| | |_|/ / /  
+| |/| | | |   
+| * | | | | 4cfa5c3 02eb369 fixed ratio and pixel density
+| * | | | | 02eb369 4ab6553 added new px var
+| * | | | | 4ab6553 b01437f fixed
+| * | | | | b01437f 99d4e5c test
+| | |/ / /  
+| |/| | |   
+| * | | | 99d4e5c 0bf442a added some reusable parameters
+| * | | | 0bf442a 2519660 Added Piter new functions
+| * | | | 2519660 424ee82 new distribution (commented)
+| * | | | 424ee82 0d291ec finer point and added a new distribution
+| * | | | 0d291ec 45f0aaa finer tip
+| * | | | 45f0aaa be547a8 Fixed initial
+| | |_|/  
+| |/| |   
+| * | | be547a8 11b149e added piter nosie
+| |/ /  
+| * | 11b149e 67a3e32 added spectral
+| * | 67a3e32 3f4e941 commit
+|/ /  
+| | * 8f05d66 97bc20d alpha fix
+| | * 97bc20d 5f605f0 fixed land alpha
+| | * 5f605f0 8d44df5 fixing pixel density
+| | * 8d44df5 55ce3bc fixed dimention
+| | * 55ce3bc 2a9e01f fixing pixel density
+| | * 2a9e01f 1551322 changed title + gitignore
+| |/  
+| * 1551322 c110dce ready
+| * c110dce 1d5c8cb fixed
+| * 1d5c8cb 3f4e941 ready expo
+|/  
+* 3f4e941  first commit
