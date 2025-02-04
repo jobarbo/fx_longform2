@@ -63,34 +63,78 @@ class Branch {
 		this.start = start;
 		this.end = end;
 		this.commits = [];
-		this.generateCommits();
-	}
 
-	generateCommits() {
-		// Randomly decide how many commits to show on this branch (0-3)
+		// Generate control points for wobbly effect
+		let dx = this.end.x - this.start.x;
+		let dy = this.end.y - this.start.y;
+		let distance = dist(this.start.x, this.start.y, this.end.x, this.end.y);
+
+		// Create noise offsets for control points
+		this.noiseOffsetX1 = random(1000);
+		this.noiseOffsetY1 = random(1000);
+		this.noiseOffsetX2 = random(1000);
+		this.noiseOffsetY2 = random(1000);
+
+		// Calculate control points with some perpendicular offset
+		let perpX = -dy / distance; // Perpendicular vector
+		let perpY = dx / distance;
+
+		// Control points at 1/3 and 2/3 of the line
+		this.ctrl1 = {
+			x: this.start.x + dx / 3,
+			y: this.start.y + dy / 3,
+		};
+		this.ctrl2 = {
+			x: this.start.x + (2 * dx) / 3,
+			y: this.start.y + (2 * dy) / 3,
+		};
+
+		// Store commit positions as ratios (0-1) along the curve
+		this.commitRatios = [];
 		let numCommits = floor(random(0, 4));
-
-		if (numCommits > 0) {
-			// Calculate positions for commits
-			for (let i = 1; i <= numCommits; i++) {
-				let ratio = i / (numCommits + 1); // This creates equal spacing
-				let x = lerp(this.start.x, this.end.x, ratio);
-				let y = lerp(this.start.y, this.end.y, ratio);
-				// Pass the depth of the parent node plus 1 for commits
-				this.commits.push(new Node(x, y, true, this.end.depth));
-			}
+		for (let i = 1; i <= numCommits; i++) {
+			this.commitRatios.push(i / (numCommits + 1));
 		}
 	}
 
 	display() {
 		push();
-		// Draw the branch line
 		stroke(0);
 		strokeWeight(2);
-		line(this.start.x, this.start.y, this.end.x, this.end.y);
 
-		// Draw commits along the branch
-		for (let commit of this.commits) {
+		// Update control points with noise
+		let wobbleAmount = 55;
+		let t = frameCount * 0.01;
+
+		let offset1X = map(noise(this.noiseOffsetX1 + t), 0, 1, -wobbleAmount, wobbleAmount);
+		let offset1Y = map(noise(this.noiseOffsetY1 + t), 0, 1, -wobbleAmount, wobbleAmount);
+		let offset2X = map(noise(this.noiseOffsetX2 + t), 0, 1, -wobbleAmount, wobbleAmount);
+		let offset2Y = map(noise(this.noiseOffsetY2 + t), 0, 1, -wobbleAmount, wobbleAmount);
+
+		// Current control points with noise
+		let currentCtrl1 = {
+			x: this.ctrl1.x + offset1X,
+			y: this.ctrl1.y + offset1Y,
+		};
+		let currentCtrl2 = {
+			x: this.ctrl2.x + offset2X,
+			y: this.ctrl2.y + offset2Y,
+		};
+
+		// Draw curved line
+		noFill();
+		beginShape();
+		vertex(this.start.x, this.start.y);
+		bezierVertex(currentCtrl1.x, currentCtrl1.y, currentCtrl2.x, currentCtrl2.y, this.end.x, this.end.y);
+		endShape();
+
+		// Update and draw commits along the curve using current control points
+		this.commits = []; // Clear existing commits
+		for (let t of this.commitRatios) {
+			let x = bezierPoint(this.start.x, currentCtrl1.x, currentCtrl2.x, this.end.x, t);
+			let y = bezierPoint(this.start.y, currentCtrl1.y, currentCtrl2.y, this.end.y, t);
+			let commit = new Node(x, y, true, this.end.depth);
+			this.commits.push(commit);
 			commit.display();
 		}
 		pop();
@@ -122,7 +166,7 @@ function createCladogram() {
 	nodes.push(startNode);
 
 	// Create initial branches spreading in all directions
-	let numInitialBranches = floor(random(0, 3)) + 2; // Will give exactly 2, 3, or 4
+	let numInitialBranches = floor(random(4, 7));
 
 	// Random starting angle for the first branch
 	let startingAngle = random(0, 360);
