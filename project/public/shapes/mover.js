@@ -9,8 +9,8 @@ class Mover {
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
-		this.a = 100;
-		this.s = random([0.75]);
+		this.a = 30;
+		this.s = random([1]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -30,11 +30,8 @@ class Mover {
 	}
 
 	show() {
-		//
-		//blendMode(SCREEN);
-		fill(this.hue, this.sat, this.bri, this.a);
-		noStroke();
-		circle(this.x, this.y, this.s);
+		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
+		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
 
 	move() {
@@ -91,7 +88,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		scaleOffset3 = sclOff3,
 		noiseScale1 = 1,
 		noiseScale2 = 1,
-		noiseScale3 = 111,
+		noiseScale3 = 11,
 		nseed = seed;
 	un = sin(nx * (scale1 * scaleOffset1) + nseed) + cos(nx * (scale2 * scaleOffset2) + nseed) - sin(nx * (scale3 * scaleOffset3) + nseed);
 	vn = cos(ny * (scale1 * scaleOffset1) + nseed) + sin(ny * (scale2 * scaleOffset2) + nseed) - cos(ny * (scale3 * scaleOffset3) + nseed);
@@ -143,8 +140,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	let zu = ZZ(u, 20, 120, 0.1);
-	let zv = ZZ(v, 20, 120, 0.1);
+	let zu = ZZ(u, 20, 120, 0.01);
+	let zv = ZZ(v, 20, 120, 0.01);
 	let p = createVector(zu, zv);
 	return p;
 }

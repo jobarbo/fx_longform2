@@ -2,6 +2,7 @@ let features = "";
 let movers = [];
 let scl1;
 let scl2;
+let scl3;
 let ang1;
 let ang2;
 let rseed;
@@ -35,7 +36,7 @@ function setup() {
 	} else {
 		pixelDensity(2);
 	}
-	createCanvas(10 * 100, 16 * 100);
+	createCanvas(15 * 100, 15 * 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	seed = random(10000000000000);
 	randomSeed(seed);
@@ -63,30 +64,10 @@ function draw() {
  */
 function INIT(seed) {
 	movers = [];
-	/* 	scl1 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
-	scl2 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]);
-	scl3 = random([0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.0075, 0.01, 0.03, 0.05, 0.075]); */
 
 	scl1 = 0.001;
 	scl2 = 0.001;
 	scl3 = 0.001;
-
-	/* 	scl1 = 0.4;
-	scl2 = 0.002;
-	scl3 = 0.4;
- */
-	/* 	scl1 = 0.01;
-	scl2 = 0.005;
-	scl3 = 0.01; */
-
-	/* 	scl1 = 0.0025;
-	scl2 = 0.0005;
-	scl3 = 0.0075;
-
-	console.log("scl1", scl1);
-	console.log("scl2", scl2);
-	console.log("scl3", scl3);
-	let hue = random(360); */
 
 	let sclOffset1 = 1;
 	let sclOffset2 = 1;
@@ -100,26 +81,17 @@ function INIT(seed) {
 	console.log("scl2", scl2);
 	console.log("scl3", scl3);
 
-	/* 	xMin = -0.1;
+	xMin = -0.1;
 	xMax = 1.1;
 	yMin = -0.1;
-	yMax = 1.1; */
-	xMin = 0.06;
-	xMax = 0.94;
-	yMin = 0.06;
-	yMax = 0.94;
+	yMax = 1.1;
+
+	let hue = random(360); // Define base hue for particles
 
 	for (let i = 0; i < 100000; i++) {
-		// distribue the movers within a circle using polar coordinates
-		/* 		let r = randomGaussian(4, 2);
-		let theta = random(0, TWO_PI);
-		let x = width / 2 + r * cos(theta) * 50;
-		let y = height / 2 + r * sin(theta) * 50; */
-
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
-		//let hueOffset = map(x, xMin * width, xMax * width, -10, 10);
 		let hueOffset = random(-20, 20);
 		let initHue = hue + hueOffset;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
