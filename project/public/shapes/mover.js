@@ -147,8 +147,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	let zu = ZZ(u, 20, 120, 0.02);
-	let zv = ZZ(v, 20, 120, 0.02);
+	let zu = ZZ(u, 35, 80, 0.018);
+	let zv = ZZ(v, 35, 80, 0.018);
 	let p = createVector(zu, zv);
 	return p;
 }
