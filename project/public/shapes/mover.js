@@ -21,8 +21,10 @@ class Mover {
 		this.nseed = nseed;
 		this.xRandDivider = 0.1;
 		this.yRandDivider = 0.1;
-		this.xRandSkipper = 0;
-		this.yRandSkipper = 0;
+		this.xRandSkipper = 0.0;
+		this.yRandSkipper = 0.0;
+		this.xRandSkipperOffset = 0.0;
+		this.yRandSkipperOffset = 0.0;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
