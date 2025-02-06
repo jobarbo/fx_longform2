@@ -79,10 +79,23 @@ function INIT(rseed, nseed) {
 	console.log("scl2", scl2);
 	console.log("scl3", scl3);
 
-	xMin = -0.1;
-	xMax = 1.1;
-	yMin = -0.1;
-	yMax = 1.1;
+	// Calculate padding based on the smaller dimension for consistent borders
+	let paddingRatio = 0.1; // 10% padding
+	let padding = min(width, height) * paddingRatio;
+
+	// Calculate bounds in absolute coordinates first
+	let bounds = {
+		left: padding,
+		right: width - padding,
+		top: padding,
+		bottom: height - padding,
+	};
+
+	// Convert to relative coordinates
+	xMin = bounds.left / width;
+	xMax = bounds.right / width;
+	yMin = bounds.top / height;
+	yMax = bounds.bottom / height;
 
 	let hue = random(360); // Define base hue for particles
 

@@ -62,17 +62,22 @@ class Mover {
 		this.y = this.y < -this.s ? height + this.s : this.y > height + this.s ? -this.s : this.y; */
 
 		if (this.isBordered) {
-			if (this.x < (this.xMin - 0.015) * width) {
-				this.x = (this.xMax - 0.015) * width;
+			let wrapPadding = (min(width, height) * 0.05) / width; // Convert to relative coordinates for x
+			let wrapPaddingY = (min(width, height) * 0.05) / height; // Convert to relative coordinates for y
+			let reentryOffset = (min(width, height) * 0.015) / width; // For x coordinates
+			let reentryOffsetY = (min(width, height) * 0.015) / height; // For y coordinates
+
+			if (this.x < (this.xMin - wrapPadding) * width) {
+				this.x = (this.xMax - random(0, reentryOffset)) * width;
 			}
-			if (this.x > (this.xMax + 0.015) * width) {
-				this.x = (this.xMin + 0.015) * width;
+			if (this.x > (this.xMax + wrapPadding) * width) {
+				this.x = (this.xMin + random(0, reentryOffset)) * width;
 			}
-			if (this.y < (this.yMin - 0.015) * height) {
-				this.y = (this.yMax - 0.015) * height;
+			if (this.y < (this.yMin - wrapPaddingY) * height) {
+				this.y = (this.yMax - random(0, reentryOffsetY)) * height;
 			}
-			if (this.y > (this.yMax + 0.015) * height) {
-				this.y = (this.yMin + 0.015) * height;
+			if (this.y > (this.yMax + wrapPaddingY) * height) {
+				this.y = (this.yMin + random(0, reentryOffsetY)) * height;
 			}
 		}
 	}
@@ -130,8 +135,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = -0.11; */
 
 	//! Introverted
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -4.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 4.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -4.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 4.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
