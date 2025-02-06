@@ -1,5 +1,5 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed) {
+	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
@@ -9,15 +9,16 @@ class Mover {
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
-		this.a = 30;
-		this.s = random([2.5]);
+		this.a = 100;
+		this.s = random([0.5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
 		this.sclOffset1 = sclOffset1;
 		this.sclOffset2 = sclOffset2;
 		this.sclOffset3 = sclOffset3;
-		this.seed = seed;
+		this.rseed = rseed;
+		this.nseed = nseed;
 		this.xRandDivider = 0.1;
 		this.yRandDivider = 0.1;
 		this.xRandSkipper = 0;
@@ -35,7 +36,7 @@ class Mover {
 	}
 
 	move() {
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.seed);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 		// after 1 second, change the scale
 
 		//! crayon effect too
@@ -77,7 +78,7 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMin, xMax, yMax, seed) {
+function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMin, xMax, yMax, rseed, nseed) {
 	let nx = x,
 		ny = y,
 		scale1 = scl1,
@@ -88,10 +89,9 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		scaleOffset3 = sclOff3,
 		noiseScale1 = 1,
 		noiseScale2 = 1,
-		noiseScale3 = 11,
-		nseed = seed;
-	un = sin(nx * (scale1 * scaleOffset1) + nseed) + cos(nx * (scale2 * scaleOffset2) + nseed) - sin(nx * (scale3 * scaleOffset3) + nseed);
-	vn = cos(ny * (scale1 * scaleOffset1) + nseed) + sin(ny * (scale2 * scaleOffset2) + nseed) - cos(ny * (scale3 * scaleOffset3) + nseed);
+		noiseScale3 = 1;
+	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
+	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);
 
 	//! center focused introverted
 	/* let maxU = map(ny, xMin * width, xMax * width, 3, -3, true);
@@ -106,10 +106,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1, 1), -0.005, 0.005, -4, 4, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + nseed, nx * (scale1 * scaleOffset2) + nseed, noiseScale2, 2, 1), -0.005, 0.005, -4, 4, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1) + nseed, ny * (scale1 * scaleOffset3) + nseed, noiseScale3, 0, 1), -0.005, 0.005, -4, 4, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + nseed, nx * (scale3 * scaleOffset3) + nseed, noiseScale2, 3, 1), -0.005, 0.005, -4, 4, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.005, 0.005, -4, 4, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.005, 0.005, -4, 4, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.005, 0.005, -4, 4, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale2, 3, 1), -0.005, 0.005, -4, 4, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
@@ -140,8 +140,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	let zu = ZZ(u, 20, 120, 0.01);
-	let zv = ZZ(v, 20, 120, 0.01);
+	let zu = ZZ(u, 20, 120, 0.02);
+	let zv = ZZ(v, 20, 120, 0.02);
 	let p = createVector(zu, zv);
 	return p;
 }

@@ -16,6 +16,12 @@ let isBordered = true;
 let img;
 let mask;
 
+let DEFAULT_SIZE = 2600;
+let W = window.innerWidth;
+let H = window.innerHeight;
+let DIM;
+let MULTIPLIER;
+
 function preload() {
 	img = loadImage("./image/Mono.png");
 }
@@ -24,31 +30,23 @@ function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
 
-	let formatMode = features.format_mode;
-	var ua = window.navigator.userAgent;
-	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-	var webkit = !!ua.match(/WebKit/i);
-	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
-
-	// if Safari mobile or any smartphone browser, use pixelDensity(0.5) to make the canvas bigger, else use pixelDensity(3.0)
-	if (iOSSafari || (iOS && !iOSSafari) || (!iOS && !ua.match(/iPad/i) && ua.match(/Mobile/i))) {
-		pixelDensity(1);
-	} else {
-		pixelDensity(2);
-	}
-	createCanvas(15 * 100, 15 * 100);
+	// canvas setup
+	DIM = min(windowWidth, windowHeight);
+	MULTIPLIER = DIM / DEFAULT_SIZE;
+	c = createCanvas(DIM, DIM * 1.41);
+	pixelDensity(3);
 	colorMode(HSB, 360, 100, 100, 100);
-	seed = random(10000000000000);
-	randomSeed(seed);
-	INIT(seed);
+	randomSeed(fxrand() * 10000);
+	noiseSeed(fxrand() * 10000);
+	rseed = fxrand() * 10000;
+	nseed = fxrand() * 10000;
+	INIT(rseed, nseed);
 }
 
 function draw() {
 	//blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
-		//if (frameCount > 1) {
 		movers[i].show();
-		//}
 		movers[i].move();
 	}
 	blendMode(BLEND);
@@ -62,7 +60,7 @@ function draw() {
 	INIT(seed);
 }
  */
-function INIT(seed) {
+function INIT(rseed, nseed) {
 	movers = [];
 
 	scl1 = 0.002;
@@ -88,14 +86,14 @@ function INIT(seed) {
 
 	let hue = random(360); // Define base hue for particles
 
-	for (let i = 0; i < 50000; i++) {
+	for (let i = 0; i < 500000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
 		let hueOffset = random(-20, 20);
 		let initHue = hue + hueOffset;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed));
+		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed));
 	}
 	let bgCol = spectral.mix("#000", "#fff", 0.88);
 	background(bgCol);
