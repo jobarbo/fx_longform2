@@ -46,9 +46,9 @@ function setup() {
 function draw() {
 	//blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
-		if (frameCount > 1) {
-			movers[i].show();
-		}
+		//if (frameCount > 1) {
+		movers[i].show();
+		//}
 		movers[i].move();
 	}
 	blendMode(BLEND);
@@ -65,9 +65,9 @@ function draw() {
 function INIT(seed) {
 	movers = [];
 
-	scl1 = 0.001;
-	scl2 = 0.001;
-	scl3 = 0.001;
+	scl1 = 0.002;
+	scl2 = 0.002;
+	scl3 = 0.002;
 
 	let sclOffset1 = 1;
 	let sclOffset2 = 1;
@@ -88,7 +88,7 @@ function INIT(seed) {
 
 	let hue = random(360); // Define base hue for particles
 
-	for (let i = 0; i < 100000; i++) {
+	for (let i = 0; i < 50000; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 

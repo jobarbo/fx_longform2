@@ -10,7 +10,7 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = 30;
-		this.s = random([1]);
+		this.s = random([2.5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -39,8 +39,8 @@ class Mover {
 		// after 1 second, change the scale
 
 		//! crayon effect too
-		this.xRandDivider = random(0.1, 0.1025);
-		this.yRandDivider = random(0.1, 0.1025);
+		this.xRandDivider = random(0.01, 0.01005);
+		this.yRandDivider = random(0.01, 0.01005);
 
 		/* 	this.xRandSkipper = random(-0.0001, 0.0001);
 		this.yRandSkipper = random(-0.0001, 0.0001); */
