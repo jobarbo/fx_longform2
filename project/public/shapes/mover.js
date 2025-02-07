@@ -2,15 +2,15 @@ class Mover {
 	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed) {
 		this.x = x;
 		this.y = y;
-		this.initHue = hue;
-		this.initSat = random([0, 0, 5, 10]);
-		this.initBri = random([0, 10, 20, 30, 40]);
+		this.initHue = 45;
+		this.initSat = random([10, 50, 50, 60, 70, 100]);
+		this.initBri = random([50]);
 		this.initAlpha = random(60, 100);
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = 100;
-		this.s = random([0.5]) * MULTIPLIER;
+		this.s = random([0.25]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;

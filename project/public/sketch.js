@@ -49,9 +49,11 @@ function setup() {
 }
 
 function draw() {
-	//blendMode(ADD);
+	blendMode(SCREEN);
 	for (let i = 0; i < movers.length; i++) {
-		movers[i].show();
+		if (frameCount > 1) {
+			movers[i].show();
+		}
 		movers[i].move();
 	}
 	blendMode(BLEND);
@@ -113,6 +115,6 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed));
 	}
 
-	let bgCol = spectral.mix("#000", "#fff", 0.88);
+	let bgCol = spectral.mix("#000", "#fff", 0.08);
 	background(bgCol);
 }
