@@ -16,24 +16,29 @@ let isBordered = true;
 let img;
 let mask;
 
-let DEFAULT_SIZE = 2600;
+// Base artwork dimensions (width: 948, height: 948 * 1.41)
+let ARTWORK_RATIO = 1.41;
+let BASE_WIDTH = 948;
+let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
+
+// This is our reference size for scaling
+let DEFAULT_SIZE = BASE_WIDTH;
+
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
-
-function preload() {
-	img = loadImage("./image/Mono.png");
-}
 
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
 
 	// canvas setup
+	// Take the smaller screen dimension to ensure it fits
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1.41);
+	console.log(MULTIPLIER);
+	c = createCanvas(DIM, DIM * ARTWORK_RATIO);
 	pixelDensity(3);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -50,40 +55,35 @@ function draw() {
 		movers[i].move();
 	}
 	blendMode(BLEND);
-	if (frameCount > 1500) {
+	if (frameCount > 150) {
 		console.log("done");
 		noLoop();
 	}
 }
-/* function windowResized() {
+
+function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 	INIT(seed);
 }
- */
+
 function INIT(rseed, nseed) {
 	movers = [];
 
-	scl1 = 0.002;
-	scl2 = 0.002;
-	scl3 = 0.002;
+	// Scale noise values based on MULTIPLIER
+	scl1 = 0.002 / MULTIPLIER;
+	scl2 = 0.002 / MULTIPLIER;
+	scl3 = 0.002 / MULTIPLIER;
 
 	let sclOffset1 = 1;
 	let sclOffset2 = 1;
 	let sclOffset3 = 1;
 
-	console.log("sclOffset1", sclOffset1);
-	console.log("sclOffset2", sclOffset2);
-	console.log("sclOffset3", sclOffset3);
-
-	console.log("scl1", scl1);
-	console.log("scl2", scl2);
-	console.log("scl3", scl3);
-
-	// Calculate padding based on the smaller dimension for consistent borders
+	// Calculate padding based on the reference size and scale it
 	let paddingRatio = 0.1; // 10% padding
-	let padding = min(width, height) * paddingRatio;
+	let basePadding = DEFAULT_SIZE * paddingRatio; // Use DEFAULT_SIZE as reference
+	let padding = basePadding * MULTIPLIER;
 
-	// Calculate bounds in absolute coordinates first
+	// Calculate bounds in absolute coordinates
 	let bounds = {
 		left: padding,
 		right: width - padding,
@@ -99,7 +99,11 @@ function INIT(rseed, nseed) {
 
 	let hue = random(360); // Define base hue for particles
 
-	for (let i = 0; i < 500000; i++) {
+	// Scale number of particles based on canvas size
+	let baseParticleCount = 500000;
+	let scaledParticleCount = baseParticleCount;
+
+	for (let i = 0; i < scaledParticleCount; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
@@ -108,6 +112,7 @@ function INIT(rseed, nseed) {
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed));
 	}
+
 	let bgCol = spectral.mix("#000", "#fff", 0.88);
 	background(bgCol);
 }
