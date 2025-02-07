@@ -2,15 +2,15 @@ class Mover {
 	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed) {
 		this.x = x;
 		this.y = y;
-		this.initHue = 45;
-		this.initSat = random([10, 50, 50, 60, 70, 100]);
-		this.initBri = random([50]);
+		this.initHue = hue;
+		this.initSat = random([0, 0, 5, 10]);
+		this.initBri = random([0, 10, 20, 30, 40]);
 		this.initAlpha = random(60, 100);
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = 100;
-		this.s = random([0.25]) * MULTIPLIER;
+		this.s = random([0.25, 0.4, 0.5, 0.5]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -66,8 +66,8 @@ class Mover {
 		if (this.isBordered) {
 			let wrapPadding = (min(width, height) * 0.05) / width;
 			let wrapPaddingY = (min(width, height) * 0.05) / height;
-			let reentryOffset = (min(width, height) * 0.015) / width;
-			let reentryOffsetY = (min(width, height) * 0.015) / height;
+			let reentryOffset = (min(width, height) * 0.0075) / width;
+			let reentryOffsetY = (min(width, height) * 0.0075) / height;
 
 			if (this.x < (this.xMin - wrapPadding) * width) {
 				this.x = (this.xMax - random(0, reentryOffset)) * width;
@@ -94,9 +94,9 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
-		noiseScale1 = 1,
-		noiseScale2 = 1,
-		noiseScale3 = 1;
+		noiseScale1 = 2,
+		noiseScale2 = 0.00001,
+		noiseScale3 = 2;
 
 	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
 	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);
@@ -149,15 +149,15 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 
-	let zu = ZZ(u, 35, 80, 0.018) * MULTIPLIER;
-	let zv = ZZ(v, 35, 80, 0.018) * MULTIPLIER;
+	/* 	let zu = ZZ(u, 35, 80, 0.018) * MULTIPLIER;
+	let zv = ZZ(v, 35, 80, 0.018) * MULTIPLIER; */
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
 	//! 0.001
 	//! 2
-	/*	let zu = ZZ(u, 35, 40, 0.005) * MULTIPLIER;
-	let zv = ZZ(v, 35, 40, 0.005) * MULTIPLIER; */
+	let zu = ZZ(u, 35, 40, 0.005) * MULTIPLIER;
+	let zv = ZZ(v, 35, 40, 0.005) * MULTIPLIER;
 
 	let p = createVector(zu, zv);
 	return p;
