@@ -66,20 +66,20 @@ class Mover {
 		if (this.isBordered) {
 			let wrapPadding = (min(width, height) * 0.05) / width;
 			let wrapPaddingY = (min(width, height) * 0.05) / height;
-			let reentryOffset = (min(width, height) * 0.0075) / width;
-			let reentryOffsetY = (min(width, height) * 0.0075) / height;
+			let reentryOffset = (min(width, height) * 0.01) / width;
+			let reentryOffsetY = (min(width, height) * 0.01) / height;
 
 			if (this.x < (this.xMin - wrapPadding) * width) {
-				this.x = (this.xMax + wrapPadding * 2 - random(0, reentryOffset)) * width;
+				this.x = (this.xMax + wrapPadding * 1 - random(0, reentryOffset)) * width;
 			}
 			if (this.x > (this.xMax + wrapPadding) * width) {
-				this.x = (this.xMin - wrapPadding * 2 + random(0, reentryOffset)) * width;
+				this.x = (this.xMin - wrapPadding * 1 + random(0, reentryOffset)) * width;
 			}
 			if (this.y < (this.yMin - wrapPaddingY) * height) {
-				this.y = (this.yMax + wrapPaddingY * 2 - random(0, reentryOffsetY)) * height;
+				this.y = (this.yMax + wrapPaddingY * 1 - random(0, reentryOffsetY)) * height;
 			}
 			if (this.y > (this.yMax + wrapPaddingY) * height) {
-				this.y = (this.yMin - wrapPaddingY * 2 + random(0, reentryOffsetY)) * height;
+				this.y = (this.yMin - wrapPaddingY * 1 + random(0, reentryOffsetY)) * height;
 			}
 
 			// Check if the mover is outside the bounds
