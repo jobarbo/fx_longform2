@@ -17,8 +17,8 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1;
-let BASE_WIDTH = 1800;
+let ARTWORK_RATIO = 1.41;
+let BASE_WIDTH = 948;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
 // This is our reference size for scaling
@@ -76,12 +76,12 @@ function INIT(rseed, nseed) {
 	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.002 / MULTIPLIER;
 
-	let sclOffset1 = 2;
-	let sclOffset2 = 0.00001;
-	let sclOffset3 = 2;
+	let sclOffset1 = 1;
+	let sclOffset2 = 1;
+	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatio = 0.25; // 10% padding
+	let paddingRatio = 0.1; // 10% padding
 	let basePadding = DEFAULT_SIZE * paddingRatio; // Use DEFAULT_SIZE as reference
 	let padding = basePadding * MULTIPLIER;
 
@@ -102,7 +102,7 @@ function INIT(rseed, nseed) {
 	let hue = random(360); // Define base hue for particles
 
 	// Scale number of particles based on canvas size
-	let baseParticleCount = 300000;
+	let baseParticleCount = 500000;
 	let scaledParticleCount = baseParticleCount;
 
 	for (let i = 0; i < scaledParticleCount; i++) {
