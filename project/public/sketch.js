@@ -1,5 +1,13 @@
 let features = "";
 let movers = [];
+let startTime;
+let maxFrames = 10;
+let elapsedTime = 0;
+let particleNum = 500000;
+// Adjust cycle for smoother percentage updates (1% increments)
+let cycle = parseInt((maxFrames * particleNum) / 1170);
+let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
+
 let scl1;
 let scl2;
 let scl3;
@@ -32,6 +40,8 @@ let MULTIPLIER;
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
+	startTime = frameCount;
+	executionTimer.start(); // Start the timer
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
@@ -46,21 +56,32 @@ function setup() {
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
 	INIT(rseed, nseed);
-}
 
-function draw() {
-	//blendMode(SCREEN);
-	for (let i = 0; i < movers.length; i++) {
-		if (frameCount > 1) {
-			movers[i].show();
-		}
-		movers[i].move();
-	}
-	//blendMode(BLEND);
-	if (frameCount > 150) {
-		console.log("done");
-		noLoop();
-	}
+	// Create animation generator with configuration
+	const animConfig = {
+		items: movers,
+		maxFrames: maxFrames,
+		startTime: startTime,
+		cycleLength: cycle,
+		renderItem: (mover) => {
+			//if (frameCount > 1) {
+			mover.show();
+			//}
+		},
+		moveItem: (mover) => {
+			mover.move();
+			frameCount++; // Increment frameCount after each move
+		},
+		onComplete: () => {
+			executionTimer.stop().logElapsedTime("Sketch completed in");
+			$fx.preview();
+			document.complete = true;
+		},
+	};
+
+	// Create and start the animation
+	const generator = createAnimationGenerator(animConfig);
+	startAnimation(generator);
 }
 
 function windowResized() {
@@ -81,16 +102,19 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatio = 0.1; // 10% padding
-	let basePadding = DEFAULT_SIZE * paddingRatio; // Use DEFAULT_SIZE as reference
-	let padding = basePadding * MULTIPLIER;
+	let paddingRatioX = 0.45; // 45% padding for X axis
+	let paddingRatioY = 0.1; // 45% padding for Y axis
+	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
+	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
+	let paddingX = basePaddingX * MULTIPLIER;
+	let paddingY = basePaddingY * MULTIPLIER;
 
 	// Calculate bounds in absolute coordinates
 	let bounds = {
-		left: padding,
-		right: width - padding,
-		top: padding,
-		bottom: height - padding,
+		left: paddingX,
+		right: width - paddingX,
+		top: paddingY,
+		bottom: height - paddingY,
 	};
 
 	// Convert to relative coordinates
@@ -102,7 +126,7 @@ function INIT(rseed, nseed) {
 	let hue = random(360); // Define base hue for particles
 
 	// Scale number of particles based on canvas size
-	let baseParticleCount = 500000;
+	let baseParticleCount = particleNum;
 	let scaledParticleCount = baseParticleCount;
 
 	for (let i = 0; i < scaledParticleCount; i++) {
