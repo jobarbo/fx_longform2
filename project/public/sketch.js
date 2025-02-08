@@ -51,9 +51,9 @@ function setup() {
 function draw() {
 	//blendMode(SCREEN);
 	for (let i = 0; i < movers.length; i++) {
-		//if (frameCount > 1) {
-		movers[i].show();
-		//}
+		if (frameCount > 1) {
+			movers[i].show();
+		}
 		movers[i].move();
 	}
 	//blendMode(BLEND);
