@@ -9,8 +9,8 @@ class Mover {
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
-		this.a = 40;
-		this.s = random([0.25, 0.35, 0.5, 0.5]) * MULTIPLIER;
+		this.a = 100;
+		this.s = random([0.5]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -64,8 +64,8 @@ class Mover {
 		this.y = this.y < -this.s ? height + this.s : this.y > height + this.s ? -this.s : this.y; */
 
 		if (this.isBordered) {
-			let wrapPaddingX = (min(width, height) * 0.1) / width;
-			let wrapPaddingY = (min(width, height) * 0.015) / height;
+			let wrapPaddingX = (min(width, height) * 0.05) / width;
+			let wrapPaddingY = (min(width, height) * 0.05) / height;
 			let reentryOffsetX = (min(width, height) * 0.015) / width;
 			let reentryOffsetY = (min(width, height) * 0.015) / height;
 
@@ -91,7 +91,7 @@ class Mover {
 			if (this.x < (this.xMin - wrapPaddingX) * width || this.x > (this.xMax + wrapPaddingX) * width || this.y < (this.yMin - wrapPaddingY) * height || this.y > (this.yMax + wrapPaddingY) * height) {
 				this.a = 0; // Make invisible
 			} else {
-				this.a = 40; // Make visible
+				this.a = 100; // Make visible
 			}
 		}
 	}

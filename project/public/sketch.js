@@ -1,7 +1,7 @@
 let features = "";
 let movers = [];
 let startTime;
-let maxFrames = 10;
+let maxFrames = 30;
 let elapsedTime = 0;
 let particleNum = 500000;
 // Adjust cycle for smoother percentage updates (1% increments)
@@ -102,7 +102,7 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.45; // 45% padding for X axis
+	let paddingRatioX = 0.1; // 45% padding for X axis
 	let paddingRatioY = 0.1; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
