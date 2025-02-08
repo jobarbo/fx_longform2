@@ -20,6 +20,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let frameCount = 0;
+
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
@@ -37,44 +38,24 @@ function setup() {
 
 	INIT();
 	renderStart = Date.now();
-	let sketch = drawGenerator();
-	function animate() {
-		animation = setTimeout(animate, 0);
-		sketch.next();
-	}
 
-	animate();
-}
-
-function* drawGenerator() {
-	let count = 0;
-	let frameCount = 0;
-	let draw_every = cycle;
-	let looptime = 0;
-	while (true) {
-		for (let i = 0; i < particleNum; i++) {
-			const mover = movers[i];
-			mover.show();
-			mover.move(elapsedTime, maxFrames);
-			if (count > draw_every) {
-				count = 0;
-				yield;
-			}
-			count++;
-		}
-
-		elapsedTime = frameCount - startTime;
-
-		showLoadingBar(elapsedTime, maxFrames, renderStart);
-
-		frameCount++;
-		if (elapsedTime > maxFrames && drawing) {
-			drawing = false;
+	// Create animation generator with configuration
+	const animConfig = {
+		items: movers,
+		maxFrames: maxFrames,
+		startTime: startTime,
+		cycleLength: cycle,
+		renderItem: (mover) => mover.show(),
+		moveItem: (mover, elapsedTime, maxFrames) => mover.move(elapsedTime, maxFrames),
+		onComplete: () => {
 			$fx.preview();
 			document.complete = true;
-			return;
-		}
-	}
+		},
+	};
+
+	// Create and start the animation
+	const generator = createAnimationGenerator(animConfig);
+	startAnimation(generator);
 }
 
 function INIT(seed) {
@@ -92,23 +73,4 @@ function INIT(seed) {
 	}
 
 	background(35, 5, 100);
-}
-function showLoadingBar(elapsedTime, maxFrames, renderStart) {
-	framesRendered++;
-	let currentTime = Date.now();
-	totalElapsedTime = currentTime - renderStart;
-
-	let percent = (elapsedTime / maxFrames) * 100;
-	if (percent > 100) percent = 100;
-
-	let averageFrameTime = totalElapsedTime / framesRendered;
-
-	let remainingFrames = maxFrames - framesRendered;
-	let estimatedTimeRemaining = averageFrameTime * remainingFrames;
-
-	// Convert milliseconds to seconds
-	let timeLeftSec = Math.round(estimatedTimeRemaining / 1000);
-
-	// put the percent in the title of the page
-	document.title = percent.toFixed(0) + "% - Time left : " + timeLeftSec + "s";
 }
