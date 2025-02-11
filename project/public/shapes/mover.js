@@ -32,6 +32,7 @@ class Mover {
 		this.yMin = yMin;
 		this.yMax = yMax;
 		this.isBordered = false;
+		this.hasBeenOutside = false;
 
 		// Pre-calculate padding values
 		this.wrapPaddingX = (min(width, height) * 0.05) / width;
@@ -56,12 +57,19 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update isBordered state
-		//this.isBordered = frameCount > maxFrames / 2;
 		this.isBordered = true;
 
 		// Update position with slight randomization
 		this.x += p.x / (0.01 + random(0.00005));
 		this.y += p.y / (0.01 + random(0.00005));
+
+		// Check if particle is currently outside
+		let currentlyOutside = this.isOutside();
+
+		// Update hasBeenOutside flag if particle is outside
+		if (currentlyOutside) {
+			this.hasBeenOutside = true;
+		}
 
 		if (this.isBordered) {
 			// Wrap to opposite side with slight offset
@@ -78,11 +86,17 @@ class Mover {
 			}
 		} else {
 			// Reset to initial position if not bordered
-			this.x = this.initX;
-			this.y = this.initY;
+			if (this.isOutside()) {
+				this.x = this.initX;
+				this.y = this.initY;
+			}
 		}
-		let isOutside = this.x < this.minBoundX || this.x > this.maxBoundX || this.y < this.minBoundY || this.y > this.maxBoundY;
-		this.a = isOutside ? 0 : 100;
+
+		this.a = currentlyOutside ? 0 : 100;
+		//this.a = this.hasBeenOutside && !currentlyOutside ? 100 : 0;
+	}
+	isOutside() {
+		return this.x < this.minBoundX || this.x > this.maxBoundX || this.y < this.minBoundY || this.y > this.maxBoundY;
 	}
 }
 

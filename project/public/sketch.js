@@ -65,7 +65,7 @@ function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			//if (currentFrame > 1) {
+			//if (currentFrame > 0) {
 			mover.show();
 			//}
 		},
