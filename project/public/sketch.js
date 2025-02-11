@@ -1,7 +1,7 @@
 let features = "";
 let movers = [];
 let startTime;
-let maxFrames = 30;
+let maxFrames = 20;
 let elapsedTime = 0;
 let particleNum = 500000;
 // Adjust cycle for smoother percentage updates (1% increments)
@@ -63,14 +63,14 @@ function setup() {
 		maxFrames: maxFrames,
 		startTime: startTime,
 		cycleLength: cycle,
-		renderItem: (mover) => {
-			//if (frameCount > 1) {
+		currentFrame: 0, // Add current frame tracking
+		renderItem: (mover, currentFrame) => {
+			//if (currentFrame > 1) {
 			mover.show();
 			//}
 		},
-		moveItem: (mover) => {
-			mover.move();
-			frameCount++; // Increment frameCount after each move
+		moveItem: (mover, currentFrame) => {
+			mover.move(currentFrame, maxFrames);
 		},
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");

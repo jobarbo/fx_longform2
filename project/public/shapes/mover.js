@@ -1,7 +1,9 @@
 class Mover {
 	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed) {
 		this.x = x;
+		this.initX = x;
 		this.y = y;
+		this.initY = y;
 		this.initHue = hue;
 		this.initSat = random([0, 0, 5, 10]);
 		this.initBri = random([0, 10, 20, 30, 40]);
@@ -19,17 +21,24 @@ class Mover {
 		this.sclOffset3 = sclOffset3;
 		this.rseed = rseed;
 		this.nseed = nseed;
-		this.xRandDivider = 0.01;
-		this.yRandDivider = 0.01;
-		this.xRandSkipper = 0.0;
-		this.yRandSkipper = 0.0;
-		this.xRandSkipperOffset = 0.0;
-		this.yRandSkipperOffset = 0.0;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.isBordered = isBordered;
+		this.isBordered = false;
+
+		// Pre-calculate padding values
+		this.wrapPaddingX = (min(width, height) * 0.0015) / width;
+		this.wrapPaddingY = (min(width, height) * 0.0015) / height;
+		this.reentryOffsetX = (min(width, height) * 0.01) / width;
+		this.reentryOffsetY = (min(width, height) * 0.01) / height;
+		this.wrapPaddingMultiplier = 0.0001;
+
+		// Pre-calculate bounds
+		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
+		this.maxBoundX = (this.xMax + this.wrapPaddingX) * width;
+		this.minBoundY = (this.yMin - this.wrapPaddingY) * height;
+		this.maxBoundY = (this.yMax + this.wrapPaddingY) * height;
 	}
 
 	show() {
@@ -37,62 +46,44 @@ class Mover {
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
 
-	move() {
+	move(frameCount, maxFrames) {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
-		// after 1 second, change the scale
 
-		//! crayon effect too
-		this.xRandDivider = random(0.01, 0.01005);
-		this.yRandDivider = random(0.01, 0.01005);
+		// Update isBordered state
+		//this.isBordered = frameCount >= maxFrames / 2;
+		this.isBordered = true;
 
-		/* 	this.xRandSkipper = random(-0.0001, 0.0001);
-		this.yRandSkipper = random(-0.0001, 0.0001); */
+		// Update position with slight randomization
+		this.x += p.x / (0.01 + random(0.00005));
+		this.y += p.y / (0.01 + random(0.00005));
 
-		this.x += p.x / this.xRandDivider + this.xRandSkipper;
-		this.y += p.y / this.yRandDivider + this.yRandSkipper;
+		// Check if outside bounds
+		let isOutside = this.x < this.minBoundX || this.x > this.maxBoundX || this.y < this.minBoundY || this.y > this.maxBoundY;
 
-		/* 		if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
-			this.s += 0.5;
+		// Handle boundary behavior
+		if (isOutside) {
+			this.a = 0; // Make invisible
 
-			if (this.s >= 3) {
-				this.s = 3;
-			}
-		} */
+			if (this.isBordered) {
+				// Wrap to opposite side with slight offset
+				if (this.x < this.minBoundX) {
+					this.x = (this.xMax + this.wrapPaddingX * this.wrapPaddingMultiplier - random(0, this.reentryOffsetX)) * width;
+				} else if (this.x > this.maxBoundX) {
+					this.x = (this.xMin - this.wrapPaddingX * this.wrapPaddingMultiplier + random(0, this.reentryOffsetX)) * width;
+				}
 
-		//shortand for if this.x is less than 0, set this.x to width and vice versa
-		/* 		this.x = this.x < -this.s ? width + this.s : this.x > width + this.s ? -this.s : this.x;
-		this.y = this.y < -this.s ? height + this.s : this.y > height + this.s ? -this.s : this.y; */
-
-		if (this.isBordered) {
-			let wrapPaddingX = (min(width, height) * 0.05) / width;
-			let wrapPaddingY = (min(width, height) * 0.05) / height;
-			let reentryOffsetX = (min(width, height) * 0.015) / width;
-			let reentryOffsetY = (min(width, height) * 0.015) / height;
-
-			//! 0.0001 to go back to the original padding
-			//! 1 to go back to the opposite padding offset
-			let wrapPaddingX_Multiplier = 0.0001;
-			let wrapPaddingY_Multiplier = 0.0001;
-
-			if (this.x < (this.xMin - wrapPaddingX) * width) {
-				this.x = (this.xMax + wrapPaddingX * wrapPaddingX_Multiplier - random(0, reentryOffsetX)) * width;
-			}
-			if (this.x > (this.xMax + wrapPaddingX) * width) {
-				this.x = (this.xMin - wrapPaddingX * wrapPaddingX_Multiplier + random(0, reentryOffsetX)) * width;
-			}
-			if (this.y < (this.yMin - wrapPaddingY) * height) {
-				this.y = (this.yMax + wrapPaddingY * wrapPaddingY_Multiplier - random(0, reentryOffsetY)) * height;
-			}
-			if (this.y > (this.yMax + wrapPaddingY) * height) {
-				this.y = (this.yMin - wrapPaddingY * wrapPaddingY_Multiplier + random(0, reentryOffsetY)) * height;
-			}
-
-			// Check if the mover is outside the bounds
-			if (this.x < (this.xMin - wrapPaddingX) * width || this.x > (this.xMax + wrapPaddingX) * width || this.y < (this.yMin - wrapPaddingY) * height || this.y > (this.yMax + wrapPaddingY) * height) {
-				this.a = 0; // Make invisible
+				if (this.y < this.minBoundY) {
+					this.y = (this.yMax + this.wrapPaddingY * this.wrapPaddingMultiplier - random(0, this.reentryOffsetY)) * height;
+				} else if (this.y > this.maxBoundY) {
+					this.y = (this.yMin - this.wrapPaddingY * this.wrapPaddingMultiplier + random(0, this.reentryOffsetY)) * height;
+				}
 			} else {
-				this.a = 100; // Make visible
+				// Reset to initial position
+				this.x = this.initX;
+				this.y = this.initY;
 			}
+		} else {
+			this.a = 100; // Make visible
 		}
 	}
 }
