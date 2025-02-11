@@ -12,7 +12,7 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = 100;
-		this.s = random([0.5]) * MULTIPLIER;
+		this.s = random([0.25, 0.35, 0.425, 0.5, 0.5]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -23,8 +23,8 @@ class Mover {
 		this.nseed = nseed;
 		this.xRandDivider = 0.01;
 		this.yRandDivider = 0.01;
-		this.xRandSkipper = 0.0;
-		this.yRandSkipper = 0.0;
+		this.xRandSkipper = 0;
+		this.yRandSkipper = 0;
 		this.xRandSkipperOffset = 0.0;
 		this.yRandSkipperOffset = 0.0;
 		this.xMin = xMin;
@@ -39,7 +39,7 @@ class Mover {
 		this.wrapPaddingY = (min(width, height) * 0.05) / height;
 		this.reentryOffsetX = (min(width, height) * 0.015) / width;
 		this.reentryOffsetY = (min(width, height) * 0.015) / height;
-		this.wrapPaddingMultiplier = 0.5;
+		this.wrapPaddingMultiplier = 0.0001; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -60,16 +60,10 @@ class Mover {
 		this.isBordered = true;
 
 		// Update position with slight randomization
-		this.x += p.x / (0.01 + random(0.00005));
-		this.y += p.y / (0.01 + random(0.00005));
-
-		// Check if particle is currently outside
-		let currentlyOutside = this.isOutside();
-
-		// Update hasBeenOutside flag if particle is outside
-		if (currentlyOutside) {
-			this.hasBeenOutside = true;
-		}
+		this.xRandDivider = random(0.01, 0.01005);
+		this.yRandDivider = random(0.01, 0.01005);
+		this.x += p.x / this.xRandDivider + this.xRandSkipper;
+		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
 		if (this.isBordered) {
 			// Wrap to opposite side with slight offset
@@ -92,7 +86,15 @@ class Mover {
 			}
 		}
 
-		this.a = currentlyOutside ? 0 : 100;
+		// Check if particle is currently outside
+		let currentlyOutside = this.isOutside();
+
+		// Update hasBeenOutside flag if particle is outside
+		if (currentlyOutside) {
+			this.hasBeenOutside = true;
+		}
+
+		this.a = this.isOutside() ? 0 : 100;
 		//this.a = this.hasBeenOutside && !currentlyOutside ? 100 : 0;
 	}
 	isOutside() {
