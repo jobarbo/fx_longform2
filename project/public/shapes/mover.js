@@ -28,11 +28,11 @@ class Mover {
 		this.isBordered = false;
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.0015) / width;
-		this.wrapPaddingY = (min(width, height) * 0.0015) / height;
+		this.wrapPaddingX = (min(width, height) * 0.05) / width;
+		this.wrapPaddingY = (min(width, height) * 0.05) / height;
 		this.reentryOffsetX = (min(width, height) * 0.01) / width;
 		this.reentryOffsetY = (min(width, height) * 0.01) / height;
-		this.wrapPaddingMultiplier = 0.0001;
+		this.wrapPaddingMultiplier = 0.5;
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -54,8 +54,10 @@ class Mover {
 		this.isBordered = true;
 
 		// Update position with slight randomization
-		this.x += p.x / (0.01 + random(0.00005));
-		this.y += p.y / (0.01 + random(0.00005));
+		this.xRandDivider = random(0.01, 0.01005);
+		this.yRandDivider = random(0.01, 0.01005);
+		this.x += p.x / this.xRandDivider;
+		this.y += p.y / this.yRandDivider;
 
 		// Check if outside bounds
 		let isOutside = this.x < this.minBoundX || this.x > this.maxBoundX || this.y < this.minBoundY || this.y > this.maxBoundY;
