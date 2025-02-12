@@ -25,7 +25,7 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.41;
+let ARTWORK_RATIO = 1;
 let BASE_WIDTH = 948;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -65,9 +65,9 @@ function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			//if (currentFrame > 0) {
-			mover.show();
-			//}
+			if (currentFrame > 0) {
+				mover.show();
+			}
 		},
 		moveItem: (mover, currentFrame) => {
 			mover.move(currentFrame, maxFrames);
@@ -140,5 +140,5 @@ function INIT(rseed, nseed) {
 	}
 
 	let bgCol = spectral.mix("#000", "#fff", 0.88);
-	background(bgCol);
+	background(0, 0, 0, 0);
 }
