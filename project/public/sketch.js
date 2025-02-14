@@ -189,8 +189,8 @@ function setup() {
 	//background(45, 0, 100);
 	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
-	gradient.addColorStop(0.5, "hsl(0, 100%, 95%)");
-	gradient.addColorStop(0.8, "hsl(10, 100%, 96%)");
+	gradient.addColorStop(0.5, "hsl(0, 100%, 95%,0%)");
+	gradient.addColorStop(0.8, "hsl(10, 100%, 96%,0%)");
 	drawingContext.fillStyle = gradient;
 	drawingContext.fillRect(0, 0, width, height);
 
@@ -254,8 +254,8 @@ function* drawGenerator() {
 			/* 			xoff_l_high = mapValue(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
 			xoff_l_low = mapValue(noise_cos, -1, 1, offValues_h[i].high, offValues_h[i].low, true); */
 
-			xoff_h = xoff_l_high + 0.000001;
-			yoff_h = xoff_l_high + 0.000001;
+			xoff_h = xoff_l_high + 0.0025;
+			yoff_h = xoff_l_high + 0.0025;
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
@@ -312,7 +312,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	//yoff = ZZ(yoff, 20, 120, 0.002);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(2, 0.9);
+	noiseDetail(4, 0.5);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
