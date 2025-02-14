@@ -25,7 +25,7 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1;
+let ARTWORK_RATIO = 1.41;
 let BASE_WIDTH = 948;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -65,9 +65,9 @@ function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0) {
-				mover.show();
-			}
+			//if (currentFrame > 0) {
+			mover.show();
+			//}
 		},
 		moveItem: (mover, currentFrame) => {
 			mover.move(currentFrame, maxFrames);
@@ -97,9 +97,9 @@ function INIT(rseed, nseed) {
 	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.002 / MULTIPLIER;
 
-	let sclOffset1 = 1;
-	let sclOffset2 = 1;
-	let sclOffset3 = 1;
+	let sclOffset1 = 0.9;
+	let sclOffset2 = 1.2;
+	let sclOffset3 = 1.2;
 
 	// Calculate padding based on the reference size and scale it
 	let paddingRatioX = 0.1; // 45% padding for X axis
@@ -140,5 +140,5 @@ function INIT(rseed, nseed) {
 	}
 
 	let bgCol = spectral.mix("#000", "#fff", 0.88);
-	background(0, 0, 0, 0);
+	background(bgCol);
 }
