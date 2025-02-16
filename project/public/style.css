@@ -20,6 +20,8 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	position: relative;
+	height: 100vh;
 	--bodymargin: 10px;
 	--min: min(100vw);
 	--hContent: var(--min);
@@ -41,6 +43,11 @@ canvas.p5Canvas {
 	max-width: calc(min(100vh, 100vw) * 1); /* 5% smaller than the smallest axis */
 	max-height: calc(min(100vh, 100vw) * 1); /* 5% smaller than the smallest axis */
 	max-height: 100vh;
+
+	position: absolute;
+	bottom: -0%;
+	height: 100% !important;
+	animation: rotate 1s steps(32) infinite;
 }
 
 /* having fun here */
@@ -58,6 +65,15 @@ main {
 	/* height: calc(min(100vh, 100vw) * 1); 5% smaller than the smallest axis
 	/* width: calc(min(100vh, 100vw) * 1); 5% smaller than the smallest axis */
 	aspect-ratio: attr(data-aspect-ratio); /* Use a custom attribute for aspect ratio */
+}
+
+@keyframes rotate {
+	from {
+		transform: rotate(0deg) scale(1);
+	}
+	to {
+		transform: rotate(360deg) scale(1);
+	}
 }
 
 main::after {

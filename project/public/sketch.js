@@ -116,7 +116,7 @@ function generateUpDownPattern(maxPatternValue) {
 function generateSymmetricOffValues(numCases, baseLow, baseHigh, maxPatternValue) {
 	const offValues = [];
 	const pattern = generateUpDownPattern(maxPatternValue);
-	const increment = 1;
+	const increment = 0.001;
 
 	for (let i = 0; i < numCases; i++) {
 		const patternIndex = i % pattern.length;
@@ -133,11 +133,11 @@ const numCases = angle1.length; // Number of cases you want
 //! original
 const baseLow_l = 1;
 const baseHigh_l = 0.148;
-const maxPatternValue_l = 3;
+const maxPatternValue_l = 17;
 
 const baseLow_h = 1.148;
 const baseHigh_h = 0;
-const maxPatternValue_h = 3;
+const maxPatternValue_h = 17;
 
 //! inverted
 /* const baseLow_l = 0.148;
