@@ -189,8 +189,8 @@ function setup() {
 	//background(45, 0, 100);
 	drawingContext.globalCompositeOperation = "source-over";
 	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
-	gradient.addColorStop(0.5, "hsl(0, 100%, 95%,0%)");
-	gradient.addColorStop(0.8, "hsl(10, 100%, 96%,0%)");
+	gradient.addColorStop(0.5, "hsl(0, 100%, 95%,100%)");
+	gradient.addColorStop(0.8, "hsl(10, 100%, 96%,100%)");
 	drawingContext.fillStyle = gradient;
 	drawingContext.fillRect(0, 0, width, height);
 
