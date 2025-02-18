@@ -58,7 +58,8 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update isBordered state
-		this.isBordered = true;
+		this.isBordered = frameCount > maxFrames / 2;
+		//this.isBordered = true;
 
 		// Update position with slight randomization
 		this.xRandDivider = random(0.01, 0.01005);
