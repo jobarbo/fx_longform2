@@ -43,9 +43,6 @@ canvas.p5Canvas {
 	max-width: calc(min(100vh, 100vw) * 1); /* 5% smaller than the smallest axis */
 	max-height: calc(min(100vh, 100vw) * 1); /* 5% smaller than the smallest axis */
 	max-height: 100vh;
-
-	position: absolute;
-	bottom: -0%;
 	height: 100% !important;
 	animation: rotate 1s steps(32) infinite;
 }
@@ -100,8 +97,9 @@ main {
 	height: 1px;
 	width: 770px;
 	top: 50%;
-	left: -50%;
-	transform: translateX(-50%);
+	left: 0;
+	right: 0;
+	margin: 0 auto;
 }
 
 @keyframes rotate {
