@@ -40,7 +40,7 @@ class Mover {
 		this.wrapPaddingY = (min(width, height) * 0.05) / height;
 		this.reentryOffsetX = (min(width, height) * 0.006) / width;
 		this.reentryOffsetY = (min(width, height) * 0.006) / height;
-		this.wrapPaddingMultiplier = 1; //! or 0.5
+		this.wrapPaddingMultiplier = -4; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -133,10 +133,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.005, 0.005, -4, 4, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.005, 0.005, -4, 4, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.005, 0.005, -4, 4, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale2, 3, 1), -0.005, 0.005, -4, 4, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.01, 0.01, -2, 2, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.01, 0.01, -2, 2, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.01, 0.01, -2, 2, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale2, 3, 1), -0.01, 0.01, -2, 2, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
@@ -169,6 +169,14 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 	let zu = ZZ(u, 35, 80, 0.018);
 	let zv = ZZ(v, 35, 80, 0.018);
+
+	//! PAGODA (below is noiseScale and scaleOffset)
+	//! 2
+	//! 0.001
+	//! 2
+	/* 	let zu = ZZ(u, 35, 40, 0.005) * MULTIPLIER;
+	let zv = ZZ(v, 35, 40, 0.005) * MULTIPLIER; */
+
 	let p = createVector(zu, zv);
 	return p;
 }

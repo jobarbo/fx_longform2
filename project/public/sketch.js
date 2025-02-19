@@ -65,9 +65,9 @@ function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			//if (currentFrame > 0) {
-			mover.show();
-			//}
+			if (currentFrame > 0) {
+				mover.show();
+			}
 		},
 		moveItem: (mover, currentFrame) => {
 			mover.move(currentFrame, maxFrames);
@@ -97,9 +97,9 @@ function INIT(rseed, nseed) {
 	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.002 / MULTIPLIER;
 
-	let sclOffset1 = 0.9;
-	let sclOffset2 = 1.2;
-	let sclOffset3 = 1.2;
+	let sclOffset1 = 2;
+	let sclOffset2 = 0.0001;
+	let sclOffset3 = 2;
 
 	// Calculate padding based on the reference size and scale it
 	let paddingRatioX = 0.1; // 45% padding for X axis
