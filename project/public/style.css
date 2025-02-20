@@ -86,6 +86,9 @@ main {
 	height: 1027px;
 	width: 1px;
 	left: 50%;
+	top: 0;
+	bottom: 0;
+	margin: auto;
 	transform: translateX(-50%);
 }
 
