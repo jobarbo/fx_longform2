@@ -142,25 +142,29 @@ function INIT(rseed, nseed) {
 	let bgCol = spectral.mix("#000", "#fff", 0.88);
 	background(bgCol);
 
-	// Add subtle grid texture
-	push();
-	strokeWeight(0.5);
-	stroke(90, 100, 50, 22); // Very transparent black
+	// Add subtle organic grid texture
 	let gridSize = width / 100; // Size of grid cells
+	let variance = gridSize / 45; // Amount of random variation for particles
 
-	for (let x = 0; x < width; x += gridSize) {
-		line(x, 0, x, height);
+	// Vertical lines of particles
+	for (let x = -gridSize; x <= width + gridSize; x += gridSize) {
+		for (let y = -gridSize; y <= height + gridSize; y += gridSize / 20) {
+			// More dense particle distribution
+			let xPos = x + randomGaussian(0, variance);
+			noStroke();
+			fill(0, 0, 0, 100);
+			rect(xPos, y, 0.25 * MULTIPLIER, 0.25 * MULTIPLIER);
+		}
 	}
-	for (let y = 0; y < height; y += gridSize) {
-		line(0, y, width, y);
-	}
-	pop();
 
-	for (let i = 0; i < particleNum; i++) {
-		let x = random(width);
-		let y = random(height);
-		noStroke();
-		fill(0, 0, 0, 50);
-		rect(x, y, 0.25 * MULTIPLIER, 0.25 * MULTIPLIER);
+	// Horizontal lines of particles
+	for (let y = -gridSize; y <= height + gridSize; y += gridSize) {
+		for (let x = -gridSize; x <= width + gridSize; x += gridSize / 20) {
+			// More dense particle distribution
+			let yPos = y + randomGaussian(0, variance);
+			noStroke();
+			fill(0, 0, 0, 100);
+			rect(x, yPos, 0.25 * MULTIPLIER, 0.25 * MULTIPLIER);
+		}
 	}
 }
