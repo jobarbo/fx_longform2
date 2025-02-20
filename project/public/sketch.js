@@ -141,4 +141,26 @@ function INIT(rseed, nseed) {
 
 	let bgCol = spectral.mix("#000", "#fff", 0.88);
 	background(bgCol);
+
+	// Add subtle grid texture
+	push();
+	strokeWeight(0.5);
+	stroke(90, 100, 50, 22); // Very transparent black
+	let gridSize = width / 100; // Size of grid cells
+
+	for (let x = 0; x < width; x += gridSize) {
+		line(x, 0, x, height);
+	}
+	for (let y = 0; y < height; y += gridSize) {
+		line(0, y, width, y);
+	}
+	pop();
+
+	for (let i = 0; i < particleNum; i++) {
+		let x = random(width);
+		let y = random(height);
+		noStroke();
+		fill(0, 0, 0, 50);
+		rect(x, y, 0.25 * MULTIPLIER, 0.25 * MULTIPLIER);
+	}
 }

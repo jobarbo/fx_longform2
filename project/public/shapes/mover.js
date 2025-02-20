@@ -38,8 +38,8 @@ class Mover {
 		// Pre-calculate padding values
 		this.wrapPaddingX = (min(width, height) * 0.05) / width;
 		this.wrapPaddingY = (min(width, height) * 0.05) / height;
-		this.reentryOffsetX = (min(width, height) * 0.006) / width;
-		this.reentryOffsetY = (min(width, height) * 0.006) / height;
+		this.reentryOffsetX = (min(width, height) * 0.01) / width;
+		this.reentryOffsetY = (min(width, height) * 0.01) / height;
 		this.wrapPaddingMultiplier = -4; //! or 0.5
 
 		// Pre-calculate bounds
