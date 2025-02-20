@@ -74,34 +74,7 @@ function setup() {
 		},
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
-			// Add subtle organic grid texture
-			let gridSizeX = width / 100; // Size of grid cells
-			let gridSizeY = width / 100; // Size of grid cells
-			let variance = gridSizeX / 4; // Amount of variation for particles
-			let g_variance = gridSizeX / 150;
-			let noiseScale = 0.05; // Scale of the noise
-
-			// Vertical lines of particles
-			for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX) {
-				for (let y = -gridSizeY; y <= height + gridSizeY; y += gridSizeY / 20) {
-					// More dense particle distribution
-					let xPos = x + map(noise(x * noiseScale, y * noiseScale) + randomGaussian(0, g_variance), 0, 1, -variance, variance);
-					noStroke();
-					fill(0, 0, 100, random(20, 100));
-					rect(xPos, y, random(0.15, 0.55) * MULTIPLIER, random(0.15, 0.55) * MULTIPLIER);
-				}
-			}
-
-			// Horizontal lines of particles
-			for (let y = -gridSizeY; y <= height + gridSizeY; y += gridSizeY) {
-				for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX / 20) {
-					// More dense particle distribution
-					let yPos = y + map(noise(x * noiseScale, y * noiseScale) + randomGaussian(0, g_variance), 0, 1, -variance, variance);
-					noStroke();
-					fill(0, 0, 100, random(20, 100));
-					rect(x, yPos, random(0.15, 0.55) * MULTIPLIER, random(0.15, 0.55) * MULTIPLIER);
-				}
-			}
+			initGrid(100);
 			$fx.preview();
 			document.complete = true;
 		},
@@ -169,4 +142,36 @@ function INIT(rseed, nseed) {
 
 	let bgCol = spectral.mix("#000", "#fff", 0.98);
 	background(bgCol);
+	initGrid(0);
+}
+
+function initGrid(brightness) {
+	// Add subtle organic grid texture
+	let gridSizeX = width / 100; // Size of grid cells
+	let gridSizeY = width / 100; // Size of grid cells
+	let variance = gridSizeX / 11114; // Amount of variation for particles
+	let g_variance = gridSizeX / 1111;
+	let noiseScale = 0.05; // Scale of the noise
+
+	// Vertical lines of particles
+	for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX) {
+		for (let y = -gridSizeY; y <= height + gridSizeY; y += gridSizeY / 20) {
+			// More dense particle distribution
+			let xPos = x + map(noise(x * noiseScale, y * noiseScale) + randomGaussian(0, g_variance), 0, 1, -variance, variance);
+			noStroke();
+			fill(0, 0, brightness, random(10, 100));
+			rect(xPos, y, random(0.15, 0.55) * MULTIPLIER, random(0.15, 0.55) * MULTIPLIER);
+		}
+	}
+
+	// Horizontal lines of particles
+	for (let y = -gridSizeY; y <= height + gridSizeY; y += gridSizeY) {
+		for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX / 20) {
+			// More dense particle distribution
+			let yPos = y + map(noise(x * noiseScale, y * noiseScale) + randomGaussian(0, g_variance), 0, 1, -variance, variance);
+			noStroke();
+			fill(0, 0, brightness, random(10, 100));
+			rect(x, yPos, random(0.15, 0.55) * MULTIPLIER, random(0.15, 0.55) * MULTIPLIER);
+		}
+	}
 }
