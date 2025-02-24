@@ -74,7 +74,7 @@ function setup() {
 		},
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
-			initGrid(100);
+			//initGrid(100);
 			$fx.preview();
 			document.complete = true;
 		},
@@ -142,7 +142,7 @@ function INIT(rseed, nseed) {
 
 	let bgCol = spectral.mix("#000", "#fff", 0.98);
 	background(bgCol);
-	initGrid(0);
+	//initGrid(0);
 }
 
 function initGrid(brightness) {
