@@ -55,6 +55,8 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
+	scale(1.5);
+	translate(-width / 6, -height / 6);
 	INIT(rseed, nseed);
 
 	// Create animation generator with configuration
@@ -94,17 +96,17 @@ function INIT(rseed, nseed) {
 	movers = [];
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.002 / MULTIPLIER;
+	scl1 = 0.005 / MULTIPLIER;
 	scl2 = 0.00002 / MULTIPLIER;
-	scl3 = 0.002 / MULTIPLIER;
+	scl3 = 0.005 / MULTIPLIER;
 
 	let sclOffset1 = 1;
 	let sclOffset2 = 1;
 	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.1; // 45% padding for X axis
-	let paddingRatioY = 0.1; // 45% padding for Y axis
+	let paddingRatioX = 0.41; // 45% padding for X axis
+	let paddingRatioY = 0.41; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;
