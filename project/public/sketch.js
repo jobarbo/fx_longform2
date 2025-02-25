@@ -1,7 +1,7 @@
 let features = "";
 let movers = [];
 let startTime;
-let maxFrames = 20;
+let maxFrames = 25;
 let elapsedTime = 0;
 let particleNum = 500000;
 // Adjust cycle for smoother percentage updates (1% increments)
@@ -95,12 +95,12 @@ function INIT(rseed, nseed) {
 
 	// Scale noise values based on MULTIPLIER
 	scl1 = 0.002 / MULTIPLIER;
-	scl2 = 0.002 / MULTIPLIER;
+	scl2 = 0.00002 / MULTIPLIER;
 	scl3 = 0.002 / MULTIPLIER;
 
-	let sclOffset1 = 2;
-	let sclOffset2 = 0.0001;
-	let sclOffset3 = 2;
+	let sclOffset1 = 1;
+	let sclOffset2 = 1;
+	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
 	let paddingRatioX = 0.1; // 45% padding for X axis
@@ -140,7 +140,7 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed));
 	}
 
-	let bgCol = spectral.mix("#000", "#fff", 0.98);
+	let bgCol = spectral.mix("#000", "#fff", 0.88);
 	background(bgCol);
 	//initGrid(0);
 }
