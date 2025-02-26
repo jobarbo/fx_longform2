@@ -32,7 +32,7 @@ let yi = Math.random * 1000000000000;
 let pos_range_x;
 let pos_range_y;
 //! Standard noise
-let n_range_min = 0;
+let n_range_min = -1;
 let n_range_max = 1;
 //! Custom noise
 /* let n_range_min = -1;
@@ -117,7 +117,7 @@ function generateUpDownPattern(maxPatternValue) {
 function generateSymmetricOffValues(numCases, baseLow, baseHigh, maxPatternValue) {
 	const offValues = [];
 	const pattern = generateUpDownPattern(maxPatternValue);
-	const increment = 0.001;
+	const increment = 0.0015;
 
 	for (let i = 0; i < numCases; i++) {
 		const patternIndex = i % pattern.length;
@@ -360,9 +360,9 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
  */
 	//! Astral Beings 2
-	/* 	let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
- */
+
 	//! Astral Beings 3
 	/* 	let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -384,8 +384,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//! noise affected jellyfish
-	let x = mapValue(noise(xoff, x_val, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, y_val, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
+	/* 	let x = mapValue(noise(xoff, x_val, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, y_val, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
 	//let w = mapValue(abs(cos_val), 0, 1, 0.16, 0.26, true);
 	let w = mapValue(abs(cos_val), 0, 1, 0.32, 0.46, true);

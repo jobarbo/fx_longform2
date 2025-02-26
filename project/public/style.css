@@ -22,6 +22,7 @@ body {
 	justify-content: center;
 	position: relative;
 	height: 100vh;
+	background-color: hsla(10, 100%, 96%, 1); /* Fully opaque light shade of red */
 	--bodymargin: 10px;
 	--min: min(100vw);
 	--hContent: var(--min);
@@ -43,7 +44,6 @@ canvas.p5Canvas {
 	max-width: calc(min(100vh, 100vw) * 1); /* 5% smaller than the smallest axis */
 	max-height: calc(min(100vh, 100vw) * 1); /* 5% smaller than the smallest axis */
 	max-height: 100vh;
-	height: 100% !important;
 	animation: rotate 1s steps(32) infinite;
 }
 
