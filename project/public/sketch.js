@@ -41,9 +41,12 @@ function draw() {
 	blendMode(SCREEN);
 	for (let i = 0; i < movers.length; i++) {
 		for (let t = 0; t < 1; t++) {
-			movers[i].scl1 -= 0.0001;
-			movers[i].scl2 += 0.0001;
-			movers[i].scl3 += 0.0001;
+			/* 			movers[i].scl1 -= 0.000001;
+			movers[i].scl2 += 0.000001;
+			movers[i].scl3 += 0.000001; */
+			movers[i].scl1 = map(mouseX, 0, width, 0.00001, 0.08);
+			movers[i].scl2 = map(mouseX, 0, width, 0.00001, 0.08);
+			movers[i].scl3 = map(mouseX, 0, width, 0.00001, 0.08);
 			movers[i].show();
 			movers[i].move();
 		}
@@ -64,15 +67,15 @@ function INIT(seed) {
 	/* 	scl1 = random([0.01, 0.03, 0.05, 0.075]);
 	scl2 = random([0.01, 0.03, 0.05, 0.075]);
 	scl3 = random([0.01, 0.03, 0.05, 0.075]); */
-	scl1 = 0.03;
-	scl2 = 0.05;
-	scl3 = 0.03;
+	scl1 = 0.003;
+	scl2 = 0.005;
+	scl3 = 0.003;
 
 	let hue = random(360);
 
-	let sclOffset1 = int(random(1) + 1);
-	let sclOffset2 = int(random(1) + 1);
-	let sclOffset3 = int(random(1) + 1);
+	let sclOffset1 = int(random(1) + 11);
+	let sclOffset2 = int(random(1) + 11);
+	let sclOffset3 = int(random(1) + 11);
 
 	console.log("sclOffset1", sclOffset1);
 	console.log("sclOffset2", sclOffset2);
