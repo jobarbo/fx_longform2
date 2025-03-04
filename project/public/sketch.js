@@ -64,7 +64,7 @@ let displacement2 = 100;
 //let angle1 = [45, 105, 165, 225, 285, 345];
 /* let angle1 = [0, 45, 90, 135, 180, 225, 270, 315]; */
 //let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5];
-let angle1 = [45, 225];
+let angle1 = [225];
 //let angle1 = [45, 135, 225, 315];
 //let angle1 = [0, 90, 180, 270];
 //let angle1 = [0, 45, 90];
@@ -163,6 +163,14 @@ const offValues_h = [
 	// Add more if needed
 ];
 
+let minX = Infinity;
+let maxX = -Infinity;
+let minY = Infinity;
+let maxY = -Infinity;
+let centerOffsetX = 0;
+let centerOffsetY = 0;
+let calculatingBounds = true;
+
 function setup() {
 	features = $fx.getFeatures();
 
@@ -198,7 +206,31 @@ function setup() {
 	pos_range_y = height * 0.65;
 
 	translate(width / 2, height / 2);
+
+	// First pass: calculate bounds without drawing
+	calculatingBounds = true;
 	let sketch = drawGenerator();
+	while (true) {
+		let result = sketch.next();
+		if (result.done) break;
+	}
+
+	// Calculate offsets to center the drawing
+	centerOffsetX = -(minX + maxX) / 2;
+	centerOffsetY = -(minY + maxY) / 2;
+
+	// Reset for actual drawing
+	minX = Infinity;
+	maxX = -Infinity;
+	minY = Infinity;
+	maxY = -Infinity;
+	calculatingBounds = false;
+	elapsedTime = 0;
+	framesRendered = 0;
+	generator_frameCount = 0;
+
+	// Start actual drawing
+	sketch = drawGenerator();
 	function animate() {
 		animation = setTimeout(animate, 0);
 		sketch.next();
@@ -260,6 +292,8 @@ function* drawGenerator() {
 			push();
 			rotate(angle1[i]);
 			scale(scale1);
+			// use the bounding box to draw the particles so that it can be centered along with the bounding box
+
 			for (let s = 0; s < particle_num; s++) {
 				paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val, sin_val, noise_cos, col_cos, off_cos);
 
@@ -344,6 +378,18 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
+	if (x < minX) minX = x;
+	if (x > maxX) maxX = x;
+	if (y < minY) minY = y;
+	if (y > maxY) maxY = y;
+
+	// If we're just calculating bounds, don't draw anything
+	if (calculatingBounds) return;
+
+	// Apply the centering offset for actual drawing
+	let centeredX = x + centerOffsetX;
+	let centeredY = y + centerOffsetY;
+
 	//! Astral Beings 3
 	/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -366,8 +412,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 
 	let w = mapValue(abs(cos_val), 0, 1, 0.26, 0.36, true);
 	let elW = w * MULTIPLIER;
-	let ab_x = x * MULTIPLIER;
-	let ab_y = y * MULTIPLIER;
+	let ab_x = centeredX * MULTIPLIER; // Use centered coordinates
+	let ab_y = centeredY * MULTIPLIER; // Use centered coordinates
 
 	/* 		let index = Math.floor(mapValue(abs(noise_cos), 0, 1, 0, palette.length - 1, true));
 
@@ -380,8 +426,11 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 80, true);
 	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 15, true);
 	bri = mapValue(abs(col_cos), 0, 1, 50 - bri_max, 40 - bri_min, true);
-	alpha = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 10, 60, true);
+	alpha = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 10, 100, true);
 
+	// Optional: draw the centered bounding box
+
+	// Draw your actual particles
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 	drawingContext.fillRect(ab_x, ab_y, elW, elW);
 }
