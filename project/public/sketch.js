@@ -26,7 +26,7 @@ let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
 let ARTWORK_RATIO = 1.41;
-let BASE_WIDTH = 948;
+let BASE_WIDTH = 248;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
 // This is our reference size for scaling
@@ -55,9 +55,15 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
-	scale(1.5);
-	translate(-width / 6, -height / 6);
+	let scaleFactor = 1;
+
+	translate(width / 2, height / 2);
+	scale(scaleFactor);
+	translate(-width / 2, -height / 2); // Move back to maintain center
+
 	INIT(rseed, nseed);
+
+	// Calculate the center offset based on scale
 
 	// Create animation generator with configuration
 	const animConfig = {
@@ -97,7 +103,7 @@ function INIT(rseed, nseed) {
 
 	// Scale noise values based on MULTIPLIER
 	scl1 = 0.005 / MULTIPLIER;
-	scl2 = 0.00002 / MULTIPLIER;
+	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.005 / MULTIPLIER;
 
 	let sclOffset1 = 1;
@@ -105,14 +111,14 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.41; // 45% padding for X axis
-	let paddingRatioY = 0.41; // 45% padding for Y axis
+	let paddingRatioX = 0.1; // 45% padding for X axis
+	let paddingRatioY = 0.1; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;
 	let paddingY = basePaddingY * MULTIPLIER;
 
-	// Calculate bounds in absolute coordinates
+	// Calculate bounds in absolute coordinates with equal padding
 	let bounds = {
 		left: paddingX,
 		right: width - paddingX,
