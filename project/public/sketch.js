@@ -239,7 +239,7 @@ function setup() {
 
 	// First pass: calculate bounds with a smaller sample
 	calculatingBounds = true;
-	let boundsSamplingFactor = 0.1; // Calculate bounds using 10% of particles
+	let boundsSamplingFactor = 0.2; // Calculate bounds using 20% of particles
 	let boundsSampleNum = Math.max(100, Math.floor(particle_num * boundsSamplingFactor)); // Ensure minimum sample size
 
 	console.log(`Calculating bounds with ${boundsSampleNum} particles (${boundsSamplingFactor * 100}% of total)`);
