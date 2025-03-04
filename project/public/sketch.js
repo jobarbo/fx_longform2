@@ -1,31 +1,16 @@
 let features = "";
 
 let palette = [
-	{
-		h: 267,
-		s: 72,
-		l: 63,
-	},
-	{
-		h: 324,
-		s: 84,
-		l: 65,
-	},
-	{
-		h: 52,
-		s: 99,
-		l: 62,
-	},
-	{
-		h: 195,
-		s: 100,
-		l: 49,
-	},
-	{
-		h: 172,
-		s: 100,
-		l: 48,
-	},
+	{name: "Engineering orange", hex: "d00000", rgb: [208, 0, 0], cmyk: [0, 100, 100, 18], hsb: [0, 100, 82], hsl: [0, 100, 41], lab: [43, 69, 58]},
+	{name: "Selective yellow", hex: "ffba08", rgb: [255, 186, 8], cmyk: [0, 27, 97, 0], hsb: [43, 97, 100], hsl: [43, 100, 52], lab: [80, 13, 81]},
+	{name: "Mauve", hex: "9f86c0", rgb: [159, 134, 192], cmyk: [17, 30, 0, 25], hsb: [263, 30, 75], hsl: [263, 31, 64], lab: [59, 19, -27]},
+	{name: "Powder blue", hex: "bcd4e6", rgb: [188, 212, 230], cmyk: [18, 8, 0, 10], hsb: [206, 18, 90], hsl: [206, 48, 82], lab: [84, -4, -13]},
+	{name: "Persian green", hex: "1b998b", rgb: [27, 153, 139], cmyk: [82, 0, 9, 40], hsb: [173, 82, 60], hsl: [173, 70, 35], lab: [57, -36, -2]},
+	{name: "Azure", hex: "3185fc", rgb: [49, 133, 252], cmyk: [81, 47, 0, 1], hsb: [215, 81, 99], hsl: [215, 97, 59], lab: [57, 17, -66]},
+	{name: "Tekhelet", hex: "5d2e8c", rgb: [93, 46, 140], cmyk: [34, 67, 0, 45], hsb: [270, 67, 55], hsl: [270, 51, 36], lab: [30, 40, -44]},
+	{name: "Tekhelet", hex: "46237a", rgb: [70, 35, 122], cmyk: [43, 71, 0, 52], hsb: [264, 71, 48], hsl: [264, 55, 31], lab: [23, 36, -44]},
+	{name: "Rose Pompadour", hex: "ff7b9c", rgb: [255, 123, 156], cmyk: [0, 52, 39, 0], hsb: [345, 52, 100], hsl: [345, 100, 74], lab: [68, 53, 6]},
+	{name: "Coral pink", hex: "ff9b85", rgb: [255, 155, 133], cmyk: [0, 39, 48, 0], hsb: [11, 48, 100], hsl: [11, 100, 76], lab: [74, 35, 27]},
 ];
 
 let maxDPI = 3;
@@ -107,6 +92,8 @@ let xoff_h = 1;
 let yoff_l_init = 0.6;
 let yoff_l = yoff_l_init;
 let yoff_h = 1;
+let x_val;
+let y_val;
 let cos_val;
 let col_cos;
 let off_cos;
@@ -139,29 +126,6 @@ const offValues_h = [
 	// Add more if needed
 ];
  */
-const offValues_l = [
-	{low: 2, high: 1.1}, // case 0
-	{low: 1, high: 0.1}, // case 1
-	{low: 2, high: 1.2}, // case 2
-	{low: 3, high: 2.2}, // case 3
-	{low: 4, high: 3.2}, // case 4
-	{low: 5, high: 4.2}, // case 5
-	{low: 4, high: 3.2}, // case 6
-	{low: 3, high: 2.2}, // case 7
-	// Add more if needed
-];
-
-const offValues_h = [
-	{low: 2.1, high: 1}, // case 0
-	{low: 1.1, high: 0}, // case 1
-	{low: 2.2, high: 1}, // case 2
-	{low: 3.2, high: 2}, // case 3
-	{low: 4.2, high: 3}, // case 4
-	{low: 5.2, high: 4}, // case 5
-	{low: 4.2, high: 3}, // case 6
-	{low: 3.2, high: 2}, // case 7
-	// Add more if needed
-];
 
 let minX = Infinity;
 let maxX = -Infinity;
@@ -170,6 +134,72 @@ let maxY = -Infinity;
 let centerOffsetX = 0;
 let centerOffsetY = 0;
 let calculatingBounds = true;
+
+function generateUpDownPattern(maxPatternValue) {
+	const pattern = [];
+
+	// Create the up-down pattern
+	for (let i = 1; i <= maxPatternValue; i++) {
+		pattern.push(i);
+	}
+	for (let i = maxPatternValue - 1; i > 1; i--) {
+		pattern.push(i);
+	}
+
+	return pattern;
+}
+
+function generateSymmetricOffValues(numCases, baseLow, baseHigh, maxPatternValue) {
+	const offValues = [];
+	const pattern = generateUpDownPattern(maxPatternValue);
+	const increment = 0.0015;
+
+	for (let i = 0; i < numCases; i++) {
+		const patternIndex = i % pattern.length;
+		const low = baseLow + (pattern[patternIndex] - 1) * increment;
+		const high = baseHigh + (pattern[patternIndex] - 1) * increment;
+		offValues.push({low, high});
+	}
+
+	return offValues;
+}
+console.log(angle1.length);
+const numCases = angle1.length; // Number of cases you want
+
+//! original
+const baseLow_l = 1;
+const baseHigh_l = 0.148;
+const maxPatternValue_l = 1;
+
+const baseLow_h = 1.148;
+const baseHigh_h = 0;
+const maxPatternValue_h = 1;
+
+//! inverted
+/* const baseLow_l = 0.148;
+const baseHigh_l = 1;
+const maxPatternValue_l = 1;
+
+const baseLow_h = 0;
+const baseHigh_h = 1.148;
+const maxPatternValue_h = 1; */
+
+// !high pattern / eidolons
+/*const baseLow_l = 0.5;
+const baseHigh_l = 0;
+const maxPatternValue_l = 3;
+
+const baseLow_h = 0;
+const baseHigh_h = 0.5;
+const maxPatternValue_h = 3;*/
+
+//! 2 fold symmetry to create eidolons
+
+const offValues_l = generateSymmetricOffValues(numCases, baseLow_l, baseHigh_l, maxPatternValue_l);
+const offValues_h = generateSymmetricOffValues(numCases, baseLow_h, baseHigh_h, maxPatternValue_h);
+
+console.log(offValues_l);
+console.log(offValues_h);
 
 function setup() {
 	features = $fx.getFeatures();
@@ -184,7 +214,7 @@ function setup() {
 
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
 	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
-	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
+	c = createCanvas(C_WIDTH, C_WIDTH * 1);
 	pixelDensity(dpi(maxDPI));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -207,8 +237,16 @@ function setup() {
 
 	translate(width / 2, height / 2);
 
-	// First pass: calculate bounds without drawing
+	// First pass: calculate bounds with a smaller sample
 	calculatingBounds = true;
+	let boundsSamplingFactor = 0.1; // Calculate bounds using 10% of particles
+	let boundsSampleNum = Math.max(100, Math.floor(particle_num * boundsSamplingFactor)); // Ensure minimum sample size
+
+	console.log(`Calculating bounds with ${boundsSampleNum} particles (${boundsSamplingFactor * 100}% of total)`);
+
+	let tempParticleNum = particle_num;
+	particle_num = boundsSampleNum; // Temporarily reduce particle count
+
 	let sketch = drawGenerator();
 	while (true) {
 		let result = sketch.next();
@@ -218,8 +256,10 @@ function setup() {
 	// Calculate offsets to center the drawing
 	centerOffsetX = -(minX + maxX) / 2;
 	centerOffsetY = -(minY + maxY) / 2;
+	console.log(`Centering offsets: X=${centerOffsetX}, Y=${centerOffsetY}`);
 
 	// Reset for actual drawing
+	particle_num = tempParticleNum; // Restore original particle count
 	minX = Infinity;
 	maxX = -Infinity;
 	minY = Infinity;
@@ -227,7 +267,9 @@ function setup() {
 	calculatingBounds = false;
 	elapsedTime = 0;
 	framesRendered = 0;
-	generator_frameCount = 0;
+
+	// Reset the generator_frameCount since drawGenerator relies on this
+	startTime = frameCount;
 
 	// Start actual drawing
 	sketch = drawGenerator();
@@ -246,11 +288,13 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 45);
-		sin_val = cos(generator_frameCount * 45);
-		noise_cos = sin(generator_frameCount * 170);
+		cos_val = cos(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
+		sin_val = sin(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
+		noise_cos = sin(generator_frameCount * 40); //! try cos for different pattern
 		off_cos = sin(generator_frameCount * 800);
-		col_cos = cos(generator_frameCount * 45);
+		col_cos = cos(generator_frameCount * 50); //!change to sin for different color
+		x_val = sin(generator_frameCount * 20);
+		y_val = sin(generator_frameCount * 20);
 		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
@@ -329,8 +373,8 @@ function* drawGenerator() {
 function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_val, sin_val, noise_cos, col_cos, off_cos) {
 	xoff = random(xoff_l, xoff_h);
 	yoff = random(yoff_l, yoff_h);
-	xoff = ZZ(xoff, 1.15, -0.001, 0.001);
-	yoff = ZZ(yoff, 1.15, -0.001, 0.001);
+	/* 	xoff = ZZ(xoff, 1.15, -0.001, 0.001);
+	yoff = ZZ(yoff, 1.15, -0.001, 0.001); */
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
 	noiseDetail(5, 0.5);
@@ -378,6 +422,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
+	/* 	let x = mapValue(noise(xoff, x_val, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(noise(yoff, y_val, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 	if (x < minX) minX = x;
 	if (x > maxX) maxX = x;
 	if (y < minY) minY = y;
@@ -410,7 +456,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	/* 		let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-	let w = mapValue(abs(cos_val), 0, 1, 0.26, 0.36, true);
+	let w = mapValue(abs(cos_val), 0, 1, 0.32, 0.46, true);
 	let elW = w * MULTIPLIER;
 	let ab_x = centeredX * MULTIPLIER; // Use centered coordinates
 	let ab_y = centeredY * MULTIPLIER; // Use centered coordinates
@@ -421,12 +467,20 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 		sat = palette[index].s;
 		b = palette[index].l; */
 
-	hue = mapValue(abs(col_cos), 0, 1, 360, 190, true);
-	sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true);
-	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 80, true);
-	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 0, 15, true);
-	bri = mapValue(abs(col_cos), 0, 1, 50 - bri_max, 40 - bri_min, true);
-	alpha = mapValue(elapsedTime, MAX_FRAMES / 1.15, MAX_FRAMES / 1, 10, 100, true);
+	let index = Math.floor(mapValue(abs(col_cos), 0, 1, 0, palette.length - 1, true));
+
+	hue = palette[index].hsl[0];
+	sat = palette[index].hsl[1];
+	b = palette[index].hsl[2];
+
+	/* 	hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
+		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true); */
+	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 100, true);
+	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 0, true);
+	bri = mapValue(abs(cos_val), 0.9, 1, b - bri_max, b - bri_min, true);
+	alpha = mapValue(abs(cos_val), 0.9, 1, 50, 100, true);
+	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
+	drawingContext.fillRect(ab_x, ab_y, elW, elW);
 
 	// Optional: draw the centered bounding box
 
