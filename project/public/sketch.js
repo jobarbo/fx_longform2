@@ -232,8 +232,8 @@ function setup() {
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = height * 0.65;
-	pos_range_y = height * 0.65;
+	pos_range_x = height * 0.6;
+	pos_range_y = height * 0.6;
 
 	translate(width / 2, height / 2);
 
@@ -250,7 +250,16 @@ function setup() {
 	let sketch = drawGenerator();
 	while (true) {
 		let result = sketch.next();
-		if (result.done) break;
+		if (result.done) {
+			/* 			push();
+			translate(0, 0);
+			rotate(225);
+			stroke(0, 100, 100, 100);
+			noFill();
+			rect(0, 0, maxX - minX, maxY - minY);
+			pop(); */
+			break;
+		}
 	}
 
 	// Calculate offsets to center the drawing
@@ -377,7 +386,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	yoff = ZZ(yoff, 1.15, -0.001, 0.001); */
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(5, 0.5);
+	noiseDetail(6, 0.4);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -422,20 +431,6 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	/* 	let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-	/* 	let x = mapValue(noise(xoff, x_val, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, y_val, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-	if (x < minX) minX = x;
-	if (x > maxX) maxX = x;
-	if (y < minY) minY = y;
-	if (y > maxY) maxY = y;
-
-	// If we're just calculating bounds, don't draw anything
-	if (calculatingBounds) return;
-
-	// Apply the centering offset for actual drawing
-	let centeredX = x + centerOffsetX;
-	let centeredY = y + centerOffsetY;
-
 	//! Astral Beings 3
 	/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -455,6 +450,18 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	//!complex organism (aliens)
 	/* 		let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+
+	if (x < minX) minX = x;
+	if (x > maxX) maxX = x;
+	if (y < minY) minY = y;
+	if (y > maxY) maxY = y;
+
+	// If we're just calculating bounds, don't draw anything
+	if (calculatingBounds) return;
+
+	// Apply the centering offset for actual drawing
+	let centeredX = x + centerOffsetX;
+	let centeredY = y + centerOffsetY;
 
 	let w = mapValue(abs(cos_val), 0, 1, 0.32, 0.46, true);
 	let elW = w * MULTIPLIER;
@@ -478,11 +485,12 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 100, true);
 	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 0, true);
 	bri = mapValue(abs(cos_val), 0.9, 1, b - bri_max, b - bri_min, true);
-	alpha = mapValue(abs(cos_val), 0.9, 1, 50, 100, true);
+	a_min = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 50, true);
+	a_max = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 0, true);
+	a = 100;
+	alpha = mapValue(abs(cos_val), 0.9, 1, 50 - a_min, 100 - a_max, true);
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 	drawingContext.fillRect(ab_x, ab_y, elW, elW);
-
-	// Optional: draw the centered bounding box
 
 	// Draw your actual particles
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
