@@ -111,8 +111,8 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.1; // 45% padding for X axis
-	let paddingRatioY = 0.1; // 45% padding for Y axis
+	let paddingRatioX = -0.05; // 45% padding for X axis
+	let paddingRatioY = -0.05; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;
