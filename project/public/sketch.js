@@ -482,13 +482,13 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 
 	/* 	hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
 		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true); */
-	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 100, true);
-	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 0, true);
-	bri = mapValue(abs(cos_val), 0.9, 1, b - bri_max, b - bri_min, true);
-	a_min = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 50, true);
-	a_max = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 0, true);
+	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 100, true);
+	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
+	bri = mapValue(abs(cos_val), 0.95, 1, b - bri_max, b - bri_min, true);
+	a_min = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 50, true);
+	a_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
 	a = 100;
-	alpha = mapValue(abs(cos_val), 0.9, 1, 50 - a_min, 100 - a_max, true);
+	alpha = mapValue(abs(cos_val), 0.95, 1, 50 - a_min, 100 - a_max, true);
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 	drawingContext.fillRect(ab_x, ab_y, elW, elW);
 
