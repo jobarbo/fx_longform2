@@ -7,7 +7,7 @@ class Mover {
 		this.sat = 0;
 		this.bri = 0;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 1 * MULTIPLIER;
+		this.s = 0 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.a1 = a1;
@@ -50,7 +50,7 @@ class Mover {
 		this.gaussianOffsetY = map(abs(pos), 0, 5120, 10.1, 0.00001, true); */
 
 		//!invert the two values after pos to invert the curve
-		this.s = map(pos, 24.01, 24, 2 * MULTIPLIER, 0, true);
+		this.s = map(pos, 24.01, 24, 3 * MULTIPLIER, 0, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;

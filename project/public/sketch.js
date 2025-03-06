@@ -60,8 +60,8 @@ function setup() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.000175, 0.001);
-	scl2 = random(0.000175, 0.001);
+	scl1 = random(0.000175, 0.002);
+	scl2 = random(0.000175, 0.002);
 	a1 = int(random(50, 400) * MULTIPLIER);
 	a2 = int(random(50, 400) * MULTIPLIER);
 
