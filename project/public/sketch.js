@@ -73,7 +73,7 @@ function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0) {
+			if (currentFrame > -1) {
 				mover.show();
 			}
 		},
@@ -109,7 +109,6 @@ function INIT(rseed, nseed) {
 	let sclOffset1 = 1;
 	let sclOffset2 = 1;
 	let sclOffset3 = 1;
-
 	// Calculate padding based on the reference size and scale it
 	let paddingRatioX = -0.05; // 45% padding for X axis
 	let paddingRatioY = -0.05; // 45% padding for Y axis
@@ -155,31 +154,31 @@ function INIT(rseed, nseed) {
 
 function initGrid(brightness) {
 	// Add subtle organic grid texture
-	let gridSizeX = width / 100; // Size of grid cells
-	let gridSizeY = width / 100; // Size of grid cells
-	let variance = gridSizeX / 11114; // Amount of variation for particles
+	let gridSizeX = width / 150; // Size of grid cells
+	let gridSizeY = width / 150; // Size of grid cells
+	let variance = gridSizeX / 1; // Amount of variation for particles
 	let g_variance = gridSizeX / 1111;
 	let noiseScale = 0.05; // Scale of the noise
 
 	// Vertical lines of particles
 	for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX) {
-		for (let y = -gridSizeY; y <= height + gridSizeY; y += gridSizeY / 20) {
+		for (let y = -gridSizeY; y <= height + gridSizeY; y += gridSizeY / 10) {
 			// More dense particle distribution
 			let xPos = x + map(noise(x * noiseScale, y * noiseScale) + randomGaussian(0, g_variance), 0, 1, -variance, variance);
 			noStroke();
-			fill(0, 0, brightness, random(10, 100));
-			rect(xPos, y, random(0.15, 0.55) * MULTIPLIER, random(0.15, 0.55) * MULTIPLIER);
+			fill(0, 0, brightness, random(10, 60));
+			rect(xPos, y, random(0.05, 0.25) * MULTIPLIER, random(0.05, 0.25) * MULTIPLIER);
 		}
 	}
 
 	// Horizontal lines of particles
 	for (let y = -gridSizeY; y <= height + gridSizeY; y += gridSizeY) {
-		for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX / 20) {
+		for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX / 10) {
 			// More dense particle distribution
 			let yPos = y + map(noise(x * noiseScale, y * noiseScale) + randomGaussian(0, g_variance), 0, 1, -variance, variance);
 			noStroke();
-			fill(0, 0, brightness, random(10, 100));
-			rect(x, yPos, random(0.15, 0.55) * MULTIPLIER, random(0.15, 0.55) * MULTIPLIER);
+			fill(0, 0, brightness, random(10, 60));
+			rect(x, yPos, random(0.05, 0.25) * MULTIPLIER, random(0.05, 0.25) * MULTIPLIER);
 		}
 	}
 }
