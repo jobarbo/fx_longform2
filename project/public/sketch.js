@@ -45,27 +45,21 @@ let bri_min = 60;
 let displacement1 = 0;
 let displacement2 = 100;
 
-//let angle1 = [45, 105, 165, 225, 285, 345];
-/* let angle1 = [0, 45, 90, 135, 180, 225, 270, 315]; */
-/* let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5]; */
-/* let angle1 = [45, 225]; */
-//let angle1 = [45, 135, 225, 315];
-//let angle1 = [0, 90, 180, 270];
-//let angle1 = [0, 45, 90];
-//let angle1 = [0, 90, 270];
-//let angle1 = [180, 270];
-//let angle1 = [90, 270];
-//let angle1 = [45];
-//let angle1 = [5, 25, 45, 65, 85, 105, 125, 145, 165, 185, 205, 225, 245, 265, 285, 305, 325, 345];
-// let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
-// 32 angles array
-let angle1 = [
-	0, 11.25, 22.5, 33.75, 45, 56.25, 67.5, 78.75, 90, 101.25, 112.5, 123.75, 135, 146.25, 157.5, 168.75, 180, 191.25, 202.5, 213.75, 225, 236.25, 247.5, 258.75, 270, 281.25, 292.5, 303.75, 315, 326.25,
-	337.5, 348.75,
-];
-console.log(angle1.length);
-//let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
-//let angle1 = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 315, 320, 325, 330, 335, 340, 345, 350, 355] ;
+// Function to generate evenly spaced angles
+function generateAngles(numAngles, startAngle = 0) {
+	const angles = [];
+	const angleStep = 360 / numAngles;
+
+	for (let i = 0; i < numAngles; i++) {
+		angles.push((startAngle + i * angleStep) % 360);
+	}
+
+	return angles;
+}
+
+let numAngles = 32;
+let angle1 = generateAngles(numAngles);
+
 let animation;
 let drawing = true;
 let elapsedTime = 0;
@@ -398,12 +392,13 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	sat = palette[index].hsl[1];
 	b = palette[index].hsl[2];
 
-	/* 	hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
-	sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true); */
-	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 100, true);
-	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.21, MAX_FRAMES / 1.2, 0, 0, true);
-	bri = mapValue(abs(cos_val), 0.9, 1, b - bri_max, b - bri_min, true);
-	alpha = mapValue(abs(cos_val), 0.9, 1, 50, 100, true);
+	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 100, true);
+	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
+	bri = mapValue(abs(cos_val), 0.01, 1, b - bri_max, b - bri_min, true);
+	a_min = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 50, true);
+	a_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
+	a = 100;
+	alpha = mapValue(abs(cos_val), 0.95, 1, 50 - a_min, 100 - a_max, true);
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 	drawingContext.fillRect(ab_x, ab_y, elW, elW);
 }
