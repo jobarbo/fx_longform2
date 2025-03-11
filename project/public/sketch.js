@@ -107,10 +107,8 @@ function showLoadingBar(elapsedTime, maxFrames, renderStart) {
 	let averageFrameTime = totalElapsedTime / framesRendered;
 
 	let remainingFrames = maxFrames - framesRendered;
-	console.log(remainingFrames);
-	let estimatedTimeRemaining = averageFrameTime * remainingFrames;
 
-	console.log(estimatedTimeRemaining);
+	let estimatedTimeRemaining = averageFrameTime * remainingFrames;
 
 	// Convert milliseconds to seconds
 	let timeLeftSec = Math.round(estimatedTimeRemaining / 1000);
