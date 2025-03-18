@@ -65,6 +65,7 @@ function setup() {
 
 	// Set up the main canvas
 	mainCanvas.pixelDensity(3);
+	shaderCanvas.pixelDensity(3);
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 
 	// Set background for main canvas
@@ -196,17 +197,17 @@ function draw() {
 	myShader.setUniform("uTime", millis() / 1000.0);
 	myShader.setUniform("uResolution", [width, height]);
 
-	// Draw a plane that covers the entire canvas in WebGL space
+	// Draw a rectangle that covers the entire viewport
 	push();
 	noStroke();
 
-	// Use normalized device coordinates
-	translate(0, 0, 0);
+	// Draw the quad with correct texture coordinates
 	beginShape();
-	vertex(-1, -1, 0, 0, 0);
-	vertex(1, -1, 0, 1, 0);
-	vertex(1, 1, 0, 1, 1);
-	vertex(-1, 1, 0, 0, 1);
+	// Format: vertex(x, y, z, textureU, textureV)
+	vertex(-1, 1, 0, 0, 0); // top-left
+	vertex(1, 1, 0, 1, 0); // top-right
+	vertex(1, -1, 0, 1, 1); // bottom-right
+	vertex(-1, -1, 0, 0, 1); // bottom-left
 	endShape(CLOSE);
 
 	pop();

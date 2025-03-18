@@ -8,32 +8,27 @@ uniform vec2 uResolution;
 
 void main() {
     vec2 uv = vTexCoord;
-    // Flip the y coordinate
-    uv.y = 1.0 - uv.y;
 
-    // Create a more pronounced chromatic aberration effect
-    float aberrationAmount = 0.0015; // Increase this for stronger effect
-    float timeScale = 0.5;
+    // Wave distortion
+    float waveX = sin(uv.y * 1.0 + uTime) * 0.001;
+    float waveY = cos(uv.x * 1.0 + uTime) * 0.001;
+    vec2 waveOffset = vec2(waveX, waveY);
 
-    // Add some wave distortion
-    vec2 uvOffset = vec2(
-        sin(uv.y * 20.0 + uTime * timeScale) * 0.005,
-        cos(uv.x * 15.0 + uTime * timeScale) * 0.005
-    );
+    // Chromatic aberration
+    float aberrationAmount = 0.002;
+    vec2 redOffset = uv + waveOffset + vec2(aberrationAmount, 0.0);
+    vec2 blueOffset = uv + waveOffset - vec2(aberrationAmount, 0.0);
+    vec2 greenOffset = uv + waveOffset;
 
-    // Sample the texture with different offsets for each color channel
-    float r = texture2D(uTexture, uv + uvOffset + vec2(aberrationAmount, 0.0)).r;
-    float g = texture2D(uTexture, uv + uvOffset).g;
-    float b = texture2D(uTexture, uv + uvOffset - vec2(aberrationAmount, 0.0)).b;
+    // Sample colors with offsets
+    vec4 redChannel = texture2D(uTexture, redOffset);
+    vec4 greenChannel = texture2D(uTexture, greenOffset);
+    vec4 blueChannel = texture2D(uTexture, blueOffset);
 
-    // Add some subtle color shifting based on position
-    vec3 color = vec3(r, g, b);
-
-    // Add vignette effect
+    // Combine channels
+    vec4 color = vec4(redChannel.r, greenChannel.g, blueChannel.b, 1.0);
 
 
-    // Combine effects
 
-
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = color;
 }
