@@ -49,9 +49,9 @@ class Mover {
 		this.maxBoundY = (this.yMax + this.wrapPaddingY) * height;
 	}
 
-	show() {
-		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
-		drawingContext.fillRect(this.x, this.y, this.s, this.s);
+	show(canvas) {
+		canvas.drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
+		canvas.drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
 
 	move(frameCount, maxFrames) {

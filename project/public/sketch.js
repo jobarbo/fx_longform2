@@ -6,7 +6,12 @@ let elapsedTime = 0;
 let particleNum = 500000;
 // Adjust cycle for smoother percentage updates (1% increments)
 let cycle = parseInt((maxFrames * particleNum) / 1170);
-let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
+let executionTimer = new ExecutionTimer();
+
+// Shader variables
+let shaderCanvas;
+let myShader;
+let mainCanvas;
 
 let scl1;
 let scl2;
@@ -37,33 +42,48 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
+function preload() {
+	// Load shaders
+	myShader = loadShader("shaders/vertex.vert", "shaders/fragment.frag");
+}
+
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
 	startTime = frameCount;
-	executionTimer.start(); // Start the timer
+	executionTimer.start();
 
 	// canvas setup
-	// Take the smaller screen dimension to ensure it fits
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
-	c = createCanvas(DIM, DIM * ARTWORK_RATIO);
-	pixelDensity(3);
-	colorMode(HSB, 360, 100, 100, 100);
+
+	// Create main canvas for the artwork
+	mainCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
+	// Create shader canvas
+	shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
+
+	// Set up the main canvas
+	mainCanvas.pixelDensity(3);
+	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
+
+	// Set background for main canvas
+	let bgCol = spectral.mix("#000", "#fff", 0.88);
+	mainCanvas.background(bgCol);
+
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
-	let scaleFactor = 1;
 
-	translate(width / 2, height / 2);
-	scale(scaleFactor);
-	translate(-width / 2, -height / 2); // Move back to maintain center
+	// Apply transformations to main canvas
+	mainCanvas.push();
+	mainCanvas.translate(mainCanvas.width / 2, mainCanvas.height / 2);
+	mainCanvas.scale(1);
+	mainCanvas.translate(-mainCanvas.width / 2, -mainCanvas.height / 2);
+	mainCanvas.pop();
 
 	INIT(rseed, nseed);
-
-	// Calculate the center offset based on scale
 
 	// Create animation generator with configuration
 	const animConfig = {
@@ -71,10 +91,10 @@ function setup() {
 		maxFrames: maxFrames,
 		startTime: startTime,
 		cycleLength: cycle,
-		currentFrame: 0, // Add current frame tracking
+		currentFrame: 0,
 		renderItem: (mover, currentFrame) => {
 			if (currentFrame > -1) {
-				mover.show();
+				mover.show(mainCanvas);
 			}
 		},
 		moveItem: (mover, currentFrame) => {
@@ -82,7 +102,6 @@ function setup() {
 		},
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
-			//initGrid(100);
 			$fx.preview();
 			document.complete = true;
 		},
@@ -94,7 +113,20 @@ function setup() {
 }
 
 function windowResized() {
-	resizeCanvas(windowWidth, windowHeight);
+	// Calculate new dimensions
+	DIM = min(windowWidth, windowHeight);
+	let w = DIM;
+	let h = DIM * ARTWORK_RATIO;
+
+	// Resize both canvases
+	resizeCanvas(w, h);
+	mainCanvas.resizeCanvas(w, h);
+
+	// Recenter the WebGL canvas
+	let x = (windowWidth - w) / 2;
+	let y = (windowHeight - h) / 2;
+	shaderCanvas.position(x, y);
+
 	INIT(seed);
 }
 
@@ -152,33 +184,30 @@ function INIT(rseed, nseed) {
 	//initGrid(0);
 }
 
-function initGrid(brightness) {
-	// Add subtle organic grid texture
-	let gridSizeX = width / 150; // Size of grid cells
-	let gridSizeY = width / 150; // Size of grid cells
-	let variance = gridSizeX / 1; // Amount of variation for particles
-	let g_variance = gridSizeX / 1111;
-	let noiseScale = 0.05; // Scale of the noise
+function draw() {
+	// Clear the shader canvas
+	clear();
 
-	// Vertical lines of particles
-	for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX) {
-		for (let y = -gridSizeY; y <= height + gridSizeY; y += gridSizeY / 10) {
-			// More dense particle distribution
-			let xPos = x + map(noise(x * noiseScale, y * noiseScale) + randomGaussian(0, g_variance), 0, 1, -variance, variance);
-			noStroke();
-			fill(0, 0, brightness, random(10, 60));
-			rect(xPos, y, random(0.05, 0.25) * MULTIPLIER, random(0.05, 0.25) * MULTIPLIER);
-		}
-	}
+	// Apply shader effects
+	shader(myShader);
 
-	// Horizontal lines of particles
-	for (let y = -gridSizeY; y <= height + gridSizeY; y += gridSizeY) {
-		for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX / 10) {
-			// More dense particle distribution
-			let yPos = y + map(noise(x * noiseScale, y * noiseScale) + randomGaussian(0, g_variance), 0, 1, -variance, variance);
-			noStroke();
-			fill(0, 0, brightness, random(10, 60));
-			rect(x, yPos, random(0.05, 0.25) * MULTIPLIER, random(0.05, 0.25) * MULTIPLIER);
-		}
-	}
+	// Pass uniforms to the shader
+	myShader.setUniform("uTexture", mainCanvas);
+	myShader.setUniform("uTime", millis() / 1000.0);
+	myShader.setUniform("uResolution", [width, height]);
+
+	// Draw a plane that covers the entire canvas in WebGL space
+	push();
+	noStroke();
+
+	// Use normalized device coordinates
+	translate(0, 0, 0);
+	beginShape();
+	vertex(-1, -1, 0, 0, 0);
+	vertex(1, -1, 0, 1, 0);
+	vertex(1, 1, 0, 1, 1);
+	vertex(-1, 1, 0, 0, 1);
+	endShape(CLOSE);
+
+	pop();
 }
