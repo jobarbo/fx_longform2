@@ -93,6 +93,11 @@ let yoff_h = 1;
 let cos_val;
 let angle_index = 0;
 
+// Shader variables
+let shaderProgram;
+let graphicsOriginal;
+let finalBuffer; // Add a final buffer to store the accumulated drawing
+
 function generateUpDownPattern(maxPatternValue) {
 	const pattern = [];
 
@@ -159,6 +164,11 @@ const offValues_h = generateSymmetricOffValues(numCases, baseLow_h, baseHigh_h, 
 console.log(offValues_l);
 console.log(offValues_h);
 
+function preload() {
+	// Load shader files
+	shaderProgram = loadShader("shaders/vertex.vert", "shaders/fragment.frag");
+}
+
 function setup() {
 	features = $fx.getFeatures();
 
@@ -172,28 +182,56 @@ function setup() {
 
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
 	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
-	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
+
+	// Create main canvas with WEBGL mode
+	c = createCanvas(C_WIDTH, C_WIDTH * RATIO, WEBGL);
 	pixelDensity(dpi(maxDPI));
+
+	// Create the offscreen graphics buffer for original content
+	graphicsOriginal = createGraphics(C_WIDTH, C_WIDTH * RATIO);
+	graphicsOriginal.colorMode(HSB, 360, 100, 100, 100);
+	graphicsOriginal.pixelDensity(dpi(maxDPI));
+	graphicsOriginal.rectMode(CENTER);
+	graphicsOriginal.angleMode(DEGREES);
+
+	// Create a final buffer to store accumulated drawing
+	finalBuffer = createGraphics(C_WIDTH, C_WIDTH * RATIO);
+	finalBuffer.pixelDensity(dpi(maxDPI));
+
+	// Setup main canvas settings
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
-	rectMode(CENTER);
 	angleMode(DEGREES);
-	//background(45, 0, 5);
-	//background(45, 0, 100);
-	drawingContext.globalCompositeOperation = "source-over";
-	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
+
+	// Initialize the original graphics with background
+	graphicsOriginal.drawingContext.globalCompositeOperation = "source-over";
+	let gradient = graphicsOriginal.drawingContext.createRadialGradient(
+		graphicsOriginal.width / 2,
+		graphicsOriginal.height / 2,
+		0,
+		graphicsOriginal.width / 2,
+		graphicsOriginal.height / 2,
+		graphicsOriginal.width / 2
+	);
 	gradient.addColorStop(0.5, "hsl(0, 100%, 95%,100%)");
 	gradient.addColorStop(0.8, "hsl(10, 100%, 96%,100%)");
-	drawingContext.fillStyle = gradient;
-	drawingContext.fillRect(0, 0, width, height);
+	graphicsOriginal.drawingContext.fillStyle = gradient;
+	graphicsOriginal.drawingContext.fillRect(0, 0, graphicsOriginal.width, graphicsOriginal.height);
+
+	// Also initialize the final buffer with the same background
+	finalBuffer.drawingContext.globalCompositeOperation = "source-over";
+	let finalGradient = finalBuffer.drawingContext.createRadialGradient(finalBuffer.width / 2, finalBuffer.height / 2, 0, finalBuffer.width / 2, finalBuffer.height / 2, finalBuffer.width / 2);
+	finalGradient.addColorStop(0.5, "hsl(0, 100%, 95%,100%)");
+	finalGradient.addColorStop(0.8, "hsl(10, 100%, 96%,100%)");
+	finalBuffer.drawingContext.fillStyle = finalGradient;
+	finalBuffer.drawingContext.fillRect(0, 0, finalBuffer.width, finalBuffer.height);
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = width * 0.5;
-	pos_range_y = height * 0.5;
-	translate(width / 2, height / 2);
-	rotate(45);
+	pos_range_x = graphicsOriginal.width * 0.5;
+	pos_range_y = graphicsOriginal.height * 0.5;
+
 	let sketch = drawGenerator();
 	function animate() {
 		animation = setTimeout(animate, 0);
@@ -202,18 +240,70 @@ function setup() {
 	animate();
 }
 
+// Separate draw function for p5.js that handles shader rendering
+function draw() {
+	// Clear the shader canvas
+	clear();
+
+	// Apply shader to the main canvas
+	shader(shaderProgram);
+
+	// Set the shader uniforms - use finalBuffer instead of graphicsOriginal
+	shaderProgram.setUniform("uTexture", finalBuffer);
+	shaderProgram.setUniform("uTime", millis() / 1000.0);
+	shaderProgram.setUniform("uResolution", [width, height]);
+
+	// Draw a plane that covers the entire canvas in WebGL space
+	push();
+	noStroke();
+
+	// Use normalized device coordinates
+	translate(0, 0, 0);
+	beginShape();
+	vertex(-1, -1, 0, 0, 0);
+	vertex(1, -1, 0, 1, 0);
+	vertex(1, 1, 0, 1, 1);
+	vertex(-1, 1, 0, 0, 1);
+	endShape(CLOSE);
+
+	pop();
+
+	// Show loading progress
+	showLoadingBar(elapsedTime, MAX_FRAMES, renderStart);
+
+	// Check if we're done with generation
+	// But don't stop the animation loop - we want the shader to keep animating
+	if (elapsedTime > MAX_FRAMES && drawing) {
+		window.rendered = c.canvas;
+		document.complete = true;
+		let endTime = Date.now();
+		let timeDiff = endTime - renderStart;
+		console.log("Render time: " + timeDiff + " ms");
+		drawing = false; // Mark as not drawing, but don't call noLoop()
+	}
+}
+
 function* drawGenerator() {
 	let count = 0;
 	let generator_frameCount = 0;
 	let draw_every = cycle;
 
 	while (true) {
-		// Draw with p5.js things
-		//blendMode(SCREEN);
-		//! try zz here
-		cos_val = cos(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
-		sin_val = sin(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
-		noise_cos = sin(generator_frameCount * 40); //! try cos for different pattern
+		// Stop generating new content if we've reached the frame limit
+		if (elapsedTime > MAX_FRAMES) {
+			return; // Exit the generator
+		}
+
+		// Clear the original graphics to start with a fresh frame for this iteration
+		graphicsOriginal.clear();
+
+		// Use transparent background for each new frame to allow accumulation
+		graphicsOriginal.background(0, 0, 0, 0);
+
+		// Calculate parameters for the frame
+		cos_val = cos(generator_frameCount * 12);
+		sin_val = sin(generator_frameCount * 12);
+		noise_cos = sin(generator_frameCount * 40);
 		off_cos = sin(generator_frameCount * 800);
 		col_cos = cos(generator_frameCount * 50); //!change to sin for different color
 
@@ -239,6 +329,11 @@ function* drawGenerator() {
 		let scale1 = 1;
 		let xoff_l_high;
 		let xoff_l_low;
+
+		graphicsOriginal.push();
+		graphicsOriginal.translate(graphicsOriginal.width / 2, graphicsOriginal.height / 2);
+		graphicsOriginal.rotate(45);
+
 		for (let i = 0; i < angle1.length; i++) {
 			xoff_l_high = mapValue(abs(noise_cos), 0, 1, offValues_h[i].low, offValues_h[i].high, true);
 			xoff_l_low = mapValue(abs(noise_cos), 0, 1, offValues_l[i].low, offValues_l[i].high, true);
@@ -260,11 +355,9 @@ function* drawGenerator() {
 			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
 			yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true);
 
-			/* 			xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true); */
-			push();
-			rotate(angle1[i]);
-			scale(scale1);
+			graphicsOriginal.push();
+			graphicsOriginal.rotate(angle1[i]);
+			graphicsOriginal.scale(1);
 			for (let s = 0; s < particle_num; s++) {
 				paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val, sin_val, noise_cos, col_cos, off_cos);
 
@@ -274,28 +367,21 @@ function* drawGenerator() {
 				}
 				count++;
 			}
-			pop();
+			graphicsOriginal.pop();
 		}
 
-		//particle_num = mapValue(elapsedTime, MAX_FRAMES / 20, MAX_FRAMES / 19, start_particle_num, start_particle_num / 40, true);
+		graphicsOriginal.pop();
 
+		// Copy the current frame to the final buffer (accumulate drawing)
+		finalBuffer.drawingContext.globalCompositeOperation = "source-over";
+		finalBuffer.image(graphicsOriginal, 0, 0);
+
+		// Update frame count and elapsed time
 		elapsedTime = generator_frameCount - startTime;
-
-		showLoadingBar(elapsedTime, MAX_FRAMES, renderStart);
-
 		generator_frameCount++;
-		if (elapsedTime > MAX_FRAMES && drawing) {
-			window.rendered = c.canvas;
-			//hl.token.capturePreview();
-			document.complete = true;
-			// calculate the time it took to render the image
-			let endTime = Date.now();
-			let timeDiff = endTime - renderStart;
-			console.log("Render time: " + timeDiff + " ms");
 
-			noLoop();
-			return;
-		}
+		// No need to do shader rendering here as it's now in the draw function
+		yield;
 	}
 }
 
@@ -380,12 +466,11 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let x = mapValue(noise(xoff, x_val, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(noise(yoff, y_val, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
-	//let w = mapValue(abs(cos_val), 0, 1, 0.16, 0.26, true);
 	let w = mapValue(abs(cos_val), 0, 1, 0.32, 0.46, true);
 
 	let elW = w * MULTIPLIER;
-	let ab_x = constrain(x, -width / 2.95, width / 2.95) * MULTIPLIER;
-	let ab_y = constrain(y, -height / 2.95, height / 2.95) * MULTIPLIER;
+	let ab_x = constrain(x, -graphicsOriginal.width / 2.95, graphicsOriginal.width / 2.95) * MULTIPLIER;
+	let ab_y = constrain(y, -graphicsOriginal.height / 2.95, graphicsOriginal.height / 2.95) * MULTIPLIER;
 	let index = Math.floor(mapValue(abs(col_cos), 0, 1, 0, palette.length - 1, true));
 
 	hue = palette[index].hsl[0];
@@ -399,8 +484,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	a_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
 	a = 100;
 	alpha = mapValue(abs(cos_val), 0.95, 1, 50 - a_min, 100 - a_max, true);
-	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
-	drawingContext.fillRect(ab_x, ab_y, elW, elW);
+	graphicsOriginal.drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
+	graphicsOriginal.drawingContext.fillRect(ab_x, ab_y, elW, elW);
 }
 
 function showLoadingBar(elapsedTime, MAX_FRAMES, renderStart) {
