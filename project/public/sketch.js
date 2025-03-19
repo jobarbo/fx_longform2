@@ -64,8 +64,8 @@ function setup() {
 	shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
 
 	// Set up the main canvas
-	mainCanvas.pixelDensity(1);
-	shaderCanvas.pixelDensity(1);
+	mainCanvas.pixelDensity(3);
+	shaderCanvas.pixelDensity(3);
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 
 	// Set background for main canvas
