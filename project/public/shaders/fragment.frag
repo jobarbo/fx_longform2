@@ -11,15 +11,15 @@ void main() {
     vec2 uv = vec2(vTexCoord.x, 1.0 - vTexCoord.y);
 
     // Wave distortion - slightly increased effect
-    float waveX = sin(uv.y * 1.0 + uTime) * 0.001;
-    float waveY = cos(uv.x * 1.0 + uTime) * 0.001;
+    float waveX = sin(uv.y * 1.0 + uTime) * 0.000000001;
+    float waveY = cos(uv.x * 1.0 + uTime) * 0.000000001;
     vec2 waveOffset = vec2(waveX, waveY);
 
     // Sample the original image at the center position
     vec4 originalColor = texture2D(uTexture, uv);
 
     // Chromatic aberration - slightly increased effect
-    float aberrationAmount = 0.00275;
+    float aberrationAmount = 0.0025;
     vec2 redOffset = uv + waveOffset + vec2(aberrationAmount, 0.0);
     vec2 blueOffset = uv + waveOffset - vec2(aberrationAmount, 0.0);
     vec2 greenOffset = uv + waveOffset;
