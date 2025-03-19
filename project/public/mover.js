@@ -8,7 +8,7 @@ class Mover {
 		this.bri = 100;
 		this.a = 100;
 		//this.s = random(random(random(random(min(width, height) * 0.01)))) + 1;
-		this.s = 1 * MULTIPLIER;
+		this.s = 0.1 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.a1 = a1;
@@ -42,7 +42,7 @@ class Mover {
 		this.y += (p.y / randomGaussian(10.5, 2.00000000000000001) + randomGaussian(0, 0.000001)) * MULTIPLIER;
 		//this.s += map(pos, 0, 8, -0.1 * MULTIPLIER, 0.1 * MULTIPLIER);
 
-		this.s = map(abs(pos), 20, 40, 0.1, 1, true) * MULTIPLIER;
+		this.s = map(abs(pos), 20, 40, 0.5, 1, true) * MULTIPLIER;
 		this.a = map(abs(pos), 20, 80, 10, 100, true);
 
 		/* 		if (this.hue < 0) {
@@ -99,7 +99,7 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 		amplitude2 = a2,
 		dx,
 		dy,
-		octave = 6;
+		octave = 1;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
@@ -123,15 +123,18 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
-	let time = millis() * 0.00001; // Introduce a time variable for dynamic movement
+	let time = millis() * 0.00000000001; // Introduce a time variable for dynamic movement
 	let noiseScale = 0.00000000000001; // Scale for noise function
 
 	// Modify the calculations to include time and noise
 	let un = sin(ny * scl1 + seed + time) + cos(ny * scl2 + seed + time) + sin(ny * scl1 * 0.5 + seed + time) + oct(ny * scl1 + seed + time, ny * scl2 + seed + time, noiseScale, 2, 1);
-	let vn = sin(nx * scl2 + seed + time) + cos(nx * scl1 + seed + time) + sin(nx * scl2 * 120.05 + seed + time) + oct(nx * scl2 + seed + time, nx * scl1 + seed + time, noiseScale, 3, 1);
+	let vn = sin(nx * scl2 + seed + time) + cos(nx * scl1 + seed + time) + sin(nx * scl2 * 0.05 + seed + time) + oct(nx * scl2 + seed + time, nx * scl1 + seed + time, noiseScale, 3, 1);
 
-	let u = map(un, -0.05, 0.0005, -25, 15, true);
-	let v = map(vn, -0.0005, 0.05, -25, 0, true);
+	let zun = ZZ(un, 10, 120, 0.0758);
+	let zvn = ZZ(vn, 10, 120, 0.0758);
+
+	let u = map(zun, -0.05, 0.0005, -25, 15, true);
+	let v = map(zvn, -0.0005, 0.05, -25, 0, true);
 
 	let p = createVector(u, v);
 	return p;
