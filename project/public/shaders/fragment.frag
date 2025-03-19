@@ -15,8 +15,11 @@ void main() {
     float waveY = cos(uv.x * 1.0 + uTime) * 0.001;
     vec2 waveOffset = vec2(waveX, waveY);
 
+    // Sample the original image at the center position
+    vec4 originalColor = texture2D(uTexture, uv);
+
     // Chromatic aberration - slightly increased effect
-    float aberrationAmount = 0.002;
+    float aberrationAmount = 0.00275;
     vec2 redOffset = uv + waveOffset + vec2(aberrationAmount, 0.0);
     vec2 blueOffset = uv + waveOffset - vec2(aberrationAmount, 0.0);
     vec2 greenOffset = uv + waveOffset;
@@ -26,8 +29,24 @@ void main() {
     vec4 greenChannel = texture2D(uTexture, greenOffset);
     vec4 blueChannel = texture2D(uTexture, blueOffset);
 
-    // Combine channels
-    vec4 color = vec4(redChannel.r, greenChannel.g, blueChannel.b, 1.0);
+    // Calculate the chromatic aberration color difference
+    float redDiff = redChannel.r - originalColor.r;
+    float greenDiff = greenChannel.g - originalColor.g;
+    float blueDiff = blueChannel.b - originalColor.b;
+
+    // Apply 50% saturation to the color difference
+    float saturationLevel = 0.5;
+    redDiff *= saturationLevel;
+    greenDiff *= saturationLevel;
+    blueDiff *= saturationLevel;
+
+    // Add the reduced aberration effect back to the original color
+    vec4 color = vec4(
+        originalColor.r + redDiff,
+        originalColor.g + greenDiff,
+        originalColor.b + blueDiff,
+        1.0
+    );
 
     gl_FragColor = color;
 }
