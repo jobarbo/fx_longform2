@@ -130,8 +130,8 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	let un = sin(ny * scl1 + seed + time) + cos(ny * scl2 + seed + time) + sin(ny * scl1 * 0.5 + seed + time) + oct(ny * scl1 + seed + time, ny * scl2 + seed + time, noiseScale, 2, 1);
 	let vn = sin(nx * scl2 + seed + time) + cos(nx * scl1 + seed + time) + sin(nx * scl2 * 0.05 + seed + time) + oct(nx * scl2 + seed + time, nx * scl1 + seed + time, noiseScale, 3, 1);
 
-	let zun = ZZ(un, 10, 120, 0.0258);
-	let zvn = ZZ(vn, 10, 120, 0.0258);
+	let zun = ZZ(un, 10, 120, 0.0758);
+	let zvn = ZZ(vn, 10, 120, 0.0758);
 
 	let u = map(zun, -0.05, 0.0005, -25, 15, true);
 	let v = map(zvn, -0.0005, 0.05, -25, 0, true);

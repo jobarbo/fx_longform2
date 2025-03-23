@@ -62,16 +62,15 @@ function setup() {
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.0005, 0.002);
-	scl2 = random(0.0005, 0.002);
-	a1 = int(random(1, 2100) * MULTIPLIER);
-	a2 = int(random(1, 2100) * MULTIPLIER);
+	scl1 = random(0.001, 0.001);
+	scl2 = random(0.001, 0.001);
+	a1 = int(random(777, 1100) * MULTIPLIER);
+	a2 = int(random(777, 1100) * MULTIPLIER);
 	let hue = random(360);
 	for (let i = 0; i < 100000; i++) {
 		let x = random(-0.1, 1.1) * width;
 		let y = random(-0.1, 1.1) * height;
 		movers.push(new Mover(x, y, hue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, a1, a2, seed));
 	}
-
 	background(30, 5, 5);
 }
