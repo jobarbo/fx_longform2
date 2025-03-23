@@ -5,7 +5,8 @@ let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
-let frameCount = 0;
+let animation;
+
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
@@ -20,38 +21,51 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	let seed = fxrand() * 10000;
 	INIT(seed);
-}
 
-function draw() {
+	// Setup animation with generator configuration
 	blendMode(ADD);
-	for (let i = 0; i < movers.length; i++) {
-		for (let t = 0; t < 1; t++) {
-			movers[i].show();
-			movers[i].move();
-		}
-	}
+	background(30, 5, 5);
 
-	if (frameCount > 100) {
-		noLoop();
-	}
+	// Configure the animation generator
+	const config = {
+		items: movers,
+		maxFrames: 100,
+		startTime: 0,
+		cycleLength: 1000, // Process 1000 items before yielding
+		renderItem: (item) => {
+			item.show();
+		},
+		moveItem: (item) => {
+			item.move();
+		},
+		onComplete: () => {
+			console.log("Animation completed");
+			if (animation) {
+				clearTimeout(animation);
+			}
+			// Any cleanup code
 
-	frameCount++;
+			exporting = true;
+			if (!exporting && bleed > 0) {
+				stroke(0, 100, 100);
+				noFill();
+				strokeWeight(10);
+				rect(bleed, bleed, trimWidth, trimHeight);
+			}
+		},
+	};
 
-	exporting = true;
-	if (!exporting && bleed > 0) {
-		stroke(0, 100, 100);
-		noFill();
-		strokeWeight(10);
-		rect(bleed, bleed, trimWidth, trimHeight);
-	}
+	// Create and start the animation
+	const generator = createAnimationGenerator(config);
+	animation = startAnimation(generator);
 }
 
 function INIT(seed) {
 	movers = [];
-	scl1 = random(0.001, 0.001);
-	scl2 = random(0.001, 0.001);
-	a1 = int(random(777, 1100) * MULTIPLIER);
-	a2 = int(random(777, 1100) * MULTIPLIER);
+	scl1 = random(0.0005, 0.002);
+	scl2 = random(0.0005, 0.002);
+	a1 = int(random(1, 2100) * MULTIPLIER);
+	a2 = int(random(1, 2100) * MULTIPLIER);
 	let hue = random(360);
 	for (let i = 0; i < 100000; i++) {
 		let x = random(-0.1, 1.1) * width;
