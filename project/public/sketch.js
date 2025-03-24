@@ -43,8 +43,19 @@ let DIM;
 let MULTIPLIER;
 
 function preload() {
-	// Load shaders
-	myShader = loadShader("shaders/vertex.vert", "shaders/fragment.frag");
+	// Load shaders using the manager
+	// First, include the script in your HTML file: <script src="library/utils/shaderManager.js"></script>
+	// Initialize the shader manager
+	shaderManager.init(this);
+
+	// Set default vertex shader (optional)
+	shaderManager.setDefaultVertex("chromatic-aberration/vertex.vert");
+
+	// Load the shader we need
+	shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag");
+
+	// For backward compatibility, still assign to myShader
+	myShader = shaderManager.shaders["chromatic"];
 }
 
 function setup() {
@@ -64,8 +75,8 @@ function setup() {
 	shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
 
 	// Set up the main canvas
-	mainCanvas.pixelDensity(3);
-	shaderCanvas.pixelDensity(3);
+	mainCanvas.pixelDensity(1);
+	shaderCanvas.pixelDensity(1);
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 
 	// Set background for main canvas
@@ -189,6 +200,16 @@ function draw() {
 	// Clear the shader canvas
 	clear();
 
+	// Option 1: Use the shader manager (recommended for future development)
+	shaderManager
+		.apply("chromatic", {
+			uTexture: mainCanvas,
+			uTime: millis() / 1000.0,
+			uResolution: [width, height],
+		})
+		.drawFullscreenQuad();
+
+	/* Option 2: Use the traditional method (same as before)
 	// Apply shader effects
 	shader(myShader);
 
@@ -211,4 +232,5 @@ function draw() {
 	endShape(CLOSE);
 
 	pop();
+	*/
 }
