@@ -38,8 +38,8 @@ class Mover {
 		// Pre-calculate padding values
 		this.wrapPaddingX = (min(width, height) * 0.01) / width;
 		this.wrapPaddingY = (min(width, height) * 0.01) / height;
-		this.reentryOffsetX = (min(width, height) * 0.05) / width;
-		this.reentryOffsetY = (min(width, height) * 0.05) / height;
+		this.reentryOffsetX = (min(width, height) * 0.005) / width;
+		this.reentryOffsetY = (min(width, height) * 0.005) / height;
 		this.wrapPaddingMultiplier = 0.5; //! or 0.5
 
 		// Pre-calculate bounds
@@ -62,8 +62,8 @@ class Mover {
 		this.isBordered = true;
 
 		// Update position with slight randomization
-		this.xRandDivider = random(0.005, 0.00505);
-		this.yRandDivider = random(0.005, 0.09505);
+		this.xRandDivider = random(0.01, 0.01);
+		this.yRandDivider = random(0.01, 0.01);
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
@@ -168,8 +168,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = -0.11; */
 
 	//! Introverted
-	let u = map(vn, map(nx, xMin * width, xMax * width, -3.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 3.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -3.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 3.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -178,8 +178,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	let zu = ZZ(u, 35, 40, 0.005);
-	let zv = ZZ(v, 35, 40, 0.005);
+	let zu = ZZ(u, 35, 40, 0.015);
+	let zv = ZZ(v, 35, 40, 0.015);
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
