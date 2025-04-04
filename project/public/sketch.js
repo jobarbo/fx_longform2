@@ -131,10 +131,10 @@ const numCases = angle1.length; // Number of cases you want
 
 //! original
 const baseLow_l = 1;
-const baseHigh_l = 0.548;
+const baseHigh_l = 0.248;
 const maxPatternValue_l = 3;
 
-const baseLow_h = 1.548;
+const baseLow_h = 1.248;
 const baseHigh_h = 0;
 const maxPatternValue_h = 3;
 
@@ -352,8 +352,8 @@ function* drawGenerator() {
 			/* 	xoff_l = mapValue(cos_val, -1, 20, xoff_l_high, xoff_l_low, true);
 			yoff_l = mapValue(cos_val, -20, 1, xoff_l_low, xoff_l_high, true); */
 
-			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true);
+			xoff_l = mapValue(cos_val, -1, 5, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, -5, 1, xoff_l_low, xoff_l_high, true);
 
 			graphicsOriginal.push();
 			graphicsOriginal.rotate(angle1[i]);

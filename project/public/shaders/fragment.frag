@@ -13,9 +13,13 @@ void main() {
     // Center UV coordinates without distorting aspect ratio
     vec2 centered_uv = uv * 2.0 - 1.0;  // Convert from [0,1] to [-1,1] range
 
+    // Calculate distance from center (0,0) and create center-weighted multiplier
+    float dist = length(centered_uv);
+    float centerWeight = 1.0 - smoothstep(1.0, 0.4, dist);  // More effect in center
+
     // Apply wave effect in centered space
-    float waveX = sin(uv.y * 68.0) * 0.1;
-    float waveY = cos(uv.x * 1.0) * 0.00000014;
+    float waveX = sin(uv.y * 68.0 + uTime) * 0.1 * centerWeight;
+    float waveY = cos(uv.x * 1.0) * 0.00000014 * centerWeight;
     vec2 waveOffset = vec2(waveX, waveY);
     centered_uv += waveOffset;
 
