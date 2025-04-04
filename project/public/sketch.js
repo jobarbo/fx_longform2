@@ -230,7 +230,7 @@ function setup() {
 	xi = random(1000000000000);
 	yi = random(1000000000000);
 	pos_range_x = graphicsOriginal.width * 0.5;
-	pos_range_y = graphicsOriginal.height * 0.5;
+	pos_range_y = graphicsOriginal.width * 0.5;
 
 	let sketch = drawGenerator();
 	function animate() {

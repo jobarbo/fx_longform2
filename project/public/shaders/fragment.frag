@@ -10,15 +10,23 @@ void main() {
     // Flip the y coordinate to match p5js coordinate system
     vec2 uv = vec2(vTexCoord.x, 1.0 - vTexCoord.y);
 
-    float waveX = sin(uv.y * 3000.0 ) * cos(0.014 );
-    float waveY = cos(uv.x * 1.0 ) * sin(0.014 );
+    // Center UV coordinates without distorting aspect ratio
+    vec2 centered_uv = uv * 2.0 - 1.0;  // Convert from [0,1] to [-1,1] range
+
+    // Apply wave effect in centered space
+    float waveX = sin(uv.y * 68.0) * 0.1;
+    float waveY = cos(uv.x * 1.0) * 0.00000014;
     vec2 waveOffset = vec2(waveX, waveY);
+    centered_uv += waveOffset;
+
+    // Convert back to texture space
+    uv = (centered_uv + 1.0) * 0.5;  // Convert back to [0,1] range for texture sampling
 
     // Sample the original image at the center position
     vec4 originalColor = texture2D(uTexture, uv);
 
     // Chromatic aberration - slightly increased effect
-    float aberrationAmount = 0.000021;
+    float aberrationAmount = 0.002;
     vec2 redOffset = uv + waveOffset + vec2(aberrationAmount, 0.0);
     vec2 blueOffset = uv + waveOffset - vec2(aberrationAmount, 0.0);
     vec2 greenOffset = uv + waveOffset;
