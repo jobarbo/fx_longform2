@@ -10,16 +10,15 @@ void main() {
     // Flip the y coordinate to match p5js coordinate system
     vec2 uv = vec2(vTexCoord.x, 1.0 - vTexCoord.y);
 
-    // Wave distortion - slightly increased effect
-    float waveX = sin(uv.y * 1.0 + uTime) * 0.000000001;
-    float waveY = cos(uv.x * 1.0 + uTime) * 0.000000001;
+    float waveX = sin(uv.y * 3000.0 ) * cos(0.014 );
+    float waveY = cos(uv.x * 1.0 ) * sin(0.014 );
     vec2 waveOffset = vec2(waveX, waveY);
 
     // Sample the original image at the center position
     vec4 originalColor = texture2D(uTexture, uv);
 
     // Chromatic aberration - slightly increased effect
-    float aberrationAmount = 0.0025;
+    float aberrationAmount = 0.000021;
     vec2 redOffset = uv + waveOffset + vec2(aberrationAmount, 0.0);
     vec2 blueOffset = uv + waveOffset - vec2(aberrationAmount, 0.0);
     vec2 greenOffset = uv + waveOffset;
@@ -35,7 +34,7 @@ void main() {
     float blueDiff = blueChannel.b - originalColor.b;
 
     // Apply 50% saturation to the color difference
-    float saturationLevel = 0.5;
+    float saturationLevel = 1.0;
     redDiff *= saturationLevel;
     greenDiff *= saturationLevel;
     blueDiff *= saturationLevel;

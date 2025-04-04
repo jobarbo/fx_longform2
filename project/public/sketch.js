@@ -12,8 +12,8 @@ let palette = [
 	{name: "Rose Pompadour", hex: "ff7b9c", rgb: [255, 123, 156], cmyk: [0, 52, 39, 0], hsb: [345, 52, 100], hsl: [345, 100, 74], lab: [68, 53, 6]},
 	{name: "Coral pink", hex: "ff9b85", rgb: [255, 155, 133], cmyk: [0, 39, 48, 0], hsb: [11, 48, 100], hsl: [11, 100, 76], lab: [74, 35, 27]},
 ];
-let maxDPI = 2;
-let RATIO = 1;
+let maxDPI = 3;
+let RATIO = 1.33;
 
 let W = window.innerWidth;
 let H = window.innerHeight;
@@ -131,10 +131,10 @@ const numCases = angle1.length; // Number of cases you want
 
 //! original
 const baseLow_l = 1;
-const baseHigh_l = 0.148;
+const baseHigh_l = 0.548;
 const maxPatternValue_l = 3;
 
-const baseLow_h = 1.148;
+const baseLow_h = 1.548;
 const baseHigh_h = 0;
 const maxPatternValue_h = 3;
 
@@ -357,7 +357,7 @@ function* drawGenerator() {
 
 			graphicsOriginal.push();
 			graphicsOriginal.rotate(angle1[i]);
-			graphicsOriginal.scale(1);
+			graphicsOriginal.scale(3);
 			for (let s = 0; s < particle_num; s++) {
 				paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val, sin_val, noise_cos, col_cos, off_cos);
 
