@@ -1,32 +1,16 @@
 class Mover {
-	constructor(
-		x,
-		y,
-		hue,
-		scl1,
-		scl2,
-		scl3,
-		sclOffset1,
-		sclOffset2,
-		sclOffset3,
-		xMin,
-		xMax,
-		yMin,
-		yMax,
-		isBordered,
-		seed
-	) {
+	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed) {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
 		this.initSat = random([0, 0, 5, 10]);
-		this.initBri = random([0, 10, 20, 30, 40]);
+		this.initBri = random([100]);
 		this.initAlpha = random(60, 100);
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = 100;
-		this.s = random([0.5]);
+		this.s = random([0.25]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -54,17 +38,7 @@ class Mover {
 	}
 
 	move() {
-		let p = superCurve(
-			this.x,
-			this.y,
-			this.scl1,
-			this.scl2,
-			this.scl3,
-			this.sclOffset1,
-			this.sclOffset2,
-			this.sclOffset3,
-			this.seed
-		);
+		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.seed);
 		// after 1 second, change the scale
 
 		//! crayon effect too
@@ -111,14 +85,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 		noiseScale2 = 0.05,
 		noiseScale3 = 0.05,
 		nseed = seed;
-	un =
-		sin(nx * (scale1 * scaleOffset1) + nseed) +
-		cos(nx * (scale2 * scaleOffset2) + nseed) -
-		sin(nx * (scale3 * scaleOffset3) + nseed);
-	vn =
-		cos(ny * (scale1 * scaleOffset1) + nseed) +
-		sin(ny * (scale2 * scaleOffset2) + nseed) -
-		cos(ny * (scale3 * scaleOffset3) + nseed);
+	un = sin(nx * (scale1 * scaleOffset1) + nseed) + tan(ny * (scale2 * scaleOffset2) + nseed) - sin(nx * (scale3 * scaleOffset3) + nseed);
+	vn = cos(ny * (scale1 * scaleOffset1) + nseed) + tan(nx * (scale2 * scaleOffset2) + nseed) - cos(ny * (scale3 * scaleOffset3) + nseed);
 
 	//! center focused
 	/* 	let maxU = map(ny, 0, height, 3, -3, true);
@@ -127,38 +95,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = map(nx, 0, width, -3, 3, true);
  */
 	//! pNoise x SineCos
-	/* 	let maxU = map(
-		oct(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1, 6),
-		-0.5,
-		0.5,
-		0,
-		4,
-		true
-	);
-	let maxV = map(
-		oct(nx * (scale2 * scaleOffset1) + nseed, nx * (scale1 * scaleOffset2) + nseed, noiseScale2, 2, 6),
-		-0.5,
-		0.5,
-		0,
-		4,
-		true
-	);
-	let minU = map(
-		oct(ny * (scale3 * scaleOffset1) + nseed, ny * (scale1 * scaleOffset3) + nseed, noiseScale3, 0, 6),
-		-0.5,
-		0.5,
-		-4,
-		0,
-		true
-	);
-	let minV = map(
-		oct(nx * (scale1 * scaleOffset2) + nseed, nx * (scale3 * scaleOffset3) + nseed, noiseScale2, 3, 6),
-		-0.5,
-		0.5,
-		-4,
-		0,
-		true
-	); */
+	/* 	let maxU = map(oct(ny * (scale1 * scaleOffset1) + nseed, ny * (scale2 * scaleOffset3) + nseed, noiseScale1, 1, 1), -0.5, 0.5, -14, 14, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + nseed, nx * (scale1 * scaleOffset2) + nseed, noiseScale2, 2, 1), -0.5, 0.5, -14, 14, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1) + nseed, ny * (scale1 * scaleOffset3) + nseed, noiseScale3, 0, 1), -0.5, 0.5, -14, 14, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + nseed, nx * (scale3 * scaleOffset3) + nseed, noiseScale2, 3, 1), -0.5, 0.5, -14, 14, true); */
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
@@ -173,10 +113,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = random(-4, -0.001); */
 
 	//! Standard Mode
-	let maxU = 1;
-	let maxV = 1;
-	let minU = -1;
-	let minV = -1;
+	let maxU = 12;
+	let maxV = 12;
+	let minU = -12;
+	let minV = -12;
 
 	//! Introverted
 	let u = map(vn, map(nx, 0, width, -10.0001, -0.0000001), map(nx, 0, width, 0.0000001, 10.0001), minU, maxU, true);

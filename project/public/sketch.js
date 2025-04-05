@@ -45,7 +45,7 @@ function setup() {
 function draw() {
 	blendMode(ADD);
 	for (let i = 0; i < movers.length; i++) {
-		if (frameCount > 1) {
+		if (frameCount > -1) {
 			movers[i].show();
 		}
 		movers[i].move();
@@ -102,7 +102,7 @@ function INIT(seed) {
 	yMin = 0.4;
 	yMax = 0.6; */
 
-	for (let i = 0; i < 30000; i++) {
+	for (let i = 0; i < 500000; i++) {
 		// distribue the movers within a circle using polar coordinates
 		/* 		let r = randomGaussian(4, 2);
 		let theta = random(0, TWO_PI);
