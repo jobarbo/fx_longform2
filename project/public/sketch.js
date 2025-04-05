@@ -102,12 +102,12 @@ function INIT(rseed, nseed) {
 	movers = [];
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.005 / MULTIPLIER;
-	scl2 = 0.002 / MULTIPLIER;
-	scl3 = 0.005 / MULTIPLIER;
+	scl1 = 0.0049 / MULTIPLIER;
+	scl2 = 0.005 / MULTIPLIER;
+	scl3 = 0.0051 / MULTIPLIER;
 
-	let sclOffset1 = 1;
-	let sclOffset2 = 1;
+	let sclOffset1 = 5;
+	let sclOffset2 = 0.001;
 	let sclOffset3 = 1;
 	// Calculate padding based on the reference size and scale it
 	let paddingRatioX = -0.05; // 45% padding for X axis
