@@ -30,7 +30,7 @@ let BASE_WIDTH = 248;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
 // This is our reference size for scaling
-let DEFAULT_SIZE = BASE_WIDTH;
+let DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
 
 let W = window.innerWidth;
 let H = window.innerHeight;
