@@ -18,8 +18,8 @@ void main() {
     float centerWeight = 1.0 - smoothstep(1.0, 0.4, dist);  // More effect in center
 
     // Apply wave effect in centered space
-    float waveX = sin(uv.y * 68.0 + uTime) * 0.1 * centerWeight;
-    float waveY = cos(uv.x * 1.0) * 0.00000014 * centerWeight;
+    float waveX = tan(uv.x * 12.0 + uTime) * 0.1 * centerWeight;
+    float waveY = sin(uv.y * 11.0) * 0.00000014 * centerWeight;
     vec2 waveOffset = vec2(waveX, waveY);
     centered_uv += waveOffset;
 
