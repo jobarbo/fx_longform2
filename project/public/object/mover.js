@@ -4,7 +4,7 @@ class Mover {
 		this.y = y;
 		this.initHue = hue;
 		this.initSat = random([0, 0, 0, 0, 0, 10, 10, 10, 20, 30, 80, 100, 100, 100, 100, 100, 100, 100, 100, 100]);
-		this.initBri = 30;
+		this.initBri = 100;
 		this.initAlpha = 100;
 		this.initS = 0.2 * MULTIPLIER;
 		this.s = this.initS;
@@ -56,10 +56,12 @@ class Mover {
 		this.apertureHigh = 10;
 	}
 
-	show() {
-		fill(this.hue, this.sat, this.bri, this.a);
-		noStroke();
-		rect(this.x, this.y, this.s);
+	show(canvas) {
+		// If no canvas is provided, use the main canvas
+		canvas = canvas || window;
+		canvas.fill(this.hue, this.sat, this.bri, this.a);
+		canvas.noStroke();
+		canvas.rect(this.x, this.y, this.s);
 	}
 
 	move() {
