@@ -250,7 +250,8 @@ function draw() {
 
 	// Set the shader uniforms - use finalBuffer instead of graphicsOriginal
 	shaderProgram.setUniform("uTexture", finalBuffer);
-	shaderProgram.setUniform("uTime", millis() / 1000.0);
+	let shaderSpeed = map(mouseX, 0, width, 500, 2000, true);
+	shaderProgram.setUniform("uTime", millis() / shaderSpeed);
 	shaderProgram.setUniform("uResolution", [width, height]);
 
 	// Draw a plane that covers the entire canvas in WebGL space
@@ -352,12 +353,12 @@ function* drawGenerator() {
 			/* 	xoff_l = mapValue(cos_val, -1, 20, xoff_l_high, xoff_l_low, true);
 			yoff_l = mapValue(cos_val, -20, 1, xoff_l_low, xoff_l_high, true); */
 
-			xoff_l = mapValue(cos_val, -1, 5, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, -5, 1, xoff_l_low, xoff_l_high, true);
+			xoff_l = mapValue(cos_val, -1, 2, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, -2, 1, xoff_l_low, xoff_l_high, true);
 
 			graphicsOriginal.push();
 			graphicsOriginal.rotate(angle1[i]);
-			graphicsOriginal.scale(3);
+			graphicsOriginal.scale(1.25);
 			for (let s = 0; s < particle_num; s++) {
 				paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val, sin_val, noise_cos, col_cos, off_cos);
 
