@@ -12,7 +12,7 @@ let palette = [
 	{name: "Rose Pompadour", hex: "ff7b9c", rgb: [255, 123, 156], cmyk: [0, 52, 39, 0], hsb: [345, 52, 100], hsl: [345, 100, 74], lab: [68, 53, 6]},
 	{name: "Coral pink", hex: "ff9b85", rgb: [255, 155, 133], cmyk: [0, 39, 48, 0], hsb: [11, 48, 100], hsl: [11, 100, 76], lab: [74, 35, 27]},
 ];
-let maxDPI = 1;
+let maxDPI = 2;
 let RATIO = 1;
 
 let W = window.innerWidth;
@@ -67,7 +67,7 @@ let renderStart = Date.now();
 let framesRendered = 0;
 let totalElapsedTime = 0;
 
-let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
+let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 175, 350));
 let start_particle_num = Math.floor(10000 / angle1.length);
 let particle_num = start_particle_num;
 

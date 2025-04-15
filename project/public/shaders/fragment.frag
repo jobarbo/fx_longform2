@@ -15,7 +15,7 @@ void main() {
 
     // Calculate distance from center (0,0) and create center-weighted multiplier
     float dist = length(centered_uv);
-    float centerWeight = 1.0 - smoothstep(1.0, 0.4, dist);  // More effect in center
+    float centerWeight = 1.0 - smoothstep(1.0, 0.25, dist);  // More effect in center
 
     // Apply wave effect in centered space
     float waveX = tan(uv.x * 12.0 + uTime) * 0.1 * centerWeight;
@@ -30,7 +30,7 @@ void main() {
     vec4 originalColor = texture2D(uTexture, uv);
 
     // Chromatic aberration - slightly increased effect
-    float aberrationAmount = 0.002;
+    float aberrationAmount = 0.0002;
     vec2 redOffset = uv + waveOffset + vec2(aberrationAmount, 0.0);
     vec2 blueOffset = uv + waveOffset - vec2(aberrationAmount, 0.0);
     vec2 greenOffset = uv + waveOffset;
