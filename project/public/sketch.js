@@ -19,7 +19,7 @@ let maxFrames = 600; //! can be 1000
 let C_WIDTH;
 let MULTIPLIER;
 let RATIO = window.innerWidth / window.innerHeight;
-RATIO = 1;
+RATIO = 1.41;
 console.log(RATIO);
 
 let centerX;
@@ -53,7 +53,7 @@ function setup() {
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1200;
-	c = createCanvas(C_WIDTH * RATIO, C_WIDTH);
+	c = createCanvas(C_WIDTH, C_WIDTH * RATIO);
 	rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
 	nseed = noiseSeed(fxrand() * 10000);
