@@ -7,7 +7,7 @@ class Mover {
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initAlpha = 100;
-		this.initS = 0.5 * MULTIPLIER;
+		this.initS = 0.01 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -91,8 +91,8 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		let randMultX = map(frameCount, 0, this.maxFrames / 5, 1, 6, true);
-		let randMultY = map(frameCount, 0, this.maxFrames / 5, 1, 6, true);
+		let randMultX = map(frameCount, 0, this.maxFrames / 5, 6, 16, true);
+		let randMultY = map(frameCount, 0, this.maxFrames / 5, 6, 16, true);
 		this.xRandDivider = fxrand() * randMultX;
 		this.yRandDivider = fxrand() * randMultY;
 
@@ -109,7 +109,7 @@ class Mover {
 			//!complexion standard (vegetation variant)
 			/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
 		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
-			this.initS = map(frameCount, 0, this.maxFrames, 0.75, 0.5, true) * MULTIPLIER;
+			this.initS = map(frameCount, 0, this.maxFrames, 0.2, 0.1, true) * MULTIPLIER;
 			/* 		let alpha_min = map(frameCount, 0, this.maxFrames / 2, 10, 70, true);
 			let alpha_max = map(frameCount, 0, this.maxFrames / 2, 40, 100, true); */
 
@@ -123,10 +123,10 @@ class Mover {
 		}
 
 		//!goldenfold variant
-		if (this.speed < 1) {
-			this.hue = 35;
-			this.sat = this.initSat + 80;
-			this.bri = this.initBri + 30;
+		if (this.speed < 0.51) {
+			this.hue = 15;
+			this.sat = this.initSat + 100;
+			this.bri = this.initBri + 10;
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
