@@ -15,11 +15,12 @@ void main() {
 
     // Calculate distance from center (0,0) and create center-weighted multiplier
     float dist = length(centered_uv);
-    float centerWeight = 1.0 - smoothstep(1.0, 0.4, dist);  // More effect in center
+    float centerWeight = 1.0 - smoothstep(1.0, 0.3, dist);  // More effect in center
 
-    // Apply wave effect in centered space
-    float waveX = tan(uv.x * 12.0 + uTime) * 0.1 * centerWeight;
-    float waveY = sin(uv.y * 11.0) * 0.00000014 * centerWeight;
+
+    // Use centered_uv instead of uv for the tangent calculation to ensure proper centering
+    float waveX = tan(centered_uv.x * 12.0) * 0.1 * centerWeight;
+    float waveY = tan(centered_uv.y * 12.0 + uTime) * 0.1 * centerWeight;
     vec2 waveOffset = vec2(waveX, waveY);
     centered_uv += waveOffset;
 

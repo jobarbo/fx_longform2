@@ -131,10 +131,10 @@ const numCases = angle1.length; // Number of cases you want
 
 //! original
 const baseLow_l = 1;
-const baseHigh_l = 0.248;
+const baseHigh_l = 0.148;
 const maxPatternValue_l = 3;
 
-const baseLow_h = 1.248;
+const baseLow_h = 1.148;
 const baseHigh_h = 0;
 const maxPatternValue_h = 3;
 
@@ -250,7 +250,7 @@ function draw() {
 
 	// Set the shader uniforms - use finalBuffer instead of graphicsOriginal
 	shaderProgram.setUniform("uTexture", finalBuffer);
-	shaderProgram.setUniform("uTime", millis() / 1000.0);
+	shaderProgram.setUniform("uTime", millis() / 300.0);
 	shaderProgram.setUniform("uResolution", [width, height]);
 
 	// Draw a plane that covers the entire canvas in WebGL space
@@ -343,8 +343,8 @@ function* drawGenerator() {
 			/* 			xoff_l_high = mapValue(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
 			xoff_l_low = mapValue(noise_cos, -1, 1, offValues_h[i].high, offValues_h[i].low, true); */
 
-			xoff_h = xoff_l_high + 0.0025;
-			yoff_h = xoff_l_high + 0.0025;
+			xoff_h = xoff_l_high + 0.0001;
+			yoff_h = xoff_l_high + 0.0001;
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
@@ -352,12 +352,12 @@ function* drawGenerator() {
 			/* 	xoff_l = mapValue(cos_val, -1, 20, xoff_l_high, xoff_l_low, true);
 			yoff_l = mapValue(cos_val, -20, 1, xoff_l_low, xoff_l_high, true); */
 
-			xoff_l = mapValue(cos_val, -1, 5, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, -5, 1, xoff_l_low, xoff_l_high, true);
+			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true);
 
 			graphicsOriginal.push();
 			graphicsOriginal.rotate(angle1[i]);
-			graphicsOriginal.scale(3);
+			graphicsOriginal.scale(1.25);
 			for (let s = 0; s < particle_num; s++) {
 				paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val, sin_val, noise_cos, col_cos, off_cos);
 
