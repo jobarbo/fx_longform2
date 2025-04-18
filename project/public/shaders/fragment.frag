@@ -20,7 +20,7 @@ void main() {
 
     // Use centered_uv instead of uv for the tangent calculation to ensure proper centering
     float waveX = sin(centered_uv.x * 22.0) * 0.1 * centerWeight;
-    float waveY = sin(centered_uv.y * 22.0) * 0.1 * centerWeight;
+    float waveY = sin(centered_uv.y * 22.0 + uTime) * 0.1 * centerWeight;
     vec2 waveOffset = vec2(waveX, waveY);
     centered_uv += waveOffset;
 
