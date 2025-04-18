@@ -16,7 +16,7 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 let elapsedTime = 0;
-let particleNum = 10000;
+let particleNum = 5000;
 let drawing = true;
 let bgCol;
 let renderMode = 1;
@@ -24,7 +24,7 @@ let renderMode = 1;
 let scl1, scl2, ang1, ang2, scl1Zone, scl2Zone, ang1Zone, ang2Zone;
 
 function setup() {
-	console.time('setup');
+	console.time("setup");
 	var ua = window.navigator.userAgent;
 	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
 	var webkit = !!ua.match(/WebKit/i);
@@ -38,7 +38,7 @@ function setup() {
 	}
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM);
+	c = createCanvas(DIM, DIM * 1.25);
 
 	/*
 		window.addEventListener('resize', onResize);
@@ -111,7 +111,7 @@ function* drawGenerator() {
 		if (elapsedTime > maxFrames && drawing) {
 			drawing = false;
 			// close the generator
-			console.timeEnd('setup');
+			console.timeEnd("setup");
 			return;
 		}
 	}
@@ -126,17 +126,24 @@ function draw() {
 //////////////////////////////////////////////////////
 
 function INIT() {
-	console.log('INIT');
+	console.log("INIT");
 	background(bgCol);
 	movers = [];
 
 	let xRandDivider = 0.1;
 	let yRandDivider = xRandDivider;
 	let hue = fxrand() * 360;
-	xMin = 0.05;
-	xMax = 0.95;
-	yMin = 0.05;
-	yMax = 0.95;
+
+	// Calculate equal borders while respecting canvas aspect ratio
+	let borderSize = 0.05; // 5% uniform border
+	xMin = borderSize;
+	xMax = 1 - borderSize;
+
+	// Adjust y-values to maintain the same physical border width
+	// Since the canvas has a height * 1.25 ratio
+	let aspectRatio = width / height;
+	yMin = borderSize * aspectRatio;
+	yMax = 1 - borderSize * aspectRatio;
 
 	for (let i = 0; i < particleNum; i++) {
 		let x = fxrand() * (xMax - xMin) * width + xMin * width;
@@ -173,12 +180,12 @@ function showLoadingBar(elapsedTime, maxFrames, xMin, xMax, yMin, yMax) {
 	if (percent > 100) percent = 100;
 
 	// put the percent in the title of the page
-	document.title = percent.toFixed(0) + '%' + ' (mode ' + renderMode + ')';
+	document.title = percent.toFixed(0) + "%" + " (mode " + renderMode + ")";
 }
 
 function drawUI() {
 	// Define the stroke color and weight (line width)
-	drawingContext.strokeStyle = 'black';
+	drawingContext.strokeStyle = "black";
 	drawingContext.lineWidth = 2 * MULTIPLIER;
 	drawingContext.beginPath();
 
@@ -308,7 +315,7 @@ function keyPressed() {
 		maxFrames = keyCodeToMaxFrames;
 		drawing = true;
 		loop();
-		console.log('keyPressed');
+		console.log("keyPressed");
 		INIT(particleNum);
 	}
 }

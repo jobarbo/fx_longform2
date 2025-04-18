@@ -1,23 +1,5 @@
 class Mover {
-	constructor(
-		x,
-		y,
-		hue,
-		scl1,
-		scl2,
-		ang1,
-		ang2,
-		xMin,
-		xMax,
-		yMin,
-		yMax,
-		xRandDivider,
-		yRandDivider,
-		scl1Zone,
-		scl2Zone,
-		ang1Zone,
-		ang2Zone
-	) {
+	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, scl1Zone, scl2Zone, ang1Zone, ang2Zone) {
 		this.px = x;
 		this.py = y;
 		this.x = x;
@@ -26,7 +8,7 @@ class Mover {
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initAlpha = 100;
-		this.initS = 0.45 * MULTIPLIER;
+		this.initS = 0.75 * MULTIPLIER;
 		this.initLineS = 0.25 * MULTIPLIER;
 		this.s = this.initS;
 		this.ls = this.initLineS;
@@ -94,16 +76,16 @@ class Mover {
 		this.px = this.x;
 		this.py = this.y;
 
-		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [1000, 10]);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [100, 100]);
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, height - 500], 100);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = parseInt(mapValue(distCircle, 0, 200, 100, 300));
-		this.ang2 = parseInt(mapValue(distCircle, 0, 200, -500, 900));
-		/*this.scl1 = map(distCircle, 0, 30, 0.006, 0.0012, true);
-		this.scl2 = map(distCircle, 0, 30, 0.006, 0.0012, true);
-
-		this.ns = map(distCircle, 0, 30, -0.000000001, -0.5, true); */
+		this.ang1 = parseInt(mapValue(distFromCenter, 150, 200, -100, 500));
+		this.ang2 = parseInt(mapValue(distFromCenter, 150, 200, -100, 500));
+		this.scl1 = map(distFromCenter, 150, 200, -0.0096, 0.0036, true);
+		this.scl2 = map(distFromCenter, 150, 200, -0.0096, 0.0036, true);
+		this.oct = map(distFromCenter, 150, 151, 6, 6, true);
+		this.ns = map(distFromCenter, 150, 151, 0.01, 1.5, true);
 
 		//this.oct = map(distCircle, 0, 1, 1, 6, true);
 		//this.ang2 = parseInt(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
@@ -114,8 +96,8 @@ class Mover {
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, this.scl2Init / 1000, this.scl2Init * 3, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.ns);
-		this.xRandDivider = fxrand() * 6;
-		this.yRandDivider = fxrand() * 6;
+		this.xRandDivider = fxrand() * mapValue(distFromCenter, 170, 200, 4, 6);
+		this.yRandDivider = fxrand() * mapValue(distFromCenter, 170, 200, 4, 6);
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider;
