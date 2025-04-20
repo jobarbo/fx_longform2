@@ -50,7 +50,7 @@ class Mover {
 		this.gaussianOffsetY = map(abs(pos), 0, 5120, 10.1, 0.00001, true); */
 
 		//!invert the two values after pos to invert the curve
-		this.s = map(pos, 24.01, 24, 3 * MULTIPLIER, 0, true);
+		this.s = map(pos, 24, 24.01, 3 * MULTIPLIER, 0, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
@@ -127,8 +127,8 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let zun = ZZ(un, 20, 120, 0.01);
-	let zvn = ZZ(vn, 20, 120, 0.3);
+	let zun = ZZ(un, 20, 40, 0.01);
+	let zvn = ZZ(vn, 20, 40, 0.3);
 
 	/* 	let u = map(noise(x * scl1, y * scl1, seed), 0, 1, -4, 4);
 	let v = map(noise(x * scl2, y * scl2, seed), 0, 1, -4, 4); */
