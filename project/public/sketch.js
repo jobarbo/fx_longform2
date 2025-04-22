@@ -34,11 +34,11 @@ function setup() {
 	if (iOSSafari) {
 		pixelDensity(1.0);
 	} else {
-		pixelDensity(3.0);
+		pixelDensity(1.0);
 	}
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1.25);
+	c = createCanvas(DIM, DIM * 1.33);
 
 	/*
 		window.addEventListener('resize', onResize);

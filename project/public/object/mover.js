@@ -8,7 +8,7 @@ class Mover {
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initAlpha = 100;
-		this.initS = 0.75 * MULTIPLIER;
+		this.initS = 0.35 * MULTIPLIER;
 		this.initLineS = 0.25 * MULTIPLIER;
 		this.s = this.initS;
 		this.ls = this.initLineS;
@@ -80,12 +80,12 @@ class Mover {
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, height - 500], 100);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
-		this.ang1 = parseInt(mapValue(distFromCenter, 150, 200, -100, 500));
-		this.ang2 = parseInt(mapValue(distFromCenter, 150, 200, -100, 500));
-		this.scl1 = map(distFromCenter, 150, 200, -0.0096, 0.0036, true);
-		this.scl2 = map(distFromCenter, 150, 200, -0.0096, 0.0036, true);
-		this.oct = map(distFromCenter, 150, 151, 6, 6, true);
-		this.ns = map(distFromCenter, 150, 151, 0.01, 1.5, true);
+		this.ang1 = parseInt(mapValue(distFromCenter, 150, 200, -50, 500));
+		this.ang2 = parseInt(mapValue(distFromCenter, 150, 200, -50, 500));
+		this.scl1 = map(distCircle, 150, 200, -0.01896, 0.0036, true);
+		this.scl2 = map(distCircle, 150, 200, -0.01896, 0.0036, true);
+		this.oct = parseInt(map(distCircle, 1, 151, 2, 6, true));
+		this.ns = map(distCircle, 100, 200, 0.5, 1.0, true);
 
 		//this.oct = map(distCircle, 0, 1, 1, 6, true);
 		//this.ang2 = parseInt(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
