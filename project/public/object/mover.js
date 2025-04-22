@@ -8,7 +8,7 @@ class Mover {
 		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initAlpha = 100;
-		this.initS = 0.35 * MULTIPLIER;
+		this.initS = 0.75 * MULTIPLIER;
 		this.initLineS = 0.25 * MULTIPLIER;
 		this.s = this.initS;
 		this.ls = this.initLineS;
@@ -76,16 +76,16 @@ class Mover {
 		this.px = this.x;
 		this.py = this.y;
 
-		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [100, 100]);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [100, 100], -150);
 		let distCircle = sdf_circle([this.x, this.y], [this.centerX, height - 500], 100);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		this.ang1 = parseInt(mapValue(distFromCenter, 150, 200, -50, 500));
 		this.ang2 = parseInt(mapValue(distFromCenter, 150, 200, -50, 500));
-		this.scl1 = map(distCircle, 150, 200, -0.01896, 0.0036, true);
-		this.scl2 = map(distCircle, 150, 200, -0.01896, 0.0036, true);
-		this.oct = parseInt(map(distCircle, 1, 151, 2, 6, true));
-		this.ns = map(distCircle, 100, 200, 0.5, 1.0, true);
+		this.scl1 = map(distFromCenter, 150, 200, -0.01896, 0.0036, true);
+		this.scl2 = map(distFromCenter, 150, 200, -0.01896, 0.0036, true);
+		this.oct = parseInt(map(distFromCenter, 1, 151, 2, 6, true));
+		this.ns = map(distFromCenter, 100, 200, 0.5, 1.0, true);
 
 		//this.oct = map(distCircle, 0, 1, 1, 6, true);
 		//this.ang2 = parseInt(map(distFromCenter, 0, this.ang2Zone, this.ang2Init * 2, this.ang2Init / 100, true));
@@ -96,8 +96,8 @@ class Mover {
 		this.scl2 = map(distFromCenter, 0, this.scl2Zone, this.scl2Init / 1000, this.scl2Init * 3, true); */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct, this.ns);
-		this.xRandDivider = fxrand() * mapValue(distFromCenter, 170, 200, 4, 6);
-		this.yRandDivider = fxrand() * mapValue(distFromCenter, 170, 200, 4, 6);
+		this.xRandDivider = fxrand() * mapValue(distFromCenter, 170, 200, 14, 6);
+		this.yRandDivider = fxrand() * mapValue(distFromCenter, 170, 200, 14, 6);
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider;
