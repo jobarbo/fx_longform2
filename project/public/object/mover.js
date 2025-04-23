@@ -86,6 +86,9 @@ class Mover {
 				//this.uvalue[i] *= 1.01 * this.uvalueDir[i];
 				this.uvalue[i] += 1.5; //! try higher val like 11.5
 				this.nvalue[i] += 1.2 * this.nvalueDir[i]; //! try higher val like 11.2
+			} else if (config_type === 4) {
+				this.uvalue[i] *= 1.0055;
+				this.nvalue[i] *= 1.00000002 * this.nvalueDir[i];
 			}
 
 			//! YoYo with value (not sure);
