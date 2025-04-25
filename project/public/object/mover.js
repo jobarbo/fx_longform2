@@ -1,7 +1,7 @@
 class Mover {
 	constructor(x, y, hue, s1, s2, a1, a2, xMin, xMax, yMin, yMax, xDiv, yDiv, seed, features) {
 		this.x = x;
-		this.y = height;
+		this.y = 0;
 		this.hue = 201;
 		this.sat = 0;
 		this.bri = 100;
@@ -75,7 +75,7 @@ function superCurve(x, y, s1, s2, a1, a2, seed, oct_value, nValues, uValues) {
 	});
 
 	let u = map(oct(nx, ny, s1, 0, octaves), -nValues[0], nValues[1], -uValues[0], uValues[1], true);
-	let v = map(oct(nx, ny, s2, 1, octaves), -nValues[2], nValues[3], uValues[2], uValues[3], true);
+	let v = map(oct(nx, ny, s2, 1, octaves), -nValues[2], nValues[3], -uValues[2], -uValues[3], true);
 
 	return createVector(u, v);
 }

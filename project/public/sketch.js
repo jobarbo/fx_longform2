@@ -29,8 +29,8 @@ function setup() {
 	pixelDensity(iOSSafari ? 1.0 : 3.0);
 
 	cWidth = min(windowWidth, windowHeight);
-	mult = cWidth / 1200;
-	c = createCanvas(cWidth, cWidth * 1.41);
+	mult = cWidth / 1400;
+	c = createCanvas(cWidth * 1.25, cWidth);
 	rectMode(CENTER);
 	rSeed = randomSeed(fxrand() * 10000);
 	nSeed = noiseSeed(fxrand() * 10000);
