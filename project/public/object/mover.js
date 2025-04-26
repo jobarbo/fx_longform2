@@ -76,15 +76,15 @@ class Mover {
 		this.px = this.x;
 		this.py = this.y;
 
-		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, height - 500], [100, 100], -150);
-		let distCircle = sdf_circle([this.x, this.y], [this.centerX, height - 500], 100);
+		let distFromCenter = sdf_box([this.x, this.y], [this.centerX, this.centerY], [100, 100], -5);
+		let distCircle = sdf_circle([this.x, this.y], [this.centerX, this.centerY], 100);
 
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		this.ang1 = parseInt(mapValue(distFromCenter, 150, 200, -50, 500));
 		this.ang2 = parseInt(mapValue(distFromCenter, 150, 200, -50, 500));
 		this.scl1 = map(distFromCenter, 150, 200, -0.01896, 0.0036, true);
 		this.scl2 = map(distFromCenter, 150, 200, -0.01896, 0.0036, true);
-		this.oct = parseInt(map(distFromCenter, 1, 151, 2, 6, true));
+		this.oct = parseInt(map(distCircle, -100, 100, 1, 6, true));
 		this.ns = map(distFromCenter, 100, 200, 0.5, 1.0, true);
 
 		//this.oct = map(distCircle, 0, 1, 1, 6, true);

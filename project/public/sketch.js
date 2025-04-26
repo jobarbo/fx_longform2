@@ -38,7 +38,7 @@ function setup() {
 	}
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1.33);
+	c = createCanvas(DIM * 1.25, DIM);
 
 	/*
 		window.addEventListener('resize', onResize);
@@ -135,7 +135,7 @@ function INIT() {
 	let hue = fxrand() * 360;
 
 	// Calculate equal borders while respecting canvas aspect ratio
-	let borderSize = 0.05; // 5% uniform border
+	let borderSize = 0.0001; // 5% uniform border
 	xMin = borderSize;
 	xMax = 1 - borderSize;
 
