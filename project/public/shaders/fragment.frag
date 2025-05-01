@@ -15,18 +15,18 @@ void main() {
 
     // Calculate distance from center (0,0) and create center-weighted multiplier
     float dist = length(centered_uv);
-    float centerWeight = 1.0 - smoothstep(1.0, 0.3, dist);  // More effect in center
+    float centerWeight = 1.0 - smoothstep(1.0, 0.05, dist);  // More effect in center
 
     // Create pulsing effect
-    float pulse = sin(uTime * 0.05) * 0.05 + 0.5;
+    float pulse = sin(uTime * 10.7) * 0.5 + 0.5;
 
     // More intense wave effect that changes over time
-    float waveX = tan(centered_uv.x * (20.0 + sin(uTime) * 10.0)) * 0.15 * centerWeight * (1.0 + pulse * 0.5);
-    float waveY = tan(centered_uv.y * (8.0 + cos(uTime * 0.7) * 5.0) + uTime) * 0.15 * centerWeight * (1.0 + pulse * 0.5);
+    float waveX = tan(centered_uv.x * (20.0 + sin(uTime) * 0.00001)) * 0.000001 * centerWeight * (1.0 + pulse * 10.5);
+    float waveY = tan(centered_uv.y * (8.0 + cos(uTime * 0.000001) * 0.000001) + uTime) * 0.000001 * centerWeight * (1.0 + pulse * 10.5);
 
     // Add spiral effect
     float angle = atan(centered_uv.y, centered_uv.x);
-    float spiral = sin(dist * 10.0 - uTime * 1.0) * 2.0;
+    float spiral = sin(dist * 15.0 - uTime * 0.75) * 0.5;
 
     vec2 waveOffset = vec2(waveX, waveY);
     vec2 spiralOffset = vec2(cos(angle), sin(angle)) * spiral * centerWeight;
