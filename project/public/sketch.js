@@ -55,10 +55,11 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
-	let scaleFactor = 1;
+	let scaleFactorX = 1;
+	let scaleFactorY = 1;
 
 	translate(width / 2, height / 2);
-	scale(scaleFactor);
+	scale(scaleFactorX, scaleFactorY);
 	translate(-width / 2, -height / 2); // Move back to maintain center
 
 	INIT(rseed, nseed);
