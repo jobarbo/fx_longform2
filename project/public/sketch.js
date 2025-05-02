@@ -1,11 +1,11 @@
 let features = "";
 let movers = [];
 let startTime;
-let maxFrames = 25;
+let maxFrames = 35;
 let elapsedTime = 0;
-let particleNum = 2500000;
+let particleNum = 500000;
 // Adjust cycle for smoother percentage updates (1% increments)
-let cycle = parseInt((maxFrames * particleNum) / 5170);
+let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 
 let scl1;
