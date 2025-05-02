@@ -3,9 +3,9 @@ let movers = [];
 let startTime;
 let maxFrames = 25;
 let elapsedTime = 0;
-let particleNum = 500000;
+let particleNum = 2500000;
 // Adjust cycle for smoother percentage updates (1% increments)
-let cycle = parseInt((maxFrames * particleNum) / 1170);
+let cycle = parseInt((maxFrames * particleNum) / 5170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 
 let scl1;
@@ -25,7 +25,7 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.41;
+let ARTWORK_RATIO = 1.25;
 let BASE_WIDTH = 948;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -48,7 +48,7 @@ function setup() {
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
-	c = createCanvas(DIM, DIM * ARTWORK_RATIO);
+	c = createCanvas(DIM * ARTWORK_RATIO, DIM);
 	pixelDensity(3);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -65,7 +65,7 @@ function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0) {
+			if (currentFrame > -1) {
 				mover.show();
 			}
 		},
@@ -103,8 +103,8 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.1; // 45% padding for X axis
-	let paddingRatioY = 0.1; // 45% padding for Y axis
+	let paddingRatioX = 0.001; // 45% padding for X axis
+	let paddingRatioY = 0.001; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;

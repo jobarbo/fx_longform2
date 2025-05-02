@@ -13,7 +13,7 @@ class Mover {
 		this.bri = this.initBri;
 		this.initAlpha = 100;
 		this.a = this.initAlpha;
-		this.s = random([0.35]) * MULTIPLIER;
+		this.s = random([0.05]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -36,11 +36,11 @@ class Mover {
 		this.hasBeenOutside = false;
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.075) / width;
-		this.wrapPaddingY = (min(width, height) * 0.075) / height;
-		this.reentryOffsetX = (min(width, height) * 0.01) / width;
-		this.reentryOffsetY = (min(width, height) * 0.01) / height;
-		this.wrapPaddingMultiplier = -4; //! or 0.5
+		this.wrapPaddingX = (min(width, height) * 0.005) / width;
+		this.wrapPaddingY = (min(width, height) * 0.005) / height;
+		this.reentryOffsetX = (min(width, height) * 0.00751) / width;
+		this.reentryOffsetY = (min(width, height) * 0.00751) / height;
+		this.wrapPaddingMultiplier = -6.5; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
