@@ -15,7 +15,7 @@ void main() {
 
     // Calculate distance from center (0,0) and create center-weighted multiplier
     float dist = length(centered_uv);
-    float centerWeight = 1.0 - smoothstep(1.0, 0.05, dist);  // More effect in center
+    float centerWeight = 1.0 - smoothstep(1.0, 0.1, dist);  // More effect in center
 
     // Create pulsing effect
     float pulse = sin(uTime * 10.7) * 0.5 + 0.5;
@@ -39,11 +39,14 @@ void main() {
     // Sample the original image at the center position
     vec4 originalColor = texture2D(uTexture, uv);
 
-    // Enhanced chromatic aberration
-    float aberrationAmount = 0.0000001 * (1.0 + pulse * 0.5);
-    vec2 redOffset = uv + vec2(aberrationAmount * sin(uTime * 0.3), aberrationAmount * cos(uTime * 0.2));
-    vec2 blueOffset = uv - vec2(aberrationAmount * cos(uTime * 0.2), aberrationAmount * sin(uTime * 0.3));
-    vec2 greenOffset = uv + vec2(-aberrationAmount * sin(uTime * 0.5), aberrationAmount * sin(uTime * 0.4));
+    // Enhanced chromatic aberration that follows the spiral pattern
+    float aberrationAmount = 0.001 * (0.5  * dist * 5.0);
+    float spiralFactor = spiral * 11.0; // Amplify the spiral effect for aberration
+
+    // Use the angle and spiral calculations to create offset vectors that follow the spiral pattern
+    vec2 redOffset = uv + aberrationAmount * vec2(cos(angle + spiralFactor), sin(angle + spiralFactor));
+    vec2 blueOffset = uv + aberrationAmount * vec2(cos(angle - spiralFactor), sin(angle - spiralFactor));
+    vec2 greenOffset = uv + aberrationAmount * vec2(cos(angle + spiralFactor * 0.5), sin(angle - spiralFactor * 0.5));
 
     // Sample colors with offsets
     vec4 redChannel = texture2D(uTexture, redOffset);

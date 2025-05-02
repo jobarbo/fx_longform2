@@ -68,7 +68,7 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 175, 350));
-let start_particle_num = Math.floor(10000 / angle1.length);
+let start_particle_num = Math.floor(40000 / angle1.length);
 let particle_num = start_particle_num;
 
 //let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
@@ -392,7 +392,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	//yoff = ZZ(yoff, 20, 120, 0.002);
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(6, 0.5);
+	noiseDetail(2, 0.8);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
