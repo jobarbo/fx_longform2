@@ -18,7 +18,7 @@ void main() {
     float centerWeight = 1.0 - smoothstep(1.0, 0.1, dist);  // More effect in center
 
     // Create pulsing effect
-    float pulse = sin(uTime * 10.7) * 0.5 + 0.5;
+    float pulse = sin(uTime * 1.7) * 0.000015 + 0.015;
 
     // More intense wave effect that changes over time
     float waveX = tan(centered_uv.x * (20.0 + sin(uTime) * 0.00001)) * 0.000001 * centerWeight * (1.0 + pulse * 10.5);
@@ -26,7 +26,7 @@ void main() {
 
     // Add spiral effect
     float angle = atan(centered_uv.y, centered_uv.x);
-    float spiral = sin(dist * 15.0 - uTime * 0.75) * 0.5;
+    float spiral = tan(dist * 2.0 - uTime * 0.1) * 1.0;
 
     vec2 waveOffset = vec2(waveX, waveY);
     vec2 spiralOffset = vec2(cos(angle), sin(angle)) * spiral * centerWeight;
@@ -40,7 +40,7 @@ void main() {
     vec4 originalColor = texture2D(uTexture, uv);
 
     // Enhanced chromatic aberration that follows the spiral pattern
-    float aberrationAmount = 0.001 * (0.5  * dist * 5.0);
+    float aberrationAmount = 0.001 * (1.5  * dist * 5.0);
     float spiralFactor = spiral * 11.0; // Amplify the spiral effect for aberration
 
     // Use the angle and spiral calculations to create offset vectors that follow the spiral pattern
