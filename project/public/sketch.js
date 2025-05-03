@@ -12,7 +12,7 @@ let palette = [
 	{name: "Rose Pompadour", hex: "ff7b9c", rgb: [255, 123, 156], cmyk: [0, 52, 39, 0], hsb: [345, 52, 100], hsl: [345, 100, 74], lab: [68, 53, 6]},
 	{name: "Coral pink", hex: "ff9b85", rgb: [255, 155, 133], cmyk: [0, 39, 48, 0], hsb: [11, 48, 100], hsl: [11, 100, 76], lab: [74, 35, 27]},
 ];
-let maxDPI = 2;
+let maxDPI = 1;
 let RATIO = 1;
 
 let W = window.innerWidth;
@@ -25,8 +25,8 @@ let MULTIPLIER;
 let xoff = 0.6;
 let yoff = 0.3;
 
-let xi = Math.random * 1000000000000;
-let yi = Math.random * 1000000000000;
+let xi = Math.random() * 1000000000000;
+let yi = Math.random() * 1000000000000;
 
 let pos_range_x;
 let pos_range_y;
@@ -180,6 +180,18 @@ function setup() {
 	startTime = frameCount;
 	renderStart = Date.now();
 
+	// Check if the device is iOS for performance optimizations
+	let ua = window.navigator.userAgent;
+	let iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+	let webkit = !!ua.match(/WebKit/i);
+	let iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
+
+	// Reduce particle count on iOS devices
+	if (iOSSafari) {
+		particle_num = Math.floor(start_particle_num / 4);
+		cycle = 5000; // Reduce the cycle length for more frequent yields
+	}
+
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
 	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
 
@@ -234,8 +246,10 @@ function setup() {
 
 	let sketch = drawGenerator();
 	function animate() {
-		animation = setTimeout(animate, 0);
-		sketch.next();
+		if (drawing) {
+			animation = requestAnimationFrame(animate);
+			sketch.next();
+		}
 	}
 	animate();
 }
@@ -280,6 +294,11 @@ function draw() {
 		let timeDiff = endTime - renderStart;
 		console.log("Render time: " + timeDiff + " ms");
 		drawing = false; // Mark as not drawing, but don't call noLoop()
+
+		// Cancel any existing animation frame
+		if (animation) {
+			cancelAnimationFrame(animation);
+		}
 	}
 }
 
