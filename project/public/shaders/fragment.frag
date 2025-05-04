@@ -21,8 +21,11 @@ void main() {
     float pulse = sin(uTime * 1.7) * 0.000015 + 0.015;
 
     // More intense wave effect that changes over time
-    float waveX = tan(centered_uv.x * (20.0 + sin(uTime) * 0.00001)) * 0.000001 * centerWeight * (1.0 + pulse * 10.5);
-    float waveY = tan(centered_uv.y * (8.0 + cos(uTime * 0.000001) * 0.000001) + uTime) * 0.000001 * centerWeight * (1.0 + pulse * 10.5);
+/*     float waveX = tan(centered_uv.x * (20.0 + sin(uTime) * 0.00001)) * 0.000001 * centerWeight * (1.0 + pulse * 10.5);
+    float waveY = tan(centered_uv.y * (8.0 + cos(uTime * 0.000001) * 0.000001) + uTime) * 0.000001 * centerWeight * (1.0 + pulse * 10.5); */
+
+    float waveX = centered_uv.x * 0.00001;
+    float waveY = centered_uv.y * 0.00001;
 
     // Add spiral effect
     float angle = atan(centered_uv.y, centered_uv.x);

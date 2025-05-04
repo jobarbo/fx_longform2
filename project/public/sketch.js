@@ -68,7 +68,7 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 175, 350));
-let start_particle_num = Math.floor(40000 / angle1.length);
+let start_particle_num = Math.floor(10000 / angle1.length);
 let particle_num = start_particle_num;
 
 //let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
