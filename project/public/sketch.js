@@ -26,7 +26,7 @@ let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
 let ARTWORK_RATIO = 1.41;
-let BASE_WIDTH = 248;
+let BASE_WIDTH = 348;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
 // This is our reference size for scaling
@@ -104,15 +104,15 @@ function INIT(rseed, nseed) {
 
 	// Scale noise values based on MULTIPLIER
 	scl1 = 0.0049 / MULTIPLIER;
-	scl2 = 0.005 / MULTIPLIER;
+	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.0051 / MULTIPLIER;
 
-	let sclOffset1 = 5;
-	let sclOffset2 = 0.001;
+	let sclOffset1 = 1;
+	let sclOffset2 = 1;
 	let sclOffset3 = 1;
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = -0.05; // 45% padding for X axis
-	let paddingRatioY = -0.05; // 45% padding for Y axis
+	let paddingRatioX = 0.01; // 45% padding for X axis
+	let paddingRatioY = 0.01; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;
