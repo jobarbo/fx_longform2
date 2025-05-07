@@ -15,11 +15,11 @@ let xMax;
 let yMin;
 let yMax;
 let startTime;
-let maxFrames = 600; //! can be 1000
+let maxFrames = 800; //! can be 1000
 let C_WIDTH;
 let MULTIPLIER;
 let RATIO = window.innerWidth / window.innerHeight;
-RATIO = 1.41;
+RATIO = 1.25;
 console.log(RATIO);
 
 let centerX;

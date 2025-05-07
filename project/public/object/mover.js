@@ -9,7 +9,7 @@ class Mover {
 		this.initS = 0.2 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
-		this.sat = 0;
+		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
 		this.hueStep = 0.2;
@@ -67,8 +67,8 @@ class Mover {
 	move() {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed, this.oct, this.nvalue, this.uvalue);
 
-		this.lineWeightMax = map(frameCount, 50, maxFrames - 100, this.shutterHigh, this.shutterLow, true);
-		this.skipperMax = map(frameCount, 50, maxFrames - 100, this.apertureHigh, this.apertureLow, true);
+		this.lineWeightMax = map(frameCount, 50, maxFrames / 1.15, this.shutterHigh, this.shutterLow, true);
+		this.skipperMax = map(frameCount, 50, maxFrames / 1.15, this.apertureHigh, this.apertureLow, true);
 
 		this.xRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
 		this.yRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
@@ -115,7 +115,7 @@ class Mover {
 		let totalSpeed = abs(velocity.mag());
 		this.sat += map(totalSpeed, 0, 600 * MULTIPLIER, -this.satDir, this.satDir, true);
 		this.sat = this.sat > 95 ? (this.sat = 0) : this.sat < 0 ? (this.sat = 95) : this.sat;
-		this.sat = 0;
+		//this.sat = 0;
 		this.hue += map(totalSpeed, 0, 1200 * MULTIPLIER, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? (this.hue = 0) : this.hue < 0 ? (this.hue = 360) : this.hue;
 		this.lineWeight = map(totalSpeed, 0, 600 * MULTIPLIER, 0, this.lineWeightMax, true) * MULTIPLIER;
