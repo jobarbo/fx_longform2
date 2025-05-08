@@ -29,7 +29,7 @@ void main() {
 
     // Add spiral effect
     float angle = atan(centered_uv.y, centered_uv.x);
-    float spiral = tan(dist * 2.0 - uTime * 0.1) * 1.0;
+    float spiral = tan(dist * 1.0 - uTime * 0.2) / tan(dist * 2.01 - uTime * 0.1);
 
     vec2 waveOffset = vec2(waveX, waveY);
     vec2 spiralOffset = vec2(cos(angle), sin(angle)) * spiral * centerWeight;
