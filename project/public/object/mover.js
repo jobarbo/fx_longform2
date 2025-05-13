@@ -126,7 +126,7 @@ class Mover {
 		if (this.speed < 0.51) {
 			this.hue = 15;
 			this.sat = this.initSat + 100;
-			this.bri = this.initBri + 10;
+			this.bri = this.initBri + random([-30, -20, -10, 0, 10, 50]);
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
