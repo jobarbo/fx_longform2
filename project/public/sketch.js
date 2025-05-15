@@ -13,10 +13,10 @@ let startTime;
 let frameIterator = 0;
 let currentFrame = 0;
 //let maxFrames = 20;
-let maxFrames = 64 * 32;
+let maxFrames = 64;
 //let maxFrames = 64 * 120;
 //let particleNum = 800000;
-let particleNum = 10250;
+let particleNum = 580250;
 //let particleNum = 2250;
 
 // viewport
@@ -56,8 +56,8 @@ function setup() {
 	frameIterator = maxFrames / maxFrames;
 	scl1 = fxrand() * (0.0022 - 0.001) + 0.001;
 	scl2 = fxrand() * (0.0022 - 0.001) + 0.001;
-	ang1 = parseInt(fxrand() * (500, 1200) + 500);
-	ang2 = parseInt(fxrand() * (1000, 1200) + 1000);
+	ang1 = parseInt(fxrand() * (6500, 1200) + 500);
+	ang2 = parseInt(fxrand() * (6000, 1200) + 1000);
 
 	// change how drastically it changes with the SDF
 	scl1Zone = 600;

@@ -3,11 +3,11 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.maxFrames = maxFrames;
-		this.initHue = parseInt(hue);
-		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
+		this.initHue = parseInt(35);
+		this.initSat = [0, 0, 10, 100][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initAlpha = 100;
-		this.initS = 0.01 * MULTIPLIER;
+		this.initS = 0.03 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -39,7 +39,7 @@ class Mover {
 		this.yMax = yMax;
 		this.xLimit = 0.00015;
 		this.yLimit = 0.00015;
-		this.oct = 6;
+		this.oct = 1;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX = width / 2;
@@ -114,8 +114,8 @@ class Mover {
 			let alpha_max = map(frameCount, 0, this.maxFrames / 2, 40, 100, true); */
 
 			//!complexion inverser (goldenfold variant)
-			this.s = mapValue(this.speed, 0, 1.01, this.initS * 2, this.initS * 3, true);
-			this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
+			this.s = mapValue(this.speed, 0, 1.01, this.initS * 1, this.initS * 0.8, true);
+			this.a = mapValue(this.speed, 2, 2.01, 100, 100, true);
 
 			//!complexion inverser (malachite variant)
 			/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
@@ -205,8 +205,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let sun = smoothstep(-0.5, 0.15, un);
-	let svn = smoothstep(-0.15, 0.5, vn);
+	let sun = smoothstep(-0.00005, 0.00005, un);
+	let svn = smoothstep(-0.005, 0.005, vn);
 
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */
@@ -219,7 +219,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 
 	/* 	let u = mapValue(un, -0.5, 0.5, -aValue, bValue);
 	let v = mapValue(vn, -0.5, 0.5, -bValue, aValue);*/
-	let u = mapValue(sun, 0, 1, -bValue, aValue);
+	let u = mapValue(sun, 0, 2, -bValue, aValue);
 	let v = mapValue(svn, 0, 1, -aValue, bValue);
 
 	//let p = createVector(u, v);
