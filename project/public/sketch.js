@@ -56,8 +56,8 @@ function setup() {
 	frameIterator = maxFrames / maxFrames;
 	scl1 = fxrand() * (0.0022 - 0.001) + 0.001;
 	scl2 = fxrand() * (0.0022 - 0.001) + 0.001;
-	ang1 = parseInt(fxrand() * (6500, 1200) + 500);
-	ang2 = parseInt(fxrand() * (6000, 1200) + 1000);
+	ang1 = parseInt(fxrand() * (3500, 1200) + 500);
+	ang2 = parseInt(fxrand() * (1000, 1200) + 1000);
 
 	// change how drastically it changes with the SDF
 	scl1Zone = 600;
