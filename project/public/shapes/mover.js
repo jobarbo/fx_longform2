@@ -11,7 +11,7 @@ class Mover {
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
 		this.bri = this.initBri;
-		this.initAlpha = 50;
+		this.initAlpha = 100;
 		this.a = this.initAlpha;
 		this.s = random([0.1]) * MULTIPLIER;
 		this.scl1 = scl1;
@@ -38,9 +38,9 @@ class Mover {
 		// Pre-calculate padding values
 		this.wrapPaddingX = (min(width, height) * 0.14) / width;
 		this.wrapPaddingY = (min(width, height) * 0.14) / height;
-		this.reentryOffsetX = (min(width, height) * 0.001) / width;
-		this.reentryOffsetY = (min(width, height) * 0.001) / height;
-		this.wrapPaddingMultiplier = -4; //! or 0.5
+		this.reentryOffsetX = (min(width, height) * 0.0041) / width;
+		this.reentryOffsetY = (min(width, height) * 0.0041) / height;
+		this.wrapPaddingMultiplier = -0.1; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -62,8 +62,8 @@ class Mover {
 		this.isBordered = true;
 
 		// Update position with slight randomization
-		this.xRandDivider = random(0.005, 0.00505);
-		this.yRandDivider = random(0.005, 0.09505);
+		this.xRandDivider = random(0.005, 0.005);
+		this.yRandDivider = random(0.005, 0.005);
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
@@ -144,10 +144,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -1.5, 1.5, -15, 15, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -1.5, 1.5, -15, 15, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -1.5, 1.5, -15, 15, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale1, 3, 1), -1.5, 1.5, -15, 15, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.015, 0.015, -0.5, 0.5, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.015, 0.015, -0.5, 0.5, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.015, 0.015, -0.5, 0.5, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale1, 3, 1), -0.015, 0.015, -0.5, 0.5, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
@@ -168,8 +168,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = -1; */
 
 	//! Introverted
-	let u = map(vn, map(nx, xMin * width, xMax * width, -15.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 15.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -15.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 15.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
