@@ -74,6 +74,7 @@ function setup() {
 	let bga = 100;
 	console.log(bghue, bgsat, bgbri, bga);
 	bgCol = color(bghue, bgsat, bgbri, bga);
+	bgCol_array = [bghue, bgsat, bgbri, bga];
 
 	INIT();
 
@@ -174,7 +175,8 @@ function INIT() {
 				scl2Zone * MULTIPLIER,
 				ang1Zone * MULTIPLIER,
 				ang2Zone * MULTIPLIER,
-				maxFrames
+				maxFrames,
+				bgCol_array
 			)
 		);
 	}

@@ -1,5 +1,5 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, scl1Zone, scl2Zone, ang1Zone, ang2Zone, maxFrames) {
+	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, scl1Zone, scl2Zone, ang1Zone, ang2Zone, maxFrames, bgCol_array) {
 		this.x = x;
 		this.y = y;
 		this.maxFrames = maxFrames;
@@ -124,9 +124,9 @@ class Mover {
 
 		//!goldenfold variant
 		if (this.speed < 0.51) {
-			this.hue = 15;
-			this.sat = this.initSat + 100;
-			this.bri = this.initBri + random([-30, -20, -10, 0, 10, 50]);
+			this.hue = bgCol_array[0];
+			this.sat = bgCol_array[1];
+			this.bri = bgCol_array[2] + random([-30, -20, -10, 0, 10, 50]);
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
@@ -162,17 +162,17 @@ class Mover {
 
 		// if this.x is outside of xmin and xmax, set the alpha to 0;
 
-		if (this.x < (this.xMin - this.xLimit) * width - 50) {
-			this.x = (this.xMax + this.xLimit) * width + 50;
+		if (this.x < (this.xMin - this.xLimit) * width - 10) {
+			this.x = (this.xMax + this.xLimit) * width + 10;
 		}
-		if (this.x > (this.xMax + this.xLimit) * width + 50) {
-			this.x = (this.xMin - this.xLimit) * width - 50;
+		if (this.x > (this.xMax + this.xLimit) * width + 10) {
+			this.x = (this.xMin - this.xLimit) * width - 10;
 		}
-		if (this.y < (this.yMin - this.yLimit) * height - 50) {
-			this.y = (this.yMax + this.yLimit) * height + 50;
+		if (this.y < (this.yMin - this.yLimit) * height - 10) {
+			this.y = (this.yMax + this.yLimit) * height + 10;
 		}
-		if (this.y > (this.yMax + this.yLimit) * height + 50) {
-			this.y = (this.yMin - this.yLimit) * height - 50;
+		if (this.y > (this.yMax + this.yLimit) * height + 10) {
+			this.y = (this.yMin - this.yLimit) * height - 10;
 		}
 	}
 }
