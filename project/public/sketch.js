@@ -48,7 +48,7 @@ function setup() {
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
-	c = createCanvas(DIM * ARTWORK_RATIO, DIM);
+	c = createCanvas(DIM, DIM * ARTWORK_RATIO);
 	pixelDensity(5);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);

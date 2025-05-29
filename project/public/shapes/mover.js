@@ -40,7 +40,7 @@ class Mover {
 		this.wrapPaddingY = (min(width, height) * 0.075) / height;
 		this.reentryOffsetX = (min(width, height) * 0.0041) / width;
 		this.reentryOffsetY = (min(width, height) * 0.0041) / height;
-		this.wrapPaddingMultiplier = -0.1; //! or 0.5
+		this.wrapPaddingMultiplier = 1.1; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -178,8 +178,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	let zu = ZZ(u, 50, 550, 0.0015);
-	let zv = ZZ(v, 50, 550, 0.0015);
+	let zu = ZZ(u, 50, 60, 0.0015);
+	let zv = ZZ(v, 50, 60, 0.0015);
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
