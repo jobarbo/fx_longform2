@@ -13,7 +13,7 @@ class Mover {
 		this.bri = this.initBri;
 		this.initAlpha = 10;
 		this.a = this.initAlpha;
-		this.s = random([0.6]);
+		this.s = random([0.5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
