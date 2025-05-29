@@ -25,7 +25,7 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1;
+let ARTWORK_RATIO = 1.41;
 let BASE_WIDTH = 348;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
