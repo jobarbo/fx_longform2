@@ -3,7 +3,7 @@ let movers = [];
 let startTime;
 let maxFrames = 25;
 let elapsedTime = 0;
-let particleNum = 500000;
+let particleNum = 1500000;
 // Adjust cycle for smoother percentage updates (1% increments)
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
@@ -48,8 +48,8 @@ function setup() {
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
-	c = createCanvas(DIM, DIM * ARTWORK_RATIO);
-	pixelDensity(3);
+	c = createCanvas(DIM * ARTWORK_RATIO, DIM);
+	pixelDensity(5);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
@@ -108,11 +108,11 @@ function INIT(rseed, nseed) {
 	scl3 = 0.0051 / MULTIPLIER;
 
 	let sclOffset1 = 1;
-	let sclOffset2 = 1;
+	let sclOffset2 = 2;
 	let sclOffset3 = 1;
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.01; // 45% padding for X axis
-	let paddingRatioY = 0.01; // 45% padding for Y axis
+	let paddingRatioX = 0.1; // 45% padding for X axis
+	let paddingRatioY = 0.1; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;
