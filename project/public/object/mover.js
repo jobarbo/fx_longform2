@@ -1,5 +1,5 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, scl1Zone, scl2Zone, ang1Zone, ang2Zone, maxFrames, bgCol_array) {
+	constructor(x, y, hue, scl1, scl2, ang1, ang2, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, scl1Zone, scl2Zone, ang1Zone, ang2Zone, maxFrames) {
 		this.x = x;
 		this.y = y;
 		this.maxFrames = maxFrames;
@@ -39,7 +39,7 @@ class Mover {
 		this.yMax = yMax;
 		this.xLimit = 0.00015;
 		this.yLimit = 0.00015;
-		this.oct = 6;
+		this.oct = 10;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX = width / 2;
@@ -124,9 +124,9 @@ class Mover {
 
 		//!goldenfold variant
 		if (this.speed < 0.51) {
-			this.hue = bgCol_array[0];
-			this.sat = bgCol_array[1];
-			this.bri = bgCol_array[2] + random([-30, -20, -10, 0, 10, 50]);
+			this.hue = 15;
+			this.sat = this.initSat + 100;
+			this.bri = this.initBri + random([-30, -20, -10, 0, 10, 50]);
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
@@ -219,7 +219,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 
 	/* 	let u = mapValue(un, -0.5, 0.5, -aValue, bValue);
 	let v = mapValue(vn, -0.5, 0.5, -bValue, aValue);*/
-	let u = mapValue(sun, 0, 2, -bValue, aValue);
+	let u = mapValue(sun, 0, 3, -bValue, aValue);
 	let v = mapValue(svn, 0, 1, -aValue, bValue);
 
 	//let p = createVector(u, v);
