@@ -49,7 +49,7 @@ function setup() {
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
 	c = createCanvas(DIM, DIM * ARTWORK_RATIO);
-	pixelDensity(5);
+	pixelDensity(3);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
@@ -111,8 +111,8 @@ function INIT(rseed, nseed) {
 	let sclOffset2 = 2;
 	let sclOffset3 = 1;
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.1; // 45% padding for X axis
-	let paddingRatioY = 0.1; // 45% padding for Y axis
+	let paddingRatioX = -0.01; // 45% padding for X axis
+	let paddingRatioY = -0.01; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;
@@ -148,7 +148,7 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed));
 	}
 
-	let bgCol = spectral.mix("#000", "#fff", 0.88);
+	let bgCol = color(45, 10, 100);
 	background(bgCol);
 	//initGrid(0);
 }

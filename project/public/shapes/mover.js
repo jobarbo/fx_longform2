@@ -1,18 +1,19 @@
 class Mover {
 	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed) {
+		// Define the palette in hex format - Light to dark blue gradient
+		this.palette = ["#f72585", "#b5179e", "#7209b7", "#560bad", "#480ca8", "#3a0ca3", "#3f37c9", "#4361ee", "#4895ef", "#4cc9f0"];
+
 		this.x = x;
 		this.initX = x;
 		this.y = y;
 		this.initY = y;
-		this.initHue = 0;
-		this.initSat = random([0]);
-		this.initBri = random([0]);
-		this.initAlpha = random(60, 100);
-		this.hue = random([this.initHue, this.initHue / 2]);
-		this.sat = this.initSat;
-		this.bri = this.initBri;
-		this.initAlpha = 20;
+
+		// Start with the first color
+		this.colorIndex = 0;
+		this.colorDirection = 1; // 1 for forward, -1 for backward
+		this.initAlpha = 30; // Set opacity
 		this.a = this.initAlpha;
+		this.currentColor = this.hexToRGBA(this.palette[this.colorIndex], this.a);
 		this.s = random([0.5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -36,11 +37,11 @@ class Mover {
 		this.hasBeenOutside = false;
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.075) / width;
-		this.wrapPaddingY = (min(width, height) * 0.075) / height;
+		this.wrapPaddingX = (min(width, height) * 0.001) / width;
+		this.wrapPaddingY = (min(width, height) * 0.001) / height;
 		this.reentryOffsetX = (min(width, height) * 0.0041) / width;
 		this.reentryOffsetY = (min(width, height) * 0.0041) / height;
-		this.wrapPaddingMultiplier = 1.1; //! or 0.5
+		this.wrapPaddingMultiplier = -0.5; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -50,7 +51,7 @@ class Mover {
 	}
 
 	show() {
-		drawingContext.fillStyle = `hsla(${this.hue}, ${this.sat}%, ${this.bri}%, ${this.a}%)`;
+		drawingContext.fillStyle = this.currentColor;
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
 	}
 
@@ -58,7 +59,6 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update isBordered state
-		//this.isBordered = frameCount > maxFrames / 2;
 		this.isBordered = true;
 
 		// Update position with slight randomization
@@ -68,6 +68,20 @@ class Mover {
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += p.x / this.xRandDivider + this.xRandSkipper;
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
+
+		// Change color every frame and reverse direction at ends
+		if (frameCount % 5 === 0) {
+			this.colorIndex += this.colorDirection;
+
+			// Reverse direction when reaching either end
+			if (this.colorIndex >= this.palette.length - 1) {
+				this.colorDirection = -1;
+			} else if (this.colorIndex <= 0) {
+				this.colorDirection = 1;
+			}
+
+			this.currentColor = this.hexToRGBA(this.palette[this.colorIndex], this.a);
+		}
 
 		if (this.isBordered) {
 			// Wrap to opposite side with slight offset
@@ -112,6 +126,20 @@ class Mover {
 	}
 	isOutside() {
 		return this.x < this.minBoundX || this.x > this.maxBoundX || this.y < this.minBoundY || this.y > this.maxBoundY;
+	}
+
+	// Helper function to convert hex to rgba
+	hexToRGBA(hex, alpha) {
+		// Remove the hash if it exists
+		hex = hex.replace("#", "");
+
+		// Convert hex to RGB
+		const r = parseInt(hex.substring(0, 2), 16);
+		const g = parseInt(hex.substring(2, 4), 16);
+		const b = parseInt(hex.substring(4, 6), 16);
+
+		// Return rgba string
+		return `rgba(${r}, ${g}, ${b}, ${alpha / 100})`;
 	}
 }
 
