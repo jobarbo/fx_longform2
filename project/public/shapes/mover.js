@@ -1,7 +1,7 @@
 class Mover {
 	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed) {
 		// Define the palette in hex format - Light to dark blue gradient
-		this.palette = ["#f72585", "#b5179e", "#7209b7", "#560bad", "#480ca8", "#3a0ca3", "#3f37c9", "#4361ee", "#4895ef", "#4cc9f0"];
+		this.palette = ["#00202e", "#003f5c", "#2c4875", "#8a508f", "#bc5090", "#ff6361", "#ff8531", "#ffa600", "#ffd380"];
 
 		this.x = x;
 		this.initX = x;
@@ -9,9 +9,9 @@ class Mover {
 		this.initY = y;
 
 		// Start with the first color
-		this.colorIndex = 0;
-		this.colorDirection = 1; // 1 for forward, -1 for backward
-		this.initAlpha = 30; // Set opacity
+		this.colorIndex = this.palette.length - 1;
+		this.colorDirection = -1; // 1 for forward, -1 for backward
+		this.initAlpha = 35; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.hexToRGBA(this.palette[this.colorIndex], this.a);
 		this.s = random([0.5]);
@@ -37,8 +37,8 @@ class Mover {
 		this.hasBeenOutside = false;
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.001) / width;
-		this.wrapPaddingY = (min(width, height) * 0.001) / height;
+		this.wrapPaddingX = (min(width, height) * 0.05) / width;
+		this.wrapPaddingY = (min(width, height) * 0.05) / height;
 		this.reentryOffsetX = (min(width, height) * 0.0041) / width;
 		this.reentryOffsetY = (min(width, height) * 0.0041) / height;
 		this.wrapPaddingMultiplier = 0.5; //! or 0.5
@@ -70,7 +70,7 @@ class Mover {
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
 		// Change color every frame and reverse direction at ends
-		if (frameCount % 5 === 0) {
+		if (frameCount % 3 === 0) {
 			this.colorIndex += this.colorDirection;
 
 			// Reverse direction when reaching either end
