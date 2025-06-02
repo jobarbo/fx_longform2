@@ -25,7 +25,7 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1;
+let ARTWORK_RATIO = 1.41;
 let BASE_WIDTH = 348;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -83,7 +83,7 @@ function setup() {
 		},
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
-			//initGrid(100);
+			initGrid(50);
 			$fx.preview();
 			document.complete = true;
 		},
@@ -148,9 +148,8 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed));
 	}
 
-	let bgCol = color(190, 5, 100);
+	let bgCol = color(45, 0, 95);
 	background(bgCol);
-	//initGrid(0);
 }
 
 function initGrid(brightness) {
@@ -159,7 +158,7 @@ function initGrid(brightness) {
 	let gridSizeY = width / 150; // Size of grid cells
 	let variance = gridSizeX / 1; // Amount of variation for particles
 	let g_variance = gridSizeX / 1111;
-	let noiseScale = 0.05; // Scale of the noise
+	let noiseScale = 0.015; // Scale of the noise
 
 	// Vertical lines of particles
 	for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX) {
