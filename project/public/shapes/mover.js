@@ -1,7 +1,7 @@
 class Mover {
 	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed) {
 		// Define the palette in hex format - Light to dark blue gradient
-		this.palette = ["#00202e", "#003f5c", "#2c4875", "#8a508f", "#bc5090", "#ff6361", "#ff8531", "#ffa600", "#ffd380", "#fff899"];
+		this.palette = ["#00202e", "#003f5c", "#2c4875", "#8a508f", "#bc5090", "#ff6361", "#ff8531", "#ffa600", "#ffd380"];
 
 		this.x = x;
 		this.initX = x;
@@ -70,7 +70,7 @@ class Mover {
 		this.y += p.y / this.yRandDivider + this.yRandSkipper;
 
 		// Change color every frame and reverse direction at ends
-		if (frameCount % 3 === 0) {
+		/* 	if (frameCount % 5 === 0) {
 			this.colorIndex += this.colorDirection;
 
 			// Reverse direction when reaching either end
@@ -81,7 +81,12 @@ class Mover {
 			}
 
 			this.currentColor = this.hexToRGBA(this.palette[this.colorIndex], this.a);
-		}
+		} */
+
+		// Map color based on frame count
+		let mappedIndex = map(frameCount, 0, maxFrames / 1.1, this.palette.length - 1, 0, true);
+		this.colorIndex = Math.floor(mappedIndex);
+		this.currentColor = this.hexToRGBA(this.palette[this.colorIndex], this.a);
 
 		if (this.isBordered) {
 			// Wrap to opposite side with slight offset

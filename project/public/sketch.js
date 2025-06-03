@@ -83,7 +83,6 @@ function setup() {
 		},
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
-			initGrid(50);
 			$fx.preview();
 			document.complete = true;
 		},
@@ -150,6 +149,7 @@ function INIT(rseed, nseed) {
 
 	let bgCol = color(45, 0, 95);
 	background(bgCol);
+	//initGrid(50);
 }
 
 function initGrid(brightness) {
@@ -158,7 +158,7 @@ function initGrid(brightness) {
 	let gridSizeY = width / 150; // Size of grid cells
 	let variance = gridSizeX / 1; // Amount of variation for particles
 	let g_variance = gridSizeX / 1111;
-	let noiseScale = 0.015; // Scale of the noise
+	let noiseScale = 0.000015; // Scale of the noise
 
 	// Vertical lines of particles
 	for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX) {
