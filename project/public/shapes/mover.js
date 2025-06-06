@@ -1,21 +1,19 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed) {
-		// Define the palette in hex format - Light to dark blue gradient
-		this.palette = ["#0a1419", "#141f2b", "#1e2a3d", "#283c55", "#355070", "#6d597a", "#915f78", "#b56576", "#e56b6f", "#e77c76", "#e88c7d", "#eaac8b", "#eebba0"];
-
-		/* this.palette = ["#00202e", "#003f5c", "#2c4875", "#8a508f", "#bc5090", "#ff6361", "#ff8531", "#ffa600", "#ffd380"]; */
-
+	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette) {
 		this.x = x;
 		this.initX = x;
 		this.y = y;
 		this.initY = y;
 
+		// Use the pre-calculated palette directly
+		this.palette = preCalculatedPalette;
+
 		// Start with the first color
 		this.colorIndex = this.palette.length - 1;
 		this.colorDirection = -1; // 1 for forward, -1 for backward
-		this.initAlpha = 35; // Set opacity
+		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
-		this.currentColor = this.hexToRGBA(this.palette[this.colorIndex], this.a);
+		this.currentColor = this.palette[this.colorIndex];
 		this.s = random([0.5]);
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -82,13 +80,12 @@ class Mover {
 				this.colorDirection *= -1;
 			}
 
-			this.currentColor = this.hexToRGBA(this.palette[this.colorIndex], this.a);
 		} */
 
 		// Map color based on frame count
 		let mappedIndex = map(frameCount, 0, maxFrames / 1.5, this.palette.length - 1, 0, true);
 		this.colorIndex = Math.floor(mappedIndex);
-		this.currentColor = this.hexToRGBA(this.palette[this.colorIndex], this.a);
+		this.currentColor = this.palette[this.colorIndex];
 
 		if (this.isBordered) {
 			// Wrap to opposite side with slight offset
@@ -133,20 +130,6 @@ class Mover {
 	}
 	isOutside() {
 		return this.x < this.minBoundX || this.x > this.maxBoundX || this.y < this.minBoundY || this.y > this.maxBoundY;
-	}
-
-	// Helper function to convert hex to rgba
-	hexToRGBA(hex, alpha) {
-		// Remove the hash if it exists
-		hex = hex.replace("#", "");
-
-		// Convert hex to RGB
-		const r = parseInt(hex.substring(0, 2), 16);
-		const g = parseInt(hex.substring(2, 4), 16);
-		const b = parseInt(hex.substring(4, 6), 16);
-
-		// Return rgba string
-		return `rgba(${r}, ${g}, ${b}, ${alpha / 100})`;
 	}
 }
 

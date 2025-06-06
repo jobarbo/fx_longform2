@@ -25,7 +25,7 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.41;
+let ARTWORK_RATIO = 1;
 let BASE_WIDTH = 348;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -36,6 +36,67 @@ let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
+
+// Two different base HSL palettes to choose from
+let basePalettes = [
+	// Palette 1: Current blue-orange gradient
+	[
+		{h: 200, s: 100, l: 9}, // #00202e
+		{h: 200, s: 100, l: 18}, // #003f5c
+		{h: 218, s: 45, l: 32}, // #2c4875
+		{h: 295, s: 28, l: 44}, // #8a508f
+		{h: 320, s: 40, l: 53}, // #bc5090
+		{h: 1, s: 100, l: 69}, // #ff6361
+		{h: 25, s: 100, l: 60}, // #ff8531
+		{h: 39, s: 100, l: 50}, // #ffa600
+		{h: 44, s: 100, l: 75}, // #ffd380
+	],
+	// Palette 2: Dark blue-green to coral gradient (smoother transitions)
+	[
+		{h: 190, s: 43, l: 7}, // #0a1419
+		{h: 208, s: 37, l: 12}, // #141f2b
+		{h: 215, s: 34, l: 18}, // #1e2a3d
+		{h: 215, s: 36, l: 25}, // #283c55
+		{h: 215, s: 35, l: 37}, // #355070
+		{h: 230, s: 25, l: 38}, // Intermediate blue-purple
+		{h: 250, s: 20, l: 39}, // Intermediate purple-blue
+		{h: 284, s: 15, l: 40}, // #6d597a
+		{h: 335, s: 21, l: 44}, // #915f78
+		{h: 349, s: 24, l: 53}, // #b56576
+		{h: 2, s: 69, l: 67}, // #e56b6f
+		{h: 8, s: 70, l: 68}, // #e77c76
+		{h: 14, s: 71, l: 69}, // #e88c7d
+		{h: 26, s: 69, l: 73}, // #eaac8b
+		{h: 35, s: 77, l: 80}, // #eebba0
+	],
+];
+
+let selectedPalette; // Will store the randomly selected palette
+let baseHSLPalette; // Keep for backward compatibility
+
+// Pre-calculated color variations (1000 different palettes)
+let colorVariations = [];
+
+function generateColorVariations() {
+	const numVariations = 1000; // Create 1000 different color palettes
+	colorVariations = [];
+
+	for (let i = 0; i < numVariations; i++) {
+		// Use Math.random() instead of p5's random() to avoid affecting the seed
+		const saturationOffset = (Math.random() - 0.5) * 10; // -5 to 5
+		const brightnessOffset = (Math.random() - 0.5) * 10; // -5 to 5
+
+		const palette = baseHSLPalette.map((hsl) => {
+			const finalS = Math.max(0, Math.min(100, hsl.s + saturationOffset));
+			const finalL = Math.max(0, Math.min(100, hsl.l + brightnessOffset));
+			return `hsla(${hsl.h}, ${finalS}%, ${finalL}%, 1)`;
+		});
+
+		colorVariations.push(palette);
+	}
+
+	console.log(`Using palette ${selectedPalette + 1} with ${baseHSLPalette.length} colors`);
+}
 
 function setup() {
 	console.log(features);
@@ -101,6 +162,11 @@ function windowResized() {
 function INIT(rseed, nseed) {
 	movers = [];
 
+	// Generate color variations first (1000 different palettes)
+	selectedPalette = Math.floor(Math.random() * basePalettes.length);
+	baseHSLPalette = basePalettes[selectedPalette];
+	generateColorVariations();
+
 	// Scale noise values based on MULTIPLIER
 	scl1 = 0.0049 / MULTIPLIER;
 	scl2 = 0.002 / MULTIPLIER;
@@ -109,6 +175,7 @@ function INIT(rseed, nseed) {
 	let sclOffset1 = 1;
 	let sclOffset2 = 2;
 	let sclOffset3 = 1;
+
 	// Calculate padding based on the reference size and scale it
 	let paddingRatioX = 0.1; // 45% padding for X axis
 	let paddingRatioY = 0.1; // 45% padding for Y axis
@@ -144,7 +211,11 @@ function INIT(rseed, nseed) {
 		let hueOffset = random(-20, 20);
 		let initHue = hue + hueOffset;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed));
+
+		// Randomly assign one of the pre-calculated color variations using Math.random()
+		let colorVariationIndex = Math.floor(Math.random() * colorVariations.length);
+
+		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, colorVariations[colorVariationIndex]));
 	}
 
 	let bgCol = color(45, 0, 95);
