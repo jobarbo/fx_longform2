@@ -11,7 +11,7 @@ class Mover {
 		// Start with the first color
 		this.colorIndex = this.palette.length - 1;
 		this.colorDirection = -1; // 1 for forward, -1 for backward
-		this.initAlpha = 100; // Set opacity
+		this.initAlpha = 35; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
 		this.s = random([0.5]);
