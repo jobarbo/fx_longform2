@@ -11,7 +11,7 @@ class Mover {
 		// Start with the first color
 		this.colorIndex = this.palette.length - 1;
 		this.colorDirection = -1; // 1 for forward, -1 for backward
-		this.initAlpha = 35; // Set opacity
+		this.initAlpha = 0.35; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
 		this.s = random([0.5]);
@@ -51,8 +51,12 @@ class Mover {
 	}
 
 	show() {
+		// Apply alpha by setting globalAlpha
+		drawingContext.globalAlpha = this.a;
 		drawingContext.fillStyle = this.currentColor;
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
+		// Reset globalAlpha to 1 for other drawing operations
+		drawingContext.globalAlpha = 1;
 	}
 
 	move(frameCount, maxFrames) {
