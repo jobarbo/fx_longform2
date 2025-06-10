@@ -25,7 +25,7 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.25;
+let ARTWORK_RATIO = 1.0;
 let BASE_WIDTH = 348;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -83,8 +83,8 @@ function generateColorVariations() {
 
 	for (let i = 0; i < numVariations; i++) {
 		// Use Math.random() instead of p5's random() to avoid affecting the seed
-		const saturationOffset = (Math.random() - 0.5) * 10; // -5 to 5
-		const brightnessOffset = (Math.random() - 0.5) * 10; // -5 to 5
+		const saturationOffset = (Math.random() - 0.5) * 5; // -5 to 5
+		const brightnessOffset = (Math.random() - 0.5) * 5; // -5 to 5
 
 		const palette = baseHSLPalette.map((hsl) => {
 			const finalS = Math.max(0, Math.min(100, hsl.s + saturationOffset));
@@ -110,7 +110,7 @@ function setup() {
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
 	c = createCanvas(DIM, DIM * ARTWORK_RATIO);
-	pixelDensity(2);
+	pixelDensity(5);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
@@ -163,7 +163,7 @@ function INIT(rseed, nseed) {
 	movers = [];
 
 	// Generate color variations first (1000 different palettes)
-	selectedPalette = Math.floor(Math.random() * basePalettes.length);
+	selectedPalette = int(random(basePalettes.length));
 	baseHSLPalette = basePalettes[selectedPalette];
 	generateColorVariations();
 

@@ -1,20 +1,16 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette) {
+	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette, paletteMode = "default", cycleCount = 1) {
 		this.x = x;
 		this.initX = x;
 		this.y = y;
 		this.initY = y;
-
-		// Use the pre-calculated palette directly
 		this.palette = preCalculatedPalette;
-
-		// Start with the first color
 		this.colorIndex = this.palette.length - 1;
 		this.colorDirection = -1; // 1 for forward, -1 for backward
 		this.initAlpha = 0.35; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.5]);
+		this.s = random([0.35]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -35,6 +31,11 @@ class Mover {
 		this.yMax = yMax;
 		this.isBordered = false;
 		this.hasBeenOutside = false;
+
+		// Palette animation properties
+		this.paletteMode = paletteMode; // 'once' or 'yoyo'
+		this.cycleCount = cycleCount; // Number of yo-yo cycles
+		this.paletteCompleted = false; // Track if one-time pass is completed
 
 		// Pre-calculate padding values
 		this.wrapPaddingX = (min(width, height) * 0.05) / width;
@@ -70,25 +71,34 @@ class Mover {
 		this.yRandDivider = random(0.005, 0.005);
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
-		this.x += p.x / this.xRandDivider + this.xRandSkipper;
-		this.y += p.y / this.yRandDivider + this.yRandSkipper;
-
-		// Change color every frame and reverse direction at ends
-		/* 	if (frameCount % 3 === 0) {
-			this.colorIndex += this.colorDirection;
-
-			// Reverse direction when reaching either end
-			if (this.colorIndex >= this.palette.length - 1) {
-				this.colorDirection *= -1;
-			} else if (this.colorIndex <= 0) {
-				this.colorDirection *= -1;
-			}
-
-		} */
+		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
+		this.y += (p.y / this.yRandDivider + this.yRandSkipper) * MULTIPLIER;
 
 		// Map color based on frame count
-		let mappedIndex = map(frameCount, 0, maxFrames / 1.5, this.palette.length - 1, 0, true);
-		this.colorIndex = Math.floor(mappedIndex);
+		if (this.paletteMode === "once") {
+			// One-time pass: go from palette.length-1 to 0 and stop
+			if (!this.paletteCompleted) {
+				let progress = frameCount / (maxFrames - 1);
+				if (progress >= 1) {
+					this.paletteCompleted = true;
+					this.colorIndex = 0;
+				} else {
+					this.colorIndex = Math.floor((1 - progress) * (this.palette.length - 1));
+				}
+			}
+		} else if (this.paletteMode === "yoyo") {
+			// Yo-yo effect using cosine for smooth oscillation
+			// Adjust frequency so cycles complete before maxFrames
+			let frequency = (this.cycleCount * Math.PI) / (maxFrames - 1);
+			let cosValue = Math.cos(frameCount * frequency);
+			// Map cosine (-1 to 1) to palette range (0 to palette.length-1)
+			this.colorIndex = Math.round(((cosValue + 1) / 2) * (this.palette.length - 1));
+		} else {
+			// Default: original linear mapping
+			let mappedIndex = map(frameCount, 0, maxFrames / 1.5, this.palette.length - 1, 0, true);
+			this.colorIndex = Math.floor(mappedIndex);
+		}
+
 		this.currentColor = this.palette[this.colorIndex];
 
 		if (this.isBordered) {
@@ -115,22 +125,7 @@ class Mover {
 			}
 		}
 
-		// Check if particle is currently outside
-		let currentlyOutside = this.isOutside();
-
-		// Update hasBeenOutside flag if particle is outside
-		/* 		if (this.hasBeenOutside) {
-			if (this.isBordered) {
-				this.hue = 40;
-				this.sat = 100;
-				this.bri = random([0, 10, 10, 50]);
-				this.xRandSkipperOffset = 5;
-				this.yRandSkipperOffset = 5;
-			}
-		} */
-
 		this.a = this.isOutside() ? 0 : this.initAlpha;
-		//this.a = this.hasBeenOutside && !currentlyOutside ? 100 : 0;
 	}
 	isOutside() {
 		return this.x < this.minBoundX || this.x > this.maxBoundX || this.y < this.minBoundY || this.y > this.maxBoundY;
@@ -166,10 +161,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.000015, 0.000015, -0.5, 0.5, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.000015, 0.000015, -0.5, 0.5, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.000015, 0.000015, -0.5, 0.5, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale1, 3, 1), -0.000015, 0.000015, -0.5, 0.5, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.000015, 0.000015, -0.15, 0.15, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.000015, 0.000015, -0.15, 0.15, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.000015, 0.000015, -0.15, 0.15, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale1, 3, 1), -0.000015, 0.000015, -0.15, 0.15, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
