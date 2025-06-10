@@ -201,11 +201,6 @@ function setup() {
 	startAnimation(generator);
 }
 
-function windowResized() {
-	resizeCanvas(windowWidth, windowHeight);
-	INIT(seed);
-}
-
 function INIT(rseed, nseed) {
 	movers = [];
 
