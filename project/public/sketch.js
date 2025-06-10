@@ -8,6 +8,17 @@ let particleNum = 1500000;
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 
+// Global color mapping optimization
+let globalColorIndices = {
+	once: 0,
+	yoyo: 0,
+	default: 0,
+	onceCompleted: false,
+	// Pre-calculated yo-yo indices for common cycle counts
+	yoyoCycles: {},
+	lastCalculatedFrame: -1, // Track last frame we calculated for
+};
+
 let scl1;
 let scl2;
 let scl3;
@@ -26,7 +37,7 @@ let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
 let ARTWORK_RATIO = 1.0;
-let BASE_WIDTH = 348;
+let BASE_WIDTH = 948;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
 // This is our reference size for scaling
@@ -77,14 +88,45 @@ let baseHSLPalette; // Keep for backward compatibility
 // Pre-calculated color variations (1000 different palettes)
 let colorVariations = [];
 
+function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
+	// Calculate once for "once" mode
+	if (currentFrame === 0) {
+		globalColorIndices.onceCompleted = false;
+	}
+
+	if (!globalColorIndices.onceCompleted) {
+		let progress = currentFrame / (maxFrames - 1);
+		if (progress >= 1) {
+			globalColorIndices.onceCompleted = true;
+			globalColorIndices.once = 0;
+		} else {
+			globalColorIndices.once = Math.floor((1 - progress) * (paletteLength - 1));
+		}
+	}
+
+	// Calculate yo-yo indices for common cycle counts (1-4)
+	for (let cycleCount = 1; cycleCount <= 4; cycleCount++) {
+		let frequency = (cycleCount * Math.PI) / (maxFrames - 1);
+		let cosValue = Math.cos(currentFrame * frequency);
+		globalColorIndices.yoyoCycles[cycleCount] = Math.round(((cosValue + 1) / 2) * (paletteLength - 1));
+	}
+
+	// Keep the original yoyo for backward compatibility (cycle count 1)
+	globalColorIndices.yoyo = globalColorIndices.yoyoCycles[1];
+
+	// Calculate once for "default" mode
+	let mappedIndex = map(currentFrame, 0, maxFrames / 1.5, paletteLength - 1, 0, true);
+	globalColorIndices.default = Math.floor(mappedIndex);
+}
+
 function generateColorVariations() {
 	const numVariations = 1000; // Create 1000 different color palettes
 	colorVariations = [];
 
 	for (let i = 0; i < numVariations; i++) {
 		// Use Math.random() instead of p5's random() to avoid affecting the seed
-		const saturationOffset = (Math.random() - 0.5) * 5; // -5 to 5
-		const brightnessOffset = (Math.random() - 0.5) * 5; // -5 to 5
+		const saturationOffset = random(-5, 5); // -5 to 5
+		const brightnessOffset = random(-5, 5); // -5 to 5
 
 		const palette = baseHSLPalette.map((hsl) => {
 			const finalS = Math.max(0, Math.min(100, hsl.s + saturationOffset));
@@ -140,6 +182,11 @@ function setup() {
 			}
 		},
 		moveItem: (mover, currentFrame) => {
+			// Calculate color indices once per frame (check if not already calculated)
+			if (globalColorIndices.lastCalculatedFrame !== currentFrame) {
+				calculateGlobalColorIndices(currentFrame, maxFrames, baseHSLPalette.length);
+				globalColorIndices.lastCalculatedFrame = currentFrame;
+			}
 			mover.move(currentFrame, maxFrames);
 		},
 		onComplete: () => {

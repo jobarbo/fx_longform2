@@ -10,7 +10,7 @@ class Mover {
 		this.initAlpha = 0.35; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.35]) * MULTIPLIER;
+		this.s = random([0.5]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -74,29 +74,20 @@ class Mover {
 		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
 		this.y += (p.y / this.yRandDivider + this.yRandSkipper) * MULTIPLIER;
 
-		// Map color based on frame count
+		// Map color based on frame count - now using pre-calculated global indices
 		if (this.paletteMode === "once") {
-			// One-time pass: go from palette.length-1 to 0 and stop
-			if (!this.paletteCompleted) {
-				let progress = frameCount / (maxFrames - 1);
-				if (progress >= 1) {
-					this.paletteCompleted = true;
-					this.colorIndex = 0;
-				} else {
-					this.colorIndex = Math.floor((1 - progress) * (this.palette.length - 1));
-				}
-			}
+			this.colorIndex = globalColorIndices.onceCompleted ? 0 : globalColorIndices.once;
 		} else if (this.paletteMode === "yoyo") {
-			// Yo-yo effect using cosine for smooth oscillation
-			// Adjust frequency so cycles complete before maxFrames
-			let frequency = (this.cycleCount * Math.PI) / (maxFrames - 1);
-			let cosValue = Math.cos(frameCount * frequency);
-			// Map cosine (-1 to 1) to palette range (0 to palette.length-1)
-			this.colorIndex = Math.round(((cosValue + 1) / 2) * (this.palette.length - 1));
+			// Use pre-calculated values for cycle counts (1-4)
+			this.colorIndex = globalColorIndices.yoyoCycles[this.cycleCount];
 		} else {
-			// Default: original linear mapping
-			let mappedIndex = map(frameCount, 0, maxFrames / 1.5, this.palette.length - 1, 0, true);
-			this.colorIndex = Math.floor(mappedIndex);
+			this.colorIndex = globalColorIndices.default;
+		}
+
+		// Debug: log if we get invalid indices
+		if (this.colorIndex === undefined || this.colorIndex < 0 || this.colorIndex >= this.palette.length) {
+			console.log("Invalid colorIndex:", this.colorIndex, "Mode:", this.paletteMode, "CycleCount:", this.cycleCount, "PaletteLength:", this.palette.length);
+			this.colorIndex = 0; // Fallback to first color
 		}
 
 		this.currentColor = this.palette[this.colorIndex];
@@ -161,10 +152,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.000015, 0.000015, -0.15, 0.15, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.000015, 0.000015, -0.15, 0.15, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.000015, 0.000015, -0.15, 0.15, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale1, 3, 1), -0.000015, 0.000015, -0.15, 0.15, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.000015, 0.000015, -0.5, 0.5, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.000015, 0.000015, -0.5, 0.5, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.000015, 0.000015, -0.5, 0.5, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale1, 3, 1), -0.000015, 0.000015, -0.5, 0.5, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
