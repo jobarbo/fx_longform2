@@ -1,5 +1,5 @@
 class Mover {
-	constructor(x, y, hue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette, paletteMode = "default", cycleCount = 1) {
+	constructor(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette, paletteMode = "default", cycleCount = 1) {
 		this.x = x;
 		this.initX = x;
 		this.y = y;
@@ -7,7 +7,7 @@ class Mover {
 		this.palette = preCalculatedPalette;
 		this.colorIndex = this.palette.length - 1;
 		this.colorDirection = -1; // 1 for forward, -1 for backward
-		this.initAlpha = 0.35; // Set opacity
+		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
 		this.s = random([0.5]) * MULTIPLIER;
@@ -29,7 +29,7 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.isBordered = false;
+		this.isBordered = isBordered;
 		this.hasBeenOutside = false;
 
 		// Palette animation properties
@@ -52,19 +52,12 @@ class Mover {
 	}
 
 	show() {
-		// Apply alpha by setting globalAlpha
-		drawingContext.globalAlpha = this.a;
-		drawingContext.fillStyle = this.currentColor;
+		drawingContext.fillStyle = `hsla(${this.currentColor.h}, ${this.currentColor.s}%, ${this.currentColor.l}%, ${this.a}%)`;
 		drawingContext.fillRect(this.x, this.y, this.s, this.s);
-		// Reset globalAlpha to 1 for other drawing operations
-		drawingContext.globalAlpha = 1;
 	}
 
 	move(frameCount, maxFrames) {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
-
-		// Update isBordered state
-		this.isBordered = true;
 
 		// Update position with slight randomization
 		this.xRandDivider = random(0.005, 0.005);
@@ -82,12 +75,6 @@ class Mover {
 			this.colorIndex = globalColorIndices.yoyoCycles[this.cycleCount];
 		} else {
 			this.colorIndex = globalColorIndices.default;
-		}
-
-		// Debug: log if we get invalid indices
-		if (this.colorIndex === undefined || this.colorIndex < 0 || this.colorIndex >= this.palette.length) {
-			console.log("Invalid colorIndex:", this.colorIndex, "Mode:", this.paletteMode, "CycleCount:", this.cycleCount, "PaletteLength:", this.palette.length);
-			this.colorIndex = 0; // Fallback to first color
 		}
 
 		this.currentColor = this.palette[this.colorIndex];
@@ -138,6 +125,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 
 	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
 	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);
+
+	//! noise x SineCos
+	/* un = noise(sin(nx * (scale1 * scaleOffset1) + rseed)) + noise(cos(nx * (scale2 * scaleOffset2) + rseed)) - noise(sin(nx * (scale3 * scaleOffset3) + rseed));
+	vn = noise(cos(ny * (scale1 * scaleOffset1) + rseed)) + noise(sin(ny * (scale2 * scaleOffset2) + rseed)) - noise(cos(ny * (scale3 * scaleOffset3) + rseed)); */
 
 	//! center focused introverted
 	/* let maxU = map(ny, xMin * width, xMax * width, 3, -3, true);

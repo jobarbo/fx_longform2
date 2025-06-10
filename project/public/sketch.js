@@ -36,7 +36,7 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.0;
+let ARTWORK_RATIO = 1.25;
 let BASE_WIDTH = 948;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -120,7 +120,7 @@ function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
 }
 
 function generateColorVariations() {
-	const numVariations = 1000; // Create 1000 different color palettes
+	const numVariations = 0; // Create 1000 different color palettes
 	colorVariations = [];
 
 	for (let i = 0; i < numVariations; i++) {
@@ -131,7 +131,11 @@ function generateColorVariations() {
 		const palette = baseHSLPalette.map((hsl) => {
 			const finalS = Math.max(0, Math.min(100, hsl.s + saturationOffset));
 			const finalL = Math.max(0, Math.min(100, hsl.l + brightnessOffset));
-			return `hsla(${hsl.h}, ${finalS}%, ${finalL}%, 1)`;
+			return {
+				h: hsl.h,
+				s: finalS,
+				l: finalL,
+			};
 		});
 
 		colorVariations.push(palette);
@@ -214,9 +218,9 @@ function INIT(rseed, nseed) {
 	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.0051 / MULTIPLIER;
 
-	let sclOffset1 = 1;
-	let sclOffset2 = 2;
-	let sclOffset3 = 1;
+	let sclOffset1 = 0.75;
+	let sclOffset2 = 1;
+	let sclOffset3 = 0.75;
 
 	// Calculate padding based on the reference size and scale it
 	let paddingRatioX = 0.1; // 45% padding for X axis
@@ -250,14 +254,18 @@ function INIT(rseed, nseed) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
-		let hueOffset = random(-20, 20);
-		let initHue = hue + hueOffset;
-		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-
 		// Randomly assign one of the pre-calculated color variations using Math.random()
-		let colorVariationIndex = Math.floor(Math.random() * colorVariations.length);
+		let colorVariationIndex = 0;
+		let selectedPalette;
+		if (colorVariations.length > 0) {
+			colorVariationIndex = Math.floor(Math.random() * colorVariations.length);
+			selectedPalette = colorVariations[colorVariationIndex];
+		} else {
+			// Use base palette directly when no variations exist
+			selectedPalette = baseHSLPalette;
+		}
 
-		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, colorVariations[colorVariationIndex]));
+		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, selectedPalette));
 	}
 
 	let bgCol = color(45, 0, 95);
