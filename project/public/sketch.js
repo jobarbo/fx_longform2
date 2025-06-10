@@ -156,7 +156,7 @@ function setup() {
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
 	c = createCanvas(DIM, DIM * ARTWORK_RATIO);
-	pixelDensity(5);
+	pixelDensity(2);
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
