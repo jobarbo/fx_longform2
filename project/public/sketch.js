@@ -80,6 +80,18 @@ let basePalettes = [
 		{h: 26, s: 69, l: 73}, // #eaac8b
 		{h: 35, s: 77, l: 80}, // #eebba0
 	],
+
+	[
+		{h: 200, s: 100, l: 5}, // rgba(5, 32, 46, 1)
+		{h: 187, s: 95, l: 10}, // rgba(7, 50, 56, 1)
+		{h: 182, s: 90, l: 15}, // rgba(13, 85, 87, 1)
+		{h: 161, s: 85, l: 20}, // rgba(24, 115, 86, 1)
+		{h: 145, s: 80, l: 25}, // rgba(47, 150, 90, 1)
+		{h: 80, s: 75, l: 35}, // rgba(148, 184, 77, 1)
+		{h: 71, s: 70, l: 45}, // rgba(219, 194, 127, 1)
+		{h: 64, s: 65, l: 55}, // rgba(255, 223, 189, 1)
+		{h: 60, s: 60, l: 65},
+	],
 ];
 
 let selectedPalette; // Will store the randomly selected palette
@@ -120,13 +132,13 @@ function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
 }
 
 function generateColorVariations() {
-	const numVariations = 0; // Create 1000 different color palettes
+	const numVariations = 20; // Create 1000 different color palettes
 	colorVariations = [];
 
 	for (let i = 0; i < numVariations; i++) {
 		// Use Math.random() instead of p5's random() to avoid affecting the seed
-		const saturationOffset = random(-5, 5); // -5 to 5
-		const brightnessOffset = random(-5, 5); // -5 to 5
+		const saturationOffset = random(-5, 15); // -5 to 5
+		const brightnessOffset = random(-5, 1); // -5 to 5
 
 		const palette = baseHSLPalette.map((hsl) => {
 			const finalS = Math.max(0, Math.min(100, hsl.s + saturationOffset));
@@ -223,8 +235,8 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 0.75;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.1; // 45% padding for X axis
-	let paddingRatioY = 0.1; // 45% padding for Y axis
+	let paddingRatioX = 0.01; // 45% padding for X axis
+	let paddingRatioY = 0.01; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;
