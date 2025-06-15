@@ -6,7 +6,7 @@ class Mover {
 		this.initSat = random([0, 0, 0, 0, 0, 10, 10, 10, 20, 30, 80, 100, 100, 100, 100, 100, 100, 100, 100, 100]);
 		this.initBri = 100;
 		this.initAlpha = 100;
-		this.initS = 0.2 * MULTIPLIER;
+		this.initS = 0.12 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -68,7 +68,7 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.seed, this.oct, this.nvalue, this.uvalue);
 
 		this.lineWeightMax = map(frameCount, 50, maxFrames / 1.15, this.shutterHigh, this.shutterLow, true);
-		this.skipperMax = map(frameCount, 50, maxFrames / 1.15, this.apertureHigh, this.apertureLow, true);
+		this.skipperMax = map(frameCount, 50, maxFrames / 1.23, this.apertureHigh, this.apertureLow, true);
 
 		this.xRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
 		this.yRandSkipperVal = random([0.1, random(0.00001, this.skipperMax)]);
