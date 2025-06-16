@@ -138,7 +138,7 @@ function generateColorVariations() {
 	for (let i = 0; i < numVariations; i++) {
 		// Use Math.random() instead of p5's random() to avoid affecting the seed
 		const saturationOffset = random(-5, 15); // -5 to 5
-		const brightnessOffset = random(-5, 1); // -5 to 5
+		const brightnessOffset = random(-5, 5); // -5 to 5
 
 		const palette = baseHSLPalette.map((hsl) => {
 			const finalS = Math.max(0, Math.min(100, hsl.s + saturationOffset));
@@ -235,8 +235,8 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 0.75;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.01; // 45% padding for X axis
-	let paddingRatioY = 0.01; // 45% padding for Y axis
+	let paddingRatioX = 0.04; // 45% padding for X axis
+	let paddingRatioY = 0.04; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;

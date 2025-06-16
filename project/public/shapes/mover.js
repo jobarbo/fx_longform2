@@ -38,8 +38,8 @@ class Mover {
 		this.paletteCompleted = false; // Track if one-time pass is completed
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.001) / width;
-		this.wrapPaddingY = (min(width, height) * 0.001) / height;
+		this.wrapPaddingX = (min(width, height) * 0.025) / width;
+		this.wrapPaddingY = (min(width, height) * 0.025) / height;
 		this.reentryOffsetX = (min(width, height) * 0.0041) / width;
 		this.reentryOffsetY = (min(width, height) * 0.0041) / height;
 		this.wrapPaddingMultiplier = 0.5; //! or 0.5
@@ -60,8 +60,8 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update position with slight randomization
-		this.xRandDivider = random(0.005, 0.005);
-		this.yRandDivider = random(0.005, 0.005);
+		this.xRandDivider = 0.005;
+		this.yRandDivider = 0.005;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
