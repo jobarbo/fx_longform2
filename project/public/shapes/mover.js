@@ -51,9 +51,13 @@ class Mover {
 		this.maxBoundY = (this.yMax + this.wrapPaddingY) * height;
 	}
 
-	show() {
-		drawingContext.fillStyle = `hsla(${this.currentColor.h}, ${this.currentColor.s}%, ${this.currentColor.l}%, ${this.a}%)`;
-		drawingContext.fillRect(this.x, this.y, this.s, this.s);
+	show(canvas = null) {
+		// Get the drawing context - either from provided canvas or default
+		const drawingCtx = canvas ? canvas.drawingContext : drawingContext;
+
+		// Use the original color format that preserves vibrancy
+		drawingCtx.fillStyle = `hsla(${this.currentColor.h}, ${this.currentColor.s}%, ${this.currentColor.l}%, ${this.a}%)`;
+		drawingCtx.fillRect(this.x, this.y, this.s, this.s);
 	}
 
 	move(frameCount, maxFrames) {
@@ -119,9 +123,9 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
-		noiseScale1 = 1,
-		noiseScale2 = 1,
-		noiseScale3 = 1;
+		noiseScale1 = 0.00001,
+		noiseScale2 = 0.2,
+		noiseScale3 = 0.00001;
 
 	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
 	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);
@@ -143,8 +147,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.000015, 0.000015, -0.005, 0.0055, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.000015, 0.000015, -0.5, 0.55, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.000015, 0.000015, -0.005, 0.00515, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.000015, 0.000015, -0.5, 0.525, true);
 	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.000015, 0.000015, -0.005, 0.005, true);
 	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale1, 3, 1), -0.000015, 0.000015, -0.5, 0.5, true);
 

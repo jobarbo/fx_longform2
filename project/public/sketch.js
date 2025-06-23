@@ -8,6 +8,15 @@ let particleNum = 500000;
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 
+// Shader Manager - using global instance from shaderManager.js
+let isShaderEnabled = true;
+let mainCanvas; // Main graphics buffer for artwork
+let shaderCanvas; // WEBGL canvas for shader effects
+
+// Animation control
+let particleAnimationComplete = false;
+let shaderTime = 0;
+
 // Global color mapping optimization
 let globalColorIndices = {
 	once: 0,
@@ -132,7 +141,7 @@ function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
 }
 
 function generateColorVariations() {
-	const numVariations = 20; // Create 1000 different color palettes
+	const numVariations = 0; // Create 1000 different color palettes
 	colorVariations = [];
 
 	for (let i = 0; i < numVariations; i++) {
@@ -156,6 +165,17 @@ function generateColorVariations() {
 	console.log(`Using palette ${selectedPalette + 1} with ${baseHSLPalette.length} colors`);
 }
 
+function preload() {
+	// Initialize the global shader manager instance
+	shaderManager.init(this);
+
+	// Set default vertex shader
+	shaderManager.setDefaultVertex("chromatic-aberration/vertex.vert");
+
+	// Load the shader we need
+	shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag");
+}
+
 function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
@@ -167,9 +187,23 @@ function setup() {
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
-	c = createCanvas(DIM, DIM * ARTWORK_RATIO);
-	pixelDensity(2);
+
+	// Create main canvas for the artwork
+	mainCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
+	// Create shader canvas for the WEBGL renderer
+	shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
+
+	// Set up the rendering properties
+	mainCanvas.pixelDensity(2);
+	shaderCanvas.pixelDensity(2);
+
+	// Set color modes and ensure proper color preservation
+	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 	colorMode(HSB, 360, 100, 100, 100);
+
+	// Enable color preservation settings for mainCanvas
+	mainCanvas.drawingContext.imageSmoothingEnabled = false;
+	mainCanvas.drawingContext.globalCompositeOperation = "source-over";
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
@@ -194,7 +228,7 @@ function setup() {
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
 			if (currentFrame > -1) {
-				mover.show();
+				mover.show(mainCanvas);
 			}
 		},
 		moveItem: (mover, currentFrame) => {
@@ -205,16 +239,76 @@ function setup() {
 			}
 			mover.move(currentFrame, maxFrames);
 		},
+
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
+			particleAnimationComplete = true;
 			$fx.preview();
 			document.complete = true;
+			console.log("Particle animation complete, shader animation continues");
 		},
 	};
 
 	// Create and start the animation
 	const generator = createAnimationGenerator(animConfig);
 	startAnimation(generator);
+}
+
+// Function to toggle shader effects
+function toggleShader() {
+	isShaderEnabled = !isShaderEnabled;
+	console.log("Shader effects:", isShaderEnabled ? "enabled" : "disabled");
+}
+
+// Function to apply shader effects (call this in your render loop if needed)
+function applyShaderEffect() {
+	if (!isShaderEnabled || !shaderManager) return;
+
+	// Clear the shader canvas
+	clear();
+
+	// Apply the shader effect using the manager with dedicated shader time
+	shaderManager
+		.apply("chromatic", {
+			uTexture: mainCanvas,
+			uTime: shaderTime,
+			uResolution: [width, height],
+		})
+		.drawFullscreenQuad();
+}
+
+// Keyboard controls
+function keyPressed() {
+	if (key === "g" || key === "G") {
+		toggleShader();
+	}
+}
+
+// Traditional draw function that handles shader effects continuously
+function draw() {
+	// Update shader animation time
+	shaderTime += 0.01;
+
+	// Apply shader effects to the main canvas
+	if (isShaderEnabled) {
+		applyShaderEffect();
+	}
+}
+
+// Helper function to load additional shaders dynamically
+function loadShader(name, fragPath, vertPath = null) {
+	if (shaderManager) {
+		shaderManager.loadShader(name, fragPath, vertPath);
+		console.log(`Loaded shader: ${name}`);
+	}
+}
+
+// Helper function to get available shader names
+function getLoadedShaders() {
+	if (shaderManager && shaderManager.shaders) {
+		return Object.keys(shaderManager.shaders);
+	}
+	return [];
 }
 
 function INIT(rseed, nseed) {
@@ -281,7 +375,8 @@ function INIT(rseed, nseed) {
 	}
 
 	let bgCol = color(45, 0, 95);
-	background(bgCol);
+	mainCanvas.background(bgCol);
+
 	//initGrid(50);
 }
 
