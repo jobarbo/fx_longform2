@@ -91,6 +91,9 @@ class Mover {
 	}
 }
 
+// Explicitly make Mover available globally
+window.Mover = Mover;
+
 function superCurve(x, y, scl1, scl2, ang1, ang2, seed, xi, yi) {
 	let nx = x + xi,
 		ny = y + yi,

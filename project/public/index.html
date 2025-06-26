@@ -4,14 +4,12 @@
 		<title>BUBBLE-CHAMBER</title>
 		<meta charset="utf-8" />
 		<link rel="stylesheet" href="./style.css" />
-		<script src="./library/utils/fxhash.js"></script>
-		<script src="./library/p5/p5.min.js"></script>
-		<!--<script src="./library/utils/knob.js"></script>-->
-		<script src="./library/p5/spectral.js"></script>
-		<script src="./parameters/params.js"></script>
-		<script src="./library/utils/utils.js"></script>
-		<script src="./object/mover.js"></script>
-		<script src="sketch.js"></script>
+
+		<!-- Load only the library manager first -->
+		<script src="./library/libManager.js"></script>
+
+		<!-- Load sketch after library manager is ready -->
+		<script src="sketch.js" defer></script>
 
 		<!-- if you need to import js scripts do it here -->
 	</head>

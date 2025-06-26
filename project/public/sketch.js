@@ -1,3 +1,4 @@
+// Global variables
 let features = "";
 let movers = [];
 let scl1;
@@ -25,14 +26,68 @@ let easeAng = 0,
 	ayoff = Math.random() * 10000;
 (sxoff = Math.random() * 10000), (syoff = Math.random() * 10000);
 
+// Import what we need from utils
+let utils, logger, MoverClass;
+let modulesLoaded = false;
+
+// Initialize the application
+async function initApp() {
+	try {
+		// Load essential modules first
+		await libManager.loadEssentials();
+
+		// Get module references
+		utils = libManager.get("utils");
+		logger = libManager.get("logs").Logger;
+		MoverClass = libManager.get("mover").Mover || window.Mover;
+
+		logger.success("All modules loaded successfully!");
+		logger.info("Starting generative art application...");
+
+		// Set features after modules are loaded
+		features = $fx.getFeatures();
+
+		modulesLoaded = true;
+
+		// Now that everything is loaded, we can start p5.js
+		// p5.js setup() and draw() will be called automatically
+	} catch (error) {
+		// Use console.error as fallback since logger may not be available during initialization failure
+		console.error("Failed to initialize application:", error);
+		// Fallback to direct globals if module system fails
+		features = window.features || {};
+		MoverClass = window.Mover;
+		modulesLoaded = false;
+	}
+}
+
+// Call initialization when the page loads
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", initApp);
+} else {
+	initApp();
+}
+
 /* P5Capture.setDefaultOptions({
 	format: 'mp4',
 }); */
-function setup() {
-	console.log(features);
-	features = $fx.getFeatures();
 
-	let formatMode = features.format_mode;
+function setup() {
+	// Wait for modules to be loaded before proceeding
+	if (!modulesLoaded) {
+		// Retry setup in a moment if modules aren't loaded yet
+		setTimeout(setup, 100);
+		return;
+	}
+
+	logger.info("Features loaded:", features);
+
+	// Handle case where features might still be undefined
+	if (!features) {
+		features = $fx.getFeatures() || {};
+	}
+
+	let formatMode = features.format_mode || "default";
 	var ua = window.navigator.userAgent;
 	var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
 	var webkit = !!ua.match(/WebKit/i);
@@ -68,21 +123,36 @@ function draw() {
 	blendMode(BLEND);
 
 	// every 100 frames, save the canvas
-
 	if (frameCount % 100 == 0) {
 		let cosIndex = cos(radians(easeAng));
-		console.log("cosIndex: " + cosIndex);
+
+		// Track animation progress with table
+		logger.table("Animation Progress", {
+			cosIndex: cosIndex.toFixed(4),
+			cycleCount: cycleCount,
+			frameCount: frameCount,
+			easeAng: easeAng.toFixed(2),
+		});
+
 		if (cosIndex >= 1) {
 			cycleCount += 1;
 		}
 		if (cycleCount < 1) {
-			console.log("screenshot");
-			saveArtwork();
-			INIT(rseed);
+			logger.info("Taking screenshot");
+
+			// Save first, then wait before reinitializing to prevent black image
+			utils.saveArtwork();
+
+			// Use requestAnimationFrame to wait for save to complete before clearing canvas
+			requestAnimationFrame(() => {
+				setTimeout(() => {
+					logger.info("Reinitializing after save...");
+					INIT(rseed);
+				}, 150); // Small delay to ensure save completes
+			});
 		} else {
 			noLoop();
 		}
-		console.log("cycleCount: " + cycleCount);
 	}
 }
 
@@ -107,9 +177,6 @@ function INIT(seed) {
 	hue += map(noise(xoff, yoff), 0, 1, -2, 2, true);
 	hue < 0 ? hue + 360 : hue > 360 ? hue - 360 : hue;
 
-	console.log("xi: " + xi);
-	console.log("yi: " + yi);
-
 	easeAng += 0.3;
 	xoff += 0.001;
 	yoff += 0.001;
@@ -118,12 +185,31 @@ function INIT(seed) {
 	sxoff += 0.01;
 	syoff += 0.01;
 
-	console.log("scl1: " + scl1);
-	console.log("scl2: " + scl2);
-	console.log("ang1: " + angle1);
-	console.log("ang2: " + angle2);
+	// Track coordinate positions
+	logger.table("Position Variables", {
+		xi: xi.toFixed(2),
+		yi: yi.toFixed(2),
+		hue: hue.toFixed(2),
+	});
 
-	console.log("cos(easing): " + cos(easing));
+	// Track scale and angle parameters
+	logger.table("Animation Parameters", {
+		scl1: scl1.toFixed(6),
+		scl2: scl2.toFixed(6),
+		angle1: angle1,
+		angle2: angle2,
+		"cos(easing)": cos(easing).toFixed(4),
+	});
+
+	// Track noise offsets
+	logger.table("Noise Offsets", {
+		xoff: xoff.toFixed(3),
+		yoff: yoff.toFixed(3),
+		axoff: axoff.toFixed(3),
+		ayoff: ayoff.toFixed(3),
+		sxoff: sxoff.toFixed(3),
+		syoff: syoff.toFixed(3),
+	});
 
 	xMin = -0.1;
 	xMax = 1.1;
@@ -146,8 +232,10 @@ function INIT(seed) {
 
 		let initHue = hue + random(-10, 10);
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
-		movers.push(new Mover(x, y, xi, yi, initHue, scl1, scl2, angle1, angle2, xMin, xMax, yMin, yMax, isBordered, seed));
+
+		// Use the loaded Mover class or fallback to global
+		const MoverToUse = MoverClass || window.Mover;
+		movers.push(new MoverToUse(x, y, xi, yi, initHue, scl1, scl2, angle1, angle2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix("#000", "#b08968", 0.01);
-	background(bgCol);
+	background(0, 0, 2);
 }
