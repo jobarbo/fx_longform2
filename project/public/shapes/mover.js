@@ -38,10 +38,10 @@ class Mover {
 		this.paletteCompleted = false; // Track if one-time pass is completed
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.025) / width;
-		this.wrapPaddingY = (min(width, height) * 0.025) / height;
-		this.reentryOffsetX = (min(width, height) * 0.0041) / width;
-		this.reentryOffsetY = (min(width, height) * 0.0041) / height;
+		this.wrapPaddingX = (min(width, height) * 0.045) / width;
+		this.wrapPaddingY = (min(width, height) * 0.045) / height;
+		this.reentryOffsetX = (min(width, height) * 0.004) / width;
+		this.reentryOffsetY = (min(width, height) * 0.004) / height;
 		this.wrapPaddingMultiplier = 0.5; //! or 0.5
 
 		// Pre-calculate bounds
@@ -147,10 +147,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.000015, 0.000015, -0.005, 0.00515, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.000015, 0.000015, -0.5, 0.525, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.000015, 0.000015, -0.005, 0.005, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale1, 3, 1), -0.000015, 0.000015, -0.5, 0.5, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.000015, 0.000015, 0.2, 0.515, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.000015, 0.000015, 0.2, 0.515, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.000015, 0.000015, -0.5, -0.2, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale1, 3, 1), -0.000015, 0.000015, -0.5, -0.2, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
@@ -171,8 +171,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = -1; */
 
 	//! Introverted
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1111.5, -455.0000001), map(nx, xMin * width, xMax * width, 455.0000001, 1111.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1111.5, -455.0000001), map(ny, yMin * height, yMax * height, 455.0000001, 1111.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -191,6 +191,6 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	/* 	let zu = ZZ(u, 35, 40, 0.005) * MULTIPLIER;
 	let zv = ZZ(v, 35, 40, 0.005) * MULTIPLIER; */
 
-	let p = createVector(zu, zv);
+	let p = createVector(u, v);
 	return p;
 }
