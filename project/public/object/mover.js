@@ -6,7 +6,7 @@ class Mover {
 		this.initSat = random([0, 0, 0, 0, 0, 10, 10, 10, 20, 30, 80, 100, 100, 100, 100, 100, 100, 100, 100, 100]);
 		this.initBri = 100;
 		this.initAlpha = 100;
-		this.initS = 0.12 * MULTIPLIER;
+		this.initS = 0.16 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -29,20 +29,20 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.oct = 1;
+		this.oct = 6;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.zombie = false;
 		this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [55, 55, 55, 55];
+		this.uvalue = [1, 1, 1, 1];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5]; //! lower number here too
-		this.nlimit = 20; //! can put higher number here like 120/120
-		this.nlow = -20;
+		this.nlimit = 121; //! can put higher number here like 120/120
+		this.nlow = -120;
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
-		this.ulow = 50;
-		this.uhigh = 300; //! can be put higher number here like 1300 if nlimit is high too
+		this.ulow = 1;
+		this.uhigh = 2; //! can be put higher number here like 1300 if nlimit is high too
 		/* 		this.ulow = random([10, 25, 50, 75, 100, 125, 150, 175, 200]);
 		this.uhigh = random([0.01, 0.1, 1, 2.5, 5, 10, 20]); */
 
@@ -116,6 +116,7 @@ class Mover {
 		this.sat += map(totalSpeed, 0, 600 * MULTIPLIER, -this.satDir, this.satDir, true);
 		this.sat = this.sat > 95 ? (this.sat = 0) : this.sat < 0 ? (this.sat = 95) : this.sat;
 		//this.sat = 0;
+		this.s = map(pxy, 0, 10 * MULTIPLIER, 0.1 * MULTIPLIER, 2.4 * MULTIPLIER, true);
 		this.hue += map(totalSpeed, 0, 1200 * MULTIPLIER, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? (this.hue = 0) : this.hue < 0 ? (this.hue = 360) : this.hue;
 		this.lineWeight = map(totalSpeed, 0, 600 * MULTIPLIER, 0, this.lineWeightMax, true) * MULTIPLIER;

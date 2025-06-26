@@ -180,8 +180,8 @@ function INIT(seed) {
 	scl1 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
 	scl2 = scl1;
 
-	ang1 = 0;
-	ang2 = 0;
+	ang1 = 1230;
+	ang2 = 1230;
 
 	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	yRandDivider = xRandDivider;
@@ -222,20 +222,4 @@ function showLoadingBar(elapsedTime, MAX_FRAMES, renderStart) {
 	// put the percent in the title of the page
 	document.title = percent.toFixed(0) + "%";
 	// show a loading bar on the bottom of the canvas
-}
-
-function windowResized() {
-	// Calculate new dimensions
-	C_WIDTH = min(windowWidth, windowHeight);
-	let w = C_WIDTH;
-	let h = C_WIDTH * RATIO;
-
-	// Resize both canvases
-	resizeCanvas(w, h);
-	mainCanvas.resizeCanvas(w, h);
-
-	// Recenter the WebGL canvas
-	let x = (windowWidth - w) / 2;
-	let y = (windowHeight - h) / 2;
-	shaderCanvas.position(x, y);
 }
