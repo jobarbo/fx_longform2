@@ -27,7 +27,7 @@ let easeAng = 0,
 (sxoff = Math.random() * 10000), (syoff = Math.random() * 10000);
 
 // Import what we need from utils
-let utils, logger, MoverClass;
+let utils, logger, MoverClass, memoryManager;
 let modulesLoaded = false;
 
 // Initialize the application
@@ -36,13 +36,28 @@ async function initApp() {
 		// Load essential modules first
 		await libManager.loadEssentials();
 
+		// Also load memory manager
+		await libManager.loadModule("memory");
+
 		// Get module references
 		utils = libManager.get("utils");
 		logger = libManager.get("logs").Logger;
 		MoverClass = libManager.get("mover").Mover || window.Mover;
 
+		// Initialize Memory Manager
+		const MemoryManagerClass = libManager.get("memory").MemoryManager;
+		memoryManager = new MemoryManagerClass({
+			intervalMs: 5000, // Check every 5 seconds
+			memoryThreshold: 0.85, // Start cleanup at 85% memory usage
+			enableLogging: true,
+		});
+
 		logger.success("All modules loaded successfully!");
 		logger.info("Starting generative art application...");
+
+		// Prepare memory for sketch and start monitoring
+		memoryManager.prepareForSketch();
+		memoryManager.start();
 
 		// Set features after modules are loaded
 		features = $fx.getFeatures();
@@ -126,19 +141,38 @@ function draw() {
 	if (frameCount % 100 == 0) {
 		let cosIndex = cos(radians(easeAng));
 
-		// Track animation progress with table
-		logger.table("Animation Progress", {
+		// Get current memory usage
+		let memoryUsage = null;
+		if (memoryManager) {
+			memoryUsage = memoryManager.getMemoryUsage();
+		}
+
+		// Track animation progress with table including memory info
+		const progressData = {
 			cosIndex: cosIndex.toFixed(4),
 			cycleCount: cycleCount,
 			frameCount: frameCount,
 			easeAng: easeAng.toFixed(2),
-		});
+		};
+
+		// Add memory info if available
+		if (memoryUsage) {
+			progressData.memoryUsed = memoryUsage.used + "MB";
+			progressData.memoryPercent = memoryUsage.percentage + "%";
+		}
+
+		logger.table("Animation Progress", progressData);
 
 		if (cosIndex >= 1) {
 			cycleCount += 1;
 		}
 		if (cycleCount < 1) {
 			logger.info("Taking screenshot");
+
+			// Force garbage collection before save to prevent issues
+			if (memoryManager) {
+				memoryManager.forceGC();
+			}
 
 			// Save first, then wait before reinitializing to prevent black image
 			utils.saveArtwork();
@@ -151,6 +185,12 @@ function draw() {
 				}, 150); // Small delay to ensure save completes
 			});
 		} else {
+			// Stop memory monitoring and cleanup when animation is complete
+			if (memoryManager) {
+				memoryManager.stop();
+				memoryManager.cleanupAfterSketch();
+				logger.info("Animation complete - Memory monitoring stopped and cleaned up");
+			}
 			noLoop();
 		}
 	}
@@ -162,6 +202,13 @@ function draw() {
 }
  */
 function INIT(seed) {
+	// Clear existing movers array and force garbage collection
+	if (movers && movers.length > 0) {
+		movers.length = 0; // Clear array efficiently
+		if (memoryManager) {
+			memoryManager.forceGC(); // Force cleanup of old objects
+		}
+	}
 	movers = [];
 	let easing = radians(easeAng);
 	let xpff;
@@ -238,4 +285,18 @@ function INIT(seed) {
 		movers.push(new MoverToUse(x, y, xi, yi, initHue, scl1, scl2, angle1, angle2, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
 	background(0, 0, 2);
+
+	// Log memory status after creating all movers
+	if (memoryManager) {
+		const memoryUsage = memoryManager.getMemoryUsage();
+		if (memoryUsage) {
+			logger.table("Memory Status After INIT", {
+				"Objects Created": movers.length,
+				"Memory Used": memoryUsage.used + "MB",
+				"Memory Total": memoryUsage.total + "MB",
+				"Memory Limit": memoryUsage.limit + "MB",
+				"Usage Percentage": memoryUsage.percentage + "%",
+			});
+		}
+	}
 }
