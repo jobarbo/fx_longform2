@@ -35,10 +35,10 @@ class Mover {
 		this.zombie = false;
 		this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
-		this.uvalue = [1, 1, 1, 1];
-		this.nvalue = [0.5, 0.5, 0.5, 0.5]; //! lower number here too
-		this.nlimit = 121; //! can put higher number here like 120/120
-		this.nlow = -120;
+		this.uvalue = [0.1, 0.1, 0.1, 0.1];
+		this.nvalue = [0.005, 0.005, 0.005, 0.005]; //! lower number here too
+		this.nlimit = 0.05; //! can put higher number here like 120/120
+		this.nlow = -0.05;
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
 		this.ulow = 1;
@@ -52,7 +52,7 @@ class Mover {
 		this.shutterHigh = 20;
 		this.lineWeightMax = this.shutterHigh;
 
-		this.apertureLow = 0.1;
+		this.apertureLow = 2;
 		this.apertureHigh = 10;
 	}
 
@@ -101,6 +101,8 @@ class Mover {
 			if (this.uvalue[i] < this.ulow || this.uvalue[i] > this.uhigh) {
 				this.uvalue[i] = this.uvalue[i] > this.uhigh ? this.ulow : this.uvalue[i] < this.ulow ? this.uhigh : this.uvalue[i];
 			}
+
+			this.s = map(abs(this.nvalue[i]), 0, 0.5, 0.05 * MULTIPLIER, 0.25 * MULTIPLIER, true);
 		}
 
 		this.xRandSkipper = randomGaussian(0, this.xRandSkipperVal * MULTIPLIER);
@@ -116,7 +118,7 @@ class Mover {
 		this.sat += map(totalSpeed, 0, 600 * MULTIPLIER, -this.satDir, this.satDir, true);
 		this.sat = this.sat > 95 ? (this.sat = 0) : this.sat < 0 ? (this.sat = 95) : this.sat;
 		//this.sat = 0;
-		this.s = map(pxy, 0, 10 * MULTIPLIER, 0.1 * MULTIPLIER, 2.4 * MULTIPLIER, true);
+
 		this.hue += map(totalSpeed, 0, 1200 * MULTIPLIER, -this.hueStep, this.hueStep, true);
 		this.hue = this.hue > 360 ? (this.hue = 0) : this.hue < 0 ? (this.hue = 360) : this.hue;
 		this.lineWeight = map(totalSpeed, 0, 600 * MULTIPLIER, 0, this.lineWeightMax, true) * MULTIPLIER;
