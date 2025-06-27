@@ -320,9 +320,9 @@ function INIT(rseed, nseed) {
 	generateColorVariations();
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.0049 / MULTIPLIER;
+	scl1 = 0.0019 / MULTIPLIER;
 	scl2 = 0.002 / MULTIPLIER;
-	scl3 = 0.0051 / MULTIPLIER;
+	scl3 = 0.0011 / MULTIPLIER;
 
 	let sclOffset1 = 0.75;
 	let sclOffset2 = 1;

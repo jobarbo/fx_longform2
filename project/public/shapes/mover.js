@@ -171,8 +171,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = -1; */
 
 	//! Introverted
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1111.5, -455.0000001), map(nx, xMin * width, xMax * width, 455.0000001, 1111.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1111.5, -455.0000001), map(ny, yMin * height, yMax * height, 455.0000001, 1111.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -181,16 +181,16 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	let zu = ZZ(u, 50, 60, 0.0015);
-	let zv = ZZ(v, 50, 60, 0.0015);
+	/* 	let zu = ZZ(u, 50, 60, 0.0015);
+	let zv = ZZ(v, 50, 60, 0.0015); */
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
 	//! 0.001
 	//! 2
-	/* 	let zu = ZZ(u, 35, 40, 0.005) * MULTIPLIER;
-	let zv = ZZ(v, 35, 40, 0.005) * MULTIPLIER; */
+	let zu = ZZ(u, 2.1, 5.5, 0.01) * MULTIPLIER;
+	let zv = ZZ(v, 2.1, 5.5, 0.01) * MULTIPLIER;
 
-	let p = createVector(u, v);
+	let p = createVector(zu, zv);
 	return p;
 }
