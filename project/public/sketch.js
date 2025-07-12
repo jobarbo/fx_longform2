@@ -194,13 +194,13 @@ function INIT(seed) {
 	for (let i = 0; i < 20000; i++) {
 		let x = random(xMin, xMax) * mainCanvas.width;
 		let y = random(yMin, yMax) * mainCanvas.height;
-		let initHue = hue + random(-1, 1);
+		let initHue = 35;
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1 / MULTIPLIER, scl2 / MULTIPLIER, ang1 * MULTIPLIER, ang2 * MULTIPLIER, xMin, xMax, yMin, yMax, xRandDivider, yRandDivider, seed, features));
 	}
 
 	bgCol = color(random(0, 360), random([0, 2, 5]), features.theme == "bright" ? 93 : 5, 100);
-	mainCanvas.background(220, 100, 5);
+	mainCanvas.background(185, 100, 40);
 }
 
 function showLoadingBar(elapsedTime, MAX_FRAMES, renderStart) {

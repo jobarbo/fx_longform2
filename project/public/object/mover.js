@@ -3,7 +3,7 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.initHue = hue;
-		this.initSat = random([0, 0, 0, 0, 0, 10, 10, 10, 20, 30, 80, 100, 100, 100, 100, 100, 100, 100, 100, 100]);
+		this.initSat = random([50]);
 		this.initBri = 100;
 		this.initAlpha = 100;
 		this.initS = 0.16 * MULTIPLIER;
@@ -12,7 +12,7 @@ class Mover {
 		this.sat = this.initSat;
 		this.bri = this.initBri;
 		this.a = this.initAlpha;
-		this.hueStep = 0.2;
+		this.hueStep = 0;
 		this.satDir = 1;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
@@ -29,7 +29,7 @@ class Mover {
 		this.xMax = xMax;
 		this.yMin = yMin;
 		this.yMax = yMax;
-		this.oct = 6;
+		this.oct = 4;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.zombie = false;
@@ -37,8 +37,8 @@ class Mover {
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [1, 1, 1, 1];
 		this.nvalue = [0.5, 0.5, 0.5, 0.5]; //! lower number here too
-		this.nlimit = 121; //! can put higher number here like 120/120
-		this.nlow = -120;
+		this.nlimit = 2; //! can put higher number here like 120/120
+		this.nlow = -2;
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
 		this.ulow = 1;
