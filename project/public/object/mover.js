@@ -36,13 +36,13 @@ class Mover {
 		this.lineWeight = random([0.1, 1, 2, 5, 10, 25, 50, 100]) * MULTIPLIER; //!try randomizing this
 		this.clampvaluearray = features.clampvalue.split(",").map(Number);
 		this.uvalue = [55, 55, 55, 55];
-		this.nvalue = [0.5, 0.5, 0.5, 0.5]; //! lower number here too
-		this.nlimit = 20; //! can put higher number here like 120/120
-		this.nlow = -20;
+		this.nvalue = [0.005, 0.005, 0.005, 0.005]; //! lower number here too
+		this.nlimit = 0.2; //! can put higher number here like 120/120
+		this.nlow = -0.2;
 		this.nvalueDir = [-1, -1, -1, -1];
 		this.uvalueDir = [1, 1, 1, 1];
-		this.ulow = 50;
-		this.uhigh = 300; //! can be put higher number here like 1300 if nlimit is high too
+		this.ulow = 2;
+		this.uhigh = 60; //! can be put higher number here like 1300 if nlimit is high too
 		/* 		this.ulow = random([10, 25, 50, 75, 100, 125, 150, 175, 200]);
 		this.uhigh = random([0.01, 0.1, 1, 2.5, 5, 10, 20]); */
 
@@ -84,8 +84,8 @@ class Mover {
 			} else if (config_type === 3) {
 				//! ORIGINAL CONFIGURATION
 				//this.uvalue[i] *= 1.01 * this.uvalueDir[i];
-				this.uvalue[i] += 1.5; //! try higher val like 11.5
-				this.nvalue[i] += 1.2 * this.nvalueDir[i]; //! try higher val like 11.2
+				this.uvalue[i] += 1.5 * this.uvalueDir[i]; //! try higher val like 11.5
+				this.nvalue[i] += 0.01 * this.nvalueDir[i]; //! try higher val like 11.2
 			} else if (config_type === 4) {
 				this.uvalue[i] *= 1.0055;
 				this.nvalue[i] *= 1.00000002 * this.nvalueDir[i];
@@ -100,6 +100,7 @@ class Mover {
 
 			if (this.uvalue[i] < this.ulow || this.uvalue[i] > this.uhigh) {
 				this.uvalue[i] = this.uvalue[i] > this.uhigh ? this.ulow : this.uvalue[i] < this.ulow ? this.uhigh : this.uvalue[i];
+				this.uvalueDir[i] *= -1;
 			}
 		}
 
