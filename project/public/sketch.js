@@ -177,11 +177,11 @@ function draw() {
 }
 
 function INIT(seed) {
-	scl1 = random([0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.00195]);
+	scl1 = random([0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.0195]);
 	scl2 = scl1;
 
-	ang1 = 1230;
-	ang2 = 1230;
+	ang1 = 1;
+	ang2 = 1;
 
 	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
 	yRandDivider = xRandDivider;
