@@ -101,6 +101,8 @@ let basePalettes = [
 		{h: 64, s: 65, l: 55}, // rgba(255, 223, 189, 1)
 		{h: 60, s: 60, l: 65},
 	],
+
+	[{h: 0, s: 0, l: 0}],
 ];
 
 let selectedPalette; // Will store the randomly selected palette
@@ -227,7 +229,7 @@ function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > -1) {
+			if (currentFrame > 0) {
 				mover.show(mainCanvas);
 			}
 		},
@@ -374,7 +376,7 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, selectedPalette));
 	}
 
-	let bgCol = color(45, 0, 95);
+	let bgCol = color(45, 0, 100);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
