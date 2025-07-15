@@ -1,5 +1,5 @@
 //let config_type = parseInt(fxrand() * 3 + 1);
-let config_type = 3;
+let config_type = 1;
 console.log(config_type);
 
 let features = "";
@@ -177,7 +177,7 @@ function draw() {
 }
 
 function INIT(seed) {
-	scl1 = random([0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.0195]);
+	scl1 = random([0.0021]);
 	scl2 = scl1;
 
 	ang1 = 1;
