@@ -10,7 +10,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.75]) * MULTIPLIER;
+		this.s = random([0.45]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -200,15 +200,15 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	/* 	let zu = ZZ(u, 50, 60, 0.0015);
-	let zv = ZZ(v, 50, 60, 0.0015); */
+	let zu = ZZ(u, 50, 60, 0.0015);
+	let zv = ZZ(v, 50, 60, 0.0015);
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
 	//! 0.001
 	//! 2
-	let zu = ZZ(u, 2.1, 5.5, 0.01) * MULTIPLIER;
-	let zv = ZZ(v, 2.1, 5.5, 0.01) * MULTIPLIER;
+	/* 	let zu = ZZ(u, 2.1, 5.5, 0.01) * MULTIPLIER;
+	let zv = ZZ(v, 2.1, 5.5, 0.01) * MULTIPLIER; */
 
 	let p = createVector(zu, zv);
 	return p;

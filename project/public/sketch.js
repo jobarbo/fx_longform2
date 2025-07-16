@@ -3,7 +3,7 @@ let movers = [];
 let startTime;
 let maxFrames = 25;
 let elapsedTime = 0;
-let particleNum = 500000;
+let particleNum = 1500000;
 // Adjust cycle for smoother percentage updates (1% increments)
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
@@ -138,7 +138,7 @@ function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
 	globalColorIndices.yoyo = globalColorIndices.yoyoCycles[1];
 
 	// Calculate once for "default" mode
-	let mappedIndex = map(currentFrame, 0, maxFrames / 1.5, paletteLength - 1, 0, true);
+	let mappedIndex = map(currentFrame, 0, maxFrames / 2, paletteLength - 1, 0, true);
 	globalColorIndices.default = Math.floor(mappedIndex);
 }
 
@@ -318,7 +318,7 @@ function INIT(rseed, nseed) {
 
 	// Generate color variations first (1000 different palettes)
 	selectedPalette = int(random(basePalettes.length));
-	baseHSLPalette = basePalettes[selectedPalette];
+	baseHSLPalette = basePalettes[0];
 	generateColorVariations();
 
 	// Scale noise values based on MULTIPLIER
