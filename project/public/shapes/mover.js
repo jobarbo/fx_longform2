@@ -38,8 +38,8 @@ class Mover {
 		this.paletteCompleted = false; // Track if one-time pass is completed
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.045) / width;
-		this.wrapPaddingY = (min(width, height) * 0.045) / height;
+		this.wrapPaddingX = (min(width, height) * -0.045) / width;
+		this.wrapPaddingY = (min(width, height) * -0.045) / height;
 		this.reentryOffsetX = (min(width, height) * 0.004) / width;
 		this.reentryOffsetY = (min(width, height) * 0.004) / height;
 		this.wrapPaddingMultiplier = 0.5; //! or 0.5
@@ -64,8 +64,8 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.005;
-		this.yRandDivider = 0.005;
+		this.xRandDivider = 0.015;
+		this.yRandDivider = 0.015;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
@@ -126,6 +126,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		noiseScale1 = 4,
 		noiseScale2 = 4,
 		noiseScale3 = 4,
+		noiseScale4 = 4,
 		octave = 1,
 		a1 = 425,
 		a2 = 425;
@@ -168,7 +169,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, octave), -0.00015, 0.00015, 0.2, 1.515, true);
 	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, octave), -0.00015, 0.00015, 1.2, 0.515, true);
 	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, octave), -0.00015, 0.00015, -0.5, -1.2, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale1, 3, octave), -0.00015, 0.00015, -1.5, -0.2, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.00015, 0.00015, -1.5, -0.2, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);

@@ -61,6 +61,7 @@ let MULTIPLIER;
 let basePalettes = [
 	// Palette 1: Current blue-orange gradient
 	[
+		{h: 200, s: 100, l: 3}, // #00202e
 		{h: 200, s: 100, l: 9}, // #00202e
 		{h: 200, s: 100, l: 18}, // #003f5c
 		{h: 218, s: 45, l: 32}, // #2c4875
@@ -331,8 +332,8 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 0.75;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.08; // 45% padding for X axis
-	let paddingRatioY = 0.08; // 45% padding for Y axis
+	let paddingRatioX = 0.005; // 45% padding for X axis
+	let paddingRatioY = 0.005; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;
