@@ -128,8 +128,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		noiseScale3 = 4,
 		noiseScale4 = 4,
 		octave = 1,
-		a1 = 425,
-		a2 = 425;
+		a1 = 211,
+		a2 = 211;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
