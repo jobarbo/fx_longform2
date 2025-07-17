@@ -64,8 +64,8 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.015;
-		this.yRandDivider = 0.015;
+		this.xRandDivider = 0.0075;
+		this.yRandDivider = 0.0075;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
