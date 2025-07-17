@@ -319,7 +319,7 @@ function INIT(rseed, nseed) {
 
 	// Generate color variations first (1000 different palettes)
 	selectedPalette = int(random(basePalettes.length));
-	baseHSLPalette = basePalettes[0];
+	baseHSLPalette = basePalettes[selectedPalette];
 	generateColorVariations();
 
 	// Scale noise values based on MULTIPLIER
