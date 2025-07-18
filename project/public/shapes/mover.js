@@ -10,7 +10,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.75]) * MULTIPLIER;
+		this.s = random([0.45]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -38,8 +38,8 @@ class Mover {
 		this.paletteCompleted = false; // Track if one-time pass is completed
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.045) / width;
-		this.wrapPaddingY = (min(width, height) * 0.045) / height;
+		this.wrapPaddingX = (min(width, height) * -0.045) / width;
+		this.wrapPaddingY = (min(width, height) * -0.045) / height;
 		this.reentryOffsetX = (min(width, height) * 0.004) / width;
 		this.reentryOffsetY = (min(width, height) * 0.004) / height;
 		this.wrapPaddingMultiplier = 0.5; //! or 0.5
@@ -64,8 +64,8 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.005;
-		this.yRandDivider = 0.005;
+		this.xRandDivider = 0.0045;
+		this.yRandDivider = 0.0045;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
@@ -123,12 +123,13 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
-		noiseScale1 = 4,
-		noiseScale2 = 4,
-		noiseScale3 = 4,
+		noiseScale1 = 1,
+		noiseScale2 = 1,
+		noiseScale3 = 1,
+		noiseScale4 = 1,
 		octave = 1,
-		a1 = 425,
-		a2 = 425;
+		a1 = 21,
+		a2 = 21;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
@@ -168,7 +169,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, octave), -0.00015, 0.00015, 0.2, 1.515, true);
 	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, octave), -0.00015, 0.00015, 1.2, 0.515, true);
 	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, octave), -0.00015, 0.00015, -0.5, -1.2, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale1, 3, octave), -0.00015, 0.00015, -1.5, -0.2, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.00015, 0.00015, -1.5, -0.2, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
@@ -190,8 +191,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 
 	//! Introverted
 	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -10.05, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 10.05), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -10.05, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 10.05), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1231233.05, -1231233.0000001), map(nx, xMin * width, xMax * width, 1231233.0000001, 1231233.05), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1231233.05, -1231233.0000001), map(ny, yMin * height, yMax * height, 1231233.0000001, 1231233.05), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -200,15 +201,15 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	/* 	let zu = ZZ(u, 50, 60, 0.0015);
-	let zv = ZZ(v, 50, 60, 0.0015); */
+	let zu = ZZ(u, 50, 60, 0.0015);
+	let zv = ZZ(v, 50, 60, 0.0015);
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
 	//! 0.001
 	//! 2
-	let zu = ZZ(u, 2.1, 5.5, 0.01) * MULTIPLIER;
-	let zv = ZZ(v, 2.1, 5.5, 0.01) * MULTIPLIER;
+	/* 	let zu = ZZ(u, 2.1, 5.5, 0.01) * MULTIPLIER;
+	let zv = ZZ(v, 2.1, 5.5, 0.01) * MULTIPLIER; */
 
 	let p = createVector(zu, zv);
 	return p;

@@ -3,7 +3,7 @@ let movers = [];
 let startTime;
 let maxFrames = 25;
 let elapsedTime = 0;
-let particleNum = 500000;
+let particleNum = 1500000;
 // Adjust cycle for smoother percentage updates (1% increments)
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
@@ -61,6 +61,7 @@ let MULTIPLIER;
 let basePalettes = [
 	// Palette 1: Current blue-orange gradient
 	[
+		{h: 200, s: 100, l: 3}, // #00202e
 		{h: 200, s: 100, l: 9}, // #00202e
 		{h: 200, s: 100, l: 18}, // #003f5c
 		{h: 218, s: 45, l: 32}, // #2c4875
@@ -331,8 +332,8 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 0.75;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.08; // 45% padding for X axis
-	let paddingRatioY = 0.08; // 45% padding for Y axis
+	let paddingRatioX = 0.005; // 45% padding for X axis
+	let paddingRatioY = 0.005; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;
