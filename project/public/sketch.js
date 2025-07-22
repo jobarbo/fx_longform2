@@ -337,10 +337,10 @@ function INIT(rseed, nseed) {
 	// Scale noise values based on MULTIPLIER
 	scl1 = 0.0019 / MULTIPLIER;
 	scl2 = 0.002 / MULTIPLIER;
-	scl3 = 0.0011 / MULTIPLIER;
+	scl3 = 0.0021 / MULTIPLIER;
 
 	let sclOffset1 = 0.75;
-	let sclOffset2 = 1;
+	let sclOffset2 = 0.75;
 	let sclOffset3 = 0.75;
 
 	// Calculate padding based on the reference size and scale it
