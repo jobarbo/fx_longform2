@@ -3,7 +3,7 @@ let movers = [];
 let startTime;
 let maxFrames = 25;
 let elapsedTime = 0;
-let particleNum = 500000;
+let particleNum = 150000;
 // Adjust cycle for smoother percentage updates (1% increments)
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
@@ -339,9 +339,9 @@ function INIT(rseed, nseed) {
 	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.0021 / MULTIPLIER;
 
-	let sclOffset1 = 0.75;
-	let sclOffset2 = 0.75;
-	let sclOffset3 = 0.75;
+	let sclOffset1 = 2.75;
+	let sclOffset2 = 2.75;
+	let sclOffset3 = 2.75;
 
 	// Calculate padding based on the reference size and scale it
 	let paddingRatioX = 0.3; // 45% padding for X axis

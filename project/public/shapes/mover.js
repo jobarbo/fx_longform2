@@ -10,7 +10,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.75]) * MULTIPLIER;
+		this.s = random([0.25]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -42,7 +42,7 @@ class Mover {
 		this.wrapPaddingY = (min(width, height) * 0.1) / height;
 		this.reentryOffsetX = (min(width, height) * 0.003) / width;
 		this.reentryOffsetY = (min(width, height) * 0.003) / height;
-		this.wrapPaddingMultiplier = 0.5; //! or 0.5
+		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -64,8 +64,8 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.0045;
-		this.yRandDivider = 0.0045;
+		this.xRandDivider = 0.45;
+		this.yRandDivider = 0.45;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
@@ -127,9 +127,9 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		noiseScale2 = 1,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
-		octave = 1,
-		a1 = 21,
-		a2 = 21;
+		octave = 6,
+		a1 = 1,
+		a2 = 1;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
@@ -146,12 +146,12 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	nx += dx * a1;
 	ny += dy * a2;
 
-	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
-	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);
+	/* un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
+	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed); */
 
 	//! noise x SineCos
-	/* un = noise(sin(nx * (scale1 * scaleOffset1) + rseed)) + noise(cos(nx * (scale2 * scaleOffset2) + rseed)) - noise(sin(nx * (scale3 * scaleOffset3) + rseed));
-	vn = noise(cos(ny * (scale1 * scaleOffset1) + rseed)) + noise(sin(ny * (scale2 * scaleOffset2) + rseed)) - noise(cos(ny * (scale3 * scaleOffset3) + rseed)); */
+	un = noise(nx * (scale1 * scaleOffset1) + rseed) + noise(nx * (scale2 * scaleOffset2) + rseed) - noise(nx * (scale3 * scaleOffset3) + rseed);
+	vn = noise(cos(ny * (scale1 * scaleOffset1) + rseed)) + noise(ny * (scale2 * scaleOffset2) + rseed) - noise(ny * (scale3 * scaleOffset3) + rseed);
 
 	//! center focused introverted
 	/* let maxU = map(ny, xMin * width, xMax * width, 3, -3, true);
@@ -191,8 +191,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 
 	//! Introverted
 	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1111.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1111.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1111.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1111.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
