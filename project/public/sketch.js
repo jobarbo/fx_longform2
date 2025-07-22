@@ -1,7 +1,7 @@
 let features = "";
 let movers = [];
 let startTime;
-let maxFrames = 25;
+let maxFrames = 35;
 let elapsedTime = 0;
 let particleNum = 150000;
 // Adjust cycle for smoother percentage updates (1% increments)
@@ -151,7 +151,7 @@ function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
 	globalColorIndices.yoyo = globalColorIndices.yoyoCycles[1];
 
 	// Calculate once for "default" mode
-	let mappedIndex = map(currentFrame, 0, maxFrames / 1.5, paletteLength - 1, 0, true);
+	let mappedIndex = map(currentFrame, 0, maxFrames / 1.2, paletteLength - 1, 0, true);
 	globalColorIndices.default = Math.floor(mappedIndex);
 }
 
@@ -223,12 +223,12 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
-	let scaleFactorX = 1;
-	let scaleFactorY = 1;
+	let scaleFactorX = 2;
+	let scaleFactorY = 2;
 
-	translate(width / 2, height / 2);
-	scale(scaleFactorX, scaleFactorY);
-	translate(-width / 2, -height / 2); // Move back to maintain center
+	mainCanvas.translate(width / 2, height / 2);
+	mainCanvas.scale(scaleFactorX, scaleFactorY);
+	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
 
 	INIT(rseed, nseed);
 
@@ -344,8 +344,8 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 2.75;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.3; // 45% padding for X axis
-	let paddingRatioY = 0.3; // 45% padding for Y axis
+	let paddingRatioX = 0.3; // 30% padding for X axis
+	let paddingRatioY = paddingRatioX * ARTWORK_RATIO; // Y padding respects artwork ratio
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;

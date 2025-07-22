@@ -10,7 +10,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.25]) * MULTIPLIER;
+		this.s = random([0.35]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -19,12 +19,12 @@ class Mover {
 		this.sclOffset3 = sclOffset3;
 		this.rseed = rseed;
 		this.nseed = nseed;
-		this.xRandDivider = 0.01;
-		this.yRandDivider = 0.01;
+		this.xRandDivider = 0.45;
+		this.yRandDivider = 0.45;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperOffset = 0.0;
-		this.yRandSkipperOffset = 0.0;
+		this.xRandSkipperOffset = 10.1;
+		this.yRandSkipperOffset = 10.1;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -38,10 +38,10 @@ class Mover {
 		this.paletteCompleted = false; // Track if one-time pass is completed
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.1) / width;
-		this.wrapPaddingY = (min(width, height) * 0.1) / height;
-		this.reentryOffsetX = (min(width, height) * 0.003) / width;
-		this.reentryOffsetY = (min(width, height) * 0.003) / height;
+		this.wrapPaddingX = (min(width, height) * 0.0001) / width;
+		this.wrapPaddingY = this.wrapPaddingX * ARTWORK_RATIO;
+		this.reentryOffsetX = (min(width, height) * 0.000003) / width;
+		this.reentryOffsetY = (min(width, height) * 0.000003) / height;
 		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
@@ -70,6 +70,10 @@ class Mover {
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
 		this.y += (p.y / this.yRandDivider + this.yRandSkipper) * MULTIPLIER;
+
+		this.xRandSkipperOffset = map(frameCount, 0, maxFrames / 2, 10, 0, true);
+
+		this.yRandSkipperOffset = map(frameCount, 0, maxFrames / 2, 10, 0, true);
 
 		// Map color based on frame count - now using pre-calculated global indices
 		if (this.paletteMode === "once") {
@@ -126,10 +130,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		noiseScale1 = 1,
 		noiseScale2 = 1,
 		noiseScale3 = 1,
-		noiseScale4 = 1,
+		noiseScale4 = 122,
 		octave = 6,
-		a1 = 1,
-		a2 = 1;
+		a1 = 221,
+		a2 = 1221;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
@@ -166,10 +170,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, octave), -0.000000015, 0.000000015, -0.3, 0.35, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, octave), -0.000000015, 0.000000015, -0.3, 0.35, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, octave), -0.000000015, 0.000000015, -0.3, 0.3, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.000000015, 0.000000015, -0.3, 0.3, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, octave), -1.000000015, 1.000000015, -2.3, 2.35, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, octave), -1.000000015, 1.000000015, -2.3, 2.35, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, octave), -1.000000015, 1.000000015, 2.3, -2.3, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -1.000000015, 1.000000015, 2.3, -12.3, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
@@ -191,8 +195,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 
 	//! Introverted
 	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1111.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1111.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1111.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1111.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1230.00005, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1230.00005), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1230.00005, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1230.00005), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -201,8 +205,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	let zu = ZZ(u, 50, 60, 0.0015);
-	let zv = ZZ(v, 50, 60, 0.0015);
+	let zu = ZZ(u, 50, 60, 0.0000015);
+	let zv = ZZ(v, 50, 60, 0.0000015);
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
