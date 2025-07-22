@@ -3,7 +3,7 @@ let movers = [];
 let startTime;
 let maxFrames = 25;
 let elapsedTime = 0;
-let particleNum = 1500000;
+let particleNum = 500000;
 // Adjust cycle for smoother percentage updates (1% increments)
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
@@ -103,7 +103,19 @@ let basePalettes = [
 		{h: 60, s: 60, l: 65},
 	],
 
-	[{h: 0, s: 0, l: 0}],
+	[
+		{h: 240, s: 100, l: 8}, // Deep midnight blue
+		{h: 250, s: 85, l: 12}, // Dark blue-purple
+		{h: 265, s: 75, l: 18}, // Deep purple
+		{h: 285, s: 70, l: 25}, // Purple-magenta
+		{h: 310, s: 65, l: 32}, // Magenta-pink
+		{h: 340, s: 80, l: 40}, // Deep coral-red
+		{h: 15, s: 85, l: 48}, // Warm red-orange
+		{h: 25, s: 90, l: 58}, // Bright orange
+		{h: 35, s: 85, l: 68}, // Light orange
+		{h: 45, s: 80, l: 78}, // Golden yellow
+		{h: 55, s: 70, l: 85}, // Light golden
+	],
 ];
 
 let selectedPalette; // Will store the randomly selected palette
@@ -332,8 +344,8 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 0.75;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.005; // 45% padding for X axis
-	let paddingRatioY = 0.005; // 45% padding for Y axis
+	let paddingRatioX = 0.3; // 45% padding for X axis
+	let paddingRatioY = 0.3; // 45% padding for Y axis
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;
