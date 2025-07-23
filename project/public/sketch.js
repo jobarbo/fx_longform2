@@ -209,8 +209,8 @@ function setup() {
 	shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
 
 	// Set up the rendering properties
-	mainCanvas.pixelDensity(2);
-	shaderCanvas.pixelDensity(2);
+	mainCanvas.pixelDensity(4);
+	shaderCanvas.pixelDensity(4);
 
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
@@ -223,12 +223,12 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
-	let scaleFactorX = 1;
-	let scaleFactorY = 1;
+	let scaleFactorX = 1.5;
+	let scaleFactorY = 1.5;
 
-	translate(width / 2, height / 2);
-	scale(scaleFactorX, scaleFactorY);
-	translate(-width / 2, -height / 2); // Move back to maintain center
+	mainCanvas.translate(width / 2, height / 2);
+	mainCanvas.scale(scaleFactorX, scaleFactorY);
+	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
 
 	INIT(rseed, nseed);
 
@@ -344,8 +344,8 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 0.75;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.3; // 45% padding for X axis
-	let paddingRatioY = 0.3; // 45% padding for Y axis
+	let paddingRatioX = 0.3; // 30% padding for X axis
+	let paddingRatioY = paddingRatioX * ARTWORK_RATIO;
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
 	let paddingX = basePaddingX * MULTIPLIER;

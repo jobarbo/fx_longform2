@@ -39,7 +39,7 @@ class Mover {
 
 		// Pre-calculate padding values
 		this.wrapPaddingX = (min(width, height) * 0.1) / width;
-		this.wrapPaddingY = (min(width, height) * 0.1) / height;
+		this.wrapPaddingY = ((min(width, height) * 0.1) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * 0.003) / width;
 		this.reentryOffsetY = (min(width, height) * 0.003) / height;
 		this.wrapPaddingMultiplier = 0.5; //! or 0.5
@@ -201,8 +201,9 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	let zu = ZZ(u, 50, 60, 0.0015);
-	let zv = ZZ(v, 50, 60, 0.0015);
+	// Apply ZZ symmetrically - preserve sign but apply transformation to absolute value
+	let zu = u < 0 ? -ZZ(Math.abs(u), 50, 60, 0.00000025) : ZZ(u, 50, 60, 0.0015);
+	let zv = v < 0 ? -ZZ(Math.abs(v), 50, 60, 0.00000025) : ZZ(v, 50, 60, 0.0015);
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
