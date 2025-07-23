@@ -201,8 +201,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 	// Apply ZZ symmetrically - preserve sign but apply transformation to absolute value
-	let zu = u < 0 ? u : ZZ(u, 35, 80, 0.008);
-	let zv = v < 0 ? v : ZZ(v, 35, 80, 0.008);
+	let zu = u < 0 ? u : ZZ(u, 35, 80, 0.018);
+	let zv = v < 0 ? v : ZZ(v, 35, 80, 0.018);
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
