@@ -49,7 +49,7 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.41;
+let ARTWORK_RATIO = 1.25;
 let BASE_WIDTH = 948;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -158,7 +158,7 @@ function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
 	globalColorIndices.yoyo = globalColorIndices.yoyoCycles[1];
 
 	// Calculate once for "default" mode
-	let mappedIndex = map(currentFrame, 0, maxFrames / 1.5, paletteLength - 1, 0, true);
+	let mappedIndex = map(currentFrame, 0, maxFrames / 1.25, paletteLength - 1, 0, true);
 	globalColorIndices.default = Math.floor(mappedIndex);
 }
 
@@ -246,8 +246,8 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
-	let scaleFactorX = 1.85;
-	let scaleFactorY = 1.85;
+	let scaleFactorX = 1;
+	let scaleFactorY = 1;
 
 	debugCanvas.translate(width / 2, height / 2);
 	debugCanvas.scale(scaleFactorX, scaleFactorY);
@@ -383,7 +383,7 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.3; // 30% padding for X axis
+	let paddingRatioX = 0.1; // 30% padding for X axis
 	let paddingRatioY = paddingRatioX * ARTWORK_RATIO;
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
