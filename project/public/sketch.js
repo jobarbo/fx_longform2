@@ -428,7 +428,7 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, selectedPalette));
 	}
 
-	let bgCol = color(45, 0, 100);
+	let bgCol = color(25, 5, 100);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
