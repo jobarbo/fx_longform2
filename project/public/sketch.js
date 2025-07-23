@@ -45,7 +45,7 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.25;
+let ARTWORK_RATIO = 1.41;
 let BASE_WIDTH = 948;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -223,8 +223,8 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
-	let scaleFactorX = 1.5;
-	let scaleFactorY = 1.5;
+	let scaleFactorX = 1.85;
+	let scaleFactorY = 1.85;
 
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
@@ -331,17 +331,17 @@ function INIT(rseed, nseed) {
 
 	// Generate color variations first (1000 different palettes)
 	selectedPalette = int(random(basePalettes.length));
-	baseHSLPalette = basePalettes[selectedPalette];
+	baseHSLPalette = basePalettes[3];
 	generateColorVariations();
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.0019 / MULTIPLIER;
+	scl1 = 0.002 / MULTIPLIER;
 	scl2 = 0.002 / MULTIPLIER;
-	scl3 = 0.0021 / MULTIPLIER;
+	scl3 = 0.002 / MULTIPLIER;
 
-	let sclOffset1 = 0.75;
-	let sclOffset2 = 0.75;
-	let sclOffset3 = 0.75;
+	let sclOffset1 = 1;
+	let sclOffset2 = 1;
+	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
 	let paddingRatioX = 0.3; // 30% padding for X axis
