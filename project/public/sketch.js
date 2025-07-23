@@ -9,13 +9,17 @@ let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 
 // Shader Manager - using global instance from shaderManager.js
-let isShaderEnabled = true;
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects
+let debugCanvas; // Separate canvas for debug overlays
+let compositeCanvas; // Combined canvas for shader processing
 
 // Animation control
 let particleAnimationComplete = false;
 let shaderTime = 0;
+
+// Debug controls
+let debugPadding = false;
 
 // Global color mapping optimization
 let globalColorIndices = {
@@ -205,26 +209,43 @@ function setup() {
 
 	// Create main canvas for the artwork
 	mainCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
+	// Create debug canvas for overlays
+	debugCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
 	// Create shader canvas for the WEBGL renderer
 	shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
+	// Create composite canvas for combining main and debug content
+	compositeCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
 
 	// Set up the rendering properties
 	mainCanvas.pixelDensity(4);
 	shaderCanvas.pixelDensity(4);
+	debugCanvas.pixelDensity(4);
+	compositeCanvas.pixelDensity(4);
 
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
+	debugCanvas.colorMode(HSB, 360, 100, 100, 100);
+	compositeCanvas.colorMode(HSB, 360, 100, 100, 100);
 	colorMode(HSB, 360, 100, 100, 100);
 
 	// Enable color preservation settings for mainCanvas
 	mainCanvas.drawingContext.imageSmoothingEnabled = false;
 	mainCanvas.drawingContext.globalCompositeOperation = "source-over";
+
+	// Initialize debug canvas as transparent
+	debugCanvas.clear();
+	debugCanvas.drawingContext.globalCompositeOperation = "source-over";
+
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
 	let scaleFactorX = 1.85;
 	let scaleFactorY = 1.85;
+
+	debugCanvas.translate(width / 2, height / 2);
+	debugCanvas.scale(scaleFactorX, scaleFactorY);
+	debugCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
 
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
@@ -267,25 +288,36 @@ function setup() {
 	// Create and start the animation
 	const generator = createAnimationGenerator(animConfig);
 	startAnimation(generator);
-}
 
-// Function to toggle shader effects
-function toggleShader() {
-	isShaderEnabled = !isShaderEnabled;
-	console.log("Shader effects:", isShaderEnabled ? "enabled" : "disabled");
+	// Log available controls
+	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
 }
 
 // Function to apply shader effects (call this in your render loop if needed)
 function applyShaderEffect() {
-	if (!isShaderEnabled || !shaderManager) return;
+	if (!shaderManager) {
+		console.log("ShaderManager not available");
+		return;
+	}
 
 	// Clear the shader canvas
 	clear();
 
-	// Apply the shader effect using the manager with dedicated shader time
+	// Clear and prepare the composite canvas
+	compositeCanvas.clear();
+
+	// Draw mainCanvas first
+	compositeCanvas.image(mainCanvas, 0, 0);
+
+	// Overlay debugCanvas if debug is enabled
+	if (debugPadding) {
+		compositeCanvas.image(debugCanvas, 0, 0);
+	}
+
+	// Apply the shader effect using the composite canvas
 	shaderManager
 		.apply("chromatic", {
-			uTexture: mainCanvas,
+			uTexture: compositeCanvas,
 			uTime: shaderTime,
 			uResolution: [width, height],
 		})
@@ -294,8 +326,11 @@ function applyShaderEffect() {
 
 // Keyboard controls
 function keyPressed() {
-	if (key === "g" || key === "G") {
-		toggleShader();
+	if (key === "d" || key === "D") {
+		debugPadding = !debugPadding;
+		console.log("Debug padding:", debugPadding ? "enabled" : "disabled");
+		// Update debug canvas when toggled
+		drawDebugPadding();
 	}
 }
 
@@ -304,10 +339,8 @@ function draw() {
 	// Update shader animation time
 	shaderTime += 0.01;
 
-	// Apply shader effects to the main canvas
-	if (isShaderEnabled) {
-		applyShaderEffect();
-	}
+	// Always apply shader effects
+	applyShaderEffect();
 }
 
 // Helper function to load additional shaders dynamically
@@ -424,4 +457,46 @@ function initGrid(brightness) {
 			rect(x, yPos, random(0.05, 0.25) * MULTIPLIER, random(0.05, 0.25) * MULTIPLIER);
 		}
 	}
+}
+
+// Function to draw debug padding outline
+function drawDebugPadding() {
+	// Clear the debug canvas first
+	debugCanvas.clear();
+
+	if (!debugPadding) return;
+
+	// Calculate the basic padding bounds in pixels
+	let left = xMin * width;
+	let right = xMax * width;
+	let top = yMin * height;
+	let bottom = yMax * height;
+
+	// Draw on the debug canvas
+	debugCanvas.push();
+
+	// Draw basic padding bounds (green)
+	debugCanvas.stroke(120, 100, 100, 90); // Bright green with transparency
+	debugCanvas.strokeWeight(3);
+	debugCanvas.noFill();
+	debugCanvas.rect(left, top, right - left, bottom - top);
+
+	// Draw actual particle movement bounds (red) if we have movers
+	if (movers && movers.length > 0) {
+		let mover = movers[0]; // Get bounds from first mover
+
+		debugCanvas.stroke(0, 100, 100, 90); // Bright red with transparency
+		debugCanvas.strokeWeight(3);
+		debugCanvas.noFill();
+
+		// Draw the actual movement bounds rectangle
+		let moveLeft = mover.minBoundX;
+		let moveRight = mover.maxBoundX;
+		let moveTop = mover.minBoundY;
+		let moveBottom = mover.maxBoundY;
+
+		debugCanvas.rect(moveLeft, moveTop, moveRight - moveLeft, moveBottom - moveTop);
+	}
+
+	debugCanvas.pop();
 }
