@@ -61,7 +61,8 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
-let pixel_density = 2;
+// Dynamic pixel density will be calculated in setup() after windowWidth/Height are available
+let pixel_density;
 
 // Two different base HSL palettes to choose from
 let basePalettes = [
@@ -161,6 +162,35 @@ function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
 	globalColorIndices.default = Math.floor(mappedIndex);
 }
 
+function calculateOptimalPixelDensity() {
+	// Get the smaller screen dimension that will be used for canvas size
+	const screenDim = Math.min(windowWidth, windowHeight);
+
+	// Calculate what the actual canvas dimensions would be
+	const canvasWidth = screenDim;
+	const canvasHeight = screenDim * 1.41; // ARTWORK_RATIO
+
+	// Maximum reasonable canvas buffer size (in pixels per dimension)
+	const MAX_BUFFER_DIMENSION = 8000; // Conservative limit for browser compatibility
+
+	// Calculate maximum pixel density that won't exceed our limits
+	const maxPixelDensityX = MAX_BUFFER_DIMENSION / canvasWidth;
+	const maxPixelDensityY = MAX_BUFFER_DIMENSION / canvasHeight;
+	const maxSafePixelDensity = Math.min(maxPixelDensityX, maxPixelDensityY);
+
+	// Start with desired pixel density but clamp to safe limits
+	const desiredPixelDensity = 2;
+	const optimalPixelDensity = Math.min(desiredPixelDensity, maxSafePixelDensity);
+
+	// Ensure minimum quality of 1
+	const finalPixelDensity = Math.max(1, Math.floor(optimalPixelDensity));
+
+	console.log(`Screen dimensions: ${screenDim}px, Canvas: ${canvasWidth}×${canvasHeight}, Pixel density: ${finalPixelDensity}`);
+	console.log(`Final buffer size: ${canvasWidth * finalPixelDensity}×${canvasHeight * finalPixelDensity}`);
+
+	return finalPixelDensity;
+}
+
 function generateColorVariations() {
 	const numVariations = 0; // Create 1000 different color palettes
 	colorVariations = [];
@@ -202,6 +232,9 @@ function setup() {
 	features = $fx.getFeatures();
 	startTime = frameCount;
 	executionTimer.start(); // Start the timer
+
+	// Calculate optimal pixel density before creating canvases
+	pixel_density = calculateOptimalPixelDensity();
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
