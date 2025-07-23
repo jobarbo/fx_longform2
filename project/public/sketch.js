@@ -117,11 +117,31 @@ let basePalettes = [
 		{h: 285, s: 70, l: 25}, // Purple-magenta
 		{h: 310, s: 65, l: 32}, // Magenta-pink
 		{h: 340, s: 80, l: 40}, // Deep coral-red
+		{h: 350, s: 75, l: 45}, // Deep coral-red
 		{h: 15, s: 85, l: 48}, // Warm red-orange
 		{h: 25, s: 90, l: 58}, // Bright orange
 		{h: 35, s: 85, l: 68}, // Light orange
 		{h: 45, s: 80, l: 78}, // Golden yellow
 		{h: 55, s: 70, l: 85}, // Light golden
+	],
+
+	[
+		{h: 316, s: 95, l: 1},
+		{h: 305, s: 85, l: 5},
+		{h: 300, s: 76, l: 8},
+		{h: 296, s: 76, l: 13},
+		{h: 281, s: 66, l: 21},
+		{h: 266, s: 68, l: 29},
+		{h: 251, s: 69, l: 37},
+		{h: 236, s: 71, l: 50},
+		{h: 221, s: 73, l: 56},
+		{h: 206, s: 76, l: 60},
+		{h: 181, s: 77, l: 63},
+		{h: 171, s: 85, l: 67},
+		{h: 161, s: 87, l: 70},
+		{h: 151, s: 89, l: 75},
+		{h: 148, s: 88, l: 80},
+		{h: 144, s: 72, l: 90},
 	],
 ];
 
@@ -370,7 +390,7 @@ function INIT(rseed, nseed) {
 
 	// Generate color variations first (1000 different palettes)
 	selectedPalette = int(random(basePalettes.length));
-	baseHSLPalette = basePalettes[selectedPalette];
+	baseHSLPalette = basePalettes[4];
 	generateColorVariations();
 
 	// Scale noise values based on MULTIPLIER
