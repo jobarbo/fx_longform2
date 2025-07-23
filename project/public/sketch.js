@@ -61,6 +61,8 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
+let pixel_density = 2;
+
 // Two different base HSL palettes to choose from
 let basePalettes = [
 	// Palette 1: Current blue-orange gradient
@@ -217,10 +219,10 @@ function setup() {
 	compositeCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
 
 	// Set up the rendering properties
-	mainCanvas.pixelDensity(4);
-	shaderCanvas.pixelDensity(4);
-	debugCanvas.pixelDensity(4);
-	compositeCanvas.pixelDensity(4);
+	mainCanvas.pixelDensity(pixel_density);
+	shaderCanvas.pixelDensity(pixel_density);
+	debugCanvas.pixelDensity(pixel_density);
+	compositeCanvas.pixelDensity(pixel_density);
 
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
