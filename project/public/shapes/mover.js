@@ -40,8 +40,8 @@ class Mover {
 		// Pre-calculate padding values
 		this.wrapPaddingX = (min(width, height) * 0.0001) / width;
 		this.wrapPaddingY = this.wrapPaddingX * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.000003) / width;
-		this.reentryOffsetY = (min(width, height) * 0.000003) / height;
+		this.reentryOffsetX = (min(width, height) * random(0.005, 0.02)) / width;
+		this.reentryOffsetY = (min(width, height) * random(0.005, 0.02)) / height;
 		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
@@ -64,8 +64,8 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.45;
-		this.yRandDivider = 0.45;
+		this.xRandDivider = 0.9;
+		this.yRandDivider = 0.9;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
@@ -93,15 +93,15 @@ class Mover {
 				this.hasBeenOutside = true;
 			}
 			if (this.x < this.minBoundX) {
-				this.x = (this.xMax + this.wrapPaddingX * this.wrapPaddingMultiplier - random(0, this.reentryOffsetX)) * width;
+				this.x = (this.xMax + this.wrapPaddingX * this.wrapPaddingMultiplier - this.reentryOffsetX) * width;
 			} else if (this.x > this.maxBoundX) {
-				this.x = (this.xMin - this.wrapPaddingX * this.wrapPaddingMultiplier + random(0, this.reentryOffsetX)) * width;
+				this.x = (this.xMin - this.wrapPaddingX * this.wrapPaddingMultiplier + this.reentryOffsetX) * width;
 			}
 
 			if (this.y < this.minBoundY) {
-				this.y = (this.yMax + this.wrapPaddingY * this.wrapPaddingMultiplier - random(0, this.reentryOffsetY)) * height;
+				this.y = (this.yMax + this.wrapPaddingY * this.wrapPaddingMultiplier - this.reentryOffsetY) * height;
 			} else if (this.y > this.maxBoundY) {
-				this.y = (this.yMin - this.wrapPaddingY * this.wrapPaddingMultiplier + random(0, this.reentryOffsetY)) * height;
+				this.y = (this.yMin - this.wrapPaddingY * this.wrapPaddingMultiplier + this.reentryOffsetY) * height;
 			}
 		} else {
 			// Reset to initial position if not bordered
@@ -130,7 +130,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		noiseScale1 = 1,
 		noiseScale2 = 1,
 		noiseScale3 = 1,
-		noiseScale4 = 122,
+		noiseScale4 = 1,
 		octave = 6,
 		a1 = 221,
 		a2 = 1221;
@@ -173,7 +173,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, octave), -1.000000015, 1.000000015, -2.3, 2.35, true);
 	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, octave), -1.000000015, 1.000000015, -2.3, 2.35, true);
 	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, octave), -1.000000015, 1.000000015, 2.3, -2.3, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -1.000000015, 1.000000015, 2.3, -12.3, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -1.000000015, 1.000000015, 0.3, -12.3, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);

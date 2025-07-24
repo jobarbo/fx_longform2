@@ -151,7 +151,7 @@ function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
 	globalColorIndices.yoyo = globalColorIndices.yoyoCycles[1];
 
 	// Calculate once for "default" mode
-	let mappedIndex = map(currentFrame, 0, maxFrames / 1.2, paletteLength - 1, 0, true);
+	let mappedIndex = map(currentFrame, 0, maxFrames / 1.1, paletteLength - 1, 0, true);
 	globalColorIndices.default = Math.floor(mappedIndex);
 }
 
