@@ -127,6 +127,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		noiseScale2 = 1,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
+		x_sine_scale = 1,
+		y_sine_scale = 1,
 		octave = 1,
 		a1 = 1,
 		a2 = 1;
@@ -149,6 +151,20 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
 	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);
 
+	//! sine x cos x oct
+	/*
+	let time = millis() * 0.000000001; // Introduce a time variable for dynamic movement
+	let un =
+		sin(y * scl1 * scaleOffset1 + time) +
+		cos(y * scl2 * scaleOffset2 + time) +
+		sin(y * scl2 * 1.05 + time) +
+		oct(ny * scl1 * scaleOffset1 + time, nx * scl2 * scaleOffset2 + time, x_sine_scale, 2, octave);
+	let vn =
+		sin(x * scl1 * scaleOffset1 + time) +
+		cos(x * scl2 * scaleOffset2 + time) -
+		sin(x * scl2 * 1.05 + time) +
+		oct(nx * scl2 * scaleOffset2 + time, ny * scl1 * scaleOffset1 + time, y_sine_scale, 3, octave);
+	*/
 	//! noise x SineCos
 	/* un = noise(sin(nx * (scale1 * scaleOffset1) + rseed)) + noise(cos(nx * (scale2 * scaleOffset2) + rseed)) - noise(sin(nx * (scale3 * scaleOffset3) + rseed));
 	vn = noise(cos(ny * (scale1 * scaleOffset1) + rseed)) + noise(sin(ny * (scale2 * scaleOffset2) + rseed)) - noise(cos(ny * (scale3 * scaleOffset3) + rseed)); */
