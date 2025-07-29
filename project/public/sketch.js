@@ -50,7 +50,7 @@ let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
 let ARTWORK_RATIO = 1.1363636364;
-let BASE_WIDTH = 248;
+let BASE_WIDTH = 948;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
 // This is our reference size for scaling
@@ -266,8 +266,8 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
-	let scaleFactorX = 1;
-	let scaleFactorY = 1;
+	let scaleFactorX = 4;
+	let scaleFactorY = 4;
 
 	debugCanvas.translate(width / 2, height / 2);
 	debugCanvas.scale(scaleFactorX, scaleFactorY);
@@ -403,7 +403,7 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.3; // 30% padding for X axis
+	let paddingRatioX = 0.45; // 30% padding for X axis
 	let paddingRatioY = paddingRatioX * ARTWORK_RATIO;
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;

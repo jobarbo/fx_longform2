@@ -10,7 +10,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.15]) * MULTIPLIER;
+		this.s = random([0.05]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -38,11 +38,11 @@ class Mover {
 		this.paletteCompleted = false; // Track if one-time pass is completed
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.05) / width;
-		this.wrapPaddingY = ((min(width, height) * 0.05) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.005) / width;
-		this.reentryOffsetY = (min(width, height) * 0.005) / height;
-		this.wrapPaddingMultiplier = 0.001; //! or 0.5
+		this.wrapPaddingX = (min(width, height) * 0.01) / width;
+		this.wrapPaddingY = ((min(width, height) * 0.01) / height) * ARTWORK_RATIO;
+		this.reentryOffsetX = (min(width, height) * 0.0005) / width;
+		this.reentryOffsetY = (min(width, height) * 0.0005) / height;
+		this.wrapPaddingMultiplier = 0.95; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -64,8 +64,8 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.05;
-		this.yRandDivider = 0.05;
+		this.xRandDivider = 0.1;
+		this.yRandDivider = 0.1;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
@@ -123,15 +123,15 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
-		noiseScale1 = 1,
-		noiseScale2 = 1,
-		noiseScale3 = 1,
-		noiseScale4 = 1,
+		noiseScale1 = 2,
+		noiseScale2 = 2,
+		noiseScale3 = 2,
+		noiseScale4 = 2,
 		x_sine_scale = 1,
 		y_sine_scale = 1,
 		octave = 1,
-		a1 = 1,
-		a2 = 1;
+		a1 = 311,
+		a2 = 311;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
