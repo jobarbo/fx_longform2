@@ -148,8 +148,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	nx += dx * a1 * MULTIPLIER;
 	ny += dy * a2 * MULTIPLIER;
 
-	un = sin(nx * (scale1 * scaleOffset1)) + cos(nx * (scale2 * scaleOffset2)) - sin(nx * (scale3 * scaleOffset3));
-	vn = cos(ny * (scale1 * scaleOffset1)) + sin(ny * (scale2 * scaleOffset2)) - cos(ny * (scale3 * scaleOffset3));
+	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
+	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);
 
 	//! sine x cos x oct
 	/*
@@ -166,8 +166,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		oct(nx * scl2 * scaleOffset2 + time, ny * scl1 * scaleOffset1 + time, y_sine_scale, 3, octave);
 	*/
 	//! noise x SineCos
-	/* un = noise(sin(nx * (scale1 * scaleOffset1) )) + noise(cos(nx * (scale2 * scaleOffset2) )) - noise(sin(nx * (scale3 * scaleOffset3) ));
-	vn = noise(cos(ny * (scale1 * scaleOffset1) )) + noise(sin(ny * (scale2 * scaleOffset2) )) - noise(cos(ny * (scale3 * scaleOffset3) )); */
+	/* un = noise(sin(nx * (scale1 * scaleOffset1) + rseed)) + noise(cos(nx * (scale2 * scaleOffset2) + rseed)) - noise(sin(nx * (scale3 * scaleOffset3) + rseed));
+	vn = noise(cos(ny * (scale1 * scaleOffset1) + rseed)) + noise(sin(ny * (scale2 * scaleOffset2) + rseed)) - noise(cos(ny * (scale3 * scaleOffset3) + rseed)); */
 
 	//! center focused introverted
 	/* let maxU = map(ny, xMin * width, xMax * width, 3, -3, true);
@@ -182,10 +182,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1), ny * (scale2 * scaleOffset3), noiseScale1, 1, 1), -0.005, 0.005, -1, 1, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1), nx * (scale1 * scaleOffset2), noiseScale2, 2, 1), -0.005, 0.005, -1, 1, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1), ny * (scale1 * scaleOffset3), noiseScale3, 0, 1), -0.005, 0.005, -1, 1, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2), nx * (scale3 * scaleOffset3), noiseScale4, 3, 1), -0.005, 0.005, -1, 1, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.005, 0.005, -1, 1, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.005, 0.005, -1, 1, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.005, 0.005, -1, 1, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, 1), -0.005, 0.005, -1, 1, true);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
