@@ -1,5 +1,26 @@
 class Mover {
-	constructor(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette, paletteMode = "default", cycleCount = 1) {
+	constructor(
+		x,
+		y,
+		scl1,
+		scl2,
+		scl3,
+		sclOffset1,
+		sclOffset2,
+		sclOffset3,
+		amplitude1,
+		amplitude2,
+		xMin,
+		xMax,
+		yMin,
+		yMax,
+		isBordered,
+		rseed,
+		nseed,
+		preCalculatedPalette,
+		paletteMode = "default",
+		cycleCount = 1
+	) {
 		this.x = x;
 		this.initX = x;
 		this.y = y;
@@ -17,6 +38,8 @@ class Mover {
 		this.sclOffset1 = sclOffset1;
 		this.sclOffset2 = sclOffset2;
 		this.sclOffset3 = sclOffset3;
+		this.amplitude1 = amplitude1;
+		this.amplitude2 = amplitude2;
 		this.rseed = rseed;
 		this.nseed = nseed;
 		this.xRandDivider = 0.01;
@@ -61,7 +84,24 @@ class Mover {
 	}
 
 	move(frameCount, maxFrames) {
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
+		let p = superCurve(
+			this.x,
+			this.y,
+			this.scl1,
+			this.scl2,
+			this.scl3,
+			this.sclOffset1,
+			this.sclOffset2,
+			this.sclOffset3,
+			this.amplitude1,
+			this.amplitude2,
+			this.xMin,
+			this.yMin,
+			this.xMax,
+			this.yMax,
+			this.rseed,
+			this.nseed
+		);
 
 		// Update position with slight randomization
 		this.xRandDivider = 0.01;
@@ -114,7 +154,7 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMin, xMax, yMax, rseed, nseed) {
+function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude1, amplitude2, xMin, yMin, xMax, yMax, rseed, nseed) {
 	let nx = x,
 		ny = y,
 		scale1 = scl1,
@@ -130,23 +170,23 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		x_sine_scale = 1,
 		y_sine_scale = 1,
 		octave = 1,
-		a1 = 1,
-		a2 = 1;
+		a1 = amplitude1,
+		a2 = amplitude2;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1 * MULTIPLIER;
-	ny += dy * a2 * MULTIPLIER;
+	nx += dx * a1;
+	ny += dy * a2;
 
 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 3, octave);
-	nx += dx * a1 * MULTIPLIER;
-	ny += dy * a2 * MULTIPLIER;
+	nx += dx * a1;
+	ny += dy * a2;
 
 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1 * MULTIPLIER;
-	ny += dy * a2 * MULTIPLIER;
+	nx += dx * a1;
+	ny += dy * a2;
 
 	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
 	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);

@@ -403,6 +403,9 @@ function INIT(rseed, nseed) {
 	let sclOffset2 = 1;
 	let sclOffset3 = 1;
 
+	let amplitude1 = 421 * MULTIPLIER;
+	let amplitude2 = 1 * MULTIPLIER;
+
 	// Calculate padding based on the reference size and scale it
 	let paddingRatioX = 0.1; // 30% padding for X axis
 	let paddingRatioY = paddingRatioX * ARTWORK_RATIO;
@@ -446,7 +449,7 @@ function INIT(rseed, nseed) {
 			selectedPalette = baseHSLPalette;
 		}
 
-		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, selectedPalette));
+		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, selectedPalette));
 	}
 
 	let bgCol = color(25, 5, 100);
