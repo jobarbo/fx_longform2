@@ -346,6 +346,7 @@ function applyShaderEffect() {
 			uTexture: compositeCanvas,
 			uTime: shaderTime,
 			uResolution: [width, height],
+			uEffectType: 1,
 		})
 		.drawFullscreenQuad();
 }
