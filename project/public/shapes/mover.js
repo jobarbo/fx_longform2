@@ -66,10 +66,10 @@ class Mover {
 		// Update position with slight randomization
 		this.xRandDivider = 0.01;
 		this.yRandDivider = 0.01;
-		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
-		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
-		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
-		this.y += (p.y / this.yRandDivider + this.yRandSkipper) * MULTIPLIER;
+		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
+		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
+		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
+		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
 		// Map color based on frame count - now using pre-calculated global indices
 		if (this.paletteMode === "once") {
@@ -130,26 +130,26 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		x_sine_scale = 1,
 		y_sine_scale = 1,
 		octave = 1,
-		a1 = 1,
+		a1 = 511,
 		a2 = 1;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1;
-	ny += dy * a2;
+	nx += dx * a1 * MULTIPLIER;
+	ny += dy * a2 * MULTIPLIER;
 
 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 3, octave);
-	nx += dx * a1;
-	ny += dy * a2;
+	nx += dx * a1 * MULTIPLIER;
+	ny += dy * a2 * MULTIPLIER;
 
 	dx = oct(nx, ny, scale1, 1, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1;
-	ny += dy * a2;
+	nx += dx * a1 * MULTIPLIER;
+	ny += dy * a2 * MULTIPLIER;
 
-	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
-	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);
+	un = sin(nx * (scale1 * scaleOffset1)) + cos(nx * (scale2 * scaleOffset2)) - sin(nx * (scale3 * scaleOffset3));
+	vn = cos(ny * (scale1 * scaleOffset1)) + sin(ny * (scale2 * scaleOffset2)) - cos(ny * (scale3 * scaleOffset3));
 
 	//! sine x cos x oct
 	/*
@@ -182,10 +182,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.005, 0.005, -1, 1, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.005, 0.005, -1, 1, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.005, 0.005, -1, 1, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, 1), -0.005, 0.005, -1, 1, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1), ny * (scale2 * scaleOffset3), noiseScale1, 1, 1), -0.005, 0.005, -1, 1, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1), nx * (scale1 * scaleOffset2), noiseScale2, 2, 1), -0.005, 0.005, -1, 1, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1), ny * (scale1 * scaleOffset3), noiseScale3, 0, 1), -0.005, 0.005, -1, 1, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2), nx * (scale3 * scaleOffset3), noiseScale4, 3, 1), -0.005, 0.005, -1, 1, true);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
