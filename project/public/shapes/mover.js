@@ -130,7 +130,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		x_sine_scale = 1,
 		y_sine_scale = 1,
 		octave = 1,
-		a1 = 511,
+		a1 = 1,
 		a2 = 1;
 
 	dx = oct(nx, ny, scale1, 0, octave);
@@ -166,8 +166,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		oct(nx * scl2 * scaleOffset2 + time, ny * scl1 * scaleOffset1 + time, y_sine_scale, 3, octave);
 	*/
 	//! noise x SineCos
-	/* un = noise(sin(nx * (scale1 * scaleOffset1) + rseed)) + noise(cos(nx * (scale2 * scaleOffset2) + rseed)) - noise(sin(nx * (scale3 * scaleOffset3) + rseed));
-	vn = noise(cos(ny * (scale1 * scaleOffset1) + rseed)) + noise(sin(ny * (scale2 * scaleOffset2) + rseed)) - noise(cos(ny * (scale3 * scaleOffset3) + rseed)); */
+	/* un = noise(sin(nx * (scale1 * scaleOffset1) )) + noise(cos(nx * (scale2 * scaleOffset2) )) - noise(sin(nx * (scale3 * scaleOffset3) ));
+	vn = noise(cos(ny * (scale1 * scaleOffset1) )) + noise(sin(ny * (scale2 * scaleOffset2) )) - noise(cos(ny * (scale3 * scaleOffset3) )); */
 
 	//! center focused introverted
 	/* let maxU = map(ny, xMin * width, xMax * width, 3, -3, true);
