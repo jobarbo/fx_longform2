@@ -10,7 +10,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.75]) * MULTIPLIER;
+		this.s = random([0.15]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -40,8 +40,8 @@ class Mover {
 		// Pre-calculate padding values
 		this.wrapPaddingX = (min(width, height) * 0.05) / width;
 		this.wrapPaddingY = ((min(width, height) * 0.05) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.01) / width;
-		this.reentryOffsetY = (min(width, height) * 0.01) / height;
+		this.reentryOffsetX = (min(width, height) * 0.005) / width;
+		this.reentryOffsetY = (min(width, height) * 0.005) / height;
 		this.wrapPaddingMultiplier = 0.001; //! or 0.5
 
 		// Pre-calculate bounds
@@ -64,8 +64,8 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.01;
-		this.yRandDivider = 0.01;
+		this.xRandDivider = 0.05;
+		this.yRandDivider = 0.05;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
 		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;

@@ -49,8 +49,8 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.25;
-let BASE_WIDTH = 948;
+let ARTWORK_RATIO = 1.1363636364;
+let BASE_WIDTH = 248;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
 // This is our reference size for scaling
@@ -130,17 +130,17 @@ let basePalettes = [
 		{h: 247, s: 85, l: 5},
 		{h: 242, s: 76, l: 8},
 		{h: 234, s: 76, l: 13},
-		{h: 230, s: 66, l: 21},
-		{h: 225, s: 68, l: 27},
-		{h: 215, s: 69, l: 33},
-		{h: 205, s: 71, l: 38},
-		{h: 197, s: 73, l: 44},
-		{h: 192, s: 76, l: 48},
-		{h: 186, s: 77, l: 53},
-		{h: 181, s: 85, l: 58},
-		{h: 175, s: 87, l: 65},
+		{h: 230, s: 66, l: 18},
+		{h: 225, s: 68, l: 22},
+		{h: 215, s: 69, l: 25},
+		{h: 205, s: 71, l: 30},
+		{h: 197, s: 73, l: 36},
+		{h: 192, s: 76, l: 40},
+		{h: 186, s: 77, l: 45},
+		{h: 181, s: 85, l: 53},
+		{h: 175, s: 87, l: 60},
 		{h: 171, s: 89, l: 68},
-		{h: 165, s: 88, l: 78},
+		{h: 165, s: 88, l: 75},
 		{h: 161, s: 72, l: 85},
 	],
 ];
@@ -403,7 +403,7 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.1; // 30% padding for X axis
+	let paddingRatioX = 0.3; // 30% padding for X axis
 	let paddingRatioY = paddingRatioX * ARTWORK_RATIO;
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
