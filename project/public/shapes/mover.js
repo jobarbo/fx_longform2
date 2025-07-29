@@ -38,8 +38,8 @@ class Mover {
 		this.paletteCompleted = false; // Track if one-time pass is completed
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.01) / width;
-		this.wrapPaddingY = ((min(width, height) * 0.01) / height) * ARTWORK_RATIO;
+		this.wrapPaddingX = (min(width, height) * 0.001) / width;
+		this.wrapPaddingY = ((min(width, height) * 0.001) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * 0.0005) / width;
 		this.reentryOffsetY = (min(width, height) * 0.0005) / height;
 		this.wrapPaddingMultiplier = 0.95; //! or 0.5
@@ -123,10 +123,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
-		noiseScale1 = 2,
-		noiseScale2 = 2,
-		noiseScale3 = 2,
-		noiseScale4 = 2,
+		noiseScale1 = 5,
+		noiseScale2 = 5,
+		noiseScale3 = 5,
+		noiseScale4 = 5,
 		x_sine_scale = 1,
 		y_sine_scale = 1,
 		octave = 1,
@@ -206,8 +206,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 
 	//! Introverted
 	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1111.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1111.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1111.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1111.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -217,8 +217,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 	// Apply ZZ symmetrically - preserve sign but apply transformation to absolute value
-	let zu = u < 0 ? u : ZZ(u, 35, 80, 0.018);
-	let zv = v < 0 ? v : ZZ(v, 35, 80, 0.018);
+	let zu = u < 0 ? u : ZZ(u, 35, 40, 0.0015);
+	let zv = v < 0 ? v : ZZ(v, 35, 40, 0.0015);
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
