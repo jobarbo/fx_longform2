@@ -403,30 +403,15 @@ function INIT(rseed, nseed) {
 	let sclOffset2 = 1;
 	let sclOffset3 = 1;
 
-	let amplitude1 = 10 * MULTIPLIER;
-	let amplitude2 = 10 * MULTIPLIER;
+	let amplitude1 = 1 * MULTIPLIER;
+	let amplitude2 = 1 * MULTIPLIER;
 
-	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.1; // 30% padding for X axis
-	let paddingRatioY = paddingRatioX * ARTWORK_RATIO;
-	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
-	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
-	let paddingX = basePaddingX * MULTIPLIER;
-	let paddingY = basePaddingY * MULTIPLIER;
-
-	// Calculate bounds in absolute coordinates with equal padding
-	let bounds = {
-		left: paddingX,
-		right: width - paddingX,
-		top: paddingY,
-		bottom: height - paddingY,
-	};
-
-	// Convert to relative coordinates
-	xMin = bounds.left / width;
-	xMax = bounds.right / width;
-	yMin = bounds.top / height;
-	yMax = bounds.bottom / height;
+	// Simple 10% padding calculation with artwork ratio
+	let padding = 0.4;
+	xMin = padding;
+	xMax = 1 - padding;
+	yMin = padding;
+	yMax = 1 - padding;
 
 	let hue = random(360); // Define base hue for particles
 
