@@ -10,7 +10,6 @@ class Mover {
 		this.y = y;
 		this.noiseOffset = noiseOffset;
 		this.noiseStep = 0.01;
-		this.speed = 2;
 		this.multiplier = multiplier;
 		this.scl1 = truncateMultiplier(0.001 / this.multiplier, 14);
 		this.scl2 = truncateMultiplier(0.001 / this.multiplier, 14);
@@ -18,6 +17,7 @@ class Mover {
 		this.ang2 = truncateMultiplier(2 * this.multiplier);
 		this.noiseSpeed = 0.5;
 		this.octave = 1;
+		this.size = 10 * this.multiplier;
 		console.log(this.scl1, this.scl2, this.ang1, this.ang2);
 	}
 
@@ -34,16 +34,16 @@ class Mover {
 			this.noiseSpeed // noiseSpeed
 		);
 
-		this.x += truncateMultiplier(movement.x * this.multiplier);
-		this.y += truncateMultiplier(movement.y * this.multiplier);
+		this.x += truncateMultiplier(movement.x * this.multiplier, 14);
+		this.y += truncateMultiplier(movement.y * this.multiplier, 14);
 		this.noiseOffset += this.noiseStep;
 	}
 
-	display(size = 10) {
+	display() {
 		fill(0, 0, 100, 100);
 		stroke(0, 0, 0, 100);
 		strokeWeight(truncateMultiplier(1 * this.multiplier));
-		ellipse(this.x, this.y, size, size);
+		ellipse(this.x, this.y, this.size, this.size);
 	}
 
 	// Get position for drawing lines between movers

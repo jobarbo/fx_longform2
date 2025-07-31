@@ -42,8 +42,8 @@ function setup() {
 	// Create movers using fixed coordinate system
 	for (let i = 0; i < numMovers; i++) {
 		// Use fixed reference coordinates that don't depend on screen size
-		let x = random(-500, 500);
-		let y = random(-500, 500);
+		let x = random(-width / 2, width / 2);
+		let y = random(-height / 2, height / 2);
 		let noiseOffset = random(1000);
 		movers.push(new Mover(x, y, noiseOffset, MULTIPLIER)); // Fixed multiplier of 1
 	}
@@ -55,18 +55,18 @@ function draw() {
 	// Update and display all movers
 	for (let mover of movers) {
 		mover.update();
-		mover.display(20); // Fixed size, no multiplier
+		mover.display(); // Fixed size, no multiplier
 	}
 
 	// Draw connections between nearby movers
 	stroke(0, 0, 100, 30);
-	strokeWeight(1); // Fixed stroke weight, no multiplier
+	strokeWeight(1 * MULTIPLIER); // Fixed stroke weight, no multiplier
 	for (let i = 0; i < movers.length; i++) {
 		for (let j = i + 1; j < movers.length; j++) {
 			let pos1 = movers[i].getPos();
 			let pos2 = movers[j].getPos();
 			let d = dist(pos1.x, pos1.y, pos2.x, pos2.y);
-			if (d < 100) {
+			if (d < 100 * MULTIPLIER) {
 				// Fixed distance, no multiplier
 				line(pos1.x, pos1.y, pos2.x, pos2.y);
 			}
