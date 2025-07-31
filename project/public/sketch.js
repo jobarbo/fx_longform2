@@ -30,9 +30,11 @@ function setup() {
 	features = $fx.getFeatures();
 
 	// canvas setup
-	DIM = min(W, H);
-	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * RATIO);
+	const screenRatio = window.innerWidth / window.innerHeight;
+	const baseRatio = BASE_WIDTH / BASE_HEIGHT;
+	MULTIPLIER = screenRatio < baseRatio ? window.innerWidth / BASE_WIDTH : window.innerHeight / BASE_HEIGHT;
+
+	c = createCanvas(BASE_WIDTH * MULTIPLIER, BASE_HEIGHT * MULTIPLIER);
 	pixelDensity(dpi(5));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
@@ -43,16 +45,15 @@ function setup() {
 
 	// Create movers using fixed coordinate system
 	for (let i = 0; i < numMovers; i++) {
-		// Use fixed reference coordinates that don't depend on screen size
-		let x = truncateMultiplier(random(-0.5, 0.5) * width);
-		let y = truncateMultiplier(random(-0.5, 0.5) * height);
-		let noiseOffset = random(1000);
-		movers.push(new Mover(x, y, noiseOffset, MULTIPLIER)); // Fixed multiplier of 1
+		const x = random(BASE_WIDTH) - BASE_WIDTH * 0.5;
+		const y = random(BASE_HEIGHT) - BASE_HEIGHT * 0.5;
+		movers.push(new Mover(x, y, random(1000)));
 	}
 }
 
 function draw() {
-	translate(width / 2, height / 2);
+	scale(MULTIPLIER);
+	translate(BASE_WIDTH * 0.5, BASE_HEIGHT * 0.5);
 
 	// Update and display all movers
 	for (let mover of movers) {
@@ -68,7 +69,7 @@ function draw() {
 			let pos1 = movers[i].getPos();
 			let pos2 = movers[j].getPos();
 			let d = dist(pos1.x, pos1.y, pos2.x, pos2.y);
-			if (d < 100 * MULTIPLIER) {
+			if (d < 100) {
 				// Fixed distance, no multiplier
 				line(pos1.x, pos1.y, pos2.x, pos2.y);
 			}

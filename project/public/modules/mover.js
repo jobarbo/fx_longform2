@@ -1,7 +1,4 @@
 // Helper function to truncate multiplier calculations to 2 decimals
-function truncateMultiplier(value) {
-	return Math.round(value * 100) / 100;
-}
 
 // Mover class that uses noise for movement
 class Mover {
@@ -11,11 +8,11 @@ class Mover {
 		this.noiseOffset = noiseOffset;
 		this.noiseStep = 0.01;
 		this.multiplier = multiplier;
-		this.scl1 = truncateMultiplier(0.005 / this.multiplier, 14);
-		this.scl2 = truncateMultiplier(0.005 / this.multiplier, 14);
-		this.amp1 = truncateMultiplier(11234 * this.multiplier, 2);
-		this.amp2 = truncateMultiplier(11234 * this.multiplier, 2);
-		this.noiseSpeed = 0.5;
+		this.scl1 = 0.00065;
+		this.scl2 = 0.00065;
+		this.amp1 = 3444;
+		this.amp2 = 3444;
+		this.noiseSpeed = 0.1;
 		this.octave = 1;
 		this.size = 3 * this.multiplier;
 		//console.log(this.scl1, this.scl2, this.ang1, this.ang2);
@@ -35,8 +32,8 @@ class Mover {
 				this.noiseSpeed // noiseSpeed
 			);
 
-			this.x += truncateMultiplier(movement.x * this.multiplier, 14);
-			this.y += truncateMultiplier(movement.y * this.multiplier, 14);
+			this.x = truncateNoiseCoord(this.x + movement.x);
+			this.y = truncateNoiseCoord(this.y + movement.y);
 			this.noiseOffset += this.noiseStep;
 		}
 	}
@@ -44,7 +41,7 @@ class Mover {
 	display() {
 		fill(0, 0, 100, 100);
 		stroke(0, 0, 0, 100);
-		strokeWeight(truncateMultiplier(1 * this.multiplier));
+		strokeWeight(truncateNoiseCoord(1 * this.multiplier));
 		ellipse(this.x, this.y, this.size, this.size);
 	}
 
@@ -82,19 +79,15 @@ class Mover {
 		let un = oct(nx, ny, scale1, 3, octave);
 		let vn = oct(nx, ny, scale2, 2, octave);
 
-		/* 	let u = clamp(un + 0.5, 0, 1) * 21 - 1;
-		let v = clamp(vn + 0.5, 0, 1) * 21 - 20; */
-
 		let rangeA = [10, 15, 20];
 		let rangeB = [1, 2, 3];
 
-		let aValue = rangeA[Math.floor(fxrand() * rangeA.length)];
-		let bValue = rangeB[Math.floor(fxrand() * rangeB.length)];
+		let aValue = rangeA[Math.floor(random() * rangeA.length)];
+		let bValue = rangeB[Math.floor(random() * rangeB.length)];
 
 		let u = mapValue(un, -noiseSpeed, noiseSpeed, -aValue, bValue);
 		let v = mapValue(vn, -noiseSpeed, noiseSpeed, -bValue, aValue);
 
-		//let p = createVector(u, v);
 		return {x: u, y: v};
 	}
 }
