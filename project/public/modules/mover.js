@@ -14,8 +14,8 @@ class Mover {
 		this.multiplier = multiplier;
 		this.scl1 = truncateMultiplier(0.001 / this.multiplier, 14);
 		this.scl2 = truncateMultiplier(0.001 / this.multiplier, 14);
-		this.ang1 = truncateMultiplier(4212 * this.multiplier, 1);
-		this.ang2 = truncateMultiplier(4223 * this.multiplier, 1);
+		this.ang1 = truncateMultiplier(2 * this.multiplier);
+		this.ang2 = truncateMultiplier(2 * this.multiplier);
 		this.noiseSpeed = 0.5;
 		this.octave = 1;
 		console.log(this.scl1, this.scl2, this.ang1, this.ang2);
@@ -34,8 +34,8 @@ class Mover {
 			this.noiseSpeed // noiseSpeed
 		);
 
-		this.x += truncateMultiplier(movement.x * this.multiplier, 1);
-		this.y += truncateMultiplier(movement.y * this.multiplier, 1);
+		this.x += truncateMultiplier(movement.x * this.multiplier);
+		this.y += truncateMultiplier(movement.y * this.multiplier);
 		this.noiseOffset += this.noiseStep;
 	}
 

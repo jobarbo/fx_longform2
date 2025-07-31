@@ -45,7 +45,7 @@ function setup() {
 		let x = random(-500, 500);
 		let y = random(-500, 500);
 		let noiseOffset = random(1000);
-		movers.push(new Mover(x, y, noiseOffset, 1)); // Fixed multiplier of 1
+		movers.push(new Mover(x, y, noiseOffset, MULTIPLIER)); // Fixed multiplier of 1
 	}
 }
 
