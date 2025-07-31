@@ -11,32 +11,34 @@ class Mover {
 		this.noiseOffset = noiseOffset;
 		this.noiseStep = 0.01;
 		this.multiplier = multiplier;
-		this.scl1 = truncateMultiplier(0.001 / this.multiplier, 14);
-		this.scl2 = truncateMultiplier(0.001 / this.multiplier, 14);
-		this.ang1 = truncateMultiplier(2 * this.multiplier);
-		this.ang2 = truncateMultiplier(2 * this.multiplier);
+		this.scl1 = truncateMultiplier(0.005 / this.multiplier, 14);
+		this.scl2 = truncateMultiplier(0.005 / this.multiplier, 14);
+		this.amp1 = truncateMultiplier(11234 * this.multiplier, 2);
+		this.amp2 = truncateMultiplier(11234 * this.multiplier, 2);
 		this.noiseSpeed = 0.5;
 		this.octave = 1;
-		this.size = 10 * this.multiplier;
-		console.log(this.scl1, this.scl2, this.ang1, this.ang2);
+		this.size = 3 * this.multiplier;
+		//console.log(this.scl1, this.scl2, this.ang1, this.ang2);
 	}
 
-	update() {
+	update(frameCount) {
 		// Use superCurve for movement
-		let movement = this.superCurve(
-			this.x,
-			this.y,
-			this.scl1, // scale1
-			this.scl2, // scale2
-			this.ang1, // angle1
-			this.ang2, // angle2
-			1, // octaves
-			this.noiseSpeed // noiseSpeed
-		);
+		if (frameCount > 1) {
+			let movement = this.superCurve(
+				this.x,
+				this.y,
+				this.scl1, // scale1
+				this.scl2, // scale2
+				this.amp1, // angle1
+				this.amp2, // angle2
+				1, // octaves
+				this.noiseSpeed // noiseSpeed
+			);
 
-		this.x += truncateMultiplier(movement.x * this.multiplier, 14);
-		this.y += truncateMultiplier(movement.y * this.multiplier, 14);
-		this.noiseOffset += this.noiseStep;
+			this.x += truncateMultiplier(movement.x * this.multiplier, 14);
+			this.y += truncateMultiplier(movement.y * this.multiplier, 14);
+			this.noiseOffset += this.noiseStep;
+		}
 	}
 
 	display() {

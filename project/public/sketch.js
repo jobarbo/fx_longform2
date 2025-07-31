@@ -16,6 +16,8 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
+console.log(DEFAULT_SIZE);
+
 // Helper function to truncate multiplier calculations to 2 decimals
 function truncateMultiplier(value, decimals = 2) {
 	return Math.round(value * 10 ** decimals) / 10 ** decimals;
@@ -28,10 +30,10 @@ function setup() {
 	features = $fx.getFeatures();
 
 	// canvas setup
-	DIM = min(windowWidth, windowHeight);
+	DIM = min(W, H);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	c = createCanvas(DIM, DIM * RATIO);
-	pixelDensity(dpi(2));
+	pixelDensity(dpi(5));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
@@ -42,8 +44,8 @@ function setup() {
 	// Create movers using fixed coordinate system
 	for (let i = 0; i < numMovers; i++) {
 		// Use fixed reference coordinates that don't depend on screen size
-		let x = random(-width / 2, width / 2);
-		let y = random(-height / 2, height / 2);
+		let x = truncateMultiplier(random(-0.5, 0.5) * width);
+		let y = truncateMultiplier(random(-0.5, 0.5) * height);
 		let noiseOffset = random(1000);
 		movers.push(new Mover(x, y, noiseOffset, MULTIPLIER)); // Fixed multiplier of 1
 	}
@@ -54,7 +56,7 @@ function draw() {
 
 	// Update and display all movers
 	for (let mover of movers) {
-		mover.update();
+		mover.update(frameCount);
 		mover.display(); // Fixed size, no multiplier
 	}
 
