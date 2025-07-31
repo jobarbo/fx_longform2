@@ -16,12 +16,13 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
-let v_p;
-let v_p_pos = {x: 0, y: 0};
-let x_pos = 0.5;
-let y_pos = 0.5;
-let r_w = 10;
-let s_w = 1;
+// Helper function to truncate multiplier calculations to 2 decimals
+function truncateMultiplier(value, decimals = 2) {
+	return Math.round(value * 10 ** decimals) / 10 ** decimals;
+}
+
+let movers = [];
+let numMovers = 50;
 
 function setup() {
 	features = $fx.getFeatures();
@@ -38,25 +39,37 @@ function setup() {
 	angleMode(DEGREES);
 	background(50, 10, 10);
 
-	x_pos = width / 2;
-	y_pos = height / 2;
-	r_w = 50 * MULTIPLIER;
-	console.log(r_w);
-	s_w = 1 * MULTIPLIER;
-
-	x_offset = random(1000);
-	y_offset = random(1000);
+	// Create movers using fixed coordinate system
+	for (let i = 0; i < numMovers; i++) {
+		// Use fixed reference coordinates that don't depend on screen size
+		let x = random(-500, 500);
+		let y = random(-500, 500);
+		let noiseOffset = random(1000);
+		movers.push(new Mover(x, y, noiseOffset, 1)); // Fixed multiplier of 1
+	}
 }
 
 function draw() {
 	translate(width / 2, height / 2);
-	for (let i = 0; i < 1000; i++) {
-		x_pos = 100 * noise((1.5 * i) / 10) * MULTIPLIER;
-		y_pos = 100 * noise((1.5 * i) / 10 + 1) * MULTIPLIER;
-		strokeWeight(s_w);
-		fill(0, 0, 100, 100);
-		rect(x_pos, y_pos, r_w, r_w);
-		x_offset += 10.1;
+
+	// Update and display all movers
+	for (let mover of movers) {
+		mover.update();
+		mover.display(20); // Fixed size, no multiplier
 	}
-	noLoop();
+
+	// Draw connections between nearby movers
+	stroke(0, 0, 100, 30);
+	strokeWeight(1); // Fixed stroke weight, no multiplier
+	for (let i = 0; i < movers.length; i++) {
+		for (let j = i + 1; j < movers.length; j++) {
+			let pos1 = movers[i].getPos();
+			let pos2 = movers[j].getPos();
+			let d = dist(pos1.x, pos1.y, pos2.x, pos2.y);
+			if (d < 100) {
+				// Fixed distance, no multiplier
+				line(pos1.x, pos1.y, pos2.x, pos2.y);
+			}
+		}
+	}
 }
