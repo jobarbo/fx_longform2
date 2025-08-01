@@ -18,11 +18,6 @@ let MULTIPLIER;
 
 console.log(DEFAULT_SIZE);
 
-// Helper function to truncate multiplier calculations to 2 decimals
-function truncateMultiplier(value, decimals = 2) {
-	return Math.round(value * 10 ** decimals) / 10 ** decimals;
-}
-
 let movers = [];
 let numMovers = 50;
 
@@ -35,7 +30,7 @@ function setup() {
 	MULTIPLIER = screenRatio < baseRatio ? window.innerWidth / BASE_WIDTH : window.innerHeight / BASE_HEIGHT;
 
 	c = createCanvas(BASE_WIDTH * MULTIPLIER, BASE_HEIGHT * MULTIPLIER);
-	pixelDensity(dpi(5));
+	pixelDensity(dpi(2));
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
@@ -62,8 +57,8 @@ function draw() {
 	}
 
 	// Draw connections between nearby movers
-	stroke(0, 0, 100, 30);
-	strokeWeight(1 * MULTIPLIER); // Fixed stroke weight, no multiplier
+	stroke(0, 0, 100, 100);
+	strokeWeight(1); // Fixed stroke weight, no multiplier
 	for (let i = 0; i < movers.length; i++) {
 		for (let j = i + 1; j < movers.length; j++) {
 			let pos1 = movers[i].getPos();
