@@ -30,7 +30,11 @@ function setup() {
 	MULTIPLIER = screenRatio < baseRatio ? window.innerWidth / BASE_WIDTH : window.innerHeight / BASE_HEIGHT;
 
 	c = createCanvas(BASE_WIDTH * MULTIPLIER, BASE_HEIGHT * MULTIPLIER);
-	pixelDensity(dpi(2));
+
+	// Use the new dimension-agnostic functions
+	setPixelRatio(dpi(2));
+	setDimensionAgnostic(DEFAULT_SIZE);
+
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
