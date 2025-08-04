@@ -32,38 +32,6 @@ let globalColorIndices = {
 	lastCalculatedFrame: -1, // Track last frame we calculated for
 };
 
-let scl1;
-let scl2;
-let scl3;
-let ang1;
-let ang2;
-let rseed;
-let nseed;
-let xMin;
-let xMax;
-let yMin;
-let yMax;
-let isBordered = true;
-
-let img;
-let mask;
-
-// Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.25;
-let BASE_WIDTH = 948;
-let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
-
-// This is our reference size for scaling
-let DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
-
-let W = window.innerWidth;
-let H = window.innerHeight;
-let DIM;
-let MULTIPLIER;
-
-// Dynamic pixel density will be calculated in setup() after windowWidth/Height are available
-let pixel_density;
-
 // Two different base HSL palettes to choose from
 let basePalettes = [
 	// Palette 1: Current blue-orange gradient
@@ -151,61 +119,37 @@ let baseHSLPalette; // Keep for backward compatibility
 // Pre-calculated color variations (1000 different palettes)
 let colorVariations = [];
 
-function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
-	// Calculate once for "once" mode
-	if (currentFrame === 0) {
-		globalColorIndices.onceCompleted = false;
-	}
+let scl1;
+let scl2;
+let scl3;
+let ang1;
+let ang2;
+let rseed;
+let nseed;
+let xMin;
+let xMax;
+let yMin;
+let yMax;
+let isBordered = true;
 
-	if (!globalColorIndices.onceCompleted) {
-		let progress = currentFrame / (maxFrames - 1);
-		if (progress >= 1) {
-			globalColorIndices.onceCompleted = true;
-			globalColorIndices.once = 0;
-		} else {
-			globalColorIndices.once = Math.floor((1 - progress) * (paletteLength - 1));
-		}
-	}
+let img;
+let mask;
 
-	// Calculate yo-yo indices for common cycle counts (1-4)
-	for (let cycleCount = 1; cycleCount <= 4; cycleCount++) {
-		let frequency = (cycleCount * Math.PI) / (maxFrames - 1);
-		let cosValue = Math.cos(currentFrame * frequency);
-		globalColorIndices.yoyoCycles[cycleCount] = Math.round(((cosValue + 1) / 2) * (paletteLength - 1));
-	}
+// Base artwork dimensions (width: 948, height: 948 * 1.41)
+let ARTWORK_RATIO = 1.25;
+let BASE_WIDTH = 948;
+let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
-	// Keep the original yoyo for backward compatibility (cycle count 1)
-	globalColorIndices.yoyo = globalColorIndices.yoyoCycles[1];
+// This is our reference size for scaling
+let DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
 
-	// Calculate once for "default" mode
-	let mappedIndex = map(currentFrame, 0, maxFrames / 1.25, paletteLength - 1, 0, true);
-	globalColorIndices.default = Math.floor(mappedIndex);
-}
+let W = window.innerWidth;
+let H = window.innerHeight;
+let DIM;
+let MULTIPLIER;
 
-function generateColorVariations() {
-	const numVariations = 0; // Create 1000 different color palettes
-	colorVariations = [];
-
-	for (let i = 0; i < numVariations; i++) {
-		// Use Math.random() instead of p5's random() to avoid affecting the seed
-		const saturationOffset = random(-5, 15); // -5 to 5
-		const brightnessOffset = random(-5, 5); // -5 to 5
-
-		const palette = baseHSLPalette.map((hsl) => {
-			const finalS = Math.max(0, Math.min(100, hsl.s + saturationOffset));
-			const finalL = Math.max(0, Math.min(100, hsl.l + brightnessOffset));
-			return {
-				h: hsl.h,
-				s: finalS,
-				l: finalL,
-			};
-		});
-
-		colorVariations.push(palette);
-	}
-
-	console.log(`Using palette ${selectedPalette + 1} with ${baseHSLPalette.length} colors`);
-}
+// Dynamic pixel density will be calculated in setup() after windowWidth/Height are available
+let pixel_density;
 
 function preload() {
 	// Initialize the global shader manager instance
@@ -319,73 +263,6 @@ function setup() {
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
 }
 
-// Function to apply shader effects (call this in your render loop if needed)
-function applyShaderEffect() {
-	if (!shaderManager) {
-		console.log("ShaderManager not available");
-		return;
-	}
-
-	// Clear the shader canvas
-	clear();
-
-	// Clear and prepare the composite canvas
-	compositeCanvas.clear();
-
-	// Draw mainCanvas first
-	compositeCanvas.image(mainCanvas, 0, 0);
-
-	// Overlay debugCanvas if debug is enabled
-	if (debugPadding) {
-		compositeCanvas.image(debugCanvas, 0, 0);
-	}
-
-	// Apply the shader effect using the composite canvas
-	shaderManager
-		.apply("chromatic", {
-			uTexture: compositeCanvas,
-			uTime: shaderTime,
-			uResolution: [width, height],
-			uEffectType: 1,
-		})
-		.drawFullscreenQuad();
-}
-
-// Keyboard controls
-function keyPressed() {
-	if (key === "d" || key === "D") {
-		debugPadding = !debugPadding;
-		console.log("Debug padding:", debugPadding ? "enabled" : "disabled");
-		// Update debug canvas when toggled
-		drawDebugPadding();
-	}
-}
-
-// Traditional draw function that handles shader effects continuously
-function draw() {
-	// Update shader animation time
-	shaderTime += 0.01;
-
-	// Always apply shader effects
-	applyShaderEffect();
-}
-
-// Helper function to load additional shaders dynamically
-function loadShader(name, fragPath, vertPath = null) {
-	if (shaderManager) {
-		shaderManager.loadShader(name, fragPath, vertPath);
-		console.log(`Loaded shader: ${name}`);
-	}
-}
-
-// Helper function to get available shader names
-function getLoadedShaders() {
-	if (shaderManager && shaderManager.shaders) {
-		return Object.keys(shaderManager.shaders);
-	}
-	return [];
-}
-
 function INIT(rseed, nseed) {
 	movers = [];
 
@@ -443,34 +320,126 @@ function INIT(rseed, nseed) {
 	//initGrid(50);
 }
 
-function initGrid(brightness) {
-	// Add subtle organic grid texture
-	let gridSizeX = width / 150; // Size of grid cells
-	let gridSizeY = width / 150; // Size of grid cells
-	let variance = gridSizeX / 1; // Amount of variation for particles
-	let g_variance = gridSizeX / 1111;
-	let noiseScale = 0.000015; // Scale of the noise
+// Traditional draw function that handles shader effects continuously
+function draw() {
+	// Update shader animation time
+	shaderTime += 0.01;
 
-	// Vertical lines of particles
-	for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX) {
-		for (let y = -gridSizeY; y <= height + gridSizeY; y += gridSizeY / 10) {
-			// More dense particle distribution
-			let xPos = x + map(noise(x * noiseScale, y * noiseScale) + randomGaussian(0, g_variance), 0, 1, -variance, variance);
-			noStroke();
-			fill(0, 0, brightness, random(10, 60));
-			rect(xPos, y, random(0.05, 0.25) * MULTIPLIER, random(0.05, 0.25) * MULTIPLIER);
+	// Always apply shader effects
+	applyShaderEffect();
+}
+
+function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
+	// Calculate once for "once" mode
+	if (currentFrame === 0) {
+		globalColorIndices.onceCompleted = false;
+	}
+
+	if (!globalColorIndices.onceCompleted) {
+		let progress = currentFrame / (maxFrames - 1);
+		if (progress >= 1) {
+			globalColorIndices.onceCompleted = true;
+			globalColorIndices.once = 0;
+		} else {
+			globalColorIndices.once = Math.floor((1 - progress) * (paletteLength - 1));
 		}
 	}
 
-	// Horizontal lines of particles
-	for (let y = -gridSizeY; y <= height + gridSizeY; y += gridSizeY) {
-		for (let x = -gridSizeX; x <= width + gridSizeX; x += gridSizeX / 10) {
-			// More dense particle distribution
-			let yPos = y + map(noise(x * noiseScale, y * noiseScale) + randomGaussian(0, g_variance), 0, 1, -variance, variance);
-			noStroke();
-			fill(0, 0, brightness, random(10, 60));
-			rect(x, yPos, random(0.05, 0.25) * MULTIPLIER, random(0.05, 0.25) * MULTIPLIER);
-		}
+	// Calculate yo-yo indices for common cycle counts (1-4)
+	for (let cycleCount = 1; cycleCount <= 4; cycleCount++) {
+		let frequency = (cycleCount * Math.PI) / (maxFrames - 1);
+		let cosValue = Math.cos(currentFrame * frequency);
+		globalColorIndices.yoyoCycles[cycleCount] = Math.round(((cosValue + 1) / 2) * (paletteLength - 1));
+	}
+
+	// Keep the original yoyo for backward compatibility (cycle count 1)
+	globalColorIndices.yoyo = globalColorIndices.yoyoCycles[1];
+
+	// Calculate once for "default" mode
+	let mappedIndex = map(currentFrame, 0, maxFrames / 1.25, paletteLength - 1, 0, true);
+	globalColorIndices.default = Math.floor(mappedIndex);
+}
+
+function generateColorVariations() {
+	const numVariations = 0; // Create 1000 different color palettes
+	colorVariations = [];
+
+	for (let i = 0; i < numVariations; i++) {
+		// Use Math.random() instead of p5's random() to avoid affecting the seed
+		const saturationOffset = random(-5, 15); // -5 to 5
+		const brightnessOffset = random(-5, 5); // -5 to 5
+
+		const palette = baseHSLPalette.map((hsl) => {
+			const finalS = Math.max(0, Math.min(100, hsl.s + saturationOffset));
+			const finalL = Math.max(0, Math.min(100, hsl.l + brightnessOffset));
+			return {
+				h: hsl.h,
+				s: finalS,
+				l: finalL,
+			};
+		});
+
+		colorVariations.push(palette);
+	}
+
+	console.log(`Using palette ${selectedPalette + 1} with ${baseHSLPalette.length} colors`);
+}
+
+// Helper function to load additional shaders dynamically
+function loadShader(name, fragPath, vertPath = null) {
+	if (shaderManager) {
+		shaderManager.loadShader(name, fragPath, vertPath);
+		console.log(`Loaded shader: ${name}`);
+	}
+}
+
+// Helper function to get available shader names
+function getLoadedShaders() {
+	if (shaderManager && shaderManager.shaders) {
+		return Object.keys(shaderManager.shaders);
+	}
+	return [];
+}
+
+// Function to apply shader effects (call this in your render loop if needed)
+function applyShaderEffect() {
+	if (!shaderManager) {
+		console.log("ShaderManager not available");
+		return;
+	}
+
+	// Clear the shader canvas
+	clear();
+
+	// Clear and prepare the composite canvas
+	compositeCanvas.clear();
+
+	// Draw mainCanvas first
+	compositeCanvas.image(mainCanvas, 0, 0);
+
+	// Overlay debugCanvas if debug is enabled
+	if (debugPadding) {
+		compositeCanvas.image(debugCanvas, 0, 0);
+	}
+
+	// Apply the shader effect using the composite canvas
+	shaderManager
+		.apply("chromatic", {
+			uTexture: compositeCanvas,
+			uTime: shaderTime,
+			uResolution: [width, height],
+			uEffectType: 1,
+		})
+		.drawFullscreenQuad();
+}
+
+// Keyboard controls
+function keyPressed() {
+	if (key === "d" || key === "D") {
+		debugPadding = !debugPadding;
+		console.log("Debug padding:", debugPadding ? "enabled" : "disabled");
+		// Update debug canvas when toggled
+		drawDebugPadding();
 	}
 }
 
