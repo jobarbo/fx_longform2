@@ -111,6 +111,8 @@ let basePalettes = [
 		{h: 165, s: 88, l: 78},
 		{h: 161, s: 72, l: 85},
 	],
+
+	[{h: 0, s: 0, l: 0}],
 ];
 
 let selectedPalette; // Will store the randomly selected palette
@@ -136,7 +138,7 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.25;
+let ARTWORK_RATIO = 1;
 let BASE_WIDTH = 948;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -268,7 +270,7 @@ function INIT(rseed, nseed) {
 
 	// Generate color variations first (1000 different palettes)
 	selectedPalette = int(random(basePalettes.length));
-	baseHSLPalette = basePalettes[selectedPalette];
+	baseHSLPalette = basePalettes[5];
 	generateColorVariations();
 
 	// Scale noise values based on MULTIPLIER
@@ -284,7 +286,7 @@ function INIT(rseed, nseed) {
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork ratio
-	let padding = 0.1;
+	let padding = 0.05;
 	xMin = padding;
 	xMax = 1 - padding;
 	yMin = padding;
@@ -314,7 +316,7 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, selectedPalette));
 	}
 
-	let bgCol = color(25, 5, 100);
+	let bgCol = color(25, 0, 100);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
