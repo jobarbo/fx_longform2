@@ -65,7 +65,7 @@ class Mover {
 		this.wrapPaddingY = ((min(width, height) * -0.1) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * 0.04) / width;
 		this.reentryOffsetY = (min(width, height) * 0.04) / height;
-		this.wrapPaddingMultiplier = 0.75; //! or 0.5
+		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -104,8 +104,8 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.005;
-		this.yRandDivider = 0.005;
+		this.xRandDivider = 0.015;
+		this.yRandDivider = 0.015;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -138,10 +138,10 @@ class Mover {
 
 			if (this.y < this.minBoundY) {
 				this.y = (this.yMax + this.wrapPaddingY * this.wrapPaddingMultiplier - random(0, this.reentryOffsetY)) * height;
-				this.a = 100;
+				this.a = 50;
 			} else if (this.y > this.maxBoundY) {
 				this.y = (this.yMin - this.wrapPaddingY * this.wrapPaddingMultiplier + random(0, this.reentryOffsetY)) * height;
-				this.a = 100;
+				this.a = 50;
 			}
 		} else {
 			// Reset to initial position if not bordered

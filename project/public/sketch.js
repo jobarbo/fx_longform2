@@ -286,7 +286,7 @@ function INIT(rseed, nseed) {
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork ratio
-	let padding = 0.05;
+	let padding = 0.01;
 	xMin = padding;
 	xMax = 1 - padding;
 	yMin = padding;
