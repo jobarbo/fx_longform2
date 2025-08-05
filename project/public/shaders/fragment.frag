@@ -14,7 +14,7 @@ void main() {
     vec2 centered_uv = uv * 2.0 - 1.0;  // Convert from [0,1] to [-1,1] range
 
     // Calculate distance from center (0,0) and create center-weighted multiplier
-    float dist = length(centered_uv);
+    float dist = length(centered_uv.x) + length(centered_uv.y);
     float centerWeight = 1.0 - smoothstep(1.0, 0.1, dist);  // More effect in center
 
     // Create pulsing effect
