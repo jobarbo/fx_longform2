@@ -14,8 +14,8 @@ void main() {
     vec2 centered_uv = uv * 2.0 - 1.0;  // Convert from [0,1] to [-1,1] range
 
     // Calculate distance from center (0,0) and create center-weighted multiplier
-    float dist = length(centered_uv.x) + length(centered_uv.y);
-    float centerWeight = 1.0 - smoothstep(1.0, 0.1, dist);  // More effect in center
+    float dist = sin(length(centered_uv.x)) + sin(length(centered_uv.y));
+    float centerWeight = 1.0 - smoothstep(1.0, 0.01, dist);  // More effect in center
 
     // Create pulsing effect
     float pulse = sin(uTime * 1.7) * 0.000015 + 0.015;
@@ -29,7 +29,7 @@ void main() {
 
     // Add spiral effect
     float angle = atan(centered_uv.y, centered_uv.x);
-    float spiral = tan(dist * 1.0 - uTime * 0.2) / tan(dist * 2.01 - uTime * 0.1);
+    float spiral = tan(dist * 3.0 * sin(uTime* 0.012) * 12.0) / tan(dist * 2.01 - uTime * 0.1);
 
     vec2 waveOffset = vec2(waveX, waveY);
     vec2 spiralOffset = vec2(cos(angle), sin(angle)) * spiral * centerWeight;
