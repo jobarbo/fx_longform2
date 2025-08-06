@@ -61,8 +61,8 @@ class Mover {
 		this.paletteCompleted = false; // Track if one-time pass is completed
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.05) / width;
-		this.wrapPaddingY = ((min(width, height) * 0.05) / height) * ARTWORK_RATIO;
+		this.wrapPaddingX = ((min(width, height) * 0.075) / width) * ARTWORK_RATIO;
+		this.wrapPaddingY = (min(width, height) * 0.05) / height;
 		this.reentryOffsetX = (min(width, height) * 0.002) / width;
 		this.reentryOffsetY = (min(width, height) * 0.002) / height;
 		this.wrapPaddingMultiplier = 0.5; //! or 0.5
@@ -166,7 +166,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		noiseScale1 = 1,
 		noiseScale2 = 1,
 		noiseScale3 = 1,
-		noiseScale4 = 1,
+		noiseScale4 = 12,
 		x_sine_scale = 1,
 		y_sine_scale = 1,
 		octave = 1,

@@ -136,9 +136,9 @@ let img;
 let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.25;
+let ARTWORK_RATIO = 1.6;
 let BASE_WIDTH = 948;
-let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
+let BASE_HEIGHT = BASE_WIDTH / ARTWORK_RATIO;
 
 // This is our reference size for scaling
 let DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
@@ -178,13 +178,13 @@ function setup() {
 	console.log(MULTIPLIER);
 
 	// Create main canvas for the artwork
-	mainCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
+	mainCanvas = createGraphics(DIM * ARTWORK_RATIO, DIM);
 	// Create debug canvas for overlays
-	debugCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
+	debugCanvas = createGraphics(DIM * ARTWORK_RATIO, DIM);
 	// Create shader canvas for the WEBGL renderer
-	shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
+	shaderCanvas = createCanvas(DIM * ARTWORK_RATIO, DIM, WEBGL);
 	// Create composite canvas for combining main and debug content
-	compositeCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
+	compositeCanvas = createGraphics(DIM * ARTWORK_RATIO, DIM);
 
 	// Set up the rendering properties
 	mainCanvas.pixelDensity(pixel_density);
