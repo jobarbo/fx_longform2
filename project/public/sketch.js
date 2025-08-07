@@ -8,6 +8,10 @@ let particleNum = 500000;
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 
+// Swatch palette system
+let swatchPalette;
+let swatchesLoaded = false;
+
 // Shader Manager - using global instance from shaderManager.js
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects
@@ -49,48 +53,48 @@ let basePalettes = [
 	],
 	// Palette 2: Dark blue-green to coral gradient (smoother transitions)
 	[
-		{h: 190, s: 43, l: 7}, // #0a1419
-		{h: 208, s: 37, l: 12}, // #141f2b
-		{h: 215, s: 34, l: 18}, // #1e2a3d
-		{h: 215, s: 36, l: 25}, // #283c55
-		{h: 215, s: 35, l: 37}, // #355070
-		{h: 230, s: 25, l: 38}, // Intermediate blue-purple
-		{h: 250, s: 20, l: 39}, // Intermediate purple-blue
-		{h: 284, s: 15, l: 40}, // #6d597a
-		{h: 335, s: 21, l: 44}, // #915f78
-		{h: 349, s: 24, l: 53}, // #b56576
-		{h: 2, s: 69, l: 67}, // #e56b6f
-		{h: 8, s: 70, l: 68}, // #e77c76
-		{h: 14, s: 71, l: 69}, // #e88c7d
-		{h: 26, s: 69, l: 73}, // #eaac8b
-		{h: 35, s: 77, l: 80}, // #eebba0
+		{h: 190, s: 43, l: 7},
+		{h: 208, s: 37, l: 12},
+		{h: 215, s: 34, l: 18},
+		{h: 215, s: 36, l: 25},
+		{h: 215, s: 35, l: 37},
+		{h: 230, s: 25, l: 38},
+		{h: 250, s: 20, l: 39},
+		{h: 284, s: 15, l: 40},
+		{h: 335, s: 21, l: 44},
+		{h: 349, s: 24, l: 53},
+		{h: 2, s: 69, l: 67},
+		{h: 8, s: 70, l: 68},
+		{h: 14, s: 71, l: 69},
+		{h: 26, s: 69, l: 73},
+		{h: 35, s: 77, l: 80},
 	],
 
 	[
-		{h: 200, s: 100, l: 5}, // rgba(5, 32, 46, 1)
-		{h: 187, s: 95, l: 10}, // rgba(7, 50, 56, 1)
-		{h: 182, s: 90, l: 15}, // rgba(13, 85, 87, 1)
-		{h: 161, s: 85, l: 20}, // rgba(24, 115, 86, 1)
-		{h: 145, s: 80, l: 25}, // rgba(47, 150, 90, 1)
-		{h: 80, s: 75, l: 35}, // rgba(148, 184, 77, 1)
-		{h: 71, s: 70, l: 45}, // rgba(219, 194, 127, 1)
-		{h: 64, s: 65, l: 55}, // rgba(255, 223, 189, 1)
+		{h: 200, s: 100, l: 5},
+		{h: 187, s: 95, l: 10},
+		{h: 182, s: 90, l: 15},
+		{h: 161, s: 85, l: 20},
+		{h: 145, s: 80, l: 25},
+		{h: 80, s: 75, l: 35},
+		{h: 71, s: 70, l: 45},
+		{h: 64, s: 65, l: 55},
 		{h: 60, s: 60, l: 65},
 	],
 
 	[
-		{h: 240, s: 100, l: 8}, // Deep midnight blue
-		{h: 250, s: 85, l: 12}, // Dark blue-purple
-		{h: 265, s: 75, l: 18}, // Deep purple
-		{h: 285, s: 70, l: 25}, // Purple-magenta
-		{h: 310, s: 65, l: 32}, // Magenta-pink
-		{h: 340, s: 80, l: 40}, // Deep coral-red
-		{h: 350, s: 75, l: 45}, // Deep coral-red
-		{h: 15, s: 85, l: 48}, // Warm red-orange
-		{h: 25, s: 90, l: 58}, // Bright orange
-		{h: 35, s: 85, l: 68}, // Light orange
-		{h: 45, s: 80, l: 78}, // Golden yellow
-		{h: 55, s: 70, l: 85}, // Light golden
+		{h: 240, s: 100, l: 8},
+		{h: 250, s: 85, l: 12},
+		{h: 265, s: 75, l: 18},
+		{h: 285, s: 70, l: 25},
+		{h: 310, s: 65, l: 32},
+		{h: 340, s: 80, l: 40},
+		{h: 350, s: 75, l: 45},
+		{h: 15, s: 85, l: 48},
+		{h: 25, s: 90, l: 58},
+		{h: 35, s: 85, l: 68},
+		{h: 45, s: 80, l: 78},
+		{h: 55, s: 70, l: 85},
 	],
 
 	[
@@ -115,6 +119,7 @@ let basePalettes = [
 
 let selectedPalette; // Will store the randomly selected palette
 let baseHSLPalette; // Keep for backward compatibility
+let currentPaletteName = ""; // Store the name of the current palette for debug
 
 // Pre-calculated color variations (1000 different palettes)
 let colorVariations = [];
@@ -160,13 +165,26 @@ function preload() {
 
 	// Load the shader we need
 	shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag");
+
+	// Initialize swatch palette system
+	swatchPalette = new SwatchPalette();
 }
 
-function setup() {
+async function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
 	startTime = frameCount;
 	executionTimer.start(); // Start the timer
+
+	// Load swatch palettes
+	try {
+		await swatchPalette.loadFromManifest("swatches/manifest.json");
+		swatchesLoaded = true;
+		console.log(`Loaded ${swatchPalette.getSwatchCount()} swatch palettes`);
+	} catch (error) {
+		console.error("Failed to load swatch palettes, falling back to hardcoded palettes:", error);
+		swatchesLoaded = false;
+	}
 
 	// Calculate optimal pixel density before creating canvases
 	pixel_density = 2;
@@ -261,14 +279,29 @@ function setup() {
 
 	// Log available controls
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
+	console.log(`Current palette: ${currentPaletteName}`);
 }
 
 function INIT(rseed, nseed) {
 	movers = [];
 
-	// Generate color variations first (1000 different palettes)
-	selectedPalette = int(random(basePalettes.length));
-	baseHSLPalette = basePalettes[selectedPalette];
+	// Choose palette source: swatch palettes or hardcoded palettes
+	if (swatchesLoaded && swatchPalette.isReady()) {
+		// Use swatch palette system
+		const swatchNames = swatchPalette.getSwatchNames();
+		const randomIndex = int(random(swatchNames.length));
+		currentPaletteName = swatchNames[randomIndex];
+		baseHSLPalette = swatchPalette.getPalette(currentPaletteName);
+		selectedPalette = randomIndex;
+		console.log(`Using swatch palette '${currentPaletteName}' with ${baseHSLPalette.length} colors`);
+	} else {
+		// Fallback to hardcoded palettes
+		selectedPalette = int(random(basePalettes.length));
+		baseHSLPalette = basePalettes[selectedPalette];
+		currentPaletteName = `Hardcoded Palette ${selectedPalette + 1}`;
+		console.log(`Using hardcoded palette ${selectedPalette + 1} with ${baseHSLPalette.length} colors`);
+	}
+
 	generateColorVariations();
 
 	// Scale noise values based on MULTIPLIER
@@ -322,6 +355,11 @@ function INIT(rseed, nseed) {
 
 // Traditional draw function that handles shader effects continuously
 function draw() {
+	// Only proceed if setup is complete and canvases are initialized
+	if (!compositeCanvas || !mainCanvas || !debugCanvas) {
+		return;
+	}
+
 	// Update shader animation time
 	shaderTime += 0.01;
 
@@ -382,7 +420,7 @@ function generateColorVariations() {
 		colorVariations.push(palette);
 	}
 
-	console.log(`Using palette ${selectedPalette + 1} with ${baseHSLPalette.length} colors`);
+	console.log(`Generated ${numVariations} color variations from base palette`);
 }
 
 // Helper function to load additional shaders dynamically
@@ -405,6 +443,11 @@ function getLoadedShaders() {
 function applyShaderEffect() {
 	if (!shaderManager) {
 		console.log("ShaderManager not available");
+		return;
+	}
+
+	// Check if canvases are initialized
+	if (!compositeCanvas || !mainCanvas || !debugCanvas) {
 		return;
 	}
 
@@ -445,6 +488,9 @@ function keyPressed() {
 
 // Function to draw debug padding outline
 function drawDebugPadding() {
+	// Check if debug canvas is initialized
+	if (!debugCanvas) return;
+
 	// Clear the debug canvas first
 	debugCanvas.clear();
 
@@ -481,6 +527,29 @@ function drawDebugPadding() {
 
 		debugCanvas.rect(moveLeft, moveTop, moveRight - moveLeft, moveBottom - moveTop);
 	}
+
+	// Draw palette information text
+	debugCanvas.fill(0, 0, 100, 90); // White with transparency
+	debugCanvas.noStroke();
+	debugCanvas.textAlign(LEFT, TOP);
+	debugCanvas.textSize(16);
+
+	let debugText = `Palette: ${currentPaletteName}\nColors: ${baseHSLPalette ? baseHSLPalette.length : 0}`;
+	if (swatchesLoaded) {
+		debugText += `\nSource: Swatch Image`;
+	} else {
+		debugText += `\nSource: Hardcoded Array`;
+	}
+
+	// Draw text background
+	let textWidth = debugCanvas.textWidth(debugText.split("\n")[0]) + 20;
+	let textHeight = 60;
+	debugCanvas.fill(0, 0, 0, 70); // Semi-transparent black background
+	debugCanvas.rect(10, 10, textWidth, textHeight);
+
+	// Draw text
+	debugCanvas.fill(0, 0, 100, 90); // White text
+	debugCanvas.text(debugText, 20, 20);
 
 	debugCanvas.pop();
 }

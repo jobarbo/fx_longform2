@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Swatch Palette Test</title>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<h1>Swatch Palette Test</h1>
+		<div id="output"></div>
+
+		<script src="./library/utils/swatchPalette.js"></script>
+		<script>
+			async function testSwatchPalette() {
+				const output = document.getElementById("output");
+
+				try {
+					// Test loading swatches
+					await swatchPalette.loadSwatches("swatches/manifest.json");
+
+					output.innerHTML += "<p>✅ Swatches loaded successfully</p>";
+					output.innerHTML += `<p>Available swatches: ${swatchPalette.getSwatchNames().join(", ")}</p>`;
+
+					// Test getting a random swatch
+					const randomSwatch = swatchPalette.getRandomSwatchName();
+					output.innerHTML += `<p>Random swatch: ${randomSwatch}</p>`;
+
+					// Test getting color array
+					const colors = swatchPalette.getColorArray(randomSwatch);
+					output.innerHTML += `<p>Colors from ${randomSwatch}: ${colors.length} colors</p>`;
+
+					// Display first few colors
+					const colorPreview = colors
+						.slice(0, 5)
+						.map((c) => `hsl(${c.h}, ${c.s}%, ${c.l}%)`)
+						.join(", ");
+					output.innerHTML += `<p>First 5 colors: ${colorPreview}</p>`;
+
+					// Test random color array
+					const randomColors = swatchPalette.getRandomColorArray();
+					output.innerHTML += `<p>Random color array: ${randomColors.length} colors</p>`;
+				} catch (error) {
+					output.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+					console.error("Test failed:", error);
+				}
+			}
+
+			testSwatchPalette();
+		</script>
+	</body>
+</html>
