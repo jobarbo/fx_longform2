@@ -31,7 +31,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.75]) * MULTIPLIER;
+		this.s = random([0.25]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -63,9 +63,9 @@ class Mover {
 		// Pre-calculate padding values
 		this.wrapPaddingX = ((min(width, height) * 0.075) / width) * ARTWORK_RATIO;
 		this.wrapPaddingY = (min(width, height) * 0.05) / height;
-		this.reentryOffsetX = (min(width, height) * 0.002) / width;
-		this.reentryOffsetY = (min(width, height) * 0.002) / height;
-		this.wrapPaddingMultiplier = 0.5; //! or 0.5
+		this.reentryOffsetX = (min(width, height) * 0.008) / width;
+		this.reentryOffsetY = (min(width, height) * 0.008) / height;
+		this.wrapPaddingMultiplier = 0.95; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -166,7 +166,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		noiseScale1 = 1,
 		noiseScale2 = 1,
 		noiseScale3 = 1,
-		noiseScale4 = 12,
+		noiseScale4 = 1,
 		x_sine_scale = 1,
 		y_sine_scale = 1,
 		octave = 1,
@@ -222,10 +222,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.005, 0.005, -1, 1, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.005, 0.005, -1, 1, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.005, 0.005, -1, 1, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, 1), -0.005, 0.005, -1, 1, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, 1), -0.000015, 0.000015, -0.5, 1, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, 1), -0.000015, 0.000015, -0.5, 1, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, 1), -0.000015, 0.000015, -1, 0.5, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, 1), -0.000015, 0.000015, -1, 0.5, true);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
@@ -245,9 +245,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minV = -1; */
 
 	//! Introverted
-	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1111.5, -455.0000001), map(nx, xMin * width, xMax * width, 455.0000001, 1111.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1111.5, -455.0000001), map(ny, yMin * height, yMax * height, 455.0000001, 1111.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -256,16 +255,15 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	// Apply ZZ symmetrically - preserve sign but apply transformation to absolute value
-	let zu = u < 0 ? u : ZZ(u, 35, 80, 0.018);
-	let zv = v < 0 ? v : ZZ(v, 35, 80, 0.018);
+	let zu = ZZ(u, 50, 60, 0.0015);
+	let zv = ZZ(v, 50, 60, 0.0015);
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
 	//! 0.001
 	//! 2
-	/* 	let zu = ZZ(u, 2.1, 5.5, 0.01) * MULTIPLIER;
-	let zv = ZZ(v, 2.1, 5.5, 0.01) * MULTIPLIER; */
+	/* 	let zu = ZZ(u, 35, 40, 0.005) * MULTIPLIER;
+	let zv = ZZ(v, 35, 40, 0.005) * MULTIPLIER; */
 
 	let p = createVector(zu, zv);
 	return p;

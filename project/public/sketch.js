@@ -3,7 +3,7 @@ let movers = [];
 let startTime;
 let maxFrames = 25;
 let elapsedTime = 0;
-let particleNum = 500000;
+let particleNum = 1500000;
 // Adjust cycle for smoother percentage updates (1% increments)
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
@@ -111,6 +111,8 @@ let basePalettes = [
 		{h: 165, s: 88, l: 78},
 		{h: 161, s: 72, l: 85},
 	],
+	[{h: 252, s: 95, l: 1}],
+	[{h: 45, s: 100, l: 100}],
 ];
 
 let selectedPalette; // Will store the randomly selected palette
@@ -169,7 +171,7 @@ function setup() {
 	executionTimer.start(); // Start the timer
 
 	// Calculate optimal pixel density before creating canvases
-	pixel_density = 2;
+	pixel_density = 5;
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
@@ -233,7 +235,7 @@ function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0) {
+			if (currentFrame > -1) {
 				mover.show(mainCanvas);
 			}
 		},
@@ -268,23 +270,23 @@ function INIT(rseed, nseed) {
 
 	// Generate color variations first (1000 different palettes)
 	selectedPalette = int(random(basePalettes.length));
-	baseHSLPalette = basePalettes[selectedPalette];
+	baseHSLPalette = basePalettes[6];
 	generateColorVariations();
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.002 / MULTIPLIER;
-	scl2 = 0.002 / MULTIPLIER;
-	scl3 = 0.002 / MULTIPLIER;
+	scl1 = 0.006 / MULTIPLIER;
+	scl2 = 0.006 / MULTIPLIER;
+	scl3 = 0.006 / MULTIPLIER;
 
-	let sclOffset1 = 1;
-	let sclOffset2 = 1;
-	let sclOffset3 = 1;
+	let sclOffset1 = 0.9;
+	let sclOffset2 = 1.2;
+	let sclOffset3 = 1.2;
 
 	let amplitude1 = 1 * MULTIPLIER;
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork ratio
-	let padding = 0.1;
+	let padding = 0.11;
 	xMin = padding;
 	xMax = 1 - padding;
 	yMin = padding;
@@ -314,7 +316,7 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, selectedPalette));
 	}
 
-	let bgCol = color(25, 5, 100);
+	let bgCol = color(25, 5, 2);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
