@@ -235,7 +235,7 @@ function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > -1) {
+			if (currentFrame > 0) {
 				mover.show(mainCanvas);
 			}
 		},
@@ -274,9 +274,9 @@ function INIT(rseed, nseed) {
 	generateColorVariations();
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.006 / MULTIPLIER;
-	scl2 = 0.006 / MULTIPLIER;
-	scl3 = 0.006 / MULTIPLIER;
+	scl1 = 0.002 / MULTIPLIER;
+	scl2 = 0.002 / MULTIPLIER;
+	scl3 = 0.002 / MULTIPLIER;
 
 	let sclOffset1 = 0.9;
 	let sclOffset2 = 1.2;
