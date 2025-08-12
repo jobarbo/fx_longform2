@@ -104,8 +104,8 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.015;
-		this.yRandDivider = 0.015;
+		this.xRandDivider = 0.02;
+		this.yRandDivider = 0.02;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -250,8 +250,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	//! Introverted
 	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1123123.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1123123.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1123123.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1123123.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -261,8 +261,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 	// Apply ZZ symmetrically - preserve sign but apply transformation to absolute value
-	let zu = u < 0 ? u : ZZ(u, 50, 60, 0.0018);
-	let zv = v < 0 ? v : ZZ(v, 50, 60, 0.0018);
+	let zu = u < 0 ? u : ZZ(u, 25, 60, 0.0018);
+	let zv = v < 0 ? v : ZZ(v, 25, 60, 0.0018);
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2

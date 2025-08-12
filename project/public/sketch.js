@@ -212,8 +212,8 @@ function setup() {
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
-	let scaleFactorX = 1;
-	let scaleFactorY = 1;
+	let scaleFactorX = 1.5;
+	let scaleFactorY = 1.5;
 
 	debugCanvas.translate(width / 2, height / 2);
 	debugCanvas.scale(scaleFactorX, scaleFactorY);
@@ -430,7 +430,7 @@ function applyShaderEffect() {
 			uTexture: compositeCanvas,
 			uTime: shaderTime,
 			uResolution: [width, height],
-			uEffectType: 1,
+			uEffectType: 0,
 		})
 		.drawFullscreenQuad();
 }
