@@ -21,6 +21,7 @@ let compositeCanvas; // Combined canvas for shader processing
 // Animation control
 let particleAnimationComplete = false;
 let shaderTime = 0;
+let shaderSeed = 0; // Will be initialized with fxhash in setup
 
 // Debug controls
 let debugPadding = false;
@@ -228,6 +229,7 @@ async function setup() {
 	noiseSeed(fxrand() * 10000);
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
+	shaderSeed = fxrand() * 10000; // Initialize shader seed with fxhash
 	let scaleFactorX = 1;
 	let scaleFactorY = 1;
 
@@ -471,12 +473,14 @@ function applyShaderEffect() {
 			uTexture: compositeCanvas,
 			uTime: shaderTime,
 			uResolution: [width, height],
-			uEffectType: 1,
+			uEffectType: 0,
+			uSeed: shaderSeed, // Use stored seed for consistent noise pattern
 		})
 		.drawFullscreenQuad();
 }
 
 // Keyboard controls
+// D/d: Toggle debug padding
 function keyPressed() {
 	if (key === "d" || key === "D") {
 		debugPadding = !debugPadding;
