@@ -329,7 +329,7 @@ function INIT(rseed, nseed) {
 	let amplitude1 = 1 * MULTIPLIER;
 	let amplitude2 = 1 * MULTIPLIER;
 
-	// Simple 10% padding calculation with artwork ratio
+	// Simple 10% padding calculation with artwork rzatio
 	let padding = -0.05;
 	xMin = padding;
 	xMax = 1 - padding;
@@ -350,7 +350,7 @@ function INIT(rseed, nseed) {
 		let colorVariationIndex = 0;
 		let selectedPalette;
 		if (colorVariations.length > 0) {
-			colorVariationIndex = Math.floor(Math.random() * colorVariations.length);
+			colorVariationIndex = random(colorVariations.length);
 			selectedPalette = colorVariations[colorVariationIndex];
 		} else {
 			// Use base palette directly when no variations exist
