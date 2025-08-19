@@ -23,7 +23,7 @@ let particleAnimationComplete = false;
 let shaderTime = 0;
 let shaderSeed = 0; // Will be initialized with fxhash in setup
 let effectsConfig = {
-	deform: {enabled: true, amount: 0.1},
+	deform: {enabled: false, amount: 0.1},
 	chromatic: {enabled: true, amount: 0.003},
 	grain: {enabled: true, amount: 0.1},
 };
