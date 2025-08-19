@@ -285,15 +285,20 @@ function INIT(rseed, nseed) {
 
 	// Use ONLY swatch palettes - no hardcoded fallback
 	const swatchNames = swatchPalette.getSwatchNames();
-	console.log("Available swatch names:", swatchNames);
+	console.log("Available swatch names (original order):", swatchNames);
 
 	if (swatchNames.length === 0) {
 		throw new Error("No swatch palettes available for selection");
 	}
 
-	// Select directly from swatch palettes
-	selectedPalette = Math.floor(paletteSelectionRand * swatchNames.length);
-	currentPaletteName = swatchNames[selectedPalette];
+	// CRITICAL FIX: Sort swatch names alphabetically to ensure consistent order
+	// across different environments regardless of loading timing
+	const sortedSwatchNames = [...swatchNames].sort();
+	console.log("Available swatch names (sorted for consistency):", sortedSwatchNames);
+
+	// Select directly from sorted swatch palettes
+	selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
+	currentPaletteName = sortedSwatchNames[selectedPalette];
 	baseHSLPalette = swatchPalette.getPalette(currentPaletteName);
 
 	if (!baseHSLPalette || baseHSLPalette.length === 0) {
@@ -301,7 +306,7 @@ function INIT(rseed, nseed) {
 	}
 
 	console.log(`✓ SELECTED SWATCH PALETTE:`);
-	console.log(`  - Index: ${selectedPalette} of ${swatchNames.length}`);
+	console.log(`  - Index: ${selectedPalette} of ${sortedSwatchNames.length}`);
 	console.log(`  - Name: '${currentPaletteName}'`);
 	console.log(`  - Source: SWATCH (exclusive)`);
 	console.log(`  - Colors: ${baseHSLPalette.length}`);
