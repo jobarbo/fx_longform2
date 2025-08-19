@@ -69,7 +69,7 @@ function draw() {
 			let pos2 = movers[j].getPos();
 			let d = dist(pos1.x, pos1.y, pos2.x, pos2.y);
 			if (d < 100) {
-				// Fixed distance, no multiplier
+				// Fixed distance, no multipliers
 				line(pos1.x, pos1.y, pos2.x, pos2.y);
 			}
 		}
