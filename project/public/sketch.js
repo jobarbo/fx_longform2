@@ -300,16 +300,16 @@ function INIT(rseed, nseed) {
 
 	// Choose palette source: swatch palettes or hardcoded palettes
 	if (swatchesLoaded && swatchPalette.isReady()) {
-		// Use swatch palette system
+		// Use swatch palette system - use fxrand() for deterministic selection
 		const swatchNames = swatchPalette.getSwatchNames();
-		const randomIndex = int(random(swatchNames.length));
+		const randomIndex = Math.floor(fxrand() * swatchNames.length);
 		currentPaletteName = swatchNames[randomIndex];
 		baseHSLPalette = swatchPalette.getPalette(currentPaletteName);
 		selectedPalette = randomIndex;
 		console.log(`Using swatch palette '${currentPaletteName}' with ${baseHSLPalette.length} colors`);
 	} else {
-		// Fallback to hardcoded palettes
-		selectedPalette = int(random(basePalettes.length));
+		// Fallback to hardcoded palettes - use fxrand() for deterministic selection
+		selectedPalette = Math.floor(fxrand() * basePalettes.length);
 		baseHSLPalette = basePalettes[selectedPalette];
 		currentPaletteName = `Hardcoded Palette ${selectedPalette + 1}`;
 		console.log(`Using hardcoded palette ${selectedPalette + 1} with ${baseHSLPalette.length} colors`);
@@ -346,11 +346,11 @@ function INIT(rseed, nseed) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
-		// Randomly assign one of the pre-calculated color variations using Math.random()
+		// Randomly assign one of the pre-calculated color variations using fxrand() for deterministic selection
 		let colorVariationIndex = 0;
 		let selectedPalette;
 		if (colorVariations.length > 0) {
-			colorVariationIndex = random(colorVariations.length);
+			colorVariationIndex = Math.floor(fxrand() * colorVariations.length);
 			selectedPalette = colorVariations[colorVariationIndex];
 		} else {
 			// Use base palette directly when no variations exist
