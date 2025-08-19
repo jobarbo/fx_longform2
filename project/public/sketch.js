@@ -241,8 +241,8 @@ async function setup() {
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
 	shaderSeed = fxrand() * 10000; // Initialize shader seed with fxhash
-	let scaleFactorX = 1;
-	let scaleFactorY = 1;
+	let scaleFactorX = 1.12;
+	let scaleFactorY = 1.12;
 
 	debugCanvas.translate(width / 2, height / 2);
 	debugCanvas.scale(scaleFactorX, scaleFactorY);
@@ -330,7 +330,7 @@ function INIT(rseed, nseed) {
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork ratio
-	let padding = 0.1;
+	let padding = -0.05;
 	xMin = padding;
 	xMax = 1 - padding;
 	yMin = padding;
@@ -514,19 +514,6 @@ function keyPressed() {
 		console.log("Debug padding:", debugPadding ? "enabled" : "disabled");
 		// Update debug canvas when toggled
 		drawDebugPadding();
-	}
-
-	if (key === "1") {
-		effectsConfig.deform.enabled = !effectsConfig.deform.enabled;
-		console.log("Deform:", effectsConfig.deform.enabled ? "on" : "off");
-	}
-	if (key === "2") {
-		effectsConfig.chromatic.enabled = !effectsConfig.chromatic.enabled;
-		console.log("Chromatic:", effectsConfig.chromatic.enabled ? "on" : "off");
-	}
-	if (key === "3") {
-		effectsConfig.grain.enabled = !effectsConfig.grain.enabled;
-		console.log("Grain:", effectsConfig.grain.enabled ? "on" : "off");
 	}
 }
 
