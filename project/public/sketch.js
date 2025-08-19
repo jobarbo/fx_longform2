@@ -22,6 +22,11 @@ let compositeCanvas; // Combined canvas for shader processing
 let particleAnimationComplete = false;
 let shaderTime = 0;
 let shaderSeed = 0; // Will be initialized with fxhash in setup
+let effectsConfig = {
+	deform: {enabled: true, amount: 0.1},
+	chromatic: {enabled: true, amount: 0.003},
+	grain: {enabled: true, amount: 0.1},
+};
 
 // Debug controls
 let debugPadding = false;
@@ -164,8 +169,11 @@ function preload() {
 	// Set default vertex shader
 	shaderManager.setDefaultVertex("chromatic-aberration/vertex.vert");
 
-	// Load the shader we need
-	shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag");
+	// Load independent shaders
+	shaderManager.loadShader("copy", "copy/fragment.frag", "copy/vertex.vert");
+	shaderManager.loadShader("deform", "deform/fragment.frag", "deform/vertex.vert");
+	shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag", "chromatic-aberration/vertex.vert");
+	shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert");
 
 	// Initialize swatch palette system
 	swatchPalette = new SwatchPalette();
@@ -204,6 +212,9 @@ async function setup() {
 	shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
 	// Create composite canvas for combining main and debug content
 	compositeCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
+
+	// Init shader pipeline ping-pong buffers
+	shaderPipeline = new ShaderPipeline(shaderManager, this).init(width, height);
 
 	// Set up the rendering properties
 	mainCanvas.pixelDensity(pixel_density);
@@ -467,16 +478,32 @@ function applyShaderEffect() {
 		compositeCanvas.image(debugCanvas, 0, 0);
 	}
 
-	// Apply the shader effect using the composite canvas
-	shaderManager
-		.apply("chromatic", {
-			uTexture: compositeCanvas,
+	// Build effect passes dynamically
+	shaderPipeline.clearPasses();
+	if (effectsConfig.deform.enabled) {
+		shaderPipeline.addPass("deform", () => ({
 			uTime: shaderTime,
-			uResolution: [width, height],
-			uEffectType: 0,
-			uSeed: shaderSeed, // Use stored seed for consistent noise pattern
-		})
-		.drawFullscreenQuad();
+			uSeed: shaderSeed,
+			uAmount: effectsConfig.deform.amount,
+		}));
+	}
+	if (effectsConfig.chromatic.enabled) {
+		shaderPipeline.addPass("chromatic", () => ({
+			uTime: shaderTime,
+			uSeed: shaderSeed + 777.0,
+			uAmount: effectsConfig.chromatic.amount,
+		}));
+	}
+	if (effectsConfig.grain.enabled) {
+		shaderPipeline.addPass("grain", () => ({
+			uTime: shaderTime,
+			uSeed: shaderSeed + 345.0,
+			uAmount: effectsConfig.grain.amount,
+		}));
+	}
+
+	// Run pipeline from compositeCanvas to the main WEBGL canvas (default p5 instance)
+	shaderPipeline.run(compositeCanvas);
 }
 
 // Keyboard controls
@@ -487,6 +514,19 @@ function keyPressed() {
 		console.log("Debug padding:", debugPadding ? "enabled" : "disabled");
 		// Update debug canvas when toggled
 		drawDebugPadding();
+	}
+
+	if (key === "1") {
+		effectsConfig.deform.enabled = !effectsConfig.deform.enabled;
+		console.log("Deform:", effectsConfig.deform.enabled ? "on" : "off");
+	}
+	if (key === "2") {
+		effectsConfig.chromatic.enabled = !effectsConfig.chromatic.enabled;
+		console.log("Chromatic:", effectsConfig.chromatic.enabled ? "on" : "off");
+	}
+	if (key === "3") {
+		effectsConfig.grain.enabled = !effectsConfig.grain.enabled;
+		console.log("Grain:", effectsConfig.grain.enabled ? "on" : "off");
 	}
 }
 
