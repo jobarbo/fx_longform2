@@ -376,7 +376,7 @@ function draw() {
 	// Update shader animation time
 	shaderTime += 0.01;
 
-	// Always apply shader effects
+	// Always apply shader effectss
 	applyShaderEffect();
 }
 
