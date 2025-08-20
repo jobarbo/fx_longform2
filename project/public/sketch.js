@@ -274,7 +274,7 @@ function INIT(rseed, nseed) {
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork rzatio
-	let padding = 0.1;
+	let padding = 0.05;
 	xMin = padding;
 	xMax = 1 - padding;
 	yMin = padding;
