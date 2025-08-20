@@ -26,6 +26,7 @@ let effectsConfig = {
 	deform: {enabled: false, amount: 0.1},
 	chromatic: {enabled: true, amount: 0.003},
 	grain: {enabled: true, amount: 0.1},
+	collage: {enabled: true, amount: 21.0, tileSize: 255.0, tileSize2: 50.0, tileSize3: 96.0, sizeNoise: 23.0, rotNoise: 24.0},
 };
 
 // Debug controls
@@ -95,6 +96,7 @@ function preload() {
 	shaderManager.loadShader("deform", "deform/fragment.frag", "deform/vertex.vert");
 	shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag", "chromatic-aberration/vertex.vert");
 	shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert");
+	shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
 
 	// Initialize swatch palette system
 	swatchPalette = new SwatchPalette();
@@ -440,6 +442,18 @@ function applyShaderEffect() {
 			uTime: shaderTime,
 			uSeed: shaderSeed + 345.0,
 			uAmount: effectsConfig.grain.amount,
+		}));
+	}
+	if (effectsConfig.collage.enabled) {
+		shaderPipeline.addPass("collage", () => ({
+			uSeed: shaderSeed + 2222.0,
+			uTileSize1: effectsConfig.collage.tileSize,
+			uTileSize2: effectsConfig.collage.tileSize2,
+			uTileSize3: effectsConfig.collage.tileSize3,
+			uSizeNoise: effectsConfig.collage.sizeNoise,
+			uRotNoise: effectsConfig.collage.rotNoise,
+			uAmount: effectsConfig.collage.amount,
+			uResolution: [width, height],
 		}));
 	}
 
