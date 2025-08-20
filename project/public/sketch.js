@@ -500,28 +500,6 @@ function drawDebugPadding() {
 		debugCanvas.rect(moveLeft, moveTop, moveRight - moveLeft, moveBottom - moveTop);
 	}
 
-	// Draw palette information text
-	debugCanvas.fill(0, 0, 100, 90); // White with transparency
-	debugCanvas.noStroke();
-	debugCanvas.textAlign(LEFT, TOP);
-	debugCanvas.textSize(16);
-
-	let debugText = `Palette: ${currentPaletteName}\nColors: ${baseHSLPalette ? baseHSLPalette.length : 0}`;
-	if (swatchesLoaded) {
-		debugText += `\nSource: Swatch Image`;
-	} else {
-		debugText += `\nSource: Hardcoded Array`;
-	}
-
-	// Draw text background
-	let textWidth = debugCanvas.textWidth(debugText.split("\n")[0]) + 20;
-	let textHeight = 60;
-	debugCanvas.fill(0, 0, 0, 70); // Semi-transparent black background
-	debugCanvas.rect(10, 10, textWidth, textHeight);
-
-	// Draw text
-	debugCanvas.fill(0, 0, 100, 90); // White text
-	debugCanvas.text(debugText, 20, 20);
-
+	// Debug overlay removed - keeping only the deformation effect
 	debugCanvas.pop();
 }
