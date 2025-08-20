@@ -24,7 +24,7 @@ let shaderTime = 0;
 let shaderSeed = 0; // Will be initialized with fxhash in setup
 let effectsConfig = {
 	deform: {enabled: false, amount: 0.1},
-	chromatic: {enabled: false, amount: 0.003},
+	chromatic: {enabled: true, amount: 0.003},
 	grain: {enabled: true, amount: 0.1},
 };
 
@@ -106,41 +106,18 @@ async function setup() {
 	startTime = frameCount;
 	executionTimer.start(); // Start the timer
 
-	// Log hash and initial state for debugging
-	console.log("=== PALETTE SELECTION DEBUG ===");
-	console.log("fxhash:", $fx.hash);
-	console.log("Initial fxrand() calls for palette selection:");
-
-	// Store the current fxrand state to reset it after logging
-	let testRand1 = fxrand();
-	let testRand2 = fxrand();
-	let testRand3 = fxrand();
-	console.log("fxrand() call 1:", testRand1);
-	console.log("fxrand() call 2:", testRand2);
-	console.log("fxrand() call 3:", testRand3);
-
 	// Reset the random seed to ensure consistency
 	$fx.rand.reset();
-	console.log("Random seed reset for consistent palette selection");
 
 	// Load swatch palettes - REQUIRED for this project (no hardcoded fallback)
 	try {
-		console.log("Attempting to load swatch palettes...");
 		await swatchPalette.loadFromManifest("swatches/manifest.json");
 		swatchesLoaded = true;
-		console.log(`✓ Successfully loaded ${swatchPalette.getSwatchCount()} swatch palettes`);
-		console.log("Swatch palette isReady():", swatchPalette.isReady());
-		if (swatchPalette.isReady()) {
-			console.log("Available swatch names:", swatchPalette.getSwatchNames());
-		} else {
+		if (!swatchPalette.isReady()) {
 			throw new Error("Swatch palette loaded but not ready");
 		}
 	} catch (error) {
-		console.error("✗ CRITICAL ERROR: Failed to load swatch palettes:", error);
-		console.error("This project requires swatch palettes to function. Please check:");
-		console.error("1. swatches/manifest.json exists and is valid");
-		console.error("2. All swatch image files exist in swatches/ folder");
-		console.error("3. Network/CORS configuration allows loading the images");
+		console.error("Failed to load swatch palettes:", error);
 		swatchesLoaded = false;
 		throw error; // Stop execution if swatch palettes can't be loaded
 	}
@@ -186,29 +163,17 @@ async function setup() {
 	debugCanvas.clear();
 	debugCanvas.drawingContext.globalCompositeOperation = "source-over";
 
-	// Store random values from a clean fxrand state for deterministic behavior
-	console.log("=== RANDOM SEED INITIALIZATION ===");
-	console.log("Hash for seed generation:", $fx.hash);
-
+	// Initialize random seeds from fxrand for deterministic behavior
 	let mainRandomSeed = fxrand() * 10000;
 	let mainNoiseSeed = fxrand() * 10000;
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
 	shaderSeed = fxrand() * 10000; // Initialize shader seed with fxhash
 
-	console.log("Generated seeds:");
-	console.log("  - mainRandomSeed:", mainRandomSeed);
-	console.log("  - mainNoiseSeed:", mainNoiseSeed);
-	console.log("  - rseed:", rseed);
-	console.log("  - nseed:", nseed);
-	console.log("  - shaderSeed:", shaderSeed);
-
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-
-	console.log("=== END RANDOM SEED INITIALIZATION ===");
-	let scaleFactorX = 1.12;
-	let scaleFactorY = 1.12;
+	let scaleFactorX = 1;
+	let scaleFactorY = 1;
 
 	debugCanvas.translate(width / 2, height / 2);
 	debugCanvas.scale(scaleFactorX, scaleFactorY);
@@ -258,43 +223,32 @@ async function setup() {
 
 	// Log available controls
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
-	console.log(`Current palette: ${currentPaletteName}`);
 }
 
 function INIT(rseed, nseed) {
 	movers = [];
-
-	// Enhanced palette selection logging
-	console.log("=== PALETTE SELECTION LOGIC ===");
-	console.log("swatchesLoaded:", swatchesLoaded);
-	console.log("swatchPalette.isReady():", swatchPalette.isReady());
-	console.log("Current fxhash for palette selection:", $fx.hash);
 
 	// Verify that swatch palettes are available (required for this project)
 	if (!swatchesLoaded || !swatchPalette.isReady()) {
 		throw new Error("CRITICAL: Swatch palettes are required but not available. Cannot proceed with palette selection.");
 	}
 
-	// CRITICAL FIX: Reset the random seed to ensure consistent state
+	// Reset the random seed to ensure consistent state
 	$fx.rand.reset();
-	console.log("Random seed reset to ensure deterministic palette selection");
 
 	// Store the fxrand value we'll use for selection to ensure consistency
 	const paletteSelectionRand = fxrand();
-	console.log("Palette selection fxrand() value:", paletteSelectionRand);
 
 	// Use ONLY swatch palettes - no hardcoded fallback
 	const swatchNames = swatchPalette.getSwatchNames();
-	console.log("Available swatch names (original order):", swatchNames);
 
 	if (swatchNames.length === 0) {
 		throw new Error("No swatch palettes available for selection");
 	}
 
-	// CRITICAL FIX: Sort swatch names alphabetically to ensure consistent order
+	// Sort swatch names alphabetically to ensure consistent order
 	// across different environments regardless of loading timing
 	const sortedSwatchNames = [...swatchNames].sort();
-	console.log("Available swatch names (sorted for consistency):", sortedSwatchNames);
 
 	// Select directly from sorted swatch palettes
 	selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
@@ -304,16 +258,6 @@ function INIT(rseed, nseed) {
 	if (!baseHSLPalette || baseHSLPalette.length === 0) {
 		throw new Error(`Selected swatch palette '${currentPaletteName}' is empty or invalid`);
 	}
-
-	console.log(`✓ SELECTED SWATCH PALETTE:`);
-	console.log(`  - Index: ${selectedPalette} of ${sortedSwatchNames.length}`);
-	console.log(`  - Name: '${currentPaletteName}'`);
-	console.log(`  - Source: SWATCH (exclusive)`);
-	console.log(`  - Colors: ${baseHSLPalette.length}`);
-	console.log(`  - First color:`, baseHSLPalette[0]);
-	console.log(`  - Last color:`, baseHSLPalette[baseHSLPalette.length - 1]);
-
-	console.log("=== END PALETTE SELECTION ===");
 
 	generateColorVariations();
 
@@ -330,7 +274,7 @@ function INIT(rseed, nseed) {
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork rzatio
-	let padding = -0.05;
+	let padding = 0.1;
 	xMin = padding;
 	xMax = 1 - padding;
 	yMin = padding;
@@ -342,38 +286,22 @@ function INIT(rseed, nseed) {
 	let baseParticleCount = particleNum;
 	let scaledParticleCount = baseParticleCount;
 
-	// Log color variation assignment for first few particles
-	console.log("=== COLOR VARIATION ASSIGNMENT ===");
-	console.log("Total color variations generated:", colorVariations.length);
-	console.log("Will assign to", scaledParticleCount, "particles");
-
 	for (let i = 0; i < scaledParticleCount; i++) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
 		// Randomly assign one of the pre-calculated color variations using fxrand() for deterministic selection
-		let colorVariationIndex = 0;
 		let selectedPalette;
 		if (colorVariations.length > 0) {
-			colorVariationIndex = Math.floor(fxrand() * colorVariations.length);
+			let colorVariationIndex = Math.floor(fxrand() * colorVariations.length);
 			selectedPalette = colorVariations[colorVariationIndex];
 		} else {
 			// Use base palette directly when no variations exist
 			selectedPalette = baseHSLPalette;
 		}
 
-		// Log first few assignments for debugging
-		if (i < 3) {
-			console.log(`Particle ${i}:`);
-			console.log(`  - Color variation index: ${colorVariationIndex}`);
-			console.log(`  - Palette colors: ${selectedPalette.length}`);
-			console.log(`  - First color:`, selectedPalette[0]);
-		}
-
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, selectedPalette));
 	}
-
-	console.log("=== END COLOR VARIATION ASSIGNMENT ===");
 
 	let bgCol = color(25, 5, 100);
 	mainCanvas.background(bgCol);
@@ -430,10 +358,6 @@ function generateColorVariations() {
 	const numVariations = 0; // Create 0 different color palettes (disabled for now)
 	colorVariations = [];
 
-	console.log("=== COLOR VARIATION GENERATION ===");
-	console.log(`Generating ${numVariations} color variations from base palette`);
-	console.log("Base palette colors:", baseHSLPalette.length);
-
 	for (let i = 0; i < numVariations; i++) {
 		// Use fxrand() for deterministic variation generation
 		const saturationOffset = fxrand() * 20 - 5; // -5 to 15
@@ -450,15 +374,7 @@ function generateColorVariations() {
 		});
 
 		colorVariations.push(palette);
-
-		// Log first few variations for debugging
-		if (i < 3) {
-			console.log(`Variation ${i}: sat offset ${saturationOffset.toFixed(2)}, brightness offset ${brightnessOffset.toFixed(2)}`);
-		}
 	}
-
-	console.log(`✓ Generated ${numVariations} color variations from base palette`);
-	console.log("=== END COLOR VARIATION GENERATION ===");
 }
 
 // Helper function to load additional shaders dynamically
