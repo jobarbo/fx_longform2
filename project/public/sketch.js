@@ -33,15 +33,7 @@ let effectsConfig = {
 let debugPadding = false;
 
 // Global color mapping optimization
-let globalColorIndices = {
-	once: 0,
-	yoyo: 0,
-	default: 0,
-	onceCompleted: false,
-	// Pre-calculated yo-yo indices for common cycle counts
-	yoyoCycles: {},
-	lastCalculatedFrame: -1, // Track last frame we calculated for
-};
+// Simplified color management - no more complex calculations needed
 
 // Removed hardcoded palettes - now using exclusively swatch palettes from /swatches/ folder
 
@@ -50,7 +42,7 @@ let baseHSLPalette; // Keep for backward compatibility
 let currentPaletteName = ""; // Store the name of the current palette for debug
 
 // Pre-calculated color variations (1000 different palettes)
-let colorVariations = [];
+// No color variations needed - using swatches directly
 
 let scl1;
 let scl2;
@@ -202,11 +194,7 @@ async function setup() {
 			}
 		},
 		moveItem: (mover, currentFrame) => {
-			// Calculate color indices once per frame (check if not already calculated)
-			if (globalColorIndices.lastCalculatedFrame !== currentFrame) {
-				calculateGlobalColorIndices(currentFrame, maxFrames, baseHSLPalette.length);
-				globalColorIndices.lastCalculatedFrame = currentFrame;
-			}
+			// Simple movement - no complex color calculations needed
 			mover.move(currentFrame, maxFrames);
 		},
 
@@ -261,7 +249,7 @@ function INIT(rseed, nseed) {
 		throw new Error(`Selected swatch palette '${currentPaletteName}' is empty or invalid`);
 	}
 
-	generateColorVariations();
+	// No color variations needed - using swatches directly
 
 	// Scale noise values based on MULTIPLIER
 	scl1 = 0.002 / MULTIPLIER;
@@ -292,17 +280,8 @@ function INIT(rseed, nseed) {
 		let x = random(xMin, xMax) * width;
 		let y = random(yMin, yMax) * height;
 
-		// Randomly assign one of the pre-calculated color variations using fxrand() for deterministic selection
-		let selectedPalette;
-		if (colorVariations.length > 0) {
-			let colorVariationIndex = Math.floor(fxrand() * colorVariations.length);
-			selectedPalette = colorVariations[colorVariationIndex];
-		} else {
-			// Use base palette directly when no variations exist
-			selectedPalette = baseHSLPalette;
-		}
-
-		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, selectedPalette));
+		// Use the swatch palette directly - no variations needed
+		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette));
 	}
 
 	let bgCol = color(25, 5, 100);
@@ -323,60 +302,6 @@ function draw() {
 
 	// Always apply shader effectss
 	applyShaderEffect();
-}
-
-function calculateGlobalColorIndices(currentFrame, maxFrames, paletteLength) {
-	// Calculate once for "once" mode
-	if (currentFrame === 0) {
-		globalColorIndices.onceCompleted = false;
-	}
-
-	if (!globalColorIndices.onceCompleted) {
-		let progress = currentFrame / (maxFrames - 1);
-		if (progress >= 1) {
-			globalColorIndices.onceCompleted = true;
-			globalColorIndices.once = 0;
-		} else {
-			globalColorIndices.once = Math.floor((1 - progress) * (paletteLength - 1));
-		}
-	}
-
-	// Calculate yo-yo indices for common cycle counts (1-4)
-	for (let cycleCount = 1; cycleCount <= 4; cycleCount++) {
-		let frequency = (cycleCount * Math.PI) / (maxFrames - 1);
-		let cosValue = Math.cos(currentFrame * frequency);
-		globalColorIndices.yoyoCycles[cycleCount] = Math.round(((cosValue + 1) / 2) * (paletteLength - 1));
-	}
-
-	// Keep the original yoyo for backward compatibility (cycle count 1)
-	globalColorIndices.yoyo = globalColorIndices.yoyoCycles[1];
-
-	// Calculate once for "default" mode
-	let mappedIndex = map(currentFrame, 0, maxFrames / 1.25, paletteLength - 1, 0, true);
-	globalColorIndices.default = Math.floor(mappedIndex);
-}
-
-function generateColorVariations() {
-	const numVariations = 0; // Create 0 different color palettes (disabled for now)
-	colorVariations = [];
-
-	for (let i = 0; i < numVariations; i++) {
-		// Use fxrand() for deterministic variation generation
-		const saturationOffset = fxrand() * 20 - 5; // -5 to 15
-		const brightnessOffset = fxrand() * 10 - 5; // -5 to 5
-
-		const palette = baseHSLPalette.map((hsl) => {
-			const finalS = Math.max(0, Math.min(100, hsl.s + saturationOffset));
-			const finalL = Math.max(0, Math.min(100, hsl.l + brightnessOffset));
-			return {
-				h: hsl.h,
-				s: finalS,
-				l: finalL,
-			};
-		});
-
-		colorVariations.push(palette);
-	}
 }
 
 // Helper function to load additional shaders dynamically

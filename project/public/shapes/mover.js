@@ -1,26 +1,5 @@
 class Mover {
-	constructor(
-		x,
-		y,
-		scl1,
-		scl2,
-		scl3,
-		sclOffset1,
-		sclOffset2,
-		sclOffset3,
-		amplitude1,
-		amplitude2,
-		xMin,
-		xMax,
-		yMin,
-		yMax,
-		isBordered,
-		rseed,
-		nseed,
-		preCalculatedPalette,
-		paletteMode = "default",
-		cycleCount = 1
-	) {
+	constructor(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette) {
 		this.x = x;
 		this.initX = x;
 		this.y = y;
@@ -55,10 +34,8 @@ class Mover {
 		this.isBordered = isBordered;
 		this.hasBeenOutside = false;
 
-		// Palette animation properties
-		this.paletteMode = paletteMode; // 'once' or 'yoyo'
-		this.cycleCount = cycleCount; // Number of yo-yo cycles
-		this.paletteCompleted = false; // Track if one-time pass is completed
+		// Start from the last color (inverted progression)
+		this.colorIndex = this.palette.length - 1;
 
 		// Pre-calculate padding values
 		this.wrapPaddingX = (min(width, height) * 0.01) / width;
@@ -111,15 +88,10 @@ class Mover {
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
-		// Map color based on frame count - now using pre-calculated global indices
-		if (this.paletteMode === "once") {
-			this.colorIndex = globalColorIndices.onceCompleted ? 0 : globalColorIndices.once;
-		} else if (this.paletteMode === "yoyo") {
-			// Use pre-calculated values for cycle counts (1-4)
-			this.colorIndex = globalColorIndices.yoyoCycles[this.cycleCount];
-		} else {
-			this.colorIndex = globalColorIndices.default;
-		}
+		// Map frame progression to color index, inverted (last to first)
+		let maxColorIndex = this.palette.length - 1;
+		let mappedFrame = map(frameCount, 0, maxFrames / 1.25, maxColorIndex, 0, true);
+		this.colorIndex = Math.floor(mappedFrame);
 
 		this.currentColor = this.palette[this.colorIndex];
 
