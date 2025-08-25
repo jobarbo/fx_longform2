@@ -288,11 +288,21 @@ async function setup() {
 			$fx.preview();
 			document.complete = true;
 			console.log("Particle animation complete, shader animation continues");
+
+			// Create download button after sketch is complete
+			if (typeof createDownloadButton === "function") {
+				createDownloadButton();
+			}
 		},
 	};
 
 	// Create and start the animation
 	const generator = createAnimationGenerator(animConfig);
+
+	// Create download button immediately (will only show if not in iframe)
+	if (typeof createDownloadButton === "function") {
+		createDownloadButton();
+	}
 
 	// Custom animation loop that handles shaders properly
 	function customAnimate() {
