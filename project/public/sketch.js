@@ -18,6 +18,7 @@ let shaderCanvas; // WEBGL canvas for shader effects
 
 // Shader animation control
 let continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
+let applyShadersDuringSketch = false; // Set to true to apply shaders while sketching, false to wait until complete
 
 // Animation control
 let particleAnimationComplete = false;
@@ -293,6 +294,11 @@ async function setup() {
 
 		// If particle animation is done, check if we should continue shaders
 		if (result.done) {
+			// Always apply shaders at least once when sketch is complete
+			if (!applyShadersDuringSketch) {
+				applyShaderEffect();
+			}
+
 			if (continueShadersAfterCompletion) {
 				// Keep shaders running even after particles are complete
 				shaderTime += 0.01;
@@ -305,9 +311,17 @@ async function setup() {
 			return;
 		}
 
-		// Update shader time and apply effects after each batch
+		// Update shader time during sketching
 		shaderTime += 0.01;
-		applyShaderEffect();
+
+		// Only apply shaders during sketching if enabled
+		if (applyShadersDuringSketch) {
+			applyShaderEffect();
+		} else {
+			// If not applying shaders during sketching, use copy shader to display base sketch
+			clear();
+			shaderManager.apply("copy", {uTexture: mainCanvas}, this).drawFullscreenQuad(this);
+		}
 
 		// Continue animation
 		requestAnimationFrame(customAnimate);
