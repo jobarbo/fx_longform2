@@ -32,7 +32,7 @@ let shaderSeed = 0; // Will be initialized with fxhash in setup
 // - Any additional parameters specific to that effect
 let effectsConfig = {
 	deform: {
-		enabled: false,
+		enabled: true,
 		amount: 0.1,
 		timeMultiplier: 0.0, // Normal speed
 		uniforms: {
@@ -43,8 +43,8 @@ let effectsConfig = {
 	},
 
 	collage: {
-		enabled: false,
-		amount: 21.0,
+		enabled: true,
+		amount: 1.0,
 		tileSize: 55.0,
 		tileSize2: 25.0,
 		tileSize3: 16.0,
