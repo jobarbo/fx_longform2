@@ -211,7 +211,7 @@ async function setup() {
 	}
 
 	// Calculate optimal pixel density before creating canvases
-	pixel_density = 2;
+	pixel_density = 1;
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
@@ -229,8 +229,8 @@ async function setup() {
 	shaderPipeline = new ShaderPipeline(shaderManager, this).init(width, height, enabledEffects);
 
 	// Set up the rendering properties
-	mainCanvas.pixelDensity(pixel_density);
-	shaderCanvas.pixelDensity(pixel_density);
+	//mainCanvas.pixelDensity(pixel_density);
+	//shaderCanvas.pixelDensity(pixel_density);
 
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
