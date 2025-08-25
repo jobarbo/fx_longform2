@@ -22,12 +22,83 @@ let compositeCanvas; // Combined canvas for shader processing
 let particleAnimationComplete = false;
 let shaderTime = 0;
 let shaderSeed = 0; // Will be initialized with fxhash in setup
+
+// Modular shader effects configuration
+// Each effect has:
+// - enabled: boolean to toggle the effect
+// - uniforms: mapping of uniform names to their values/expressions
+// - Any additional parameters specific to that effect
 let effectsConfig = {
-	deform: {enabled: false, amount: 0.1},
-	chromatic: {enabled: true, amount: 0.003},
-	grain: {enabled: true, amount: 0.1},
-	collage: {enabled: true, amount: 21.0, tileSize: 255.0, tileSize2: 50.0, tileSize3: 96.0, sizeNoise: 23.0, rotNoise: 24.0},
+	deform: {
+		enabled: true,
+		amount: 0.1,
+		uniforms: {
+			uTime: "shaderTime",
+			uSeed: "shaderSeed",
+			uAmount: "amount",
+		},
+	},
+	chromatic: {
+		enabled: true,
+		amount: 0.003,
+		uniforms: {
+			uTime: "shaderTime",
+			uSeed: "shaderSeed + 777.0",
+			uAmount: "amount",
+		},
+	},
+	grain: {
+		enabled: true,
+		amount: 0.1,
+		uniforms: {
+			uTime: "shaderTime",
+			uSeed: "shaderSeed + 345.0",
+			uAmount: "amount",
+		},
+	},
+	collage: {
+		enabled: true,
+		amount: 21.0,
+		tileSize: 55.0,
+		tileSize2: 25.0,
+		tileSize3: 16.0,
+		sizeNoise: 1.0,
+		rotNoise: 21.0,
+		uniforms: {
+			uSeed: "shaderSeed + 2222.0",
+			uTileSize1: "tileSize",
+			uTileSize2: "tileSize2",
+			uTileSize3: "tileSize3",
+			uSizeNoise: "sizeNoise",
+			uRotNoise: "rotNoise",
+			uAmount: "amount",
+			uResolution: "[width, height]",
+		},
+	},
 };
+
+// Helper function to add new effects programmatically
+function addShaderEffect(effectName, config) {
+	effectsConfig[effectName] = {
+		enabled: config.enabled || false,
+		...config,
+		uniforms: config.uniforms || {},
+	};
+}
+
+// Helper function to enable/disable effects
+function setEffectEnabled(effectName, enabled) {
+	if (effectsConfig[effectName]) {
+		effectsConfig[effectName].enabled = enabled;
+	}
+}
+
+// Helper function to update effect parameters
+function updateEffectParam(effectName, paramName, value) {
+	if (effectsConfig[effectName] && effectsConfig[effectName][paramName] !== undefined) {
+		effectsConfig[effectName][paramName] = value;
+	}
+}
 
 // Debug controls
 let debugPadding = false;
@@ -320,7 +391,73 @@ function getLoadedShaders() {
 	return [];
 }
 
+// Helper function to safely evaluate uniform values
+// This function converts string expressions in the effectsConfig.uniforms into actual values
+// It handles:
+// - Direct property references (e.g., 'amount' -> effect.amount)
+// - Mathematical expressions (e.g., 'shaderSeed + 777.0' -> actual calculated value)
+// - Special cases (e.g., '[width, height]' -> [width, height])
+// - Global variable references (e.g., 'shaderTime' -> current shaderTime value)
+function evaluateUniformValue(value, effect) {
+	if (typeof value === "string") {
+		// Handle special cases
+		if (value === "[width, height]") {
+			return [width, height];
+		}
+
+		// Handle expressions like 'shaderSeed + 777.0'
+		if (value.includes("+") || value.includes("-") || value.includes("*") || value.includes("/")) {
+			try {
+				// Create a safe evaluation context with available variables
+				const evalContext = {
+					shaderTime,
+					shaderSeed,
+					width,
+					height,
+					...effect, // Include effect properties
+				};
+
+				// Replace variable names with their values
+				let evalString = value;
+				for (const [varName, varValue] of Object.entries(evalContext)) {
+					if (typeof varValue === "number") {
+						evalString = evalString.replace(new RegExp(`\\b${varName}\\b`, "g"), varValue);
+					}
+				}
+
+				return eval(evalString);
+			} catch (error) {
+				console.warn(`Failed to evaluate uniform value "${value}":`, error);
+				return 0;
+			}
+		}
+
+		// Handle property references from the effect config
+		if (value in effect) {
+			return effect[value];
+		}
+
+		// Handle global variable references
+		if (value === "shaderTime") return shaderTime;
+		if (value === "shaderSeed") return shaderSeed;
+		if (value === "width") return width;
+		if (value === "height") return height;
+
+		// Try to evaluate as a simple variable reference
+		try {
+			return eval(value);
+		} catch (error) {
+			console.warn(`Failed to evaluate uniform value "${value}":`, error);
+			return 0;
+		}
+	}
+
+	return value;
+}
+
 // Function to apply shader effects (call this in your render loop if needed)
+// Now uses a modular approach that dynamically loops through effectsConfig
+// Each effect's uniforms are automatically mapped based on the configuration
 function applyShaderEffect() {
 	if (!shaderManager) {
 		console.log("ShaderManager not available");
@@ -348,38 +485,20 @@ function applyShaderEffect() {
 
 	// Build effect passes dynamically
 	shaderPipeline.clearPasses();
-	if (effectsConfig.deform.enabled) {
-		shaderPipeline.addPass("deform", () => ({
-			uTime: shaderTime,
-			uSeed: shaderSeed,
-			uAmount: effectsConfig.deform.amount,
-		}));
-	}
-	if (effectsConfig.chromatic.enabled) {
-		shaderPipeline.addPass("chromatic", () => ({
-			uTime: shaderTime,
-			uSeed: shaderSeed + 777.0,
-			uAmount: effectsConfig.chromatic.amount,
-		}));
-	}
-	if (effectsConfig.grain.enabled) {
-		shaderPipeline.addPass("grain", () => ({
-			uTime: shaderTime,
-			uSeed: shaderSeed + 345.0,
-			uAmount: effectsConfig.grain.amount,
-		}));
-	}
-	if (effectsConfig.collage.enabled) {
-		shaderPipeline.addPass("collage", () => ({
-			uSeed: shaderSeed + 2222.0,
-			uTileSize1: effectsConfig.collage.tileSize,
-			uTileSize2: effectsConfig.collage.tileSize2,
-			uTileSize3: effectsConfig.collage.tileSize3,
-			uSizeNoise: effectsConfig.collage.sizeNoise,
-			uRotNoise: effectsConfig.collage.rotNoise,
-			uAmount: effectsConfig.collage.amount,
-			uResolution: [width, height],
-		}));
+
+	// Iterate through effectsConfig to build passes
+	for (const effectName in effectsConfig) {
+		const effect = effectsConfig[effectName];
+		if (effect.enabled) {
+			shaderPipeline.addPass(effectName, () => {
+				const uniforms = {};
+				for (const uniformName in effect.uniforms) {
+					const value = effect.uniforms[uniformName];
+					uniforms[uniformName] = evaluateUniformValue(value, effect);
+				}
+				return uniforms;
+			});
+		}
 	}
 
 	// Run pipeline from compositeCanvas to the main WEBGL canvas (default p5 instance)
@@ -388,6 +507,8 @@ function applyShaderEffect() {
 
 // Keyboard controls
 // D/d: Toggle debug padding
+// Console commands:
+// - Press 'D' to toggle debug bounds (green=padding, red=movement)
 function keyPressed() {
 	if (key === "d" || key === "D") {
 		debugPadding = !debugPadding;
