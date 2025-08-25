@@ -15,8 +15,8 @@ This project now includes a download button that allows users to save the genera
 ### ✅ Cross-Platform Compatibility
 
 - **Desktop Browsers**: Standard download functionality
-- **Mobile Browsers**: Optimized for touch interfaces
-- **Safari Mobile**: Enhanced download handling with fallback instructions
+- **Mobile Browsers**: Standard download functionality
+- **Safari Mobile**: Simple alert with save instructions
 
 ### ✅ User Experience
 
@@ -54,15 +54,16 @@ function isSafariMobile() {
 The `saveArtwork()` function handles different download methods:
 
 - **Standard browsers**: Uses `canvas.toDataURL()` with download link
-- **Safari mobile**: Uses `canvas.toBlob()` with object URL and fallback instructions
+- **Safari mobile**: Shows simple alert with save instructions
 
 ## Usage
 
 ### For Users
 
 1. The download button appears automatically in the top-right corner
-2. Click the button to download the current artwork
-3. The button shows download progress and success/error states
+2. **Desktop/Mobile (non-Safari)**: Click to download the image file
+3. **Safari Mobile**: Click to see save instructions
+4. Simple, clean interface
 
 ### For Developers
 
@@ -74,15 +75,23 @@ The download button is automatically created when:
 
 ## Browser Support
 
-| Browser    | Desktop | Mobile | Download Method        |
-| ---------- | ------- | ------ | ---------------------- |
-| Chrome     | ✅      | ✅     | Direct download        |
-| Firefox    | ✅      | ✅     | Direct download        |
-| Safari     | ✅      | ✅     | Direct download / Blob |
-| Edge       | ✅      | ✅     | Direct download        |
-| Safari iOS | ❌      | ✅     | Blob + fallback        |
+| Browser    | Desktop | Mobile | Download Method         |
+| ---------- | ------- | ------ | ----------------------- |
+| Chrome     | ✅      | ✅     | Direct download         |
+| Firefox    | ✅      | ✅     | Direct download         |
+| Safari     | ✅      | ✅     | Direct download         |
+| Edge       | ✅      | ✅     | Direct download         |
+| Safari iOS | ❌      | ✅     | Alert with instructions |
 
 ## Mobile Optimizations
+
+### Safari Mobile Handling
+
+When Safari mobile users click the download button:
+
+- Shows a simple alert with save instructions
+- Guides users to long-press and save to Photos
+- Clean, minimal approach
 
 ### Touch Targets
 
@@ -98,22 +107,11 @@ The download button is automatically created when:
 
 ## CSS Customization
 
-The download button styles can be customized via CSS:
+The download button uses inline styles for simplicity, but you can override them with CSS:
 
 ```css
 #download-button {
 	/* Custom styles */
-}
-
-#download-button-container {
-	/* Container positioning */
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-	#download-button {
-		/* Mobile-specific styles */
-	}
 }
 ```
 
@@ -127,7 +125,7 @@ The download button styles can be customized via CSS:
 
 ### Download Not Working
 
-1. **Safari Mobile**: Use long-press and "Save to Photos"
+1. **Safari Mobile**: Follow the alert instructions to save to Photos
 2. **Other browsers**: Check browser download settings
 3. **File size**: Large canvases may take time to process
 

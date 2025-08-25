@@ -43,7 +43,7 @@ let effectsConfig = {
 	},
 
 	collage: {
-		enabled: true,
+		enabled: false,
 		amount: 1.0,
 		tileSize: 255.0,
 		tileSize2: 50.0,
