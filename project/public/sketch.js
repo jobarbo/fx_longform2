@@ -211,13 +211,8 @@ async function setup() {
 	}
 
 	// Calculate optimal pixel density before creating canvases
-	// Safari mobile fallback - set to 1 for better performance
-	if (isSafariMobile()) {
-		pixel_density = 2;
-		console.log("Safari mobile detected, using pixel density 1");
-	} else {
-		pixel_density = 2;
-	}
+	// Set pixel density for all devices
+	pixel_density = 2;
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
