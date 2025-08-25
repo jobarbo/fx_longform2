@@ -45,11 +45,11 @@ let effectsConfig = {
 	collage: {
 		enabled: true,
 		amount: 1.0,
-		tileSize: 55.0,
-		tileSize2: 25.0,
-		tileSize3: 16.0,
-		sizeNoise: 1.0,
-		rotNoise: 21.0,
+		tileSize: 255.0,
+		tileSize2: 50.0,
+		tileSize3: 100.0,
+		sizeNoise: 23.0,
+		rotNoise: 24.0,
 		timeMultiplier: 0.0, // Slower speed
 		uniforms: {
 			uSeed: "shaderSeed + 2222.0",
