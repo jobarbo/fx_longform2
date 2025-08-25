@@ -32,8 +32,9 @@ let effectsConfig = {
 	deform: {
 		enabled: true,
 		amount: 0.1,
+		timeMultiplier: 1.0, // Normal speed
 		uniforms: {
-			uTime: "shaderTime",
+			uTime: "shaderTime * timeMultiplier",
 			uSeed: "shaderSeed",
 			uAmount: "amount",
 		},
@@ -47,6 +48,7 @@ let effectsConfig = {
 		tileSize3: 16.0,
 		sizeNoise: 1.0,
 		rotNoise: 21.0,
+		timeMultiplier: 0.5, // Slower speed
 		uniforms: {
 			uSeed: "shaderSeed + 2222.0",
 			uTileSize1: "tileSize",
@@ -62,8 +64,9 @@ let effectsConfig = {
 	chromatic: {
 		enabled: true,
 		amount: 0.0015,
+		timeMultiplier: 1.0, // Faster speed
 		uniforms: {
-			uTime: "shaderTime",
+			uTime: "shaderTime * timeMultiplier",
 			uSeed: "shaderSeed + 777.0",
 			uAmount: "amount",
 		},
@@ -72,8 +75,9 @@ let effectsConfig = {
 	grain: {
 		enabled: true,
 		amount: 0.1,
+		timeMultiplier: 0.3, // Very slow speed
 		uniforms: {
-			uTime: "shaderTime",
+			uTime: "shaderTime * timeMultiplier",
 			uSeed: "shaderSeed + 345.0",
 			uAmount: "amount",
 		},
@@ -93,6 +97,16 @@ function addShaderEffect(effectName, config) {
 function setEffectEnabled(effectName, enabled) {
 	if (effectsConfig[effectName]) {
 		effectsConfig[effectName].enabled = enabled;
+		// Reinitialize shader pipeline with updated enabled effects
+		reinitializeShaderPipeline();
+	}
+}
+
+// Function to reinitialize shader pipeline when effects are toggled
+function reinitializeShaderPipeline() {
+	if (shaderPipeline && shaderManager) {
+		const enabledEffects = Object.keys(effectsConfig).filter((name) => effectsConfig[name].enabled);
+		shaderPipeline.init(width, height, enabledEffects);
 	}
 }
 
@@ -103,8 +117,22 @@ function updateEffectParam(effectName, paramName, value) {
 	}
 }
 
-// Debug controls
-let debugPadding = false;
+// Helper function to set time speed for a specific effect
+function setEffectTimeSpeed(effectName, timeMultiplier) {
+	if (effectsConfig[effectName]) {
+		effectsConfig[effectName].timeMultiplier = timeMultiplier;
+		console.log(`${effectName} time speed set to ${timeMultiplier}x`);
+	}
+}
+
+// Helper function to pause/resume time for a specific effect
+function pauseEffectTime(effectName) {
+	setEffectTimeSpeed(effectName, 0);
+}
+
+function resumeEffectTime(effectName) {
+	setEffectTimeSpeed(effectName, 1.0);
+}
 
 // Global color mapping optimization
 // Simplified color management - no more complex calculations needed
@@ -199,37 +227,26 @@ async function setup() {
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
 
-	// Create main canvas for the artwork
+	// Create main canvas for the artwork (will also handle debug overlays)
 	mainCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
-	// Create debug canvas for overlays
-	debugCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
 	// Create shader canvas for the WEBGL renderer
 	shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
-	// Create composite canvas for combining main and debug content
-	compositeCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
 
-	// Init shader pipeline ping-pong buffers
-	shaderPipeline = new ShaderPipeline(shaderManager, this).init(width, height);
+	// Init shader pipeline with enabled effects
+	const enabledEffects = Object.keys(effectsConfig).filter((name) => effectsConfig[name].enabled);
+	shaderPipeline = new ShaderPipeline(shaderManager, this).init(width, height, enabledEffects);
 
 	// Set up the rendering properties
 	mainCanvas.pixelDensity(pixel_density);
 	shaderCanvas.pixelDensity(pixel_density);
-	debugCanvas.pixelDensity(pixel_density);
-	compositeCanvas.pixelDensity(pixel_density);
 
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
-	debugCanvas.colorMode(HSB, 360, 100, 100, 100);
-	compositeCanvas.colorMode(HSB, 360, 100, 100, 100);
 	colorMode(HSB, 360, 100, 100, 100);
 
 	// Enable color preservation settings for mainCanvas
 	mainCanvas.drawingContext.imageSmoothingEnabled = false;
 	mainCanvas.drawingContext.globalCompositeOperation = "source-over";
-
-	// Initialize debug canvas as transparent
-	debugCanvas.clear();
-	debugCanvas.drawingContext.globalCompositeOperation = "source-over";
 
 	// Initialize random seeds from fxrand for deterministic behavior
 	let mainRandomSeed = fxrand() * 10000;
@@ -242,10 +259,6 @@ async function setup() {
 	noiseSeed(mainNoiseSeed);
 	let scaleFactorX = 1;
 	let scaleFactorY = 1;
-
-	debugCanvas.translate(width / 2, height / 2);
-	debugCanvas.scale(scaleFactorX, scaleFactorY);
-	debugCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
 
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
@@ -271,7 +284,6 @@ async function setup() {
 			// Simple movement - no complex color calculations needed
 			mover.move(currentFrame, maxFrames);
 		},
-
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
 			particleAnimationComplete = true;
@@ -283,7 +295,24 @@ async function setup() {
 
 	// Create and start the animation
 	const generator = createAnimationGenerator(animConfig);
-	startAnimation(generator);
+
+	// Custom animation loop that handles shaders properly
+	function customAnimate() {
+		const result = generator.next();
+
+		// If animation is done, stop
+		if (result.done) return;
+
+		// Update shader time and apply effects after each batch
+		shaderTime += 0.01;
+		applyShaderEffect();
+
+		// Continue animation
+		requestAnimationFrame(customAnimate);
+	}
+
+	// Start the custom animation loop
+	customAnimate();
 
 	// Log available controls
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
@@ -362,20 +391,6 @@ function INIT(rseed, nseed) {
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
-}
-
-// Traditional draw function that handles shader effects continuously
-function draw() {
-	// Only proceed if setup is complete and canvases are initialized
-	if (!compositeCanvas || !mainCanvas || !debugCanvas) {
-		return;
-	}
-
-	// Update shader animation time
-	shaderTime += 0.01;
-
-	// Always apply shader effectss
-	applyShaderEffect();
 }
 
 // Helper function to load additional shaders dynamically
@@ -468,23 +483,12 @@ function applyShaderEffect() {
 	}
 
 	// Check if canvases are initialized
-	if (!compositeCanvas || !mainCanvas || !debugCanvas) {
+	if (!mainCanvas) {
 		return;
 	}
 
 	// Clear the shader canvas
 	clear();
-
-	// Clear and prepare the composite canvas
-	compositeCanvas.clear();
-
-	// Draw mainCanvas first
-	compositeCanvas.image(mainCanvas, 0, 0);
-
-	// Overlay debugCanvas if debug is enabled
-	if (debugPadding) {
-		compositeCanvas.image(debugCanvas, 0, 0);
-	}
 
 	// Build effect passes dynamically
 	shaderPipeline.clearPasses();
@@ -504,65 +508,12 @@ function applyShaderEffect() {
 		}
 	}
 
-	// Run pipeline from compositeCanvas to the main WEBGL canvas (default p5 instance)
-	shaderPipeline.run(compositeCanvas);
+	// Run pipeline from mainCanvas to the main WEBGL canvas (default p5 instance)
+	shaderPipeline.run(mainCanvas);
 }
 
-// Keyboard controls
-// D/d: Toggle debug padding
 // Console commands:
-// - Press 'D' to toggle debug bounds (green=padding, red=movement)
-function keyPressed() {
-	if (key === "d" || key === "D") {
-		debugPadding = !debugPadding;
-		console.log("Debug padding:", debugPadding ? "enabled" : "disabled");
-		// Update debug canvas when toggled
-		drawDebugPadding();
-	}
-}
-
-// Function to draw debug padding outline
-function drawDebugPadding() {
-	// Check if debug canvas is initialized
-	if (!debugCanvas) return;
-
-	// Clear the debug canvas first
-	debugCanvas.clear();
-
-	if (!debugPadding) return;
-
-	// Calculate the basic padding bounds in pixels
-	let left = xMin * width;
-	let right = xMax * width;
-	let top = yMin * height;
-	let bottom = yMax * height;
-
-	// Draw on the debug canvas
-	debugCanvas.push();
-
-	// Draw basic padding bounds (green)
-	debugCanvas.stroke(120, 100, 100, 90); // Bright green with transparency
-	debugCanvas.strokeWeight(3);
-	debugCanvas.noFill();
-	debugCanvas.rect(left, top, right - left, bottom - top);
-
-	// Draw actual particle movement bounds (red) if we have movers
-	if (movers && movers.length > 0) {
-		let mover = movers[0]; // Get bounds from first mover
-
-		debugCanvas.stroke(0, 100, 100, 90); // Bright red with transparency
-		debugCanvas.strokeWeight(3);
-		debugCanvas.noFill();
-
-		// Draw the actual movement bounds rectangle
-		let moveLeft = mover.minBoundX;
-		let moveRight = mover.maxBoundX;
-		let moveTop = mover.minBoundY;
-		let moveBottom = mover.maxBoundY;
-
-		debugCanvas.rect(moveLeft, moveTop, moveRight - moveLeft, moveBottom - moveTop);
-	}
-
-	// Debug overlay removed - keeping only the deformation effect
-	debugCanvas.pop();
-}
+// - setEffectEnabled("effectName", true/false) - Enable/disable specific shader effects
+// - setEffectTimeSpeed("effectName", multiplier) - Set time speed (0.1 = slow, 2.0 = fast)
+// - pauseEffectTime("effectName") - Pause time for specific effect
+// - resumeEffectTime("effectName") - Resume normal time speed
