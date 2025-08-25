@@ -38,24 +38,7 @@ let effectsConfig = {
 			uAmount: "amount",
 		},
 	},
-	chromatic: {
-		enabled: true,
-		amount: 0.003,
-		uniforms: {
-			uTime: "shaderTime",
-			uSeed: "shaderSeed + 777.0",
-			uAmount: "amount",
-		},
-	},
-	grain: {
-		enabled: true,
-		amount: 0.1,
-		uniforms: {
-			uTime: "shaderTime",
-			uSeed: "shaderSeed + 345.0",
-			uAmount: "amount",
-		},
-	},
+
 	collage: {
 		enabled: true,
 		amount: 21.0,
@@ -73,6 +56,26 @@ let effectsConfig = {
 			uRotNoise: "rotNoise",
 			uAmount: "amount",
 			uResolution: "[width, height]",
+		},
+	},
+
+	chromatic: {
+		enabled: true,
+		amount: 0.0015,
+		uniforms: {
+			uTime: "shaderTime",
+			uSeed: "shaderSeed + 777.0",
+			uAmount: "amount",
+		},
+	},
+
+	grain: {
+		enabled: true,
+		amount: 0.1,
+		uniforms: {
+			uTime: "shaderTime",
+			uSeed: "shaderSeed + 345.0",
+			uAmount: "amount",
 		},
 	},
 };
