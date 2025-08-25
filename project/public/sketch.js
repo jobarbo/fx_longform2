@@ -15,8 +15,9 @@ let swatchesLoaded = false;
 // Shader Manager - using global instance from shaderManager.js
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects
-let debugCanvas; // Separate canvas for debug overlays
-let compositeCanvas; // Combined canvas for shader processing
+
+// Shader animation control
+let continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
 
 // Animation control
 let particleAnimationComplete = false;
@@ -32,7 +33,7 @@ let effectsConfig = {
 	deform: {
 		enabled: true,
 		amount: 0.1,
-		timeMultiplier: 1.0, // Normal speed
+		timeMultiplier: 0.0, // Normal speed
 		uniforms: {
 			uTime: "shaderTime * timeMultiplier",
 			uSeed: "shaderSeed",
@@ -48,7 +49,7 @@ let effectsConfig = {
 		tileSize3: 16.0,
 		sizeNoise: 1.0,
 		rotNoise: 21.0,
-		timeMultiplier: 0.5, // Slower speed
+		timeMultiplier: 0.0, // Slower speed
 		uniforms: {
 			uSeed: "shaderSeed + 2222.0",
 			uTileSize1: "tileSize",
@@ -64,7 +65,7 @@ let effectsConfig = {
 	chromatic: {
 		enabled: true,
 		amount: 0.0015,
-		timeMultiplier: 1.0, // Faster speed
+		timeMultiplier: 0.0, // Faster speed
 		uniforms: {
 			uTime: "shaderTime * timeMultiplier",
 			uSeed: "shaderSeed + 777.0",
@@ -75,7 +76,7 @@ let effectsConfig = {
 	grain: {
 		enabled: true,
 		amount: 0.1,
-		timeMultiplier: 0.3, // Very slow speed
+		timeMultiplier: 0.0, // Very slow speed
 		uniforms: {
 			uTime: "shaderTime * timeMultiplier",
 			uSeed: "shaderSeed + 345.0",
@@ -117,21 +118,11 @@ function updateEffectParam(effectName, paramName, value) {
 	}
 }
 
-// Helper function to set time speed for a specific effect
-function setEffectTimeSpeed(effectName, timeMultiplier) {
-	if (effectsConfig[effectName]) {
-		effectsConfig[effectName].timeMultiplier = timeMultiplier;
-		console.log(`${effectName} time speed set to ${timeMultiplier}x`);
-	}
-}
+// Helper function to control shader continuation after sketch completion
 
-// Helper function to pause/resume time for a specific effect
-function pauseEffectTime(effectName) {
-	setEffectTimeSpeed(effectName, 0);
-}
-
-function resumeEffectTime(effectName) {
-	setEffectTimeSpeed(effectName, 1.0);
+// Helper function to check current shader continuation setting
+function getShadersContinueAfterCompletion() {
+	return continueShadersAfterCompletion;
 }
 
 // Global color mapping optimization
@@ -300,8 +291,19 @@ async function setup() {
 	function customAnimate() {
 		const result = generator.next();
 
-		// If animation is done, stop
-		if (result.done) return;
+		// If particle animation is done, check if we should continue shaders
+		if (result.done) {
+			if (continueShadersAfterCompletion) {
+				// Keep shaders running even after particles are complete
+				shaderTime += 0.01;
+				applyShaderEffect();
+				requestAnimationFrame(customAnimate);
+			} else {
+				// Stop everything when sketch is complete
+				console.log("Sketch complete - shaders stopped");
+			}
+			return;
+		}
 
 		// Update shader time and apply effects after each batch
 		shaderTime += 0.01;
@@ -511,9 +513,3 @@ function applyShaderEffect() {
 	// Run pipeline from mainCanvas to the main WEBGL canvas (default p5 instance)
 	shaderPipeline.run(mainCanvas);
 }
-
-// Console commands:
-// - setEffectEnabled("effectName", true/false) - Enable/disable specific shader effects
-// - setEffectTimeSpeed("effectName", multiplier) - Set time speed (0.1 = slow, 2.0 = fast)
-// - pauseEffectTime("effectName") - Pause time for specific effect
-// - resumeEffectTime("effectName") - Resume normal time speed
