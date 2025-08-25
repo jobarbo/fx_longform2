@@ -16,14 +16,6 @@ let swatchesLoaded = false;
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects
 
-// Safari mobile detection function
-function isSafariMobile() {
-	const userAgent = navigator.userAgent;
-	const isIOS = /iPad|iPhone|iPod/.test(userAgent);
-	const isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
-	return isIOS && isSafari;
-}
-
 // Shader animation control
 let continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
 let applyShadersDuringSketch = false; // Set to true to apply shaders while sketching, false to wait until complete
@@ -221,7 +213,7 @@ async function setup() {
 	// Calculate optimal pixel density before creating canvases
 	// Safari mobile fallback - set to 1 for better performance
 	if (isSafariMobile()) {
-		pixel_density = 1;
+		pixel_density = 2;
 		console.log("Safari mobile detected, using pixel density 1");
 	} else {
 		pixel_density = 2;
