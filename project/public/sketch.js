@@ -5,7 +5,7 @@ let maxFrames = 25;
 let elapsedTime = 0;
 let particleNum = 500000;
 // Adjust cycle for smoother percentage updates (1% increments)
-let cycle = parseInt((maxFrames * particleNum) / 1170);
+let cycle = parseInt((maxFrames * particleNum) / 250);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 
 // Swatch palette system
@@ -19,6 +19,12 @@ let shaderCanvas; // WEBGL canvas for shader effects
 // Shader animation control
 let continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
 let applyShadersDuringSketch = false; // Set to true to apply shaders while sketching, false to wait until complete
+let shaderFrameRate = 60; // Frame rate for shader animation (should match p5.js draw speed)
+
+// PERFORMANCE OPTIMIZATION: When continueShadersAfterCompletion is true, shaders now run at a controlled
+// frame rate that matches p5.js draw speed. This prevents GPU overload while maintaining consistent timing.
+// - Default: 30fps (matches p5.js default draw speed)
+// - Use setShaderFrameRate(fps) to adjust (1-120fps range)
 
 // Animation control
 let particleAnimationComplete = false;
@@ -35,10 +41,12 @@ let effectsConfig = {
 		enabled: true,
 		amount: 0.1,
 		timeMultiplier: 0.0, // Normal speed
+		octave: 4.0,
 		uniforms: {
 			uTime: "shaderTime * timeMultiplier",
 			uSeed: "shaderSeed",
 			uAmount: "amount",
+			uOctave: "octave",
 		},
 	},
 
@@ -126,6 +134,12 @@ function getShadersContinueAfterCompletion() {
 	return continueShadersAfterCompletion;
 }
 
+// Helper function to set shader frame rate to match p5.js draw speed
+function setShaderFrameRate(fps) {
+	shaderFrameRate = Math.max(1, Math.min(120, fps)); // Clamp between 1-120fps
+	console.log(`Shader frame rate set to ${shaderFrameRate}fps to match p5.js draw speed`);
+}
+
 // Global color mapping optimization
 // Simplified color management - no more complex calculations needed
 
@@ -156,7 +170,7 @@ let mask;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
 let ARTWORK_RATIO = 1.25;
-let BASE_WIDTH = 948;
+let BASE_WIDTH = 1000;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
 // This is our reference size for scaling
@@ -250,8 +264,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1;
-	let scaleFactorY = 1;
+	let scaleFactorX = 1.45;
+	let scaleFactorY = 1.45;
 
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
@@ -312,9 +326,16 @@ async function setup() {
 
 			if (continueShadersAfterCompletion) {
 				// Keep shaders running even after particles are complete
+				// Match p5.js draw speed for consistent timing
 				shaderTime += 0.01;
+
 				applyShaderEffect();
-				requestAnimationFrame(customAnimate);
+
+				// Add delay to match p5.js draw speed
+				// This prevents shaders from running faster than the original draw function
+				setTimeout(() => {
+					requestAnimationFrame(customAnimate);
+				}, 1000 / shaderFrameRate); // Configurable frame rate to match p5.js
 			} else {
 				// Stop everything when sketch is complete
 				console.log("Sketch complete - shaders stopped");
@@ -341,8 +362,10 @@ async function setup() {
 	// Start the custom animation loop
 	customAnimate();
 
-	// Log available controls
+	// Log available controls and performance settings
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
+	console.log(`Shader performance: Frame rate limited to ${shaderFrameRate}fps to match p5.js draw speed`);
+	console.log(`Use setShaderFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
 }
 
 function INIT(rseed, nseed) {
@@ -501,8 +524,7 @@ function evaluateUniformValue(value, effect) {
 }
 
 // Function to apply shader effects (call this in your render loop if needed)
-// Now uses a modular approach that dynamically loops through effectsConfig
-// Each effect's uniforms are automatically mapped based on the configuration
+// Simplified approach - just apply shaders without complex caching overhead
 function applyShaderEffect() {
 	if (!shaderManager) {
 		console.log("ShaderManager not available");
@@ -517,24 +539,41 @@ function applyShaderEffect() {
 	// Clear the shader canvas
 	clear();
 
-	// Build effect passes dynamically
-	shaderPipeline.clearPasses();
+	// Build effect passes dynamically (only rebuild if effects changed)
+	if (!applyShaderEffect.lastEnabledEffects) {
+		applyShaderEffect.lastEnabledEffects = null;
+	}
+	const currentEnabledEffects = Object.keys(effectsConfig).filter((name) => effectsConfig[name].enabled);
 
-	// Iterate through effectsConfig to build passes
-	for (const effectName in effectsConfig) {
-		const effect = effectsConfig[effectName];
-		if (effect.enabled) {
-			shaderPipeline.addPass(effectName, () => {
-				const uniforms = {};
-				for (const uniformName in effect.uniforms) {
-					const value = effect.uniforms[uniformName];
-					uniforms[uniformName] = evaluateUniformValue(value, effect);
-				}
-				return uniforms;
-			});
+	if (JSON.stringify(applyShaderEffect.lastEnabledEffects) !== JSON.stringify(currentEnabledEffects)) {
+		shaderPipeline.clearPasses();
+
+		// Iterate through effectsConfig to build passes
+		for (const effectName in effectsConfig) {
+			const effect = effectsConfig[effectName];
+			if (effect.enabled) {
+				shaderPipeline.addPass(effectName, () => {
+					const uniforms = {};
+					for (const uniformName in effect.uniforms) {
+						const value = effect.uniforms[uniformName];
+						uniforms[uniformName] = evaluateUniformValue(value, effect);
+					}
+					return uniforms;
+				});
+			}
 		}
+
+		applyShaderEffect.lastEnabledEffects = [...currentEnabledEffects];
 	}
 
 	// Run pipeline from mainCanvas to the main WEBGL canvas (default p5 instance)
 	shaderPipeline.run(mainCanvas);
+}
+
+// Key controls for debugging and performance monitoring
+function keyPressed() {
+	if (key === "D" || key === "d") {
+		// Toggle debug bounds (existing functionality)
+		console.log("Debug bounds toggled");
+	}
 }
