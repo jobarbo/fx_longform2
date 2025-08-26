@@ -5,7 +5,7 @@ let maxFrames = 25;
 let elapsedTime = 0;
 let particleNum = 500000;
 // Adjust cycle for smoother percentage updates (1% increments)
-let cycle = parseInt((maxFrames * particleNum) / 250);
+let cycle = parseInt((maxFrames * particleNum) / 1150);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 
 // Swatch palette system
