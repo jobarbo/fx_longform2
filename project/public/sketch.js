@@ -38,7 +38,7 @@ let shaderSeed = 0; // Will be initialized with fxhash in setup
 // - Any additional parameters specific to that effect
 let effectsConfig = {
 	deform: {
-		enabled: true,
+		enabled: false,
 		amount: 0.1,
 		timeMultiplier: 0.0, // Normal speed
 		octave: 4.0,
@@ -264,8 +264,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.45;
-	let scaleFactorY = 1.45;
+	let scaleFactorX = 1.0;
+	let scaleFactorY = 1.0;
 
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
@@ -417,7 +417,7 @@ function INIT(rseed, nseed) {
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork rzatio
-	let padding = 0.05;
+	let padding = 0.1;
 	xMin = padding;
 	xMax = 1 - padding;
 	yMin = padding;

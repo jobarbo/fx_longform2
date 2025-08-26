@@ -38,8 +38,8 @@ class Mover {
 		this.colorIndex = this.palette.length - 1;
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.01) / width;
-		this.wrapPaddingY = ((min(width, height) * 0.01) / height) * ARTWORK_RATIO;
+		this.wrapPaddingX = (min(width, height) * 0.05) / width;
+		this.wrapPaddingY = ((min(width, height) * 0.05) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * 0.002) / width;
 		this.reentryOffsetY = (min(width, height) * 0.002) / height;
 		this.wrapPaddingMultiplier = 0.5; //! or 0.5
