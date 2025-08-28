@@ -405,9 +405,9 @@ function INIT(rseed, nseed) {
 	// No color variations needed - using swatches directly
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.002 / MULTIPLIER;
-	scl2 = 0.002 / MULTIPLIER;
-	scl3 = 0.002 / MULTIPLIER;
+	scl1 = 0.0002 / MULTIPLIER;
+	scl2 = 0.0002 / MULTIPLIER;
+	scl3 = 0.0002 / MULTIPLIER;
 
 	let sclOffset1 = 1;
 	let sclOffset2 = 1;
