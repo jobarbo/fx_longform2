@@ -268,8 +268,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 2.0;
-	let scaleFactorY = 2.0;
+	let scaleFactorX = 1.5;
+	let scaleFactorY = 1.5;
 
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
