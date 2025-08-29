@@ -41,7 +41,7 @@ let effectsConfig = {
 		enabled: true,
 		amount: 0.1,
 		timeMultiplier: 21.1, // Normal speed
-		octave: 2.0,
+		octave: 4.0,
 		uniforms: {
 			uTime: "shaderTime * timeMultiplier",
 			uSeed: "shaderSeed",
