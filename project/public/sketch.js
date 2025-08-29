@@ -17,8 +17,8 @@ let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects
 
 // Shader animation control
-let continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
-let applyShadersDuringSketch = false; // Set to true to apply shaders while sketching, false to wait until complete
+let continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
+let applyShadersDuringSketch = true; // Set to true to apply shaders while sketching, false to wait until complete
 let shaderFrameRate = 60; // Frame rate for shader animation (should match p5.js draw speed)
 
 // PERFORMANCE OPTIMIZATION: When continueShadersAfterCompletion is true, shaders now run at a controlled
@@ -38,10 +38,10 @@ let shaderSeed = 0; // Will be initialized with fxhash in setup
 // - Any additional parameters specific to that effect
 let effectsConfig = {
 	deform: {
-		enabled: false,
+		enabled: true,
 		amount: 0.1,
-		timeMultiplier: 0.0, // Normal speed
-		octave: 4.0,
+		timeMultiplier: 21.1, // Normal speed
+		octave: 2.0,
 		uniforms: {
 			uTime: "shaderTime * timeMultiplier",
 			uSeed: "shaderSeed",
@@ -264,8 +264,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.0;
-	let scaleFactorY = 1.0;
+	let scaleFactorX = 2.0;
+	let scaleFactorY = 2.0;
 
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
@@ -437,7 +437,7 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette));
 	}
 
-	let bgCol = color(25, 5, 100);
+	let bgCol = color(35, 80, 100);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
