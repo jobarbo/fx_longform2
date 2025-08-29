@@ -40,7 +40,7 @@ let effectsConfig = {
 	deform: {
 		enabled: true,
 		amount: 0.1,
-		timeMultiplier: 21.1, // Normal speed
+		timeMultiplier: 31.1, // Normal speed
 		octave: 4.0,
 		uniforms: {
 			uTime: "shaderTime * timeMultiplier",
@@ -226,7 +226,11 @@ async function setup() {
 
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
-	pixel_density = 2;
+	if (isSafariMobile()) {
+		pixel_density = 1;
+	} else {
+		pixel_density = 2;
+	}
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
