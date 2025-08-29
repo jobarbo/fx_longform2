@@ -72,7 +72,7 @@ let effectsConfig = {
 	},
 
 	chromatic: {
-		enabled: true,
+		enabled: false,
 		amount: 0.0015,
 		timeMultiplier: 0.0, // Faster speed
 		uniforms: {
@@ -83,7 +83,7 @@ let effectsConfig = {
 	},
 
 	grain: {
-		enabled: true,
+		enabled: false,
 		amount: 0.1,
 		timeMultiplier: 0.0, // Very slow speed
 		uniforms: {
