@@ -42,11 +42,13 @@ let effectsConfig = {
 		amount: 0.1,
 		timeMultiplier: 31.1, // Normal speed
 		octave: 4.0,
+		noiseScale: 15.0,
 		uniforms: {
 			uTime: "shaderTime * timeMultiplier",
 			uSeed: "shaderSeed",
 			uAmount: "amount",
 			uOctave: "octave",
+			uNoiseScale: "noiseScale",
 		},
 	},
 
