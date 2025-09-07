@@ -138,7 +138,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		noiseScale1 = 12,
 		noiseScale2 = 12,
 		noiseScale3 = 12,
-		noiseScale4 = 12,
+		noiseScale4 = 1,
 		x_sine_scale = 1,
 		y_sine_scale = 1,
 		octave = 1,

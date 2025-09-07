@@ -43,6 +43,35 @@ canvas.p5Canvas {
 	width: auto !important;
 }
 
+/* Debug bounds overlay */
+.debug-bounds {
+	position: absolute;
+	pointer-events: none;
+	z-index: 1000;
+	display: none;
+}
+
+.debug-bounds.visible {
+	display: block;
+}
+
+.debug-rect {
+	position: absolute;
+	border: 1px solid;
+	background: transparent;
+	box-sizing: border-box;
+}
+
+.debug-bounds .base-padding {
+	border-color: #00ff00; /* Green for base padding */
+	border-width: 1px;
+}
+
+.debug-bounds .mover-bounds {
+	border-color: #ff0000; /* Red for mover bounds */
+	border-width: 1px;
+}
+
 /* Download button mobile optimizations */
 @media (max-width: 768px) {
 	#download-button-container {

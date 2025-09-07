@@ -102,6 +102,64 @@ function addShaderEffect(effectName, config) {
 		uniforms: config.uniforms || {},
 	};
 }
+let debugBounds = false;
+
+// CSS overlay debug bounds functions
+function updateDebugOverlay() {
+	const debugOverlay = document.getElementById("debug-bounds");
+	const basePadding = document.getElementById("debug-base-padding");
+	const moverBounds = document.getElementById("debug-mover-bounds");
+
+	if (!debugBounds) {
+		debugOverlay.classList.remove("visible");
+		return;
+	}
+
+	debugOverlay.classList.add("visible");
+
+	// Get canvas position and dimensions
+	const canvas = document.querySelector("canvas");
+	if (!canvas) return;
+
+	const canvasRect = canvas.getBoundingClientRect();
+	const canvasWidth = canvasRect.width;
+	const canvasHeight = canvasRect.height;
+
+	// Position the debug overlay to match the canvas
+	debugOverlay.style.left = canvasRect.left + "px";
+	debugOverlay.style.top = canvasRect.top + "px";
+	debugOverlay.style.width = canvasWidth + "px";
+	debugOverlay.style.height = canvasHeight + "px";
+
+	// Base artwork padding (0.1 padding)
+	const padding = 0.1;
+	const basePaddingLeft = padding * canvasWidth;
+	const basePaddingTop = padding * canvasHeight;
+	const basePaddingWidth = (1 - 2 * padding) * canvasWidth;
+	const basePaddingHeight = (1 - 2 * padding) * canvasHeight;
+
+	basePadding.style.left = basePaddingLeft + "px";
+	basePadding.style.top = basePaddingTop + "px";
+	basePadding.style.width = basePaddingWidth + "px";
+	basePadding.style.height = basePaddingHeight + "px";
+
+	// Mover bounds (if movers exist)
+	if (movers.length > 0) {
+		const m = movers[0];
+		const wrapPaddingX = (min(DIM, DIM * ARTWORK_RATIO) * 0.05) / DIM;
+		const wrapPaddingY = ((min(DIM, DIM * ARTWORK_RATIO) * 0.05) / (DIM * ARTWORK_RATIO)) * ARTWORK_RATIO;
+
+		const moverLeft = (m.xMin - wrapPaddingX) * canvasWidth;
+		const moverTop = (m.yMin - wrapPaddingY) * canvasHeight;
+		const moverWidth = (m.xMax + wrapPaddingX - (m.xMin - wrapPaddingX)) * canvasWidth;
+		const moverHeight = (m.yMax + wrapPaddingY - (m.yMin - wrapPaddingY)) * canvasHeight;
+
+		moverBounds.style.left = moverLeft + "px";
+		moverBounds.style.top = moverTop + "px";
+		moverBounds.style.width = moverWidth + "px";
+		moverBounds.style.height = moverHeight + "px";
+	}
+}
 
 // Helper function to enable/disable effects
 function setEffectEnabled(effectName, enabled) {
@@ -350,6 +408,10 @@ async function setup() {
 		if (applyShadersDuringSketch) {
 			applyShaderEffect();
 		} else {
+			// Draw debug overlays on mainCanvas before copying to visible canvas
+			if (debugBounds) {
+				// Debug overlays are now handled by CSS overlay - remove canvas drawing
+			}
 			// If not applying shaders during sketching, use copy shader to display base sketch
 			clear();
 			shaderManager.apply("copy", {uTexture: mainCanvas}, this).drawFullscreenQuad(this);
@@ -361,6 +423,9 @@ async function setup() {
 
 	// Start the custom animation loop
 	customAnimate();
+
+	// Initialize debug overlay after setup is complete
+	updateDebugOverlay();
 
 	// Log available controls and performance settings
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
@@ -573,7 +638,8 @@ function applyShaderEffect() {
 // Key controls for debugging and performance monitoring
 function keyPressed() {
 	if (key === "D" || key === "d") {
-		// Toggle debug bounds (existing functionality)
-		console.log("Debug bounds toggled");
+		debugBounds = !debugBounds;
+		console.log("Debug bounds toggled: ", debugBounds);
+		updateDebugOverlay();
 	}
 }
