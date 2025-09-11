@@ -10,7 +10,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.75]) * MULTIPLIER;
+		this.s = random([10.75]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -94,6 +94,8 @@ class Mover {
 		this.colorIndex = Math.floor(mappedFrame);
 
 		this.currentColor = this.palette[this.colorIndex];
+
+		this.s = map(frameCount, 0, maxFrames / 1, 10.75, 1.3, true);
 
 		if (this.isBordered) {
 			// Wrap to opposite side with slight offset

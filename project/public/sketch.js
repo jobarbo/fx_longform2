@@ -3,9 +3,9 @@ let movers = [];
 let startTime;
 let maxFrames = 25;
 let elapsedTime = 0;
-let particleNum = 500000;
+let particleNum = 5000;
 // Adjust cycle for smoother percentage updates (1% increments)
-let cycle = parseInt((maxFrames * particleNum) / 1150);
+let cycle = parseInt((maxFrames * particleNum) / 150);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 
 // Swatch palette system
@@ -291,6 +291,8 @@ async function setup() {
 		renderItem: (mover, currentFrame) => {
 			if (currentFrame > 0) {
 				mover.show(mainCanvas);
+			} else {
+				blendMode(ADD);
 			}
 		},
 		moveItem: (mover, currentFrame) => {
@@ -303,7 +305,7 @@ async function setup() {
 			$fx.preview();
 			document.complete = true;
 			console.log("Particle animation complete, shader animation continues");
-
+			blendMode(BLEND);
 			// Create download button after sketch is complete
 			if (typeof createDownloadButton === "function") {
 				createDownloadButton();
