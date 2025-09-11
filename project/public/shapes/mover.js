@@ -90,7 +90,7 @@ class Mover {
 
 		// Map frame progression to color index, inverted (last to first)
 		let maxColorIndex = this.palette.length - 1;
-		let mappedFrame = map(frameCount, 0, maxFrames / 1.25, maxColorIndex, 0, true);
+		let mappedFrame = map(frameCount, 0, maxFrames / 1.05, maxColorIndex, 0, true);
 		this.colorIndex = Math.floor(mappedFrame);
 
 		this.currentColor = this.palette[this.colorIndex];
@@ -218,8 +218,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	//! Introverted
 	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -25.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 25.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -25.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 25.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -2523231.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 2523231.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -2523231.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 2523231.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
