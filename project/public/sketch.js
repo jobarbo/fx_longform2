@@ -224,7 +224,7 @@ function INIT(seed) {
 	hue += map(noise(xoff, yoff), 0, 1, -2, 2, true);
 	hue < 0 ? hue + 360 : hue > 360 ? hue - 360 : hue;
 
-	easeAng += 0.3;
+	easeAng += 0.31;
 	xoff += 0.001;
 	yoff += 0.001;
 	axoff += 0.01;
