@@ -284,7 +284,7 @@ async function setup() {
 
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
-	pixel_density = 4;
+	pixel_density = 2;
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
@@ -478,8 +478,8 @@ function INIT(rseed, nseed) {
 	let sclOffset2 = 1;
 	let sclOffset3 = 1;
 
-	let amplitude1 = 1 * MULTIPLIER;
-	let amplitude2 = 1 * MULTIPLIER;
+	let amplitude1 = 11122 * MULTIPLIER;
+	let amplitude2 = 11122 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork rzatio
 	let padding = 0.1;
