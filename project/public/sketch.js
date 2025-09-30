@@ -284,7 +284,7 @@ async function setup() {
 
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
-	pixel_density = 2;
+	pixel_density = 4;
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
