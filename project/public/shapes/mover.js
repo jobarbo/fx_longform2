@@ -218,8 +218,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	//! Introverted
 	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1125.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1125.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1125.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1125.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -25.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 25.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -25.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 25.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
