@@ -40,8 +40,8 @@ class Mover {
 		// Pre-calculate padding values
 		this.wrapPaddingX = (min(width, height) * 0.05) / width;
 		this.wrapPaddingY = ((min(width, height) * 0.05) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.02) / width;
-		this.reentryOffsetY = (min(width, height) * 0.02) / height;
+		this.reentryOffsetX = (min(width, height) * 0.01) / width;
+		this.reentryOffsetY = (min(width, height) * 0.01) / height;
 		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
@@ -135,10 +135,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
-		noiseScale1 = 12,
+		noiseScale1 = 1,
 		noiseScale2 = 1,
-		noiseScale3 = 12,
-		noiseScale4 = 12,
+		noiseScale3 = 1,
+		noiseScale4 = 1,
 		x_sine_scale = 1,
 		y_sine_scale = 1,
 		octave = 1,
@@ -218,8 +218,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	//! Introverted
 	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -25.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 25.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -25.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 25.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -1125.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1125.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -1125.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1125.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -232,8 +232,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let zzu = map(ZZ(u, 35, 80, 0.08), -1, 1, minU, maxU, true);
 	let zzv = map(ZZ(v, 35, 80, 0.2), -1, 1, minV, maxV, true);
 
-	let zu = u < 0 ? u : zzu;
-	let zv = v < 0 ? v : zzv;
+	let zu = u < 0 ? -zzu : zzu;
+	let zv = v < 0 ? -zzv : zzv;
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2

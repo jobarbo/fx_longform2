@@ -470,16 +470,16 @@ function INIT(rseed, nseed) {
 	// No color variations needed - using swatches directly
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.0002 / MULTIPLIER;
-	scl2 = 0.0002 / MULTIPLIER;
-	scl3 = 0.0002 / MULTIPLIER;
+	scl1 = 0.002 / MULTIPLIER;
+	scl2 = 0.002 / MULTIPLIER;
+	scl3 = 0.002 / MULTIPLIER;
 
 	let sclOffset1 = 1;
 	let sclOffset2 = 1;
 	let sclOffset3 = 1;
 
-	let amplitude1 = 11122 * MULTIPLIER;
-	let amplitude2 = 11122 * MULTIPLIER;
+	let amplitude1 = 1 * MULTIPLIER;
+	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork rzatio
 	let padding = 0.1;
