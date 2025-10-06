@@ -3,7 +3,7 @@ let movers = [];
 let startTime;
 let maxFrames = 35;
 let elapsedTime = 0;
-let particleNum = 150000;
+let particleNum = 550000;
 // Adjust cycle for smoother percentage updates (1% increments)
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance

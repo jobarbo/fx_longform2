@@ -1,5 +1,5 @@
 class Mover {
-	constructor(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette, paletteMode = "default", cycleCount = 1) {
+	constructor(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette) {
 		this.x = x;
 		this.initX = x;
 		this.y = y;
@@ -17,14 +17,16 @@ class Mover {
 		this.sclOffset1 = sclOffset1;
 		this.sclOffset2 = sclOffset2;
 		this.sclOffset3 = sclOffset3;
+		this.amplitude1 = 1;
+		this.amplitude2 = 1;
 		this.rseed = rseed;
 		this.nseed = nseed;
-		this.xRandDivider = 0.45;
-		this.yRandDivider = 0.45;
+		this.xRandDivider = 0.01;
+		this.yRandDivider = 0.01;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperOffset = 10.1;
-		this.yRandSkipperOffset = 10.1;
+		this.xRandSkipperOffset = 0.0;
+		this.yRandSkipperOffset = 0.0;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -32,10 +34,8 @@ class Mover {
 		this.isBordered = isBordered;
 		this.hasBeenOutside = false;
 
-		// Palette animation properties
-		this.paletteMode = paletteMode; // 'once' or 'yoyo'
-		this.cycleCount = cycleCount; // Number of yo-yo cycles
-		this.paletteCompleted = false; // Track if one-time pass is completed
+		// Start from the last color (inverted progression)
+		this.colorIndex = this.palette.length - 1;
 
 		// Pre-calculate padding values
 		this.wrapPaddingX = (min(width, height) * 0.0001) / width;
@@ -61,29 +61,39 @@ class Mover {
 	}
 
 	move(frameCount, maxFrames) {
-		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
+		let p = superCurve(
+			this.x,
+			this.y,
+			this.scl1,
+			this.scl2,
+			this.scl3,
+			this.sclOffset1,
+			this.sclOffset2,
+			this.sclOffset3,
+			this.amplitude1,
+			this.amplitude2,
+			this.xMin,
+			this.yMin,
+			this.xMax,
+			this.yMax,
+			this.rseed,
+			this.nseed
+		);
 
 		// Update position with slight randomization
 		this.xRandDivider = 0.9;
-		this.yRandDivider = 0.9;
-		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
-		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
-		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
-		this.y += (p.y / this.yRandDivider + this.yRandSkipper) * MULTIPLIER;
+		this.yRandDivider = 0.2;
+		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
+		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
+		this.reentryOffsetX = map(frameCount, 0, maxFrames, this.reentryOffsetX, 0.001);
+		this.reentryOffsetY = map(frameCount, 0, maxFrames, this.reentryOffsetY, 0.001);
+		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
+		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
-		this.xRandSkipperOffset = map(frameCount, 0, maxFrames / 2, 10, 0, true);
-
-		this.yRandSkipperOffset = map(frameCount, 0, maxFrames / 2, 10, 0, true);
-
-		// Map color based on frame count - now using pre-calculated global indices
-		if (this.paletteMode === "once") {
-			this.colorIndex = globalColorIndices.onceCompleted ? 0 : globalColorIndices.once;
-		} else if (this.paletteMode === "yoyo") {
-			// Use pre-calculated values for cycle counts (1-4)
-			this.colorIndex = globalColorIndices.yoyoCycles[this.cycleCount];
-		} else {
-			this.colorIndex = globalColorIndices.default;
-		}
+		// Map frame progression to color index, inverted (last to first)
+		let maxColorIndex = this.palette.length - 1;
+		let mappedFrame = map(frameCount, 0, maxFrames / 1.1, maxColorIndex, 0, true);
+		this.colorIndex = Math.floor(mappedFrame);
 
 		this.currentColor = this.palette[this.colorIndex];
 
@@ -93,15 +103,15 @@ class Mover {
 				this.hasBeenOutside = true;
 			}
 			if (this.x < this.minBoundX) {
-				this.x = (this.xMax + this.wrapPaddingX * this.wrapPaddingMultiplier - this.reentryOffsetX) * width;
+				this.x = (this.xMax + this.wrapPaddingX * this.wrapPaddingMultiplier - random(0, this.reentryOffsetX)) * width;
 			} else if (this.x > this.maxBoundX) {
-				this.x = (this.xMin - this.wrapPaddingX * this.wrapPaddingMultiplier + this.reentryOffsetX) * width;
+				this.x = (this.xMin - this.wrapPaddingX * this.wrapPaddingMultiplier + random(0, this.reentryOffsetX)) * width;
 			}
 
 			if (this.y < this.minBoundY) {
-				this.y = (this.yMax + this.wrapPaddingY * this.wrapPaddingMultiplier - this.reentryOffsetY) * height;
+				this.y = (this.yMax + this.wrapPaddingY * this.wrapPaddingMultiplier - random(0, this.reentryOffsetY)) * height;
 			} else if (this.y > this.maxBoundY) {
-				this.y = (this.yMin - this.wrapPaddingY * this.wrapPaddingMultiplier + this.reentryOffsetY) * height;
+				this.y = (this.yMin - this.wrapPaddingY * this.wrapPaddingMultiplier + random(0, this.reentryOffsetY)) * height;
 			}
 		} else {
 			// Reset to initial position if not bordered
@@ -118,7 +128,7 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMin, xMax, yMax, rseed, nseed) {
+function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude1, amplitude2, xMin, yMin, xMax, yMax, rseed, nseed) {
 	let nx = x,
 		ny = y,
 		scale1 = scl1,
@@ -131,9 +141,11 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		noiseScale2 = 1,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
-		octave = 6,
-		a1 = 221,
-		a2 = 1221;
+		x_sine_scale = 1,
+		y_sine_scale = 1,
+		octave = 1,
+		a1 = amplitude1,
+		a2 = amplitude2;
 
 	dx = oct(nx, ny, scale1, 0, octave);
 	dy = oct(nx, ny, scale2, 2, octave);
@@ -150,12 +162,26 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	nx += dx * a1;
 	ny += dy * a2;
 
-	/* un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
-	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed); */
+	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
+	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);
+
+	//! sine x cos x oct
+
+	/* 	let time = millis() * 0.000000001; // Introduce a time variable for dynamic movement
+	let un =
+		sin(y * scl1 * scaleOffset1 + time) +
+		cos(y * scl2 * scaleOffset2 + time) +
+		sin(y * scl2 * 1.05 + time) +
+		oct(ny * scl1 * scaleOffset1 + time, nx * scl2 * scaleOffset2 + time, x_sine_scale, 2, octave);
+	let vn =
+		sin(x * scl1 * scaleOffset1 + time) +
+		cos(x * scl2 * scaleOffset2 + time) -
+		sin(x * scl2 * 1.05 + time) +
+		oct(nx * scl2 * scaleOffset2 + time, ny * scl1 * scaleOffset1 + time, y_sine_scale, 3, octave); */
 
 	//! noise x SineCos
-	un = noise(nx * (scale1 * scaleOffset1) + rseed) + noise(nx * (scale2 * scaleOffset2) + rseed) - noise(nx * (scale3 * scaleOffset3) + rseed);
-	vn = noise(cos(ny * (scale1 * scaleOffset1) + rseed)) + noise(ny * (scale2 * scaleOffset2) + rseed) - noise(ny * (scale3 * scaleOffset3) + rseed);
+	/* 	un = noise(nx * (scale1 * scaleOffset1) + rseed) + noise(nx * (scale2 * scaleOffset2) + rseed) - noise(nx * (scale3 * scaleOffset3) + rseed);
+	vn = noise(cos(ny * (scale1 * scaleOffset1) + rseed)) + noise(ny * (scale2 * scaleOffset2) + rseed) - noise(ny * (scale3 * scaleOffset3) + rseed); */
 
 	//! center focused introverted
 	/* let maxU = map(ny, xMin * width, xMax * width, 3, -3, true);
@@ -205,8 +231,12 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	let zu = ZZ(u, 50, 60, 0.0000015);
-	let zv = ZZ(v, 50, 60, 0.0000015);
+	// Apply ZZ symmetrically - preserve sign but apply transformation to absolute value
+	let zzu = map(ZZ(u, 35, 80, 0.08), -1, 1, minU, maxU, true);
+	let zzv = map(ZZ(v, 35, 80, 0.2), -1, 1, minV, maxV, true);
+
+	let zu = u < 0 ? -zzu : zzu;
+	let zv = v < 0 ? -zzv : zzv;
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
