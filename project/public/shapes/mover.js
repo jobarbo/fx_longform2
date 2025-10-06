@@ -19,12 +19,12 @@ class Mover {
 		this.sclOffset3 = sclOffset3;
 		this.rseed = rseed;
 		this.nseed = nseed;
-		this.xRandDivider = 0.45;
-		this.yRandDivider = 0.45;
+		this.xRandDivider = 0.01;
+		this.yRandDivider = 0.01;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
-		this.xRandSkipperOffset = 10.1;
-		this.yRandSkipperOffset = 10.1;
+		this.xRandSkipperOffset = 0.0;
+		this.yRandSkipperOffset = 0.0;
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
@@ -32,16 +32,14 @@ class Mover {
 		this.isBordered = isBordered;
 		this.hasBeenOutside = false;
 
-		// Palette animation properties
-		this.paletteMode = paletteMode; // 'once' or 'yoyo'
-		this.cycleCount = cycleCount; // Number of yo-yo cycles
-		this.paletteCompleted = false; // Track if one-time pass is completed
+		// Start from the last color (inverted progression)
+		this.colorIndex = this.palette.length - 1;
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.0001) / width;
-		this.wrapPaddingY = this.wrapPaddingX * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * random(0.005, 0.02)) / width;
-		this.reentryOffsetY = (min(width, height) * random(0.005, 0.02)) / height;
+		this.wrapPaddingX = (min(width, height) * 0.05) / width;
+		this.wrapPaddingY = ((min(width, height) * 0.05) / height) * ARTWORK_RATIO;
+		this.reentryOffsetX = (min(width, height) * 0.01) / width;
+		this.reentryOffsetY = (min(width, height) * 0.01) / height;
 		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
@@ -64,26 +62,17 @@ class Mover {
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.scl3, this.sclOffset1, this.sclOffset2, this.sclOffset3, this.xMin, this.yMin, this.xMax, this.yMax, this.rseed, this.nseed);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.9;
-		this.yRandDivider = 0.9;
-		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset);
-		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset);
-		this.x += (p.x / this.xRandDivider + this.xRandSkipper) * MULTIPLIER;
-		this.y += (p.y / this.yRandDivider + this.yRandSkipper) * MULTIPLIER;
+		this.xRandDivider = 0.4;
+		this.yRandDivider = 0.01;
+		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
+		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
+		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
+		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
-		this.xRandSkipperOffset = map(frameCount, 0, maxFrames / 2, 10, 0, true);
-
-		this.yRandSkipperOffset = map(frameCount, 0, maxFrames / 2, 10, 0, true);
-
-		// Map color based on frame count - now using pre-calculated global indices
-		if (this.paletteMode === "once") {
-			this.colorIndex = globalColorIndices.onceCompleted ? 0 : globalColorIndices.once;
-		} else if (this.paletteMode === "yoyo") {
-			// Use pre-calculated values for cycle counts (1-4)
-			this.colorIndex = globalColorIndices.yoyoCycles[this.cycleCount];
-		} else {
-			this.colorIndex = globalColorIndices.default;
-		}
+		// Map frame progression to color index, inverted (last to first)
+		let maxColorIndex = this.palette.length - 1;
+		let mappedFrame = map(frameCount, 0, maxFrames / 1.25, maxColorIndex, 0, true);
+		this.colorIndex = Math.floor(mappedFrame);
 
 		this.currentColor = this.palette[this.colorIndex];
 
@@ -131,7 +120,9 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 		noiseScale2 = 1,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
-		octave = 6,
+		x_sine_scale = 1,
+		y_sine_scale = 1,
+		octave = 1,
 		a1 = 221,
 		a2 = 1221;
 
@@ -153,6 +144,20 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	/* un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
 	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed); */
 
+	//! sine x cos x oct
+	/*
+	let time = millis() * 0.000000001; // Introduce a time variable for dynamic movement
+	let un =
+		sin(y * scl1 * scaleOffset1 + time) +
+		cos(y * scl2 * scaleOffset2 + time) +
+		sin(y * scl2 * 1.05 + time) +
+		oct(ny * scl1 * scaleOffset1 + time, nx * scl2 * scaleOffset2 + time, x_sine_scale, 2, octave);
+	let vn =
+		sin(x * scl1 * scaleOffset1 + time) +
+		cos(x * scl2 * scaleOffset2 + time) -
+		sin(x * scl2 * 1.05 + time) +
+		oct(nx * scl2 * scaleOffset2 + time, ny * scl1 * scaleOffset1 + time, y_sine_scale, 3, octave);
+	*/
 	//! noise x SineCos
 	un = noise(nx * (scale1 * scaleOffset1) + rseed) + noise(nx * (scale2 * scaleOffset2) + rseed) - noise(nx * (scale3 * scaleOffset3) + rseed);
 	vn = noise(cos(ny * (scale1 * scaleOffset1) + rseed)) + noise(ny * (scale2 * scaleOffset2) + rseed) - noise(ny * (scale3 * scaleOffset3) + rseed);
@@ -170,11 +175,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, xMin, yMi
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, octave), -1.000000015, 1.000000015, -2.3, 2.35, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, octave), -1.000000015, 1.000000015, -2.3, 2.35, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, octave), -1.000000015, 1.000000015, 2.3, -2.3, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -1.000000015, 1.000000015, 0.3, -12.3, true);
-
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset2) + rseed, noiseScale1, 1, octave), -0.005, 0.005, -11, 11, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset2) + rseed, nx * (scale1 * scaleOffset1) + rseed, noiseScale2, 2, octave), -0.005, 0.005, 0.25, 0.5, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset3) + rseed, ny * (scale1 * scaleOffset1) + rseed, noiseScale3, 0, octave), -0.005, 0.005, -11, 11, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset1) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.005, 0.005, 0.0, 0.25, true);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);

@@ -3,7 +3,7 @@ let movers = [];
 let startTime;
 let maxFrames = 35;
 let elapsedTime = 0;
-let particleNum = 150000;
+let particleNum = 500000;
 // Adjust cycle for smoother percentage updates (1% increments)
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
@@ -242,7 +242,7 @@ function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0) {
+			if (currentFrame > -1) {
 				mover.show(mainCanvas);
 			}
 		},
@@ -344,7 +344,7 @@ function INIT(rseed, nseed) {
 	let sclOffset3 = 2.75;
 
 	// Calculate padding based on the reference size and scale it
-	let paddingRatioX = 0.3; // 30% padding for X axis
+	let paddingRatioX = 0.1; // 30% padding for X axis
 	let paddingRatioY = paddingRatioX * ARTWORK_RATIO; // Y padding respects artwork ratio
 	let basePaddingX = DEFAULT_SIZE * paddingRatioX;
 	let basePaddingY = DEFAULT_SIZE * paddingRatioY;
