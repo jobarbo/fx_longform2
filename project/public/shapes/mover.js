@@ -38,11 +38,11 @@ class Mover {
 		this.colorIndex = this.palette.length - 1;
 
 		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.05) / width;
+		this.wrapPaddingX = (min(width, height) * 0.015) / width;
 		this.wrapPaddingY = ((min(width, height) * 0.015) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * random(0.05, 0.02)) / width;
-		this.reentryOffsetY = (min(width, height) * random(0.05, 0.02)) / height;
-		this.wrapPaddingMultiplier = 2; //! or 0.5
+		this.reentryOffsetX = (min(width, height) * random(0.015, 0.02)) / width;
+		this.reentryOffsetY = (min(width, height) * random(0.015, 0.02)) / height;
+		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -81,12 +81,12 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.9;
+		this.xRandDivider = 0.09;
 		this.yRandDivider = 0.02;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
-		this.reentryOffsetX = map(frameCount, 0, maxFrames, this.reentryOffsetX, 0.001);
-		this.reentryOffsetY = map(frameCount, 0, maxFrames, this.reentryOffsetY, 0.001);
+		this.reentryOffsetX = map(frameCount, 0, maxFrames / 1.01, this.reentryOffsetX, 0.00001);
+		this.reentryOffsetY = map(frameCount, 0, maxFrames / 1.01, this.reentryOffsetY, 0.00001);
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
@@ -138,7 +138,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
 		noiseScale1 = 1,
-		noiseScale2 = 1,
+		noiseScale2 = 2,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
 		x_sine_scale = 1,
@@ -199,7 +199,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, octave), -1.000000015, 1.000000015, -2.3, 2.35, true);
 	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, octave), -1.000000015, 1.000000015, -2.3, 2.35, true);
 	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, octave), -1.000000015, 1.000000015, 2.3, -2.3, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -1.000000015, 1.000000015, -0.3, 12.3, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -1.000000015, 1.000000015, -2.3, 2.3, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
@@ -232,11 +232,11 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 	// Apply ZZ symmetrically - preserve sign but apply transformation to absolute value
-	let zzu = map(ZZ(u, 35, 80, 0.08), -1, 1, minU, maxU, true);
-	let zzv = map(ZZ(v, 35, 80, 0.2), -1, 1, minV, maxV, true);
+	let zzu = map(ZZ(u, 70, 80, 0.8), -1, 1, minU, maxU, true);
+	let zzv = map(ZZ(v, 70, 80, 0.2), -1, 1, minV, maxV, true);
 
-	let zu = u < 0 ? -zzu : zzu;
-	let zv = v < 0 ? -zzv : zzv;
+	let zu = u < 0 ? u : zzu;
+	let zv = v < 0 ? v : zzv;
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
