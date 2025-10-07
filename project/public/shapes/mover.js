@@ -81,8 +81,8 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.09;
-		this.yRandDivider = 0.02;
+		this.xRandDivider = 0.2;
+		this.yRandDivider = 0.2;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.reentryOffsetX = map(frameCount, 0, maxFrames / 1.01, this.reentryOffsetX, 0.00001);
@@ -138,7 +138,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
 		noiseScale1 = 1,
-		noiseScale2 = 2,
+		noiseScale2 = 1,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
 		x_sine_scale = 1,
@@ -196,10 +196,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, octave), -1.000000015, 1.000000015, -2.3, 2.35, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, octave), -1.000000015, 1.000000015, -2.3, 2.35, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, octave), -1.000000015, 1.000000015, 2.3, -2.3, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -1.000000015, 1.000000015, -2.3, 2.3, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset3) + rseed, noiseScale1, 1, octave), -1.000000015, 1.000000015, -12.3, 12.35, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset1) + rseed, nx * (scale1 * scaleOffset2) + rseed, noiseScale2, 2, octave), -1.000000015, 1.000000015, -12.3, 12.35, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset1) + rseed, ny * (scale1 * scaleOffset3) + rseed, noiseScale3, 0, octave), -1.000000015, 1.000000015, 12.3, -12.3, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset2) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -1.000000015, 1.000000015, -12.3, 12.3, true);
 
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
@@ -221,8 +221,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	//! Introverted
 	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1230.00005, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 1230.00005), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1230.00005, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 1230.00005), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -0.00005, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 0.00005), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -0.00005, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 0.00005), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
