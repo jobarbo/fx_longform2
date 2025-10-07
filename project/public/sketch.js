@@ -242,7 +242,7 @@ function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0) {
+			if (currentFrame > -1) {
 				mover.show(mainCanvas);
 			}
 		},
@@ -339,9 +339,9 @@ function INIT(rseed, nseed) {
 	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.0021 / MULTIPLIER;
 
-	let sclOffset1 = 2.75;
-	let sclOffset2 = 2.75;
-	let sclOffset3 = 2.75;
+	let sclOffset1 = 1;
+	let sclOffset2 = 1;
+	let sclOffset3 = 1;
 
 	// Calculate padding based on the reference size and scale it
 	let paddingRatioX = 0.3; // 30% padding for X axis
@@ -389,7 +389,7 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, selectedPalette));
 	}
 
-	let bgCol = color(45, 0, 100);
+	let bgCol = color(30, 5, 100);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
