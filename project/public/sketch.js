@@ -40,7 +40,7 @@ let effectsConfig = {
 	deform: {
 		enabled: true,
 		amount: 0.1,
-		timeMultiplier: 31.1, // Normal speed
+		timeMultiplier: 1.1, // Normal speed
 		octave: 4.0,
 		noiseScale: 15.0,
 		uniforms: {
