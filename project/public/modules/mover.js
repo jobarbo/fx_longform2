@@ -8,13 +8,13 @@ class Mover {
 		this.noiseOffset = noiseOffset;
 		this.noiseStep = 0.01;
 		this.multiplier = multiplier;
-		this.scl1 = 0.00065;
-		this.scl2 = 0.00065;
-		this.amp1 = 3444;
-		this.amp2 = 3444;
+		this.scl1 = 0.00085;
+		this.scl2 = 0.00085;
+		this.amp1 = 1;
+		this.amp2 = 1;
 		this.noiseSpeed = 0.1;
 		this.octave = 1;
-		this.size = 3;
+		this.size = 1;
 		//console.log(this.scl1, this.scl2, this.ang1, this.ang2);
 	}
 
@@ -38,11 +38,10 @@ class Mover {
 		}
 	}
 
-	display() {
-		fill(0, 0, 100, 100);
-		stroke(0, 0, 0, 100);
-		strokeWeight(truncateNoiseCoord(1 * this.multiplier));
-		ellipse(this.x, this.y, this.size, this.size);
+	display(canvas) {
+		canvas.noFill();
+		canvas.noStroke();
+		canvas.ellipse(this.x, this.y, this.size, this.size);
 	}
 
 	// Get position for drawing lines between movers
@@ -79,7 +78,7 @@ class Mover {
 		let un = oct(nx, ny, scale1, 3, octave);
 		let vn = oct(nx, ny, scale2, 2, octave);
 
-		let rangeA = [10, 15, 20];
+		let rangeA = [2, 3, 5];
 		let rangeB = [1, 2, 3];
 
 		let aValue = rangeA[Math.floor(random() * rangeA.length)];

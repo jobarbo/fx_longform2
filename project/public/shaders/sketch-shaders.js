@@ -45,11 +45,13 @@ class ShaderEffects {
 				amount: 0.1,
 				timeMultiplier: 0.0,
 				octave: 4.0,
+				noiseScale: 15.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed",
 					uAmount: "amount",
 					uOctave: "octave",
+					uNoiseScale: "noiseScale",
 				},
 			},
 
@@ -76,7 +78,7 @@ class ShaderEffects {
 
 			chromatic: {
 				enabled: true,
-				amount: 0.0015,
+				amount: 0.0025,
 				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -87,7 +89,7 @@ class ShaderEffects {
 
 			grain: {
 				enabled: true,
-				amount: 0.1,
+				amount: 0.05,
 				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -97,8 +99,8 @@ class ShaderEffects {
 			},
 		};
 
-		// Cache for last enabled effects (to detect changes)
-		this.lastEnabledEffects = null;
+		// Performance: Flag to track if shader passes have been built
+		this.passesBuilt = false;
 	}
 
 	/**
@@ -167,6 +169,7 @@ class ShaderEffects {
 			...config,
 			uniforms: config.uniforms || {},
 		};
+		this.passesBuilt = false; // Mark for rebuild
 		return this;
 	}
 
@@ -178,6 +181,7 @@ class ShaderEffects {
 	setEffectEnabled(effectName, enabled) {
 		if (this.effectsConfig[effectName]) {
 			this.effectsConfig[effectName].enabled = enabled;
+			this.passesBuilt = false; // Mark for rebuild
 			this.reinitializePipeline();
 		}
 		return this;
@@ -203,6 +207,7 @@ class ShaderEffects {
 		if (this.shaderPipeline && this.shaderManager) {
 			const enabledEffects = Object.keys(this.effectsConfig).filter((name) => this.effectsConfig[name].enabled);
 			this.shaderPipeline.init(this.mainCanvas.width, this.mainCanvas.height, enabledEffects);
+			this.passesBuilt = false; // Mark for rebuild
 		}
 		return this;
 	}
@@ -304,10 +309,8 @@ class ShaderEffects {
 			this.p5Instance.clear();
 		}
 
-		// Build effect passes dynamically (only rebuild if effects changed)
-		const currentEnabledEffects = Object.keys(this.effectsConfig).filter((name) => this.effectsConfig[name].enabled);
-
-		if (JSON.stringify(this.lastEnabledEffects) !== JSON.stringify(currentEnabledEffects)) {
+		// Build effect passes only once (or when passesBuilt flag is reset)
+		if (!this.passesBuilt) {
 			this.shaderPipeline.clearPasses();
 
 			// Iterate through effectsConfig to build passes
@@ -325,7 +328,7 @@ class ShaderEffects {
 				}
 			}
 
-			this.lastEnabledEffects = [...currentEnabledEffects];
+			this.passesBuilt = true;
 		}
 
 		// Run pipeline from mainCanvas to the shader canvas
@@ -444,15 +447,13 @@ class ShaderEffects {
 				this.updateTime(0.01);
 				this.apply();
 
-				// Add delay to match p5.js draw speed
-				setTimeout(() => {
-					continueCallback();
-				}, 1000 / this.getFrameRate());
+				// Continue using requestAnimationFrame
+				return true;
 			} else {
 				// Stop everything when sketch is complete
 				console.log("Sketch complete - shaders stopped");
+				return false;
 			}
-			return false; // Don't continue immediately
 		}
 
 		// Update shader time during sketching
