@@ -2,6 +2,8 @@
 
 A modular, plug-and-play shader effects system for p5.js projects. This system keeps your `sketch.js` clean and focused on the sketch logic while managing all shader-related code separately.
 
+**Note:** Shaders are now **optional**! The sketch will work fine with or without `sketch-shaders.js` loaded. If you don't include the shader script, your sketch will render without shader effects.
+
 ## Quick Start
 
 ### 1. Copy Required Files
@@ -148,6 +150,21 @@ Copy mainCanvas to shaderCanvas without effects (useful for debugging).
 
 Update shader animation time. Call in your animation loop.
 
+#### `shaderEffects.renderFrame(isSketchComplete, continueCallback)`
+
+Handle shader rendering for each animation frame (advanced usage). This encapsulates all shader logic for the frame, including:
+
+- Applying shaders when sketch is complete
+- Continuing animation after completion
+- Time updates and frame rate throttling
+
+**Parameters:**
+
+- `isSketchComplete` (boolean): Whether the sketch animation is done
+- `continueCallback` (function): Callback to continue the animation loop
+
+**Returns:** (boolean) Whether to continue the animation loop immediately
+
 ### Configuration Methods
 
 #### `shaderEffects.addEffect(effectName, config)`
@@ -225,6 +242,32 @@ console.log(shaders); // ["copy", "deform", "chromatic", "grain"]
 
 ## Animation Patterns
 
+### Using renderFrame() (Recommended for Complex Animations)
+
+For animations with custom generators or complex completion logic:
+
+```javascript
+let generator;
+
+function setup() {
+	// ... setup code ...
+
+	generator = createAnimationGenerator(config);
+	customDraw();
+}
+
+function customDraw() {
+	const result = generator.next();
+
+	// Let shaderEffects handle all shader logic
+	const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
+
+	if (shouldContinue) {
+		requestAnimationFrame(customDraw);
+	}
+}
+```
+
 ### Static Effects (Apply Once)
 
 ```javascript
@@ -292,6 +335,21 @@ The shader effects are applied in the order they appear in `effectsConfig`:
 
 Only enabled effects are included in the pipeline.
 
+## Using Without Shaders
+
+You can use the sketch **without shaders** entirely! Just remove the shader script from your HTML:
+
+```html
+<!-- Comment out or remove this line -->
+<!-- <script src="./shaders/sketch-shaders.js"></script> -->
+```
+
+The sketch will automatically detect that shaders are not available and render the artwork directly to the canvas without any post-processing effects. This is great for:
+
+- Testing performance without shader overhead
+- Creating simpler sketches that don't need effects
+- Debugging your base artwork
+
 ## Tips
 
 1. **Keep sketch-specific config in sketch-shaders.js**: Don't modify the utility files (`shaderManager.js`, `shaderPipeline.js`) - they're reusable across projects.
@@ -302,7 +360,7 @@ Only enabled effects are included in the pipeline.
 
 4. **Time sync**: Use `setFrameRate()` to match your p5.js frameRate for smooth animations.
 
-5. **Debugging**: Use `applyCopy()` to bypass shaders and see the raw canvas output.
+5. **Debugging**: Use `applyCopy()` to bypass shaders and see the raw canvas output, or remove the shader script entirely.
 
 ## Example: Minimal Setup
 

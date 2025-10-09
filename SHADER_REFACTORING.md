@@ -41,9 +41,9 @@ project/public/
 - ✅ Simple comment: "Shader effects are now managed by shaderEffects module"
 - ✅ `shaderEffects.preload(this)` in preload()
 - ✅ `shaderEffects.setup(width, height, mainCanvas, shaderCanvas)` in setup()
-- ✅ `shaderEffects.apply()` in animation loop
-- ✅ `shaderEffects.updateTime(0.01)` in animation loop
-- ✅ Other simple method calls replacing old functions
+- ✅ `customDraw()` function - clean animation loop outside setup (was `customAnimate` inside setup)
+- ✅ `shaderEffects.renderFrame()` - encapsulates all shader rendering logic
+- ✅ Cleaner separation: sketch animation logic + shader rendering delegation
 
 ## How to Use in Other Projects
 
@@ -71,6 +71,7 @@ project/public/
 
    ```javascript
    let mainCanvas, shaderCanvas;
+   let generator; // Your animation generator
 
    function preload() {
    	shaderEffects.preload(this);
@@ -80,16 +81,22 @@ project/public/
    	mainCanvas = createGraphics(width, height);
    	shaderCanvas = createCanvas(width, height, WEBGL);
    	shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
+   	
+   	// Create your animation generator
+   	generator = createAnimationGenerator(config);
+   	customDraw();
    }
 
-   function draw() {
-   	// Draw to mainCanvas
-   	mainCanvas.background(220);
-   	// ... your drawing code ...
-
-   	// Apply shaders
-   	shaderEffects.updateTime(0.01);
-   	shaderEffects.apply();
+   // Clean animation loop outside setup
+   function customDraw() {
+   	const result = generator.next();
+   	
+   	// Delegate shader rendering to shaderEffects
+   	const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
+   	
+   	if (shouldContinue) {
+   		requestAnimationFrame(customDraw);
+   	}
    }
    ```
 
@@ -141,6 +148,7 @@ shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
 shaderEffects.apply();
 shaderEffects.applyCopy();
 shaderEffects.updateTime(delta);
+shaderEffects.renderFrame(isComplete, callback); // Encapsulates shader rendering logic
 
 // Utilities
 shaderEffects.loadShader(name, fragPath, vertPath);

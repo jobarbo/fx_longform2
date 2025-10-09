@@ -425,6 +425,49 @@ class ShaderEffects {
 	getFrameRate() {
 		return this.shaderFrameRate;
 	}
+
+	/**
+	 * Render frame - handles shader logic for each animation frame
+	 * @param {boolean} isSketchComplete - Whether the sketch animation is complete
+	 * @param {Function} continueCallback - Callback to continue animation loop
+	 * @returns {boolean} Whether to continue the animation loop
+	 */
+	renderFrame(isSketchComplete, continueCallback) {
+		if (isSketchComplete) {
+			// Always apply shaders at least once when sketch is complete
+			if (!this.shouldApplyDuringSketch()) {
+				this.apply();
+			}
+
+			if (this.shouldContinueAfterCompletion()) {
+				// Keep shaders running even after particles are complete
+				this.updateTime(0.01);
+				this.apply();
+
+				// Add delay to match p5.js draw speed
+				setTimeout(() => {
+					continueCallback();
+				}, 1000 / this.getFrameRate());
+			} else {
+				// Stop everything when sketch is complete
+				console.log("Sketch complete - shaders stopped");
+			}
+			return false; // Don't continue immediately
+		}
+
+		// Update shader time during sketching
+		this.updateTime(0.01);
+
+		// Only apply shaders during sketching if enabled
+		if (this.shouldApplyDuringSketch()) {
+			this.apply();
+		} else {
+			// If not applying shaders during sketching, use copy shader to display base sketch
+			this.applyCopy();
+		}
+
+		return true; // Continue animation
+	}
 }
 
 // Create a global instance for easy access

@@ -7,6 +7,7 @@ let particleNum = 500000;
 // Adjust cycle for smoother percentage updates (1% increments)
 let cycle = parseInt((maxFrames * particleNum) / 1150);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
+let generator; // Animation generator instance
 
 // Swatch palette system
 let swatchPalette;
@@ -122,8 +123,10 @@ let MULTIPLIER;
 let pixel_density;
 
 function preload() {
-	// Initialize shader effects (will load all shaders)
-	shaderEffects.preload(this);
+	// Initialize shader effects (will load all shaders) - optional
+	if (typeof shaderEffects !== "undefined") {
+		shaderEffects.preload(this);
+	}
 
 	// Initialize swatch palette system
 	swatchPalette = new SwatchPalette();
@@ -163,15 +166,22 @@ async function setup() {
 
 	// Create main canvas for the artwork (will also handle debug overlays)
 	mainCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
-	// Create shader canvas for the WEBGL renderer
-	shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
 
-	// Initialize shader effects system
-	shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
+	// Create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
+	if (typeof shaderEffects !== "undefined") {
+		shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
+		// Initialize shader effects system
+		shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
+		// Set up shader canvas pixel density
+		shaderCanvas.pixelDensity(pixel_density);
+	} else {
+		// No shaders - create regular canvas for display
+		createCanvas(DIM, DIM * ARTWORK_RATIO);
+		pixelDensity(pixel_density);
+	}
 
-	// Set up the rendering properties
+	// Set up the main canvas rendering properties
 	mainCanvas.pixelDensity(pixel_density);
-	shaderCanvas.pixelDensity(pixel_density);
 
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
@@ -218,7 +228,9 @@ async function setup() {
 		},
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
-			shaderEffects.setParticleAnimationComplete(true);
+			if (typeof shaderEffects !== "undefined") {
+				shaderEffects.setParticleAnimationComplete(true);
+			}
 			$fx.preview();
 			document.complete = true;
 
@@ -230,71 +242,49 @@ async function setup() {
 	};
 
 	// Create and start the animation
-	const generator = createAnimationGenerator(animConfig);
+	generator = createAnimationGenerator(animConfig);
 
 	// Create download button immediately (will only show if not in iframe)
 	if (typeof createDownloadButton === "function") {
 		createDownloadButton();
 	}
 
-	// Custom animation loop that handles shaders properly
-	function customAnimate() {
-		const result = generator.next();
-
-		// If particle animation is done, check if we should continue shaders
-		if (result.done) {
-			// Always apply shaders at least once when sketch is complete
-			if (!shaderEffects.shouldApplyDuringSketch()) {
-				shaderEffects.apply();
-			}
-
-			if (shaderEffects.shouldContinueAfterCompletion()) {
-				// Keep shaders running even after particles are complete
-				// Match p5.js draw speed for consistent timing
-				shaderEffects.updateTime(0.01);
-				shaderEffects.apply();
-
-				// Add delay to match p5.js draw speed
-				// This prevents shaders from running faster than the original draw function
-				setTimeout(() => {
-					requestAnimationFrame(customAnimate);
-				}, 1000 / shaderEffects.getFrameRate()); // Configurable frame rate to match p5.js
-			} else {
-				// Stop everything when sketch is complete
-				console.log("Sketch complete - shaders stopped");
-			}
-			return;
-		}
-
-		// Update shader time during sketching
-		shaderEffects.updateTime(0.01);
-
-		// Only apply shaders during sketching if enabled
-		if (shaderEffects.shouldApplyDuringSketch()) {
-			shaderEffects.apply();
-		} else {
-			// Draw debug overlays on mainCanvas before copying to visible canvas
-			if (debugBounds) {
-				// Debug overlays are now handled by CSS overlay - remove canvas drawing
-			}
-			// If not applying shaders during sketching, use copy shader to display base sketch
-			shaderEffects.applyCopy();
-		}
-
-		// Continue animation
-		requestAnimationFrame(customAnimate);
-	}
-
-	// Start the custom animation loop
-	customAnimate();
+	// Start the custom draw loop
+	customDraw();
 
 	// Initialize debug overlay after setup is complete
 	updateDebugOverlay();
 
 	// Log available controls and performance settings
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
-	console.log(`Shader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
-	console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
+	if (typeof shaderEffects !== "undefined") {
+		console.log(`Shader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
+		console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
+	}
+}
+
+// Custom draw loop - advances sketch animation and applies shader effects
+function customDraw() {
+	const result = generator.next();
+
+	// Render shader effects for this frame (if shaders are enabled)
+	if (typeof shaderEffects !== "undefined") {
+		const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
+
+		// Continue animation if not complete
+		if (shouldContinue) {
+			requestAnimationFrame(customDraw);
+		}
+	} else {
+		// No shaders - just copy mainCanvas to main display canvas
+		clear();
+		image(mainCanvas, 0, 0);
+
+		// Continue animation if not complete
+		if (!result.done) {
+			requestAnimationFrame(customDraw);
+		}
+	}
 }
 
 function INIT(rseed, nseed) {
