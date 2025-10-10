@@ -77,7 +77,7 @@ class ShaderEffects {
 			},
 
 			chromatic: {
-				enabled: false,
+				enabled: true,
 				amount: 0.015,
 				timeMultiplier: 0.02,
 				uniforms: {
@@ -88,7 +88,7 @@ class ShaderEffects {
 			},
 
 			grain: {
-				enabled: true,
+				enabled: false,
 				amount: 0.05,
 				timeMultiplier: 0.0,
 				uniforms: {
@@ -103,6 +103,7 @@ class ShaderEffects {
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.3,
 				sortAmount: 0.8,
+				sampleCount: 32.0, // Number of samples (8-64, higher = better quality but slower)
 				timeMultiplier: 1.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -110,7 +111,21 @@ class ShaderEffects {
 					uAngle: "angle",
 					uThreshold: "threshold",
 					uSortAmount: "sortAmount",
+					uSampleCount: "sampleCount",
 					uResolution: "[width, height]",
+				},
+			},
+
+			pixelChecker: {
+				enabled: true,
+				darkness: 0.2, // 0.0 = no effect, 1.0 = maximum darkening
+				brightness: 0.0, // 0.0 = no effect, higher = brighter
+				cellSize: 1.0, // Size of each cell in pixels (1.0 = 1 pixel, 2.0 = 2x2, etc.)
+				uniforms: {
+					uResolution: "[width, height]",
+					uDarkness: "darkness",
+					uBrightness: "brightness",
+					uCellSize: "cellSize",
 				},
 			},
 		};
@@ -140,6 +155,7 @@ class ShaderEffects {
 		shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert");
 		shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
 		shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert");
+		shaderManager.loadShader("pixelChecker", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
 
 		this.shaderManager = shaderManager;
 

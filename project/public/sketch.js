@@ -61,7 +61,7 @@ function setup() {
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.angleMode(DEGREES);
-	mainCanvas.background(50, 10, 10);
+	mainCanvas.background(50, 10, 0);
 
 	// Set global color mode
 	colorMode(HSB, 360, 100, 100, 100);
