@@ -43,12 +43,14 @@ let effectsConfig = {
 		timeMultiplier: 1.1, // Normal speed
 		octave: 4.0,
 		noiseScale: 15.0,
+		emberMode: true,
 		uniforms: {
 			uTime: "shaderTime * timeMultiplier",
 			uSeed: "shaderSeed",
 			uAmount: "amount",
 			uOctave: "octave",
 			uNoiseScale: "noiseScale",
+			uEmberMode: "emberMode",
 		},
 	},
 
