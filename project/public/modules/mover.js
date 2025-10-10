@@ -8,8 +8,8 @@ class Mover {
 		this.noiseOffset = noiseOffset;
 		this.noiseStep = 0.01;
 		this.multiplier = multiplier;
-		this.scl1 = 0.00085;
-		this.scl2 = 0.00085;
+		this.scl1 = 0.00185;
+		this.scl2 = 0.00185;
 		this.amp1 = 1;
 		this.amp2 = 1;
 		this.noiseSpeed = 0.1;

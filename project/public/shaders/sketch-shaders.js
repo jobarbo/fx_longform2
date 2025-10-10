@@ -20,7 +20,7 @@
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
-		this.continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
+		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
 		this.applyShadersDuringSketch = false; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Frame rate for shader animation
 
@@ -78,8 +78,8 @@ class ShaderEffects {
 
 			chromatic: {
 				enabled: true,
-				amount: 0.0025,
-				timeMultiplier: 0.0,
+				amount: 0.015,
+				timeMultiplier: 1.2,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 777.0",

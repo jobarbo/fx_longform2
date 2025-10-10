@@ -26,7 +26,7 @@ let executionTimer = new ExecutionTimer();
 let pixel_density = 2;
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects (if shaders enabled)
-let cycle = parseInt((maxFrames * numMovers) / 150); // Number of operations before updating display (lower = more updates = slower, higher = fewer updates = faster)
+let cycle = parseInt((maxFrames * numMovers) / 50); // Number of operations before updating display (lower = more updates = slower, higher = fewer updates = faster)
 function preload() {
 	// Initialize shader effects (optional - will work without it)
 	if (typeof shaderEffects !== "undefined") {
@@ -76,8 +76,8 @@ function setup() {
 
 	// Create movers using fixed coordinate system
 	for (let i = 0; i < numMovers; i++) {
-		const x = random(BASE_WIDTH) - BASE_WIDTH * 0.5;
-		const y = random(BASE_HEIGHT) - BASE_HEIGHT * 0.5;
+		const x = random(BASE_WIDTH * 1.1) - BASE_WIDTH * 1.1 * 0.5;
+		const y = random(BASE_HEIGHT * 1.1) - BASE_HEIGHT * 1.1 * 0.5;
 		movers.push(new Mover(x, y, random(1000), MULTIPLIER));
 	}
 
