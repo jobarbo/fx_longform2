@@ -79,7 +79,7 @@ class ShaderEffects {
 			chromatic: {
 				enabled: true,
 				amount: 0.015,
-				timeMultiplier: 1.2,
+				timeMultiplier: 0.02,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 777.0",
@@ -95,6 +95,22 @@ class ShaderEffects {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 345.0",
 					uAmount: "amount",
+				},
+			},
+
+			pixelSort: {
+				enabled: true,
+				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
+				threshold: 0.3,
+				sortAmount: 0.8,
+				timeMultiplier: 1.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 999.0",
+					uAngle: "angle",
+					uThreshold: "threshold",
+					uSortAmount: "sortAmount",
+					uResolution: "[width, height]",
 				},
 			},
 		};
@@ -123,6 +139,7 @@ class ShaderEffects {
 		shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag", "chromatic-aberration/vertex.vert");
 		shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert");
 		shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
+		shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
