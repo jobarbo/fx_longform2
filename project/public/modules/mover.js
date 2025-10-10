@@ -12,7 +12,7 @@ class Mover {
 		this.scl2 = 0.00185;
 		this.amp1 = 1;
 		this.amp2 = 1;
-		this.noiseSpeed = 0.1;
+		this.noiseSpeed = 0.00000001;
 		this.octave = 1;
 		this.size = 1;
 		//console.log(this.scl1, this.scl2, this.ang1, this.ang2);

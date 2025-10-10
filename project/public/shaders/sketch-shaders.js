@@ -78,7 +78,7 @@ class ShaderEffects {
 
 			chromatic: {
 				enabled: true,
-				amount: 0.015,
+				amount: 0.005,
 				timeMultiplier: 0.02,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -118,11 +118,13 @@ class ShaderEffects {
 
 			pixelChecker: {
 				enabled: true,
-				darkness: 0.2, // 0.0 = no effect, 1.0 = maximum darkening
+				crtMode: true, // true = CRT mode (RGB stripes), false = Checkerboard mode
+				darkness: 0.2, // 0.0 = no effect, 1.0 = strong effect
 				brightness: 0.0, // 0.0 = no effect, higher = brighter
-				cellSize: 1.0, // Size of each cell in pixels (1.0 = 1 pixel, 2.0 = 2x2, etc.)
+				cellSize: 3.0, // CRT: 3-6 for visible effect, Checker: 1.0 for 1px, 2.0 for 2x2
 				uniforms: {
 					uResolution: "[width, height]",
+					uCrtMode: "crtMode",
 					uDarkness: "darkness",
 					uBrightness: "brightness",
 					uCellSize: "cellSize",
