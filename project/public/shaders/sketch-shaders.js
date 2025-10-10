@@ -77,7 +77,7 @@ class ShaderEffects {
 			},
 
 			chromatic: {
-				enabled: true,
+				enabled: false,
 				amount: 0.015,
 				timeMultiplier: 0.02,
 				uniforms: {
