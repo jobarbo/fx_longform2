@@ -18,15 +18,15 @@ let MULTIPLIER;
 
 // Animation control
 let movers = [];
-let numMovers = 400;
-let maxFrames = 200; // Total frames to animate
+let numMovers = 1400;
+let maxFrames = 40; // Total frames to animate
 let generator; // Animation generator instance
 let executionTimer = new ExecutionTimer();
 // Canvas references
 let pixel_density = 2;
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects (if shaders enabled)
-let cycle = parseInt((maxFrames * numMovers) / 50); // Number of operations before updating display (lower = more updates = slower, higher = fewer updates = faster)
+let cycle = parseInt((maxFrames * numMovers) / 55); // Number of operations before updating display (lower = more updates = slower, higher = fewer updates = faster)
 function preload() {
 	// Initialize shader effects (optional - will work without it)
 	if (typeof shaderEffects !== "undefined") {
