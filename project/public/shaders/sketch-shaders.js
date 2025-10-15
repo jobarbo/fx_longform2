@@ -21,7 +21,7 @@ class ShaderEffects {
 	constructor() {
 		// Shader animation control
 		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
-		this.applyShadersDuringSketch = false; // Set to true to apply shaders while sketching
+		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Frame rate for shader animation
 
 		// Animation state
@@ -86,7 +86,7 @@ class ShaderEffects {
 			},
 
 			grain: {
-				enabled: true,
+				enabled: false,
 				amount: 0.1,
 				timeMultiplier: 0.0,
 				uniforms: {
@@ -102,6 +102,7 @@ class ShaderEffects {
 				threshold: 0.3,
 				sortAmount: 0.8,
 				sampleCount: 32.0, // Number of samples (8-64, higher = better quality but slower)
+				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
 				timeMultiplier: 1.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -110,6 +111,7 @@ class ShaderEffects {
 					uThreshold: "threshold",
 					uSortAmount: "sortAmount",
 					uSampleCount: "sampleCount",
+					uInvert: "invert",
 					uResolution: "[width, height]",
 				},
 			},
@@ -479,15 +481,13 @@ class ShaderEffects {
 				this.updateTime(0.01);
 				this.apply();
 
-				// Add delay to match p5.js draw speed
-				setTimeout(() => {
-					continueCallback();
-				}, 1000 / this.getFrameRate());
+				// Continue using requestAnimationFrame
+				return true;
 			} else {
 				// Stop everything when sketch is complete
 				console.log("Sketch complete - shaders stopped");
+				return false;
 			}
-			return false; // Don't continue immediately
 		}
 
 		// Update shader time during sketching
