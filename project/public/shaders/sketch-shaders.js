@@ -20,7 +20,7 @@
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
-		this.continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
+		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
 		this.applyShadersDuringSketch = false; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Frame rate for shader animation
 
@@ -95,6 +95,39 @@ class ShaderEffects {
 					uAmount: "amount",
 				},
 			},
+
+			pixelSort: {
+				enabled: true,
+				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
+				threshold: 0.3,
+				sortAmount: 0.8,
+				sampleCount: 32.0, // Number of samples (8-64, higher = better quality but slower)
+				timeMultiplier: 1.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 999.0",
+					uAngle: "angle",
+					uThreshold: "threshold",
+					uSortAmount: "sortAmount",
+					uSampleCount: "sampleCount",
+					uResolution: "[width, height]",
+				},
+			},
+
+			pixelChecker: {
+				enabled: true,
+				crtMode: true, // true = CRT mode (RGB stripes), false = Checkerboard mode
+				darkness: 0.2, // 0.0 = no effect, 1.0 = strong effect
+				brightness: 0.0, // 0.0 = no effect, higher = brighter
+				cellSize: 3.0, // CRT: 3-6 for visible effect, Checker: 1.0 for 1px, 2.0 for 2x2
+				uniforms: {
+					uResolution: "[width, height]",
+					uCrtMode: "crtMode",
+					uDarkness: "darkness",
+					uBrightness: "brightness",
+					uCellSize: "cellSize",
+				},
+			},
 		};
 
 		// Cache for last enabled effects (to detect changes)
@@ -121,6 +154,8 @@ class ShaderEffects {
 		shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag", "chromatic-aberration/vertex.vert");
 		shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert");
 		shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
+		shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert");
+		shaderManager.loadShader("pixelChecker", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
