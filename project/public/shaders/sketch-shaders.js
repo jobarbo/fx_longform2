@@ -75,7 +75,7 @@ class ShaderEffects {
 			},
 
 			chromatic: {
-				enabled: false,
+				enabled: true,
 				amount: 0.0025,
 				timeMultiplier: 0.0,
 				uniforms: {
@@ -119,7 +119,7 @@ class ShaderEffects {
 			},
 
 			crtDisplay: {
-				enabled: true,
+				enabled: false,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
