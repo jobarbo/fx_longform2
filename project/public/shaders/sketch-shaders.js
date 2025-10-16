@@ -103,6 +103,7 @@ class ShaderEffects {
 				sortAmount: 0.8,
 				sampleCount: 32.0, // Number of samples (8-64, higher = better quality but slower)
 				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
+				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
 				timeMultiplier: 1.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -112,12 +113,13 @@ class ShaderEffects {
 					uSortAmount: "sortAmount",
 					uSampleCount: "sampleCount",
 					uInvert: "invert",
+					uSortMode: "sortMode",
 					uResolution: "[width, height]",
 				},
 			},
 
 			crtDisplay: {
-				enabled: false,
+				enabled: true,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
