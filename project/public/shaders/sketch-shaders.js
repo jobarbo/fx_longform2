@@ -75,8 +75,8 @@ class ShaderEffects {
 			},
 
 			chromatic: {
-				enabled: true,
-				amount: 0.0015,
+				enabled: false,
+				amount: 0.0025,
 				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -116,18 +116,22 @@ class ShaderEffects {
 				},
 			},
 
-			pixelChecker: {
-				enabled: true,
-				crtMode: true, // true = CRT mode (RGB stripes), false = Checkerboard mode
-				darkness: 0.2, // 0.0 = no effect, 1.0 = strong effect
-				brightness: 0.0, // 0.0 = no effect, higher = brighter
-				cellSize: 3.0, // CRT: 3-6 for visible effect, Checker: 1.0 for 1px, 2.0 for 2x2
+			crtDisplay: {
+				enabled: false,
+				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
+				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
+				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
+				rgbOpacity: 0.5, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
+				dotRadius: 0.5, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
+				dotFalloff: 0.99, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
 				uniforms: {
 					uResolution: "[width, height]",
-					uCrtMode: "crtMode",
-					uDarkness: "darkness",
 					uBrightness: "brightness",
 					uCellSize: "cellSize",
+					uGapOpacity: "gapOpacity",
+					uRgbOpacity: "rgbOpacity",
+					uDotRadius: "dotRadius",
+					uDotFalloff: "dotFalloff",
 				},
 			},
 		};
@@ -157,7 +161,7 @@ class ShaderEffects {
 		shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert");
 		shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
 		shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert");
-		shaderManager.loadShader("pixelChecker", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
+		shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
