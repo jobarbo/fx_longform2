@@ -199,8 +199,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.0;
-	let scaleFactorY = 1.0;
+	let scaleFactorX = 1.25;
+	let scaleFactorY = 1.25;
 
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
@@ -218,7 +218,7 @@ async function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0) {
+			if (currentFrame > -1) {
 				mover.show(mainCanvas);
 			}
 		},

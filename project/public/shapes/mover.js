@@ -37,9 +37,9 @@ class Mover {
 		// Start from the last color (inverted progression)
 		this.colorIndex = this.palette.length - 1;
 
-		// Pre-calculate padding values
-		this.wrapPaddingX = (min(width, height) * 0.05) / width;
-		this.wrapPaddingY = ((min(width, height) * 0.05) / height) * ARTWORK_RATIO;
+		// Pre-calculate padding valuesd
+		this.wrapPaddingX = -(min(width, height) * 0.000001) / width;
+		this.wrapPaddingY = -((min(width, height) * 0.000001) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * 0.01) / width;
 		this.reentryOffsetY = (min(width, height) * 0.01) / height;
 		this.wrapPaddingMultiplier = 1; //! or 0.5
