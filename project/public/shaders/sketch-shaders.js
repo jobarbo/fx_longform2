@@ -45,13 +45,11 @@ class ShaderEffects {
 				amount: 0.1,
 				timeMultiplier: 0.0,
 				octave: 4.0,
-				noiseScale: 15.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed",
 					uAmount: "amount",
 					uOctave: "octave",
-					uNoiseScale: "noiseScale",
 				},
 			},
 
@@ -78,8 +76,8 @@ class ShaderEffects {
 
 			chromatic: {
 				enabled: true,
-				amount: 0.005,
-				timeMultiplier: 0.02,
+				amount: 0.0025,
+				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 777.0",
@@ -89,7 +87,7 @@ class ShaderEffects {
 
 			grain: {
 				enabled: false,
-				amount: 0.05,
+				amount: 0.1,
 				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -104,6 +102,8 @@ class ShaderEffects {
 				threshold: 0.3,
 				sortAmount: 0.8,
 				sampleCount: 32.0, // Number of samples (8-64, higher = better quality but slower)
+				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
+				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
 				timeMultiplier: 1.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -112,28 +112,36 @@ class ShaderEffects {
 					uThreshold: "threshold",
 					uSortAmount: "sortAmount",
 					uSampleCount: "sampleCount",
+					uInvert: "invert",
+					uSortMode: "sortMode",
 					uResolution: "[width, height]",
 				},
 			},
 
-			pixelChecker: {
+			crtDisplay: {
 				enabled: true,
-				crtMode: true, // true = CRT mode (RGB stripes), false = Checkerboard mode
-				darkness: 0.2, // 0.0 = no effect, 1.0 = strong effect
-				brightness: 0.0, // 0.0 = no effect, higher = brighter
-				cellSize: 3.0, // CRT: 3-6 for visible effect, Checker: 1.0 for 1px, 2.0 for 2x2
+				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
+				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
+				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
+				rgbOpacity: 0.5, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
+				dotRadius: 0.5, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
+				dotFalloff: 0.99, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
+				filterMode: 1.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
 				uniforms: {
 					uResolution: "[width, height]",
-					uCrtMode: "crtMode",
-					uDarkness: "darkness",
 					uBrightness: "brightness",
 					uCellSize: "cellSize",
+					uGapOpacity: "gapOpacity",
+					uRgbOpacity: "rgbOpacity",
+					uDotRadius: "dotRadius",
+					uDotFalloff: "dotFalloff",
+					uFilterMode: "filterMode",
 				},
 			},
 		};
 
-		// Performance: Flag to track if shader passes have been built
-		this.passesBuilt = false;
+		// Cache for last enabled effects (to detect changes)
+		this.lastEnabledEffects = null;
 	}
 
 	/**
@@ -157,7 +165,7 @@ class ShaderEffects {
 		shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert");
 		shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
 		shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert");
-		shaderManager.loadShader("pixelChecker", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
+		shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
@@ -204,7 +212,6 @@ class ShaderEffects {
 			...config,
 			uniforms: config.uniforms || {},
 		};
-		this.passesBuilt = false; // Mark for rebuild
 		return this;
 	}
 
@@ -216,7 +223,6 @@ class ShaderEffects {
 	setEffectEnabled(effectName, enabled) {
 		if (this.effectsConfig[effectName]) {
 			this.effectsConfig[effectName].enabled = enabled;
-			this.passesBuilt = false; // Mark for rebuild
 			this.reinitializePipeline();
 		}
 		return this;
@@ -242,7 +248,6 @@ class ShaderEffects {
 		if (this.shaderPipeline && this.shaderManager) {
 			const enabledEffects = Object.keys(this.effectsConfig).filter((name) => this.effectsConfig[name].enabled);
 			this.shaderPipeline.init(this.mainCanvas.width, this.mainCanvas.height, enabledEffects);
-			this.passesBuilt = false; // Mark for rebuild
 		}
 		return this;
 	}
@@ -344,8 +349,10 @@ class ShaderEffects {
 			this.p5Instance.clear();
 		}
 
-		// Build effect passes only once (or when passesBuilt flag is reset)
-		if (!this.passesBuilt) {
+		// Build effect passes dynamically (only rebuild if effects changed)
+		const currentEnabledEffects = Object.keys(this.effectsConfig).filter((name) => this.effectsConfig[name].enabled);
+
+		if (JSON.stringify(this.lastEnabledEffects) !== JSON.stringify(currentEnabledEffects)) {
 			this.shaderPipeline.clearPasses();
 
 			// Iterate through effectsConfig to build passes
@@ -363,7 +370,7 @@ class ShaderEffects {
 				}
 			}
 
-			this.passesBuilt = true;
+			this.lastEnabledEffects = [...currentEnabledEffects];
 		}
 
 		// Run pipeline from mainCanvas to the shader canvas
