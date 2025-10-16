@@ -32,6 +32,10 @@ function preload() {
 	if (typeof shaderEffects !== "undefined") {
 		shaderEffects.preload(this);
 	}
+
+	// Enable audio reactivity with MIDI chime for easy testing
+	// Change 'chime' to 'microphone' to use live audio input instead
+	// userStartAudio(); // Uncomment if needed for audio context
 }
 
 function setup() {
@@ -140,6 +144,36 @@ function setup() {
 	// Create and start the animation
 	generator = createAnimationGenerator(animConfig);
 
+	// Enable audio reactivity with MIDI chime
+	if (typeof shaderEffects !== "undefined") {
+		shaderEffects.enableAudio("chime", {
+			smoothing: 0.85,
+			beatThreshold: 0.15,
+			chimeOptions: {
+				pattern: "chords", // 'chords', 'scale', 'bassline', 'arpeggio', 'random'
+				autoPlayInterval: 500, // ms between notes/chords
+			},
+		});
+
+		// Enable keyboard controls for manual playing
+		if (typeof enableMidiKeyboard !== "undefined") {
+			enableMidiKeyboard();
+		}
+
+		// Enable audio debug display (press V to toggle)
+		if (typeof audioDebugDisplay !== "undefined" && typeof audioAnalyzer !== "undefined") {
+			audioDebugDisplay.init(audioAnalyzer);
+			audioDebugDisplay.show(); // Show by default for easy testing
+		}
+
+		console.log("🎵 Audio-reactive mode enabled!");
+		console.log("   Press SPACE to toggle auto-play");
+		console.log("   Press A-K to play notes");
+		console.log("   Press 1-5 to play chords");
+		console.log("   Press Z,X,C for drums");
+		console.log("   Press V to toggle audio debug display");
+	}
+
 	// Start the custom draw loop
 	customDraw();
 }
@@ -161,6 +195,11 @@ function customDraw() {
 	// Render shader effects for this frame (if shaders are enabled)
 	if (typeof shaderEffects !== "undefined") {
 		const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
+
+		// Draw audio debug display on top of everything
+		if (typeof audioDebugDisplay !== "undefined") {
+			audioDebugDisplay.draw();
+		}
 
 		// Continue animation if not complete
 		if (shouldContinue) {

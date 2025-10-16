@@ -38,6 +38,10 @@ class ShaderEffects {
 		this.shaderPipeline = null;
 		this.p5Instance = null;
 
+		// Audio analyzer reference
+		this.audioAnalyzer = null;
+		this.audioEnabled = false;
+
 		// Effects configuration - customize these for your sketch
 		this.effectsConfig = {
 			deform: {
@@ -81,7 +85,8 @@ class ShaderEffects {
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 777.0",
-					uAmount: "amount",
+					// Pulses with audio energy (comment out for static effect)
+					uAmount: "amount * (1 + audioEnergy * 3)",
 				},
 			},
 
@@ -100,7 +105,7 @@ class ShaderEffects {
 				enabled: true,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.3,
-				sortAmount: 0.8,
+				sortAmount: 2.8,
 				sampleCount: 32.0, // Number of samples (8-64, higher = better quality but slower)
 				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
 				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
@@ -108,8 +113,10 @@ class ShaderEffects {
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 999.0",
-					uAngle: "angle",
-					uThreshold: "threshold",
+					// Rotate based on mid frequencies (comment out for static angle)
+					uAngle: "angle + audioMid * 3.14159",
+					// Threshold modulated by bass (comment out for static threshold)
+					uThreshold: "threshold * (0.27 + audioBass * 0.5)",
 					uSortAmount: "sortAmount",
 					uSampleCount: "sampleCount",
 					uInvert: "invert",
@@ -198,6 +205,41 @@ class ShaderEffects {
 		// Make it globally accessible (for backward compatibility)
 		window.shaderPipeline = this.shaderPipeline;
 
+		return this;
+	}
+
+	/**
+	 * Enable audio reactivity
+	 * @param {string} source - 'microphone', 'chime', or custom source
+	 * @param {object} options - Audio configuration options
+	 */
+	enableAudio(source = "microphone", options = {}) {
+		if (typeof audioAnalyzer !== "undefined") {
+			this.audioAnalyzer = audioAnalyzer;
+			this.audioAnalyzer.init(source, options);
+			this.audioEnabled = true;
+			console.log(`Audio reactivity enabled (source: ${source})`);
+
+			// If using chime, initialize it
+			if (source === "chime" && typeof midiChime !== "undefined") {
+				midiChime.init(options.chimeOptions || {});
+				console.log("MIDI Chime initialized - press SPACE to start auto-play");
+			}
+		} else {
+			console.warn("audioAnalyzer not found - make sure audioAnalyzer.js is loaded");
+		}
+		return this;
+	}
+
+	/**
+	 * Disable audio reactivity
+	 */
+	disableAudio() {
+		if (this.audioAnalyzer) {
+			this.audioAnalyzer.stop();
+			this.audioEnabled = false;
+			console.log("Audio reactivity disabled");
+		}
 		return this;
 	}
 
@@ -293,6 +335,18 @@ class ShaderEffects {
 						shaderSeed: this.shaderSeed,
 						width: this.mainCanvas.width,
 						height: this.mainCanvas.height,
+						// Audio variables (safe defaults if audio not enabled)
+						audioBass: this.audioEnabled ? this.audioAnalyzer.bass : 0,
+						audioMid: this.audioEnabled ? this.audioAnalyzer.mid : 0,
+						audioTreble: this.audioEnabled ? this.audioAnalyzer.treble : 0,
+						audioVolume: this.audioEnabled ? this.audioAnalyzer.volume : 0,
+						audioEnergy: this.audioEnabled ? this.audioAnalyzer.energy : 0,
+						audioSubBass: this.audioEnabled ? this.audioAnalyzer.subBass : 0,
+						audioLowMid: this.audioEnabled ? this.audioAnalyzer.lowMid : 0,
+						audioHighMid: this.audioEnabled ? this.audioAnalyzer.highMid : 0,
+						audioPresence: this.audioEnabled ? this.audioAnalyzer.presence : 0,
+						audioBeat: this.audioEnabled ? (this.audioAnalyzer.isBeat ? 1.0 : 0.0) : 0,
+						audioBPM: this.audioEnabled ? this.audioAnalyzer.bpm : 0,
 						...effect, // Include effect properties
 					};
 
@@ -321,6 +375,21 @@ class ShaderEffects {
 			if (value === "shaderSeed") return this.shaderSeed;
 			if (value === "width") return this.mainCanvas.width;
 			if (value === "height") return this.mainCanvas.height;
+
+			// Handle audio variable references
+			if (this.audioEnabled && this.audioAnalyzer) {
+				if (value === "audioBass") return this.audioAnalyzer.bass;
+				if (value === "audioMid") return this.audioAnalyzer.mid;
+				if (value === "audioTreble") return this.audioAnalyzer.treble;
+				if (value === "audioVolume") return this.audioAnalyzer.volume;
+				if (value === "audioEnergy") return this.audioAnalyzer.energy;
+				if (value === "audioSubBass") return this.audioAnalyzer.subBass;
+				if (value === "audioLowMid") return this.audioAnalyzer.lowMid;
+				if (value === "audioHighMid") return this.audioAnalyzer.highMid;
+				if (value === "audioPresence") return this.audioAnalyzer.presence;
+				if (value === "audioBeat") return this.audioAnalyzer.isBeat ? 1.0 : 0.0;
+				if (value === "audioBPM") return this.audioAnalyzer.bpm;
+			}
 
 			// Try to evaluate as a simple variable reference
 			try {
@@ -478,6 +547,16 @@ class ShaderEffects {
 	 * @returns {boolean} Whether to continue the animation loop
 	 */
 	renderFrame(isSketchComplete, continueCallback) {
+		// Update MIDI chime if it exists
+		if (typeof midiChime !== "undefined" && midiChime.isInitialized) {
+			midiChime.update();
+		}
+
+		// Update audio analysis if enabled
+		if (this.audioEnabled && this.audioAnalyzer) {
+			this.audioAnalyzer.update();
+		}
+
 		if (isSketchComplete) {
 			// Always apply shaders at least once when sketch is complete
 			if (!this.shouldApplyDuringSketch()) {
