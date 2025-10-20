@@ -288,3 +288,4 @@ For VJ performances:
 - Create custom patterns for your set
 - Map different frequencies to different effects
 - Have fun! 🎨🎵
+
