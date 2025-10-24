@@ -102,7 +102,7 @@ class ShaderEffects {
 				threshold: 0.3,
 				sortAmount: 0.8,
 				sampleCount: 32.0, // Number of samples (8-64, higher = better quality but slower)
-				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
+				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
 				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
 				timeMultiplier: 1.0,
 				uniforms: {
@@ -118,8 +118,20 @@ class ShaderEffects {
 				},
 			},
 
-			crtDisplay: {
+			symmetry: {
 				enabled: true,
+				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=radial
+				amount: 1.0, // Blend strength [0..1]
+				uniforms: {
+					uResolution: "[width, height]",
+					uSeed: "shaderSeed + 1234.0",
+					uSymmetryMode: "symmetryMode",
+					uAmount: "amount",
+				},
+			},
+
+			crtDisplay: {
+				enabled: false,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
@@ -166,6 +178,7 @@ class ShaderEffects {
 		shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
 		shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert");
 		shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
+		shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
