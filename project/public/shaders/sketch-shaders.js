@@ -120,7 +120,7 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 4.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=radial
+				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=radial
 				amount: 1.0, // Blend strength [0..1]
 				uniforms: {
 					uResolution: "[width, height]",
