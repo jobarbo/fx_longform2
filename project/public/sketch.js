@@ -4,8 +4,8 @@ let maxDPI = 3;
 let RATIO = 1;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.25;
-let BASE_WIDTH = 948;
+let ARTWORK_RATIO = 2.16;
+let BASE_WIDTH = 1000;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
 // This is our reference size for scaling
@@ -23,7 +23,7 @@ let maxFrames = 40; // Total frames to animate
 let generator; // Animation generator instance
 let executionTimer = new ExecutionTimer();
 // Canvas references
-let pixel_density = 2;
+let pixel_density = 5;
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects (if shaders enabled)
 let cycle = parseInt((maxFrames * numMovers) / 55); // Number of operations before updating display (lower = more updates = slower, higher = fewer updates = faster)
@@ -119,7 +119,7 @@ function setup() {
 			for (let j = currentIndex + 1; j < movers.length; j++) {
 				let pos2 = movers[j].getPos();
 				let d = dist(pos1.x, pos1.y, pos2.x, pos2.y);
-				if (d < 100) {
+				if (d < 150) {
 					mainCanvas.line(pos1.x, pos1.y, pos2.x, pos2.y);
 				}
 			}
