@@ -101,10 +101,10 @@ class ShaderEffects {
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.0,
 				sortAmount: 2.8,
-				sampleCount: 32.0, // Number of samples (8-64, higher = better quality but slower)
+				sampleCount: 1.0, // Number of samples (8-64, higher = better quality but slower)
 				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
 				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 1.0,
+				timeMultiplier: 0.3,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 999.0",
@@ -122,13 +122,17 @@ class ShaderEffects {
 				enabled: true,
 				symmetryMode: 4.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=radial
 				amount: 1.0, // Blend strength [0..1]
-				debug: 1.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
+				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
+				rotationSpeed: 0.5, // Movement speed for kaleidoscope animation (controls how fast the canvas moves)
+				timeMultiplier: 0.1, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
 					uSymmetryMode: "symmetryMode",
 					uAmount: "amount",
 					uDebug: "debug",
+					uTime: "shaderTime * timeMultiplier",
+					uRotationSpeed: "rotationSpeed",
 				},
 			},
 
