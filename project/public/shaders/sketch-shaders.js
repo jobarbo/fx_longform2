@@ -162,7 +162,8 @@ class ShaderEffects {
 		this.lastEnabledEffects = null;
 
 		// FPS tracking
-		this.showFPS = true; // Set to false to hide FPS counter
+		// Disable FPS counter on Safari mobile to prevent crashes
+		this.showFPS = typeof isSafariMobile === "function" && isSafariMobile() ? false : true;
 		this.fpsHistory = [];
 		this.fpsHistorySize = 60; // Average over 60 frames
 		this.lastFrameTime = performance.now();
@@ -501,6 +502,9 @@ class ShaderEffects {
 	 * Update FPS counter
 	 */
 	updateFPS() {
+		// Skip FPS tracking if disabled
+		if (!this.showFPS) return;
+
 		const now = performance.now();
 		const delta = now - this.lastFrameTime;
 		this.lastFrameTime = now;
@@ -523,58 +527,60 @@ class ShaderEffects {
 	 * Draw FPS counter on screen (using DOM overlay for better visibility)
 	 */
 	drawFPS() {
-		// Create or update FPS overlay element
-		let fpsElement = document.getElementById("shader-fps-overlay");
-		if (!fpsElement) {
-			fpsElement = document.createElement("div");
-			fpsElement.id = "shader-fps-overlay";
-			document.body.appendChild(fpsElement);
+		// Skip if FPS is disabled
+		if (!this.showFPS) return;
+
+		try {
+			// Create or update FPS overlay element
+			let fpsElement = document.getElementById("shader-fps-overlay");
+			if (!fpsElement) {
+				fpsElement = document.createElement("div");
+				fpsElement.id = "shader-fps-overlay";
+				document.body.appendChild(fpsElement);
+			}
+
+			fpsElement.style.display = "block";
+
+			// Get canvas position
+			const canvas = document.querySelector("canvas");
+			if (!canvas) return;
+
+			const canvasRect = canvas.getBoundingClientRect();
+
+			// Update position to match canvas
+			fpsElement.style.position = "fixed";
+			fpsElement.style.left = canvasRect.left + 10 + "px";
+			fpsElement.style.top = canvasRect.top + 10 + "px";
+			fpsElement.style.zIndex = "10000";
+
+			// Color based on performance
+			let textColor;
+			if (this.currentFPS >= 55) {
+				textColor = "#64ff64"; // Green
+			} else if (this.currentFPS >= 30) {
+				textColor = "#ffc864"; // Orange
+			} else {
+				textColor = "#ff6464"; // Red
+			}
+
+			// Update content
+			fpsElement.innerHTML = `
+				<div style="
+					background: rgba(0, 0, 0, 0.7);
+					padding: 8px 12px;
+					border-radius: 4px;
+					font-family: 'Courier New', monospace;
+					font-size: 16px;
+					color: ${textColor};
+					font-weight: bold;
+				">
+					FPS: ${this.currentFPS}
+				</div>
+			`;
+		} catch (error) {
+			// Silently fail if DOM operations crash (common on Safari mobile)
+			console.warn("FPS counter failed:", error);
 		}
-
-		// Show or hide based on showFPS flag
-		if (!this.showFPS) {
-			fpsElement.style.display = "none";
-			return;
-		}
-
-		fpsElement.style.display = "block";
-
-		// Get canvas position
-		const canvas = document.querySelector("canvas");
-		if (!canvas) return;
-
-		const canvasRect = canvas.getBoundingClientRect();
-
-		// Update position to match canvas
-		fpsElement.style.position = "fixed";
-		fpsElement.style.left = canvasRect.left + 10 + "px";
-		fpsElement.style.top = canvasRect.top + 10 + "px";
-		fpsElement.style.zIndex = "10000";
-
-		// Color based on performance
-		let textColor;
-		if (this.currentFPS >= 55) {
-			textColor = "#64ff64"; // Green
-		} else if (this.currentFPS >= 30) {
-			textColor = "#ffc864"; // Orange
-		} else {
-			textColor = "#ff6464"; // Red
-		}
-
-		// Update content
-		fpsElement.innerHTML = `
-			<div style="
-				background: rgba(0, 0, 0, 0.7);
-				padding: 8px 12px;
-				border-radius: 4px;
-				font-family: 'Courier New', monospace;
-				font-size: 16px;
-				color: ${textColor};
-				font-weight: bold;
-			">
-				FPS: ${this.currentFPS}
-			</div>
-		`;
 	}
 
 	/**
