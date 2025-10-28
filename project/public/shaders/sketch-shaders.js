@@ -21,7 +21,7 @@ class ShaderEffects {
 	constructor() {
 		// Shader animation control
 		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
-		this.applyShadersDuringSketch = false; // Set to true to apply shaders while sketching
+		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Frame rate for shader animation
 
 		// Animation state
@@ -123,7 +123,13 @@ class ShaderEffects {
 				symmetryMode: 4.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				rotationSpeed: 0.5, // Movement speed for kaleidoscope animation (controls how fast the canvas moves)
+				translationSpeed: 1.5, // Speed of horizontal/vertical movement
+				translationMode: 0.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
+				rotationSpeed: 1.5, // Speed of rotation
+				rotationOscillationSpeed: 0.5, // Speed of oscillation (controls how fast it alternates between positive/negative)
+				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
+				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				timeMultiplier: 0.1, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
@@ -132,7 +138,13 @@ class ShaderEffects {
 					uAmount: "amount",
 					uDebug: "debug",
 					uTime: "shaderTime * timeMultiplier",
+					uTranslationSpeed: "translationSpeed",
+					uTranslationMode: "translationMode",
+					uTranslationNoiseScale: "translationNoiseScale",
 					uRotationSpeed: "rotationSpeed",
+					uRotationOscillationSpeed: "rotationOscillationSpeed",
+					uRotationMode: "rotationMode",
+					uRotationNoiseScale: "rotationNoiseScale",
 				},
 			},
 
