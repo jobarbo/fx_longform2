@@ -183,8 +183,7 @@ async function setup() {
 			shaderCanvas = null;
 			createCanvas(DIM, DIM * ARTWORK_RATIO);
 			pixelDensity(pixel_density);
-			// Disable shaderEffects to prevent future shader attempts
-			shaderEffects = undefined;
+			// Shaders are unavailable; continue without them
 		}
 	} else {
 		// No shaders - create regular canvas for display
@@ -211,9 +210,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.2;
-	let scaleFactorY = 1.2;
-
+	let scaleFactorX = 1.24;
+	let scaleFactorY = 1.24;
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
@@ -285,7 +283,7 @@ function setupMobileControls() {
 	const toggleFpsButton = document.getElementById("toggle-fps");
 	if (toggleFpsButton) {
 		toggleFpsButton.addEventListener("click", function () {
-			if (typeof shaderEffects !== "undefined" && shaderCanvas) {
+			if (typeof shaderEffects !== "undefined") {
 				shaderEffects.toggleFPS();
 				// Update button visual state
 				if (shaderEffects.showFPS) {
@@ -300,7 +298,7 @@ function setupMobileControls() {
 		});
 
 		// Set initial button state
-		if (typeof shaderEffects !== "undefined" && shaderCanvas) {
+		if (typeof shaderEffects !== "undefined") {
 			if (shaderEffects.showFPS) {
 				toggleFpsButton.classList.add("active");
 				toggleFpsButton.textContent = "FPS: ON";
@@ -327,6 +325,12 @@ function customDraw() {
 		// No shaders - just copy mainCanvas to main display canvas
 		clear();
 		image(mainCanvas, 0, 0);
+
+		// If FPS overlay is available, update/draw it even without shaders
+		if (typeof shaderEffects !== "undefined") {
+			shaderEffects.updateFPS();
+			shaderEffects.drawFPS();
+		}
 
 		// Continue animation if not complete
 		if (!result.done) {
@@ -432,5 +436,11 @@ function keyPressed() {
 			shaderEffects.updateEffectParam("symmetry", "debug", newDebug);
 			console.log("Symmetry debug toggled: ", newDebug > 0.5);
 		}
+	}
+
+	if (key === "C" || key === "c") {
+		//toggle controls
+		const controls = document.getElementById("controls");
+		controls.classList.toggle("hide");
 	}
 }
