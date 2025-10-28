@@ -74,17 +74,6 @@ class ShaderEffects {
 				},
 			},
 
-			chromatic: {
-				enabled: true,
-				amount: 0.0025,
-				timeMultiplier: 0.0,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 777.0",
-					uAmount: "amount",
-				},
-			},
-
 			grain: {
 				enabled: false,
 				amount: 0.1,
@@ -120,7 +109,7 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
@@ -149,7 +138,47 @@ class ShaderEffects {
 					uRotationNoiseScale: "rotationNoiseScale",
 				},
 			},
-
+			symmetry2: {
+				enabled: true,
+				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				amount: 1.0, // Blend strength [0..1]
+				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
+				translationSpeed: 1.5, // Speed of horizontal/vertical movement
+				translationMode: 0.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
+				rotationSpeed: 0.0, // Speed of rotation
+				rotationOscillationSpeed: 0.0, // Speed of oscillation (controls how fast it alternates between positive/negative)
+				rotationStartingAngle: 0.5, // Starting angle for rotation (in radians, added to rotation)
+				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
+				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
+				timeMultiplier: 0.1, // Time multiplier for animation
+				uniforms: {
+					uResolution: "[width, height]",
+					uSeed: "shaderSeed + 1234.0",
+					uSymmetryMode: "symmetryMode",
+					uAmount: "amount",
+					uDebug: "debug",
+					uTime: "shaderTime * timeMultiplier",
+					uTranslationSpeed: "translationSpeed",
+					uTranslationMode: "translationMode",
+					uTranslationNoiseScale: "translationNoiseScale",
+					uRotationSpeed: "rotationSpeed",
+					uRotationOscillationSpeed: "rotationOscillationSpeed",
+					uRotationStartingAngle: "rotationStartingAngle",
+					uRotationMode: "rotationMode",
+					uRotationNoiseScale: "rotationNoiseScale",
+				},
+			},
+			chromatic: {
+				enabled: true,
+				amount: 0.0015,
+				timeMultiplier: 0.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 777.0",
+					uAmount: "amount",
+				},
+			},
 			crtDisplay: {
 				enabled: false,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
@@ -207,6 +236,7 @@ class ShaderEffects {
 		shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert");
 		shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
 		shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert");
+		shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
