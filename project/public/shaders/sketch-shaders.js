@@ -99,10 +99,10 @@ class ShaderEffects {
 			pixelSort: {
 				enabled: true,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
-				threshold: 0.3,
-				sortAmount: 0.8,
+				threshold: 0.0,
+				sortAmount: 2.8,
 				sampleCount: 32.0, // Number of samples (8-64, higher = better quality but slower)
-				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
+				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
 				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
 				timeMultiplier: 1.0,
 				uniforms: {
@@ -118,8 +118,22 @@ class ShaderEffects {
 				},
 			},
 
-			crtDisplay: {
+			symmetry: {
 				enabled: true,
+				symmetryMode: 4.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=radial
+				amount: 1.0, // Blend strength [0..1]
+				debug: 1.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
+				uniforms: {
+					uResolution: "[width, height]",
+					uSeed: "shaderSeed + 1234.0",
+					uSymmetryMode: "symmetryMode",
+					uAmount: "amount",
+					uDebug: "debug",
+				},
+			},
+
+			crtDisplay: {
+				enabled: false,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
@@ -142,6 +156,13 @@ class ShaderEffects {
 
 		// Cache for last enabled effects (to detect changes)
 		this.lastEnabledEffects = null;
+
+		// FPS tracking
+		this.showFPS = true; // Set to false to hide FPS counter
+		this.fpsHistory = [];
+		this.fpsHistorySize = 60; // Average over 60 frames
+		this.lastFrameTime = performance.now();
+		this.currentFPS = 60;
 	}
 
 	/**
@@ -166,6 +187,7 @@ class ShaderEffects {
 		shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
 		shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert");
 		shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
+		shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
@@ -472,12 +494,108 @@ class ShaderEffects {
 	}
 
 	/**
+	 * Update FPS counter
+	 */
+	updateFPS() {
+		const now = performance.now();
+		const delta = now - this.lastFrameTime;
+		this.lastFrameTime = now;
+
+		// Calculate instantaneous FPS
+		const instantFPS = 1000 / delta;
+
+		// Add to history
+		this.fpsHistory.push(instantFPS);
+		if (this.fpsHistory.length > this.fpsHistorySize) {
+			this.fpsHistory.shift();
+		}
+
+		// Calculate average FPS
+		const sum = this.fpsHistory.reduce((a, b) => a + b, 0);
+		this.currentFPS = Math.round(sum / this.fpsHistory.length);
+	}
+
+	/**
+	 * Draw FPS counter on screen (using DOM overlay for better visibility)
+	 */
+	drawFPS() {
+		// Create or update FPS overlay element
+		let fpsElement = document.getElementById("shader-fps-overlay");
+		if (!fpsElement) {
+			fpsElement = document.createElement("div");
+			fpsElement.id = "shader-fps-overlay";
+			document.body.appendChild(fpsElement);
+		}
+
+		// Show or hide based on showFPS flag
+		if (!this.showFPS) {
+			fpsElement.style.display = "none";
+			return;
+		}
+
+		fpsElement.style.display = "block";
+
+		// Get canvas position
+		const canvas = document.querySelector("canvas");
+		if (!canvas) return;
+
+		const canvasRect = canvas.getBoundingClientRect();
+
+		// Update position to match canvas
+		fpsElement.style.position = "fixed";
+		fpsElement.style.left = canvasRect.left + 10 + "px";
+		fpsElement.style.top = canvasRect.top + 10 + "px";
+		fpsElement.style.zIndex = "10000";
+
+		// Color based on performance
+		let textColor;
+		if (this.currentFPS >= 55) {
+			textColor = "#64ff64"; // Green
+		} else if (this.currentFPS >= 30) {
+			textColor = "#ffc864"; // Orange
+		} else {
+			textColor = "#ff6464"; // Red
+		}
+
+		// Update content
+		fpsElement.innerHTML = `
+			<div style="
+				background: rgba(0, 0, 0, 0.7);
+				padding: 8px 12px;
+				border-radius: 4px;
+				font-family: 'Courier New', monospace;
+				font-size: 16px;
+				color: ${textColor};
+				font-weight: bold;
+			">
+				FPS: ${this.currentFPS}
+			</div>
+		`;
+	}
+
+	/**
+	 * Toggle FPS display
+	 * @param {boolean} show - Show or hide FPS
+	 */
+	toggleFPS(show = null) {
+		if (show === null) {
+			this.showFPS = !this.showFPS;
+		} else {
+			this.showFPS = show;
+		}
+		return this;
+	}
+
+	/**
 	 * Render frame - handles shader logic for each animation frame
 	 * @param {boolean} isSketchComplete - Whether the sketch animation is complete
 	 * @param {Function} continueCallback - Callback to continue animation loop
 	 * @returns {boolean} Whether to continue the animation loop
 	 */
 	renderFrame(isSketchComplete, continueCallback) {
+		// Update FPS counter
+		this.updateFPS();
+
 		if (isSketchComplete) {
 			// Always apply shaders at least once when sketch is complete
 			if (!this.shouldApplyDuringSketch()) {
@@ -488,6 +606,9 @@ class ShaderEffects {
 				// Keep shaders running even after particles are complete
 				this.updateTime(0.01);
 				this.apply();
+
+				// Draw FPS counter
+				this.drawFPS();
 
 				// Continue using requestAnimationFrame
 				return true;
@@ -508,6 +629,9 @@ class ShaderEffects {
 			// If not applying shaders during sketching, use copy shader to display base sketch
 			this.applyCopy();
 		}
+
+		// Draw FPS counter
+		this.drawFPS();
 
 		return true; // Continue animation
 	}

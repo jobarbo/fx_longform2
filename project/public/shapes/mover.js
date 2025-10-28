@@ -38,8 +38,8 @@ class Mover {
 		this.colorIndex = this.palette.length - 1;
 
 		// Pre-calculate padding valuesd
-		this.wrapPaddingX = -(min(width, height) * 0.000001) / width;
-		this.wrapPaddingY = -((min(width, height) * 0.000001) / height) * ARTWORK_RATIO;
+		this.wrapPaddingX = (min(width, height) * 0.03) / width;
+		this.wrapPaddingY = ((min(width, height) * 0.03) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * 0.01) / width;
 		this.reentryOffsetY = (min(width, height) * 0.01) / height;
 		this.wrapPaddingMultiplier = 1; //! or 0.5
@@ -232,8 +232,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let zzu = map(ZZ(u, 35, 80, 0.08), -1, 1, minU, maxU, true);
 	let zzv = map(ZZ(v, 35, 80, 0.2), -1, 1, minV, maxV, true);
 
-	let zu = u < 0 ? -zzu : zzu;
-	let zv = v < 0 ? -zzv : zzv;
+	let zu = u < 0 ? u : zzu;
+	let zv = v < 0 ? v : zzv;
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2

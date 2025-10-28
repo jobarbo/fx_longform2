@@ -199,8 +199,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.25;
-	let scaleFactorY = 1.25;
+	let scaleFactorX = 1.0;
+	let scaleFactorY = 1.0;
 
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
@@ -368,5 +368,21 @@ function keyPressed() {
 		debugBounds = !debugBounds;
 		console.log("Debug bounds toggled: ", debugBounds);
 		updateDebugOverlay();
+	}
+
+	if (key === "F" || key === "f") {
+		if (typeof shaderEffects !== "undefined") {
+			shaderEffects.toggleFPS();
+			console.log("FPS counter toggled: ", shaderEffects.showFPS);
+		}
+	}
+
+	if (key === "G" || key === "g") {
+		if (typeof shaderEffects !== "undefined") {
+			const currentDebug = shaderEffects.effectsConfig.symmetry.debug;
+			const newDebug = currentDebug > 0.5 ? 0.0 : 1.0;
+			shaderEffects.updateEffectParam("symmetry", "debug", newDebug);
+			console.log("Symmetry debug toggled: ", newDebug > 0.5);
+		}
 	}
 }
