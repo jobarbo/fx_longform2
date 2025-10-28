@@ -167,13 +167,25 @@ async function setup() {
 	// Create main canvas for the artwork (will also handle debug overlays)
 	mainCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
 
-	// Create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
+	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
 	if (typeof shaderEffects !== "undefined") {
-		shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
-		// Initialize shader effects system
-		shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
-		// Set up shader canvas pixel density
-		shaderCanvas.pixelDensity(pixel_density);
+		try {
+			shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
+			// Initialize shader effects system
+			shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
+			// Set up shader canvas pixel density
+			shaderCanvas.pixelDensity(pixel_density);
+			console.log("Shader effects initialized successfully");
+		} catch (error) {
+			console.warn("Failed to initialize shader effects:", error);
+			console.log("Falling back to sketch without shaders");
+			// Fallback: create regular canvas without shaders
+			shaderCanvas = null;
+			createCanvas(DIM, DIM * ARTWORK_RATIO);
+			pixelDensity(pixel_density);
+			// Disable shaderEffects to prevent future shader attempts
+			shaderEffects = undefined;
+		}
 	} else {
 		// No shaders - create regular canvas for display
 		createCanvas(DIM, DIM * ARTWORK_RATIO);
@@ -228,7 +240,7 @@ async function setup() {
 		},
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
-			if (typeof shaderEffects !== "undefined") {
+			if (typeof shaderEffects !== "undefined" && shaderCanvas) {
 				shaderEffects.setParticleAnimationComplete(true);
 			}
 			$fx.preview();
@@ -257,9 +269,11 @@ async function setup() {
 
 	// Log available controls and performance settings
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
-	if (typeof shaderEffects !== "undefined") {
+	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
 		console.log(`Shader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
 		console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
+	} else {
+		console.log("Running without shader effects");
 	}
 }
 
@@ -268,7 +282,7 @@ function customDraw() {
 	const result = generator.next();
 
 	// Render shader effects for this frame (if shaders are enabled)
-	if (typeof shaderEffects !== "undefined") {
+	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
 		const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
 
 		// Continue animation if not complete
