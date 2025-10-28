@@ -156,7 +156,7 @@ async function setup() {
 
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
-	pixel_density = 2;
+	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
@@ -284,7 +284,7 @@ async function setup() {
 function setupMobileControls() {
 	const toggleFpsButton = document.getElementById("toggle-fps");
 	if (toggleFpsButton) {
-		toggleFpsButton.addEventListener("click", function() {
+		toggleFpsButton.addEventListener("click", function () {
 			if (typeof shaderEffects !== "undefined" && shaderCanvas) {
 				shaderEffects.toggleFPS();
 				// Update button visual state
@@ -298,7 +298,7 @@ function setupMobileControls() {
 				console.log("FPS counter toggled: ", shaderEffects.showFPS);
 			}
 		});
-		
+
 		// Set initial button state
 		if (typeof shaderEffects !== "undefined" && shaderCanvas) {
 			if (shaderEffects.showFPS) {

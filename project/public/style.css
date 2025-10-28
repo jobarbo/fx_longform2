@@ -72,27 +72,13 @@ canvas.p5Canvas {
 	border-width: 1px;
 }
 
-/* Download button mobile optimizations */
-@media (max-width: 768px) {
-	#download-button-container {
-		top: 10px !important;
-		right: 10px !important;
-	}
-
-	#download-button {
-		padding: 10px 16px !important;
-		font-size: 14px !important;
-		border-radius: 6px !important;
-	}
-}
-
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
-	#download-button {
+	.control-button {
 		min-height: 44px; /* iOS minimum touch target size */
 	}
 
-	#download-button:active {
+	.control-button:active {
 		background: rgba(0, 0, 0, 0.9) !important;
 		transform: scale(0.95) !important;
 	}
@@ -117,7 +103,7 @@ canvas.p5Canvas {
 	border-radius: 8px;
 	font-size: 14px;
 	font-weight: bold;
-	font-family: 'Courier New', monospace;
+	font-family: "Courier New", monospace;
 	cursor: pointer;
 	user-select: none;
 	-webkit-tap-highlight-color: transparent;
@@ -151,5 +137,6 @@ canvas.p5Canvas {
 @media (max-width: 768px) {
 	.mobile-controls {
 		display: flex;
+		flex-direction: row;
 	}
 }
