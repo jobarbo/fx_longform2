@@ -267,6 +267,9 @@ async function setup() {
 	// Initialize debug overlay after setup is complete
 	updateDebugOverlay();
 
+	// Setup mobile controls
+	setupMobileControls();
+
 	// Log available controls and performance settings
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
 	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
@@ -274,6 +277,37 @@ async function setup() {
 		console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
 	} else {
 		console.log("Running without shader effects");
+	}
+}
+
+// Setup mobile touch controls
+function setupMobileControls() {
+	const toggleFpsButton = document.getElementById("toggle-fps");
+	if (toggleFpsButton) {
+		toggleFpsButton.addEventListener("click", function() {
+			if (typeof shaderEffects !== "undefined" && shaderCanvas) {
+				shaderEffects.toggleFPS();
+				// Update button visual state
+				if (shaderEffects.showFPS) {
+					toggleFpsButton.classList.add("active");
+					toggleFpsButton.textContent = "FPS: ON";
+				} else {
+					toggleFpsButton.classList.remove("active");
+					toggleFpsButton.textContent = "FPS: OFF";
+				}
+				console.log("FPS counter toggled: ", shaderEffects.showFPS);
+			}
+		});
+		
+		// Set initial button state
+		if (typeof shaderEffects !== "undefined" && shaderCanvas) {
+			if (shaderEffects.showFPS) {
+				toggleFpsButton.classList.add("active");
+				toggleFpsButton.textContent = "FPS: ON";
+			} else {
+				toggleFpsButton.textContent = "FPS: OFF";
+			}
+		}
 	}
 }
 
