@@ -571,9 +571,6 @@ class ShaderEffects {
 	 * Draw FPS counter on screen (using DOM overlay for better visibility)
 	 */
 	drawFPS() {
-		// Skip if FPS is disabled
-		if (!this.showFPS) return;
-
 		try {
 			// Create or update FPS overlay element
 			let fpsElement = document.getElementById("shader-fps-overlay");
@@ -581,6 +578,12 @@ class ShaderEffects {
 				fpsElement = document.createElement("div");
 				fpsElement.id = "shader-fps-overlay";
 				document.body.appendChild(fpsElement);
+			}
+
+			// Hide if FPS is disabled
+			if (!this.showFPS) {
+				fpsElement.style.display = "none";
+				return;
 			}
 
 			fpsElement.style.display = "block";
