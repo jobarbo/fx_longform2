@@ -4,7 +4,7 @@ class Mover {
 		this.y = y;
 		this.initHue = hue;
 		this.initSat = random([0, 0, 5, 10, 80]);
-		this.initBri = random([0, 10, 15, 20, 25, 35]);
+		this.initBri = random([0]);
 		this.initAlpha = random(60, 100);
 		this.hue = random([this.initHue, this.initHue / 2]);
 		this.sat = this.initSat;
