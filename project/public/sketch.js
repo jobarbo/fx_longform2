@@ -156,6 +156,7 @@ async function setup() {
 
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
+	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
 	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
 
 	// canvas setup
@@ -165,12 +166,12 @@ async function setup() {
 	console.log(MULTIPLIER);
 
 	// Create main canvas for the artwork (will also handle debug overlays)
-	mainCanvas = createGraphics(DIM, DIM * ARTWORK_RATIO);
+	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
 
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
 	if (typeof shaderEffects !== "undefined") {
 		try {
-			shaderCanvas = createCanvas(DIM, DIM * ARTWORK_RATIO, WEBGL);
+			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
 			// Initialize shader effects system
 			shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
 			// Set up shader canvas pixel density
@@ -181,13 +182,13 @@ async function setup() {
 			console.log("Falling back to sketch without shaders");
 			// Fallback: create regular canvas without shaders
 			shaderCanvas = null;
-			createCanvas(DIM, DIM * ARTWORK_RATIO);
+			createCanvas(DIM / ARTWORK_RATIO, DIM);
 			pixelDensity(pixel_density);
 			// Shaders are unavailable; continue without them
 		}
 	} else {
 		// No shaders - create regular canvas for display
-		createCanvas(DIM, DIM * ARTWORK_RATIO);
+		createCanvas(DIM / ARTWORK_RATIO, DIM);
 		pixelDensity(pixel_density);
 	}
 
