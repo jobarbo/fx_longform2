@@ -19,6 +19,16 @@ let shaderCanvas; // WEBGL canvas for shader effects
 
 // Shader effects are now managed by shaderEffects module (loaded from shaders/sketch-shaders.js)
 // To configure shaders, modify the effectsConfig in shaders/sketch-shaders.js
+// ============================================================================
+// QUICK TOGGLE: Set to false to disable all shader effects
+// ============================================================================
+const ENABLE_SHADERS = false;
+
+// Helper function to check if shaders are enabled and available
+function shadersEnabled() {
+	return ENABLE_SHADERS && typeof shaderEffects !== "undefined";
+}
+
 let debugBounds = false;
 
 // CSS overlay debug bounds functions
@@ -124,7 +134,7 @@ let pixel_density;
 
 function preload() {
 	// Initialize shader effects (will load all shaders) - optional
-	if (typeof shaderEffects !== "undefined") {
+	if (shadersEnabled()) {
 		shaderEffects.preload(this);
 	}
 
@@ -169,7 +179,7 @@ async function setup() {
 	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
 
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
-	if (typeof shaderEffects !== "undefined") {
+	if (shadersEnabled()) {
 		try {
 			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
 			// Initialize shader effects system
@@ -211,8 +221,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.24;
-	let scaleFactorY = 1.24;
+	let scaleFactorX = 1.0;
+	let scaleFactorY = 1.0;
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
@@ -239,7 +249,7 @@ async function setup() {
 		},
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
-			if (typeof shaderEffects !== "undefined" && shaderCanvas) {
+			if (shadersEnabled() && shaderCanvas) {
 				shaderEffects.setParticleAnimationComplete(true);
 			}
 			$fx.preview();
@@ -271,7 +281,7 @@ async function setup() {
 
 	// Log available controls and performance settings
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
-	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
+	if (shadersEnabled() && shaderCanvas) {
 		console.log(`Shader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
 		console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
 	} else {
@@ -284,7 +294,7 @@ function setupMobileControls() {
 	const toggleFpsButton = document.getElementById("toggle-fps");
 	if (toggleFpsButton) {
 		toggleFpsButton.addEventListener("click", function () {
-			if (typeof shaderEffects !== "undefined") {
+			if (shadersEnabled()) {
 				shaderEffects.toggleFPS();
 				// Update button visual state
 				if (shaderEffects.showFPS) {
@@ -299,7 +309,7 @@ function setupMobileControls() {
 		});
 
 		// Set initial button state
-		if (typeof shaderEffects !== "undefined") {
+		if (shadersEnabled()) {
 			if (shaderEffects.showFPS) {
 				toggleFpsButton.classList.add("active");
 				toggleFpsButton.textContent = "FPS: ON";
@@ -315,7 +325,7 @@ function customDraw() {
 	const result = generator.next();
 
 	// Render shader effects for this frame (if shaders are enabled)
-	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
+	if (shadersEnabled() && shaderCanvas) {
 		const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
 
 		// Continue animation if not complete
@@ -328,7 +338,7 @@ function customDraw() {
 		image(mainCanvas, 0, 0);
 
 		// If FPS overlay is available, update/draw it even without shaders
-		if (typeof shaderEffects !== "undefined") {
+		if (shadersEnabled()) {
 			shaderEffects.updateFPS();
 			shaderEffects.drawFPS();
 		}
@@ -424,14 +434,14 @@ function keyPressed() {
 	}
 
 	if (key === "F" || key === "f") {
-		if (typeof shaderEffects !== "undefined") {
+		if (shadersEnabled()) {
 			shaderEffects.toggleFPS();
 			console.log("FPS counter toggled: ", shaderEffects.showFPS);
 		}
 	}
 
 	if (key === "G" || key === "g") {
-		if (typeof shaderEffects !== "undefined") {
+		if (shadersEnabled()) {
 			const currentDebug = shaderEffects.effectsConfig.symmetry.debug;
 			const newDebug = currentDebug > 0.5 ? 0.0 : 1.0;
 			shaderEffects.updateEffectParam("symmetry", "debug", newDebug);
