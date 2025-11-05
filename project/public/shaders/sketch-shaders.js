@@ -206,7 +206,10 @@ class ShaderEffects {
 
 		// FPS tracking
 		// Disable FPS counter on Safari mobile to prevent crashes
-		this.showFPS = typeof isSafariMobile === "function" && isSafariMobile() ? false : true;
+		// Also disable FPS counter when in iframe
+		const isSafariMobileCheck = typeof isSafariMobile === "function" && isSafariMobile();
+		const isInIframeCheck = typeof isInIframe === "function" && isInIframe();
+		this.showFPS = !isSafariMobileCheck && !isInIframeCheck;
 		this.fpsHistory = [];
 		this.fpsHistorySize = 60; // Average over 60 frames
 		this.lastFrameTime = performance.now();
@@ -572,6 +575,11 @@ class ShaderEffects {
 	 */
 	drawFPS() {
 		try {
+			// Don't show FPS if in iframe
+			if (typeof isInIframe === "function" && isInIframe()) {
+				return;
+			}
+
 			// Create or update FPS overlay element
 			let fpsElement = document.getElementById("shader-fps-overlay");
 			if (!fpsElement) {

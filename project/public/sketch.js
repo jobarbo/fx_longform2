@@ -291,6 +291,13 @@ async function setup() {
 
 // Setup mobile touch controls
 function setupMobileControls() {
+	// Hide entire controls container if in iframe
+	const controlsContainer = document.getElementById("controls");
+	if (controlsContainer && typeof isInIframe === "function" && isInIframe()) {
+		controlsContainer.style.display = "none";
+		return;
+	}
+
 	const toggleFpsButton = document.getElementById("toggle-fps");
 	if (toggleFpsButton) {
 		toggleFpsButton.addEventListener("click", function () {
@@ -434,6 +441,10 @@ function keyPressed() {
 	}
 
 	if (key === "F" || key === "f") {
+		// Don't allow FPS toggle if in iframe
+		if (typeof isInIframe === "function" && isInIframe()) {
+			return;
+		}
 		if (shadersEnabled()) {
 			shaderEffects.toggleFPS();
 			console.log("FPS counter toggled: ", shaderEffects.showFPS);
