@@ -239,7 +239,7 @@ async function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > -1) {
+			if (currentFrame > 0) {
 				mover.show(mainCanvas);
 			}
 		},
@@ -399,7 +399,7 @@ function INIT(rseed, nseed) {
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork rzatio
-	let padding = 0.1;
+	let padding = 0.05;
 	xMin = padding;
 	xMax = 1 - padding;
 	yMin = padding;
