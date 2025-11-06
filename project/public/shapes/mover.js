@@ -37,12 +37,13 @@ class Mover {
 		// Start from the last color (inverted progression)
 		this.colorIndex = this.palette.length - 1;
 
-		// Pre-calculate padding valuesd
-		this.wrapPaddingX = (min(width, height) * 0.1) / width;
-		this.wrapPaddingY = ((min(width, height) * 0.1) / height) * ARTWORK_RATIO;
+		// Pre-calculate padding values - use global constant if available
+		const wrapPaddingFactor = typeof WRAP_PADDING_FACTOR !== "undefined" ? WRAP_PADDING_FACTOR : 0.1;
+		this.wrapPaddingX = (min(width, height) * wrapPaddingFactor) / width;
+		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * 0.005) / width;
 		this.reentryOffsetY = (min(width, height) * 0.005) / height;
-		this.wrapPaddingMultiplier = 0.5; //! or 0.5
+		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;

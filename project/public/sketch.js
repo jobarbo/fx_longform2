@@ -1,136 +1,78 @@
+// ============================================================================
+// CONFIGURATION CONSTANTS
+// ============================================================================
+
+// Shader effects toggle
+const ENABLE_SHADERS = true;
+
+// Padding constants - centralized for consistency
+const BASE_PADDING = 0.2; // Base padding for artwork bounds (used in INIT)
+const WRAP_PADDING_FACTOR = 0.1; // Wrap padding factor for particle movement bounds (used in Mover class)
+
+// Animation configuration
+const maxFrames = 25;
+const particleNum = 500000;
+const cycle = parseInt((maxFrames * particleNum) / 1150);
+
+// Debug flags
+let debugBounds = false;
+
+// ============================================================================
+// ARTWORK DIMENSIONS & SCALING
+// ============================================================================
+
+// Base artwork dimensions (width: 1000, height: 1000 * 1.25)
+const ARTWORK_RATIO = 1.25;
+const BASE_WIDTH = 1000;
+const BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
+const DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
+
+// Calculated dimensions (set in setup())
+let DIM; // Canvas dimension (min of window width/height)
+let MULTIPLIER; // Scaling factor based on screen size
+let W = window.innerWidth; // Window width
+let H = window.innerHeight; // Window height
+
+// ============================================================================
+// CANVAS & RENDERING
+// ============================================================================
+
+let mainCanvas; // Main graphics buffer for artwork
+let shaderCanvas; // WEBGL canvas for shader effects
+let pixel_density; // Calculated in setup() after windowWidth/Height are available
+
+// ============================================================================
+// ANIMATION STATE
+// ============================================================================
+
 let features = "";
 let movers = [];
 let startTime;
-let maxFrames = 25;
 let elapsedTime = 0;
-let particleNum = 500000;
-// Adjust cycle for smoother percentage updates (1% increments)
-let cycle = parseInt((maxFrames * particleNum) / 1150);
-let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
+let executionTimer = new ExecutionTimer();
 let generator; // Animation generator instance
 
-// Swatch palette system
+// ============================================================================
+// PALETTE SYSTEM
+// ============================================================================
+
 let swatchPalette;
 let swatchesLoaded = false;
-
-// Canvas references
-let mainCanvas; // Main graphics buffer for artwork
-let shaderCanvas; // WEBGL canvas for shader effects
-
-// Shader effects are now managed by shaderEffects module (loaded from shaders/sketch-shaders.js)
-// To configure shaders, modify the effectsConfig in shaders/sketch-shaders.js
-// ============================================================================
-// QUICK TOGGLE: Set to false to disable all shader effects
-// ============================================================================
-const ENABLE_SHADERS = true;
-
-// Helper function to check if shaders are enabled and available
-function shadersEnabled() {
-	return ENABLE_SHADERS && typeof shaderEffects !== "undefined";
-}
-
-let debugBounds = false;
-
-// CSS overlay debug bounds functions
-function updateDebugOverlay() {
-	const debugOverlay = document.getElementById("debug-bounds");
-	const basePadding = document.getElementById("debug-base-padding");
-	const moverBounds = document.getElementById("debug-mover-bounds");
-
-	if (!debugBounds) {
-		debugOverlay.classList.remove("visible");
-		return;
-	}
-
-	debugOverlay.classList.add("visible");
-
-	// Get canvas position and dimensions
-	const canvas = document.querySelector("canvas");
-	if (!canvas) return;
-
-	const canvasRect = canvas.getBoundingClientRect();
-	const canvasWidth = canvasRect.width;
-	const canvasHeight = canvasRect.height;
-
-	// Position the debug overlay to match the canvas
-	debugOverlay.style.left = canvasRect.left + "px";
-	debugOverlay.style.top = canvasRect.top + "px";
-	debugOverlay.style.width = canvasWidth + "px";
-	debugOverlay.style.height = canvasHeight + "px";
-
-	// Base artwork padding (0.1 padding)
-	const padding = 0.1;
-	const basePaddingLeft = padding * canvasWidth;
-	const basePaddingTop = padding * canvasHeight;
-	const basePaddingWidth = (1 - 2 * padding) * canvasWidth;
-	const basePaddingHeight = (1 - 2 * padding) * canvasHeight;
-
-	basePadding.style.left = basePaddingLeft + "px";
-	basePadding.style.top = basePaddingTop + "px";
-	basePadding.style.width = basePaddingWidth + "px";
-	basePadding.style.height = basePaddingHeight + "px";
-
-	// Mover bounds (if movers exist)
-	if (movers.length > 0) {
-		const m = movers[0];
-		const wrapPaddingX = (min(DIM, DIM * ARTWORK_RATIO) * 0.05) / DIM;
-		const wrapPaddingY = ((min(DIM, DIM * ARTWORK_RATIO) * 0.05) / (DIM * ARTWORK_RATIO)) * ARTWORK_RATIO;
-
-		const moverLeft = (m.xMin - wrapPaddingX) * canvasWidth;
-		const moverTop = (m.yMin - wrapPaddingY) * canvasHeight;
-		const moverWidth = (m.xMax + wrapPaddingX - (m.xMin - wrapPaddingX)) * canvasWidth;
-		const moverHeight = (m.yMax + wrapPaddingY - (m.yMin - wrapPaddingY)) * canvasHeight;
-
-		moverBounds.style.left = moverLeft + "px";
-		moverBounds.style.top = moverTop + "px";
-		moverBounds.style.width = moverWidth + "px";
-		moverBounds.style.height = moverHeight + "px";
-	}
-}
-
-// Global color mapping optimization
-// Simplified color management - no more complex calculations needed
-
-// Removed hardcoded palettes - now using exclusively swatch palettes from /swatches/ folder
-
 let selectedPalette; // Will store the randomly selected palette
 let baseHSLPalette; // Keep for backward compatibility
 let currentPaletteName = ""; // Store the name of the current palette for debug
 
-// Pre-calculated color variations (1000 different palettes)
-// No color variations needed - using swatches directly
+// ============================================================================
+// PARTICLE/MOVER PARAMETERS
+// ============================================================================
 
-let scl1;
-let scl2;
-let scl3;
-let ang1;
-let ang2;
-let rseed;
-let nseed;
-let xMin;
-let xMax;
-let yMin;
-let yMax;
+// Noise and movement parameters
+let scl1, scl2, scl3, ang1, ang2;
+let rseed, nseed; // Random and noise seeds
+
+// Particle bounds
+let xMin, xMax, yMin, yMax;
 let isBordered = true;
-
-let img;
-let mask;
-
-// Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.25;
-let BASE_WIDTH = 1000;
-let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
-
-// This is our reference size for scaling
-let DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
-
-let W = window.innerWidth;
-let H = window.innerHeight;
-let DIM;
-let MULTIPLIER;
-
-// Dynamic pixel density will be calculated in setup() after windowWidth/Height are available
-let pixel_density;
 
 function preload() {
 	// Initialize shader effects (will load all shaders) - optional
@@ -289,6 +231,113 @@ async function setup() {
 	}
 }
 
+function INIT(rseed, nseed) {
+	movers = [];
+
+	// Verify that swatch palettes are available (required for this project)
+	if (!swatchesLoaded || !swatchPalette.isReady()) {
+		throw new Error("CRITICAL: Swatch palettes are required but not available. Cannot proceed with palette selection.");
+	}
+
+	// Reset the random seed to ensure consistent state
+	$fx.rand.reset();
+
+	// Store the fxrand value we'll use for selection to ensure consistency
+	const paletteSelectionRand = fxrand();
+
+	// Use ONLY swatch palettes - no hardcoded fallback
+	const swatchNames = swatchPalette.getSwatchNames();
+
+	if (swatchNames.length === 0) {
+		throw new Error("No swatch palettes available for selection");
+	}
+
+	// Sort swatch names alphabetically to ensure consistent order
+	// across different environments regardless of loading timing
+	const sortedSwatchNames = [...swatchNames].sort();
+
+	// Select directly from sorted swatch palettes
+	selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
+	currentPaletteName = sortedSwatchNames[selectedPalette];
+	baseHSLPalette = swatchPalette.getPalette(currentPaletteName);
+
+	if (!baseHSLPalette || baseHSLPalette.length === 0) {
+		throw new Error(`Selected swatch palette '${currentPaletteName}' is empty or invalid`);
+	}
+
+	// Scale noise values based on MULTIPLIER
+	scl1 = 0.002 / MULTIPLIER;
+	scl2 = 0.002 / MULTIPLIER;
+	scl3 = 0.002 / MULTIPLIER;
+
+	let sclOffset1 = 1;
+	let sclOffset2 = 1;
+	let sclOffset3 = 1;
+
+	let amplitude1 = 1 * MULTIPLIER;
+	let amplitude2 = 1 * MULTIPLIER;
+
+	// Simple 10% padding calculation with artwork ratio - use constant
+	xMin = BASE_PADDING;
+	xMax = 1 - BASE_PADDING;
+	yMin = BASE_PADDING;
+	yMax = 1 - BASE_PADDING;
+
+	// Scale number of particles based on canvas size
+	let baseParticleCount = particleNum;
+	let scaledParticleCount = baseParticleCount;
+
+	for (let i = 0; i < scaledParticleCount; i++) {
+		let x = random(xMin, xMax) * width;
+		let y = random(yMin, yMax) * height;
+
+		// Use the swatch palette directly - no variations needed
+		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette));
+	}
+
+	let bgCol = color(25, 5, 100);
+	mainCanvas.background(bgCol);
+
+	//initGrid(50);
+}
+
+//! CUSTOM UTILITIES FUNCTIONS ==========================================
+
+// Helper function to check if shaders are enabled and available
+function shadersEnabled() {
+	return ENABLE_SHADERS && typeof shaderEffects !== "undefined";
+}
+
+// Custom draw loop - advances sketch animation and applies shader effects
+function customDraw() {
+	const result = generator.next();
+
+	// Render shader effects for this frame (if shaders are enabled)
+	if (shadersEnabled() && shaderCanvas) {
+		const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
+
+		// Continue animation if not complete
+		if (shouldContinue) {
+			requestAnimationFrame(customDraw);
+		}
+	} else {
+		// No shaders - just copy mainCanvas to main display canvas
+		clear();
+		image(mainCanvas, 0, 0);
+
+		// If FPS overlay is available, update/draw it even without shaders
+		if (shadersEnabled()) {
+			shaderEffects.updateFPS();
+			shaderEffects.drawFPS();
+		}
+
+		// Continue animation if not complete
+		if (!result.done) {
+			requestAnimationFrame(customDraw);
+		}
+	}
+}
+
 // Setup mobile touch controls
 function setupMobileControls() {
 	// Hide entire controls container if in iframe
@@ -326,112 +375,6 @@ function setupMobileControls() {
 		}
 	}
 }
-
-// Custom draw loop - advances sketch animation and applies shader effects
-function customDraw() {
-	const result = generator.next();
-
-	// Render shader effects for this frame (if shaders are enabled)
-	if (shadersEnabled() && shaderCanvas) {
-		const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
-
-		// Continue animation if not complete
-		if (shouldContinue) {
-			requestAnimationFrame(customDraw);
-		}
-	} else {
-		// No shaders - just copy mainCanvas to main display canvas
-		clear();
-		image(mainCanvas, 0, 0);
-
-		// If FPS overlay is available, update/draw it even without shaders
-		if (shadersEnabled()) {
-			shaderEffects.updateFPS();
-			shaderEffects.drawFPS();
-		}
-
-		// Continue animation if not complete
-		if (!result.done) {
-			requestAnimationFrame(customDraw);
-		}
-	}
-}
-
-function INIT(rseed, nseed) {
-	movers = [];
-
-	// Verify that swatch palettes are available (required for this project)
-	if (!swatchesLoaded || !swatchPalette.isReady()) {
-		throw new Error("CRITICAL: Swatch palettes are required but not available. Cannot proceed with palette selection.");
-	}
-
-	// Reset the random seed to ensure consistent state
-	$fx.rand.reset();
-
-	// Store the fxrand value we'll use for selection to ensure consistency
-	const paletteSelectionRand = fxrand();
-
-	// Use ONLY swatch palettes - no hardcoded fallback
-	const swatchNames = swatchPalette.getSwatchNames();
-
-	if (swatchNames.length === 0) {
-		throw new Error("No swatch palettes available for selection");
-	}
-
-	// Sort swatch names alphabetically to ensure consistent order
-	// across different environments regardless of loading timing
-	const sortedSwatchNames = [...swatchNames].sort();
-
-	// Select directly from sorted swatch palettes
-	selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
-	currentPaletteName = sortedSwatchNames[selectedPalette];
-	baseHSLPalette = swatchPalette.getPalette(currentPaletteName);
-
-	if (!baseHSLPalette || baseHSLPalette.length === 0) {
-		throw new Error(`Selected swatch palette '${currentPaletteName}' is empty or invalid`);
-	}
-
-	// No color variations needed - using swatches directly
-
-	// Scale noise values based on MULTIPLIER
-	scl1 = 0.002 / MULTIPLIER;
-	scl2 = 0.002 / MULTIPLIER;
-	scl3 = 0.002 / MULTIPLIER;
-
-	let sclOffset1 = 1;
-	let sclOffset2 = 1;
-	let sclOffset3 = 1;
-
-	let amplitude1 = 1 * MULTIPLIER;
-	let amplitude2 = 1 * MULTIPLIER;
-
-	// Simple 10% padding calculation with artwork rzatio
-	let padding = 0.2;
-	xMin = padding * 2;
-	xMax = 1 - padding * 2;
-	yMin = padding;
-	yMax = 1 - padding;
-
-	let hue = random(360); // Define base hue for particles
-
-	// Scale number of particles based on canvas size
-	let baseParticleCount = particleNum;
-	let scaledParticleCount = baseParticleCount;
-
-	for (let i = 0; i < scaledParticleCount; i++) {
-		let x = random(xMin, xMax) * width;
-		let y = random(yMin, yMax) * height;
-
-		// Use the swatch palette directly - no variations needed
-		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette));
-	}
-
-	let bgCol = color(25, 5, 100);
-	mainCanvas.background(bgCol);
-
-	//initGrid(50);
-}
-
 // Key controls for debugging and performance monitoring
 function keyPressed() {
 	if (key === "D" || key === "d") {
@@ -464,5 +407,60 @@ function keyPressed() {
 		//toggle controls
 		const controls = document.getElementById("controls");
 		controls.classList.toggle("hide");
+	}
+}
+
+// CSS overlay debug bounds functions
+function updateDebugOverlay() {
+	const debugOverlay = document.getElementById("debug-bounds");
+	const basePadding = document.getElementById("debug-base-padding");
+	const moverBounds = document.getElementById("debug-mover-bounds");
+
+	if (!debugBounds) {
+		debugOverlay.classList.remove("visible");
+		return;
+	}
+
+	debugOverlay.classList.add("visible");
+
+	// Get canvas position and dimensions
+	const canvas = document.querySelector("canvas");
+	if (!canvas) return;
+
+	const canvasRect = canvas.getBoundingClientRect();
+	const canvasWidth = canvasRect.width;
+	const canvasHeight = canvasRect.height;
+
+	// Position the debug overlay to match the canvas
+	debugOverlay.style.left = canvasRect.left + "px";
+	debugOverlay.style.top = canvasRect.top + "px";
+	debugOverlay.style.width = canvasWidth + "px";
+	debugOverlay.style.height = canvasHeight + "px";
+
+	// Base artwork padding - use the actual constant value
+	const basePaddingLeft = BASE_PADDING * canvasWidth;
+	const basePaddingTop = BASE_PADDING * canvasHeight;
+	const basePaddingWidth = (1 - 2 * BASE_PADDING) * canvasWidth;
+	const basePaddingHeight = (1 - 2 * BASE_PADDING) * canvasHeight;
+
+	basePadding.style.left = basePaddingLeft + "px";
+	basePadding.style.top = basePaddingTop + "px";
+	basePadding.style.width = basePaddingWidth + "px";
+	basePadding.style.height = basePaddingHeight + "px";
+
+	// Mover bounds (if movers exist) - read actual values from mover instance
+	if (movers.length > 0) {
+		const m = movers[0];
+		// Use the actual wrapPadding values from the mover instance
+		// Convert from normalized coordinates (0-1) to pixel coordinates
+		const moverLeft = m.minBoundX;
+		const moverTop = m.minBoundY;
+		const moverWidth = m.maxBoundX - m.minBoundX;
+		const moverHeight = m.maxBoundY - m.minBoundY;
+
+		moverBounds.style.left = moverLeft + "px";
+		moverBounds.style.top = moverTop + "px";
+		moverBounds.style.width = moverWidth + "px";
+		moverBounds.style.height = moverHeight + "px";
 	}
 }
