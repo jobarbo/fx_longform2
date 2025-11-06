@@ -167,7 +167,7 @@ async function setup() {
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
-	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
+	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 4;
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
@@ -239,7 +239,7 @@ async function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0) {
+			if (currentFrame > -1) {
 				mover.show(mainCanvas);
 			}
 		},
@@ -406,9 +406,9 @@ function INIT(rseed, nseed) {
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork rzatio
-	let padding = 0.05;
-	xMin = padding;
-	xMax = 1 - padding;
+	let padding = 0.2;
+	xMin = padding * 2;
+	xMax = 1 - padding * 2;
 	yMin = padding;
 	yMax = 1 - padding;
 
