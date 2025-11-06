@@ -75,7 +75,7 @@ class ShaderEffects {
 			},
 
 			grain: {
-				enabled: false,
+				enabled: true,
 				amount: 0.1,
 				timeMultiplier: 0.0,
 				uniforms: {
@@ -86,7 +86,7 @@ class ShaderEffects {
 			},
 
 			pixelSort: {
-				enabled: true,
+				enabled: false,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.3,
 				sortAmount: 2.8,
@@ -108,7 +108,7 @@ class ShaderEffects {
 			},
 
 			symmetry: {
-				enabled: true,
+				enabled: false,
 				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
@@ -139,7 +139,7 @@ class ShaderEffects {
 				},
 			},
 			symmetry2: {
-				enabled: true,
+				enabled: false,
 				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)

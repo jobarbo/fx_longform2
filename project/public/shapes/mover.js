@@ -229,7 +229,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 	// Apply ZZ symmetrically - preserve sign but apply transformation to absolute value
-	let zzu = map(ZZ(u, 35, 80, 0.08), -1, 1, minU, maxU, true);
+	let zzu = map(ZZ(u, 35, 80, 0.02), -1, 1, minU, maxU, true);
 	let zzv = map(ZZ(v, 35, 80, 0.02), -1, 1, minV, maxV, true);
 
 	let zu = u < 0 ? u : zzu;

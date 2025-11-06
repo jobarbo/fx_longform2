@@ -22,7 +22,7 @@ let shaderCanvas; // WEBGL canvas for shader effects
 // ============================================================================
 // QUICK TOGGLE: Set to false to disable all shader effects
 // ============================================================================
-const ENABLE_SHADERS = false;
+const ENABLE_SHADERS = true;
 
 // Helper function to check if shaders are enabled and available
 function shadersEnabled() {
