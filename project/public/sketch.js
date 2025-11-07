@@ -6,10 +6,10 @@
 const ENABLE_SHADERS = true;
 
 // Padding constants - centralized for consistency
-const BASE_PADDING_X = 0.25; // Base padding (horizontal) for artwork bounds (used in INIT)
-const BASE_PADDING_Y = 0.15; // Base padding (vertical) for artwork bounds (used in INIT)
-const WRAP_PADDING_FACTOR_X = 0.1; // Wrap padding factor (horizontal) for particle movement bounds (used in Mover class)
-const WRAP_PADDING_FACTOR_Y = 0.05; // Wrap padding factor (vertical) for particle movement bounds (used in Mover class)
+const BASE_PADDING_X = 0.15; // Base padding (horizontal) for artwork bounds (used in INIT)
+const BASE_PADDING_Y = 0.45; // Base padding (vertical) for artwork bounds (used in INIT)
+const WRAP_PADDING_FACTOR_X = 0.05; // Wrap padding factor (horizontal) for particle movement bounds (used in Mover class)
+const WRAP_PADDING_FACTOR_Y = 0.35; // Wrap padding factor (vertical) for particle movement bounds (used in Mover class)
 
 // Animation configuration
 const maxFrames = 25;
