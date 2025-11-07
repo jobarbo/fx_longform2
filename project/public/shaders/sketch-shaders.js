@@ -113,12 +113,12 @@ class ShaderEffects {
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				translationSpeed: 0.0, // Speed of horizontal/vertical movement
-				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				rotationSpeed: 0.0, // Speed of rotation
 				rotationOscillationSpeed: 0.0, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 6.0, // Starting angle for rotation (in radians, added to rotation)
-				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
+				rotationStartingAngle: -0.1, // Starting angle for rotation (in radians, added to rotation)
+				rotationMode: 2.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				timeMultiplier: 0.1, // Time multiplier for animation
 				uniforms: {
