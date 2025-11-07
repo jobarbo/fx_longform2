@@ -74,17 +74,6 @@ class ShaderEffects {
 				},
 			},
 
-			grain: {
-				enabled: true,
-				amount: 0.1,
-				timeMultiplier: 0.0,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 345.0",
-					uAmount: "amount",
-				},
-			},
-
 			pixelSort: {
 				enabled: false,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
@@ -167,6 +156,16 @@ class ShaderEffects {
 					uRotationStartingAngle: "rotationStartingAngle",
 					uRotationMode: "rotationMode",
 					uRotationNoiseScale: "rotationNoiseScale",
+				},
+			},
+			grain: {
+				enabled: true,
+				amount: 0.04,
+				timeMultiplier: 0.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 345.0",
+					uAmount: "amount",
 				},
 			},
 			chromatic: {
