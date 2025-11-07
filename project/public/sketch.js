@@ -4,7 +4,7 @@ let maxDPI = 3;
 let RATIO = 1;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 2.16;
+let ARTWORK_RATIO = 1.16;
 let BASE_WIDTH = 1000;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -23,7 +23,7 @@ let maxFrames = 40; // Total frames to animate
 let generator; // Animation generator instance
 let executionTimer = new ExecutionTimer();
 // Canvas references
-let pixel_density = 5;
+let pixel_density = 2;
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects (if shaders enabled)
 let cycle = parseInt((maxFrames * numMovers) / 55); // Number of operations before updating display (lower = more updates = slower, higher = fewer updates = faster)
