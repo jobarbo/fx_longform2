@@ -43,8 +43,8 @@ class Mover {
 		const wrapPaddingFactorY = typeof WRAP_PADDING_FACTOR_Y !== "undefined" ? WRAP_PADDING_FACTOR_Y : fallbackWrapPadding;
 		this.wrapPaddingX = (min(width, height) * wrapPaddingFactorX) / width;
 		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactorY) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.0075) / width;
-		this.reentryOffsetY = (min(width, height) * 0.0075) / height;
+		this.reentryOffsetX = (min(width, height) * 0.0025) / width;
+		this.reentryOffsetY = (min(width, height) * 0.0025) / height;
 		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
@@ -197,10 +197,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset2) + rseed, noiseScale1, 1, octave), -0.0025, 0.0025, -1, 1, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset2) + rseed, nx * (scale1 * scaleOffset1) + rseed, noiseScale2, 2, octave), -0.0025, 0.0025, -1, 1, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset3) + rseed, ny * (scale1 * scaleOffset1) + rseed, noiseScale3, 0, octave), -0.0025, 0.0025, -1, 1, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset1) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.0025, 0.0025, -1, 1, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset2) + rseed, noiseScale1, 1, octave), -0.0025, 0.0425, -1, 1, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset2) + rseed, nx * (scale1 * scaleOffset1) + rseed, noiseScale2, 2, octave), -0.0025, 0.0425, -1, 1, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset3) + rseed, ny * (scale1 * scaleOffset1) + rseed, noiseScale3, 0, octave), -0.0425, 0.0025, -1, 1, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset1) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.0425, 0.0025, -1, 1, true);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
