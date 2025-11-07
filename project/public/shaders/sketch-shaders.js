@@ -21,7 +21,7 @@ class ShaderEffects {
 	constructor() {
 		// Shader animation control
 		this.continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
-		this.applyShadersDuringSketch = false; // Set to true to apply shaders while sketching
+		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Frame rate for shader animation
 
 		// Animation state
@@ -108,16 +108,16 @@ class ShaderEffects {
 			},
 
 			symmetry: {
-				enabled: false,
-				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				enabled: true,
+				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				translationSpeed: 1.5, // Speed of horizontal/vertical movement
-				translationMode: 0.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationSpeed: 0.0, // Speed of horizontal/vertical movement
+				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				rotationSpeed: 0.0, // Speed of rotation
 				rotationOscillationSpeed: 0.0, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 0.5, // Starting angle for rotation (in radians, added to rotation)
+				rotationStartingAngle: 6.0, // Starting angle for rotation (in radians, added to rotation)
 				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				timeMultiplier: 0.1, // Time multiplier for animation
