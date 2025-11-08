@@ -39,19 +39,24 @@ class Mover {
 
 		// Pre-calculate padding values - use global constants if available
 		const fallbackWrapPadding = typeof WRAP_PADDING_FACTOR !== "undefined" ? WRAP_PADDING_FACTOR : 0.1;
-		const wrapPaddingFactorX = typeof WRAP_PADDING_FACTOR_X !== "undefined" ? WRAP_PADDING_FACTOR_X : fallbackWrapPadding;
-		const wrapPaddingFactorY = typeof WRAP_PADDING_FACTOR_Y !== "undefined" ? WRAP_PADDING_FACTOR_Y : fallbackWrapPadding;
-		this.wrapPaddingX = (min(width, height) * wrapPaddingFactorX) / width;
-		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactorY) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.0055) / width;
-		this.reentryOffsetY = (min(width, height) * 0.0055) / height;
+		const wrapPaddingFactorLeft = typeof WRAP_PADDING_LEFT !== "undefined" ? WRAP_PADDING_LEFT : fallbackWrapPadding;
+		const wrapPaddingFactorRight = typeof WRAP_PADDING_RIGHT !== "undefined" ? WRAP_PADDING_RIGHT : fallbackWrapPadding;
+		const wrapPaddingFactorTop = typeof WRAP_PADDING_TOP !== "undefined" ? WRAP_PADDING_TOP : fallbackWrapPadding;
+		const wrapPaddingFactorBottom = typeof WRAP_PADDING_BOTTOM !== "undefined" ? WRAP_PADDING_BOTTOM : fallbackWrapPadding;
+		const normalizedMinDim = min(width, height);
+		this.wrapPaddingLeft = (normalizedMinDim * wrapPaddingFactorLeft) / width;
+		this.wrapPaddingRight = (normalizedMinDim * wrapPaddingFactorRight) / width;
+		this.wrapPaddingTop = ((normalizedMinDim * wrapPaddingFactorTop) / height) * ARTWORK_RATIO;
+		this.wrapPaddingBottom = ((normalizedMinDim * wrapPaddingFactorBottom) / height) * ARTWORK_RATIO;
+		this.reentryOffsetX = (min(width, height) * 0.0025) / width;
+		this.reentryOffsetY = (min(width, height) * 0.0025) / height;
 		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
-		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
-		this.maxBoundX = (this.xMax + this.wrapPaddingX) * width;
-		this.minBoundY = (this.yMin - this.wrapPaddingY) * height;
-		this.maxBoundY = (this.yMax + this.wrapPaddingY) * height;
+		this.minBoundX = (this.xMin - this.wrapPaddingLeft) * width;
+		this.maxBoundX = (this.xMax + this.wrapPaddingRight) * width;
+		this.minBoundY = (this.yMin - this.wrapPaddingTop) * height;
+		this.maxBoundY = (this.yMax + this.wrapPaddingBottom) * height;
 	}
 
 	show(canvas = null) {
@@ -84,8 +89,8 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.01;
-		this.yRandDivider = 0.0075;
+		this.xRandDivider = 0.021;
+		this.yRandDivider = 0.021;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -104,15 +109,15 @@ class Mover {
 				this.hasBeenOutside = true;
 			}
 			if (this.x < this.minBoundX) {
-				this.x = (this.xMax + this.wrapPaddingX * this.wrapPaddingMultiplier - random(0, this.reentryOffsetX)) * width;
+				this.x = (this.xMax + this.wrapPaddingRight * this.wrapPaddingMultiplier - random(0, this.reentryOffsetX)) * width;
 			} else if (this.x > this.maxBoundX) {
-				this.x = (this.xMin - this.wrapPaddingX * this.wrapPaddingMultiplier + random(0, this.reentryOffsetX)) * width;
+				this.x = (this.xMin - this.wrapPaddingLeft * this.wrapPaddingMultiplier + random(0, this.reentryOffsetX)) * width;
 			}
 
 			if (this.y < this.minBoundY) {
-				this.y = (this.yMax + this.wrapPaddingY * this.wrapPaddingMultiplier - random(0, this.reentryOffsetY)) * height;
+				this.y = (this.yMax + this.wrapPaddingBottom * this.wrapPaddingMultiplier - random(0, this.reentryOffsetY)) * height;
 			} else if (this.y > this.maxBoundY) {
-				this.y = (this.yMin - this.wrapPaddingY * this.wrapPaddingMultiplier + random(0, this.reentryOffsetY)) * height;
+				this.y = (this.yMin - this.wrapPaddingTop * this.wrapPaddingMultiplier + random(0, this.reentryOffsetY)) * height;
 			}
 		} else {
 			// Reset to initial position if not bordered
@@ -198,9 +203,9 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	//! pNoise x SineCos
 	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset2) + rseed, noiseScale1, 1, octave), -0.0025, 0.0025, -1, 1, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset2) + rseed, nx * (scale1 * scaleOffset1) + rseed, noiseScale2, 2, octave), -0.0025, 0.0025, -1, 1, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset2) + rseed, nx * (scale1 * scaleOffset1) + rseed, noiseScale2, 2, octave), -0.0025, 0.0025, -2, -4, true);
 	let minU = map(oct(ny * (scale3 * scaleOffset3) + rseed, ny * (scale1 * scaleOffset1) + rseed, noiseScale3, 0, octave), -0.0025, 0.0025, -1, 1, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset1) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.0025, 0.0025, -1, 1, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset1) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.0025, 0.0025, -0.1, -2, true);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
@@ -221,9 +226,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	//! Introverted
 	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.001), map(nx, xMin * width, xMax * width, 0.001, 1.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.001), map(ny, yMin * height, yMax * height, 0.001, 1.5), minV, maxV, true);
-
+	let u = map(vn, map(nx, xMin * width, xMax * width, -25.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 25.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -25.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 25.5), minV, maxV, true);
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
 	let v = map(un, map(nx, yMin * height, yMax * height, -5.4, -0.0001), map(nx, yMin * height, yMax * height, 0.0001, 5.4), minV, maxV, true); */

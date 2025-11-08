@@ -14,7 +14,8 @@ body {
 }
 
 body {
-	background-color: transparent;
+	background: url("bg.jpg") no-repeat center center;
+	background-size: cover;
 	margin: 0;
 	height: 100vh;
 	overflow: hidden;
@@ -26,7 +27,15 @@ body {
 	--hContent: var(--min);
 	--wContent: var(--min);
 }
+main {
+	position: relative;
+	border-radius: 30px;
+	overflow: hidden;
+	scale: 0.9;
+	box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.5);
+}
 canvas.p5Canvas {
+	position: relative;
 	display: block;
 	padding-left: 0;
 	padding-right: 0;

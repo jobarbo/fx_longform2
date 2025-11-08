@@ -6,10 +6,14 @@
 const ENABLE_SHADERS = true;
 
 // Padding constants - centralized for consistency
-const BASE_PADDING_X = 0.15; // Base padding (horizontal) for artwork bounds (used in INIT)
-const BASE_PADDING_Y = 0.45; // Base padding (vertical) for artwork bounds (used in INIT)
-const WRAP_PADDING_FACTOR_X = 0.05; // Wrap padding factor (horizontal) for particle movement bounds (used in Mover class)
-const WRAP_PADDING_FACTOR_Y = 0.35; // Wrap padding factor (vertical) for particle movement bounds (used in Mover class)
+const BASE_PADDING_LEFT = 0.15; // Base padding for the left artwork bound (used in INIT)
+const BASE_PADDING_RIGHT = 0.15; // Base padding for the right artwork bound (used in INIT)
+const BASE_PADDING_TOP = 0.75; // Base padding for the top artwork bound (used in INIT)
+const BASE_PADDING_BOTTOM = 0.075; // Base padding for the bottom artwork bound (used in INIT)
+const WRAP_PADDING_LEFT = 0.05; // Wrap padding factor for the left movement bound (used in Mover class)
+const WRAP_PADDING_RIGHT = 0.05; // Wrap padding factor for the right movement bound (used in Mover class)
+const WRAP_PADDING_TOP = 0.7; // Wrap padding factor for the top movement bound (used in Mover class)
+const WRAP_PADDING_BOTTOM = 0.01; // Wrap padding factor for the bottom movement bound (used in Mover class)
 
 // Animation configuration
 const maxFrames = 25;
@@ -280,10 +284,10 @@ function INIT(rseed, nseed) {
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple padding calculation with artwork ratio - use axis-specific constants
-	xMin = BASE_PADDING_X;
-	xMax = 1 - BASE_PADDING_X;
-	yMin = BASE_PADDING_Y;
-	yMax = 1 - BASE_PADDING_Y;
+	xMin = BASE_PADDING_LEFT;
+	xMax = 1 - BASE_PADDING_RIGHT;
+	yMin = BASE_PADDING_TOP;
+	yMax = 1 - BASE_PADDING_BOTTOM;
 
 	// Scale number of particles based on canvas size
 	let baseParticleCount = particleNum;
@@ -440,10 +444,10 @@ function updateDebugOverlay() {
 	debugOverlay.style.height = canvasHeight + "px";
 
 	// Base artwork padding - use the actual constant value per axis
-	const basePaddingLeft = BASE_PADDING_X * canvasWidth;
-	const basePaddingTop = BASE_PADDING_Y * canvasHeight;
-	const basePaddingWidth = (1 - BASE_PADDING_X * 2) * canvasWidth;
-	const basePaddingHeight = (1 - BASE_PADDING_Y * 2) * canvasHeight;
+	const basePaddingLeft = BASE_PADDING_LEFT * canvasWidth;
+	const basePaddingTop = BASE_PADDING_TOP * canvasHeight;
+	const basePaddingWidth = (1 - (BASE_PADDING_LEFT + BASE_PADDING_RIGHT)) * canvasWidth;
+	const basePaddingHeight = (1 - (BASE_PADDING_TOP + BASE_PADDING_BOTTOM)) * canvasHeight;
 
 	basePadding.style.left = basePaddingLeft + "px";
 	basePadding.style.top = basePaddingTop + "px";

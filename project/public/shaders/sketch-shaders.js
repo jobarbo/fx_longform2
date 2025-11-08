@@ -208,7 +208,8 @@ class ShaderEffects {
 		// Also disable FPS counter when in iframe
 		const isSafariMobileCheck = typeof isSafariMobile === "function" && isSafariMobile();
 		const isInIframeCheck = typeof isInIframe === "function" && isInIframe();
-		this.showFPS = !isSafariMobileCheck && !isInIframeCheck;
+		//this.showFPS = !isSafariMobileCheck && !isInIframeCheck;
+		this.showFPS = false;
 		this.fpsHistory = [];
 		this.fpsHistorySize = 60; // Average over 60 frames
 		this.lastFrameTime = performance.now();
