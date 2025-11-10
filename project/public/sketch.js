@@ -457,12 +457,13 @@ function updateDebugOverlay() {
 	// Mover bounds (if movers exist) - read actual values from mover instance
 	if (movers.length > 0) {
 		const m = movers[0];
-		// Use the actual wrapPadding values from the mover instance
-		// Convert from normalized coordinates (0-1) to pixel coordinates
-		const moverLeft = m.minBoundX;
-		const moverTop = m.minBoundY;
-		const moverWidth = m.maxBoundX - m.minBoundX;
-		const moverHeight = m.maxBoundY - m.minBoundY;
+		const scaleX = width > 0 ? canvasWidth / width : 1;
+		const scaleY = height > 0 ? canvasHeight / height : 1;
+
+		const moverLeft = m.minBoundX * scaleX;
+		const moverTop = m.minBoundY * scaleY;
+		const moverWidth = (m.maxBoundX - m.minBoundX) * scaleX;
+		const moverHeight = (m.maxBoundY - m.minBoundY) * scaleY;
 
 		moverBounds.style.left = moverLeft + "px";
 		moverBounds.style.top = moverTop + "px";
