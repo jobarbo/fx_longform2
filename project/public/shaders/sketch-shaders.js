@@ -115,9 +115,9 @@ class ShaderEffects {
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
 				translationMode: 0.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
-				rotationSpeed: 0.0, // Speed of rotation
-				rotationOscillationSpeed: 0.0, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 0.5, // Starting angle for rotation (in radians, added to rotation)
+				rotationSpeed: 1.0, // Speed of rotation
+				rotationOscillationSpeed: 0.01, // Speed of oscillation (controls how fast it alternates between positive/negative)
+				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
 				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				timeMultiplier: 0.1, // Time multiplier for animation
@@ -139,17 +139,17 @@ class ShaderEffects {
 				},
 			},
 			symmetry2: {
-				enabled: true,
+				enabled: false,
 				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
 				translationMode: 0.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
-				rotationSpeed: 0.0, // Speed of rotation
-				rotationOscillationSpeed: 0.0, // Speed of oscillation (controls how fast it alternates between positive/negative)
+				rotationSpeed: 10.01, // Speed of rotation
+				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
 				rotationStartingAngle: 0.5, // Starting angle for rotation (in radians, added to rotation)
-				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
+				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				timeMultiplier: 0.1, // Time multiplier for animation
 				uniforms: {
