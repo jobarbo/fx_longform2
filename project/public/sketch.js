@@ -20,7 +20,7 @@ let configNum = 10;
 let angle = 0;
 let margin = 0;
 let time = 0;
-let scale = 10;
+let scale = 20;
 
 function setup() {
 	features = $fx.getFeatures();
@@ -71,11 +71,11 @@ function draw() {
 			ellipse(x + cellSize / 2, y + cellSize / 2, w1, w1);
 		}
 	}
-	time += 10.5; // Increment time for animation
+	time += 3.5; // Increment time for animation
 }
 
 function wobbly(x, y, t) {
-	let w0 = sin(10.3 * x + 1.4 * t + 2.0 + 112.5 * sin(0.4 * y + -1.3 * t + 1.0));
-	let w1 = sin(10.2 * y + 1.5 * t + 2.8 + 111.3 * sin(0.5 * x + -1.2 * t + 0.5));
-	return (w0 + w1 + 2) * 1 * scale;
+	let w0 = cos(10.3 * x + 0.004 * t + 2.0 + 112.5 * sin(0.4 * y + -1.3 * t + 1.0));
+	let w1 = sin(10.2 * y + 3.5 * t + 2.8 + 111.3 * cos(0.5 * x + -1.2 * t + 0.5));
+	return (w0 + w1 + 0.02) * 2 * scale;
 }
