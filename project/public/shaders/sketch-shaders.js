@@ -29,6 +29,34 @@ class ShaderEffects {
 		this.shaderSeed = 0;
 		this.particleAnimationComplete = false;
 
+		// Translation state tracking (to prevent position jumps when speed changes)
+		this.translationPhase = {
+			symmetry: {x: 0, y: 0},
+			symmetry2: {x: 0, y: 0},
+		};
+		this.lastTranslationSpeed = {
+			symmetry: null,
+			symmetry2: null,
+		};
+
+		// Rotation state tracking (to prevent angle jumps when speed changes)
+		this.rotationPhase = {
+			symmetry: 0,
+			symmetry2: 0,
+		};
+		this.lastRotationSpeed = {
+			symmetry: null,
+			symmetry2: null,
+		};
+		this.lastRotationOscillationSpeed = {
+			symmetry: null,
+			symmetry2: null,
+		};
+		this.currentRotationAngle = {
+			symmetry: 0,
+			symmetry2: 0,
+		};
+
 		// Canvas references
 		this.mainCanvas = null;
 		this.shaderCanvas = null;
@@ -113,13 +141,17 @@ class ShaderEffects {
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
-				translationMode: 0.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
+				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
+				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
 				rotationSpeed: 0.0, // Speed of rotation
-				rotationOscillationSpeed: 0.0, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 0.5, // Starting angle for rotation (in radians, added to rotation)
-				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
-				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
+				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
+				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
+				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
+				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
+				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
+				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
 				timeMultiplier: 0.1, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
@@ -131,11 +163,15 @@ class ShaderEffects {
 					uTranslationSpeed: "translationSpeed",
 					uTranslationMode: "translationMode",
 					uTranslationNoiseScale: "translationNoiseScale",
+					uTranslationPhaseX: "translationPhaseX",
+					uTranslationPhaseY: "translationPhaseY",
 					uRotationSpeed: "rotationSpeed",
 					uRotationOscillationSpeed: "rotationOscillationSpeed",
 					uRotationStartingAngle: "rotationStartingAngle",
 					uRotationMode: "rotationMode",
 					uRotationNoiseScale: "rotationNoiseScale",
+					uRotationPhase: "rotationPhase",
+					uRotationAmplitude: "rotationAmplitude",
 				},
 			},
 			symmetry2: {
@@ -146,11 +182,15 @@ class ShaderEffects {
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
 				translationMode: 0.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
+				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
+				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
 				rotationSpeed: 0.0, // Speed of rotation
 				rotationOscillationSpeed: 0.0, // Speed of oscillation (controls how fast it alternates between positive/negative)
 				rotationStartingAngle: 0.5, // Starting angle for rotation (in radians, added to rotation)
 				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
+				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
+				rotationAmplitude: 1.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
 				timeMultiplier: 0.1, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
@@ -162,11 +202,15 @@ class ShaderEffects {
 					uTranslationSpeed: "translationSpeed",
 					uTranslationMode: "translationMode",
 					uTranslationNoiseScale: "translationNoiseScale",
+					uTranslationPhaseX: "translationPhaseX",
+					uTranslationPhaseY: "translationPhaseY",
 					uRotationSpeed: "rotationSpeed",
 					uRotationOscillationSpeed: "rotationOscillationSpeed",
 					uRotationStartingAngle: "rotationStartingAngle",
 					uRotationMode: "rotationMode",
 					uRotationNoiseScale: "rotationNoiseScale",
+					uRotationPhase: "rotationPhase",
+					uRotationAmplitude: "rotationAmplitude",
 				},
 			},
 			chromatic: {
@@ -339,7 +383,136 @@ class ShaderEffects {
 	 */
 	updateTime(delta = 0.01) {
 		this.shaderTime += delta;
+		this.updateTranslationPhases(delta);
+		this.updateRotationPhases(delta);
 		return this;
+	}
+
+	/**
+	 * Update translation phases to prevent position jumps when speed changes
+	 * @param {number} delta - Time delta
+	 */
+	updateTranslationPhases(delta) {
+		// Update phase for symmetry effects
+		const effects = ["symmetry", "symmetry2"];
+		for (const effectName of effects) {
+			const effect = this.effectsConfig[effectName];
+			if (!effect || !effect.enabled) continue;
+
+			const currentSpeed = effect.translationSpeed || 0;
+			const lastSpeed = this.lastTranslationSpeed[effectName];
+			const transMode = Math.floor(effect.translationMode || 0);
+
+			// Initialize phase if not set
+			if (effect.translationPhaseX === undefined) effect.translationPhaseX = 0;
+			if (effect.translationPhaseY === undefined) effect.translationPhaseY = 0;
+
+			// If speed changed, maintain current position by adjusting phase
+			if (lastSpeed !== null && lastSpeed !== currentSpeed && currentSpeed !== 0) {
+				const currentTime = this.shaderTime * (effect.timeMultiplier || 0.1);
+
+				if (transMode === 0) {
+					// Sine mode: maintain phase continuity
+					const oldPhaseX = currentTime * lastSpeed;
+					const oldPhaseY = currentTime * lastSpeed * 0.7;
+					// Set phase to maintain the same position
+					effect.translationPhaseX = oldPhaseX;
+					effect.translationPhaseY = oldPhaseY;
+				}
+				// For noise/FBM/vector field modes, phase is already accumulated, so we keep it
+			}
+
+			// Update phase based on current speed
+			const timeMultiplier = effect.timeMultiplier || 0.1;
+			const effectiveDelta = delta * timeMultiplier;
+
+			if (transMode === 0) {
+				// Sine mode: accumulate phase
+				effect.translationPhaseX += effectiveDelta * currentSpeed;
+				effect.translationPhaseY += effectiveDelta * currentSpeed * 0.7;
+			} else {
+				// Noise/FBM/vector field: accumulate based on speed
+				effect.translationPhaseX += effectiveDelta * currentSpeed;
+				effect.translationPhaseY += effectiveDelta * currentSpeed;
+			}
+
+			this.lastTranslationSpeed[effectName] = currentSpeed;
+		}
+	}
+
+	/**
+	 * Update rotation phases to prevent angle jumps when speed changes
+	 * @param {number} delta - Time delta
+	 */
+	updateRotationPhases(delta) {
+		// Update phase for symmetry effects
+		const effects = ["symmetry", "symmetry2"];
+		for (const effectName of effects) {
+			const effect = this.effectsConfig[effectName];
+			if (!effect || !effect.enabled) continue;
+
+			const currentSpeed = effect.rotationSpeed || 0;
+			const currentOscillationSpeed = effect.rotationOscillationSpeed || 0;
+			const lastSpeed = this.lastRotationSpeed[effectName];
+			const lastOscillationSpeed = this.lastRotationOscillationSpeed[effectName];
+			const rotMode = Math.floor(effect.rotationMode || 0);
+
+			// Initialize phase if not set
+			if (effect.rotationPhase === undefined) effect.rotationPhase = 0;
+
+			// If speed changed, maintain current angle by adjusting phase
+			if (lastSpeed !== null && lastSpeed !== currentSpeed && currentSpeed !== 0) {
+				const currentTime = this.shaderTime * (effect.timeMultiplier || 0.1);
+				const rotationNoiseScale = effect.rotationNoiseScale || 0.3;
+
+				if (rotMode === 0) {
+					// Cosine oscillation mode: maintain angle continuity
+					// Calculate what the current angle was with old speed
+					const oldOscillation = -Math.cos(currentTime * (lastOscillationSpeed || 0));
+					const oldAngle = oldOscillation * lastSpeed;
+					// Set phase to maintain the same angle (phase represents the angle directly for cosine mode)
+					effect.rotationPhase = oldAngle;
+				} else if (rotMode === 1 || rotMode === 2) {
+					// Noise/FBM modes: maintain amplitude continuity
+					// When speed changes, keep amplitude constant to prevent angle jump
+					// Speed only affects phase accumulation rate, not amplitude
+					// Initialize amplitude if not set (use current speed as starting point)
+					if (effect.rotationAmplitude === undefined) {
+						effect.rotationAmplitude = lastSpeed || currentSpeed;
+					}
+					// Keep amplitude constant - don't change it when speed changes
+				}
+			}
+
+			// Update phase based on current speed
+			const timeMultiplier = effect.timeMultiplier || 0.1;
+			const effectiveDelta = delta * timeMultiplier;
+			const currentTime = this.shaderTime * timeMultiplier;
+			const rotationNoiseScale = effect.rotationNoiseScale || 0.3;
+
+			if (rotMode === 0) {
+				// Cosine oscillation mode: phase represents the angle directly
+				// Calculate the derivative (rate of change) and integrate it
+				const oscillation = -Math.cos(currentTime * currentOscillationSpeed);
+				const angleDerivative = oscillation * currentSpeed;
+				effect.rotationPhase += effectiveDelta * angleDerivative;
+			} else {
+				// Noise/FBM: accumulate phase based on speed
+				// Phase accumulation rate controls how fast we move through noise space
+				// rotationNoiseScale in the shader controls sampling frequency (lower = smoother)
+				effect.rotationPhase += effectiveDelta * currentSpeed;
+
+				// Initialize amplitude if not set, but don't change it when speed changes
+				// This maintains angle continuity - speed only affects rotation speed, not amplitude
+				if (effect.rotationAmplitude === undefined) {
+					effect.rotationAmplitude = currentSpeed;
+				}
+				// Don't update amplitude - keep it constant to prevent angle jumps
+			}
+
+			this.lastRotationSpeed[effectName] = currentSpeed;
+			this.lastRotationOscillationSpeed[effectName] = currentOscillationSpeed;
+		}
 	}
 
 	/**
