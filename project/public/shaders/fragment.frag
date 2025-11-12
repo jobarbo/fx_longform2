@@ -29,7 +29,7 @@ void main() {
 
     // Add spiral effect
     float angle = atan(centered_uv.y, centered_uv.x);
-    float spiral = tan(dist * 3.0 * sin(uTime* 0.012) * 12.0) / tan(dist * 2.01 - uTime * 0.1);
+    float spiral = tan(dist * 0.1 * sin(uTime* 0.012) * 12.0) + tan(dist / 0.9 - uTime * 0.2);
 
     vec2 waveOffset = vec2(waveX, waveY);
     vec2 spiralOffset = vec2(cos(angle), sin(angle)) * spiral * centerWeight;
@@ -44,7 +44,7 @@ void main() {
 
     // Enhanced chromatic aberration that follows the spiral pattern
     float aberrationAmount = 0.001 * (1.5  * dist * 5.0);
-    float spiralFactor = spiral * 15.0; // Amplify the spiral effect for aberration
+    float spiralFactor = spiral * 2.0; // Amplify the spiral effect for aberration
 
     // Use the angle and spiral calculations to create offset vectors that follow the spiral pattern
     vec2 redOffset = uv + aberrationAmount * vec2(cos(angle + spiralFactor), sin(angle + spiralFactor));
