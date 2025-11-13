@@ -14,7 +14,7 @@ let drawing = true;
 let renderMode = 1;
 let cycle = parseInt((maxFrames * particleNum) / 1170);
 
-let DEFAULT_SIZE = 2600;
+let DEFAULT_SIZE = 600;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;

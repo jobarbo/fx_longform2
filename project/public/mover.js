@@ -19,16 +19,16 @@ class Mover {
 		this.yRandOffset = random(-0.1, 3.1) * MULTIPLIER;
 		this.minSat = random(1, 20);
 		this.minBri = random(1, 20);
-		this.gaussianOffsetX = 0.00001;
-		this.gaussianOffsetY = 0.00001;
-		this.rdnGaussianValueX = 0.1;
+		this.gaussianOffsetX = 10.1;
+		this.gaussianOffsetY = 10.1;
+		this.rdnGaussianValueX = 0.5;
 		this.rdnGaussianValueY = 10.3;
 	}
 
 	show() {
 		//
 		//blendMode(MULTIPLY);
-		fill(this.hue, this.sat, this.bri, 30);
+		fill(this.hue, this.sat, this.bri, 100);
 		//stroke(34, 40, 90,80);
 		noStroke();
 		ellipse(this.x, this.y, this.s);
@@ -50,7 +50,7 @@ class Mover {
 		this.gaussianOffsetY = map(abs(pos), 0, 5120, 10.1, 0.00001, true); */
 
 		//!invert the two values after pos to invert the curve
-		this.s = map(pos, 24, 24.01, 3 * MULTIPLIER, 0, true);
+		this.s = map(pos, 24, 24.01, 0.65 * MULTIPLIER, 0.2 * MULTIPLIER, true);
 
 		/* 		if (this.hue < 0) {
 			this.hue = 360;
@@ -103,8 +103,8 @@ function superCurve(x, y, scl1, scl2, a1, a2, seed) {
 		ny = y,
 		scale1 = scl1,
 		scale2 = scl2,
-		amplitude1 = a1,
-		amplitude2 = a2,
+		amplitude1 = 1111,
+		amplitude2 = 111,
 		dx,
 		dy,
 		octave = 1;
