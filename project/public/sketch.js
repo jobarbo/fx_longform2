@@ -272,15 +272,15 @@ function INIT(rseed, nseed) {
 	}
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.002 / MULTIPLIER;
-	scl2 = 0.002 / MULTIPLIER;
-	scl3 = 0.002 / MULTIPLIER;
+	scl1 = 0.003 / MULTIPLIER;
+	scl2 = 0.003 / MULTIPLIER;
+	scl3 = 0.003 / MULTIPLIER;
 
 	let sclOffset1 = 1;
 	let sclOffset2 = 1;
 	let sclOffset3 = 1;
 
-	let amplitude1 = 1 * MULTIPLIER;
+	let amplitude1 = 1231 * MULTIPLIER;
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple padding calculation with artwork ratio - use axis-specific constants
