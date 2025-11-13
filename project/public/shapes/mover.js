@@ -89,8 +89,8 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.11;
-		this.yRandDivider = 0.11;
+		this.xRandDivider = 0.081;
+		this.yRandDivider = 0.081;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -143,10 +143,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
-		noiseScale1 = 2,
-		noiseScale2 = 2,
-		noiseScale3 = 2,
-		noiseScale4 = 2,
+		noiseScale1 = 1,
+		noiseScale2 = 1,
+		noiseScale3 = 1,
+		noiseScale4 = 1,
 		x_sine_scale = 1,
 		y_sine_scale = 1,
 		octave = 1,
@@ -168,7 +168,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	nx += dx * a1;
 	ny += dy * a2;
 
-	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
+	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) + sin(nx * (scale3 * scaleOffset3) + rseed);
 	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);
 
 	//! sine x cos x oct
