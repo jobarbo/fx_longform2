@@ -6,14 +6,14 @@
 const ENABLE_SHADERS = true;
 
 // Padding constants - centralized for consistency
-const BASE_PADDING_LEFT = 0.15; // Base padding for the left artwork bound (used in INIT)
-const BASE_PADDING_RIGHT = 0.15; // Base padding for the right artwork bound (used in INIT)
-const BASE_PADDING_TOP = 0.15; // Base padding for the top artwork bound (used in INIT)
-const BASE_PADDING_BOTTOM = 0.1; // Base padding for the bottom artwork bound (used in INIT)
-const WRAP_PADDING_LEFT = 0.05; // Wrap padding factor for the left movement bound (used in Mover class)
-const WRAP_PADDING_RIGHT = 0.05; // Wrap padding factor for the right movement bound (used in Mover class)
-const WRAP_PADDING_TOP = 0.1; // Wrap padding factor for the top movement bound (used in Mover class)
-const WRAP_PADDING_BOTTOM = 0.01; // Wrap padding factor for the bottom movement bound (used in Mover class)
+const BASE_PADDING_LEFT = 0.045; // Base padding for the left artwork bound (used in INIT)
+const BASE_PADDING_RIGHT = 0.045; // Base padding for the right artwork bound (used in INIT)
+const BASE_PADDING_TOP = 0.045; // Base padding for the top artwork bound (used in INIT)
+const BASE_PADDING_BOTTOM = 0.045; // Base padding for the bottom artwork bound (used in INIT)
+const WRAP_PADDING_LEFT = 0.025; // Wrap padding factor for the left movement bound (used in Mover class)
+const WRAP_PADDING_RIGHT = 0.025; // Wrap padding factor for the right movement bound (used in Mover class)
+const WRAP_PADDING_TOP = 0.025; // Wrap padding factor for the top movement bound (used in Mover class)
+const WRAP_PADDING_BOTTOM = 0.025; // Wrap padding factor for the bottom movement bound (used in Mover class)
 
 // Animation configuration
 const maxFrames = 25;

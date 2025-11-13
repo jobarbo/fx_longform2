@@ -20,7 +20,7 @@
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
-		this.continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
+		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
 		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Frame rate for shader animation
 
@@ -75,14 +75,14 @@ class ShaderEffects {
 			},
 
 			pixelSort: {
-				enabled: false,
+				enabled: true,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.3,
 				sortAmount: 2.8,
 				sampleCount: 1.0, // Number of samples (8-64, higher = better quality but slower)
 				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
 				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 0.3,
+				timeMultiplier: 0.6,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 999.0",
@@ -98,18 +98,18 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 4.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				translationSpeed: 0.0, // Speed of horizontal/vertical movement
+				translationSpeed: 0.1, // Speed of horizontal/vertical movement
 				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
-				rotationSpeed: 0.0, // Speed of rotation
-				rotationOscillationSpeed: 0.0, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: -0.1, // Starting angle for rotation (in radians, added to rotation)
+				rotationSpeed: 1.1, // Speed of rotation
+				rotationOscillationSpeed: 0.01, // Speed of oscillation (controls how fast it alternates between positive/negative)
+				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
 				rotationMode: 2.0, // 0=cosine oscillation, 1=noise, 2=FBM
-				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
-				timeMultiplier: 0.1, // Time multiplier for animation
+				rotationNoiseScale: 0.03, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
+				timeMultiplier: 0.95, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
@@ -128,19 +128,19 @@ class ShaderEffects {
 				},
 			},
 			symmetry2: {
-				enabled: false,
-				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				enabled: true,
+				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				translationSpeed: 0.0, // Speed of horizontal/vertical movement
-				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationSpeed: 0.1, // Speed of horizontal/vertical movement
+				translationMode: 0.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
-				rotationSpeed: 0.0, // Speed of rotation
-				rotationOscillationSpeed: 0.0, // Speed of oscillation (controls how fast it alternates between positive/negative)
+				rotationSpeed: 1.2, // Speed of rotation
+				rotationOscillationSpeed: 0.01, // Speed of oscillation (controls how fast it alternates between positive/negative)
 				rotationStartingAngle: -0.0, // Starting angle for rotation (in radians, added to rotation)
 				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
-				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
-				timeMultiplier: 0.0, // Time multiplier for animation
+				rotationNoiseScale: 0.03, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
+				timeMultiplier: 1.15, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
