@@ -41,8 +41,8 @@ class Mover {
 		const wrapPaddingFactor = typeof WRAP_PADDING_FACTOR !== "undefined" ? WRAP_PADDING_FACTOR : 0.1;
 		this.wrapPaddingX = (min(width, height) * wrapPaddingFactor) / width;
 		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.0075) / width;
-		this.reentryOffsetY = (min(width, height) * 0.0075) / height;
+		this.reentryOffsetX = (min(width, height) * 0.0025) / width;
+		this.reentryOffsetY = (min(width, height) * 0.0025) / height;
 		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
@@ -146,23 +146,50 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		a1 = amplitude1,
 		a2 = amplitude2;
 
-	dx = oct(nx, ny, scale1, 0, octave);
-	dy = oct(nx, ny, scale2, 2, octave);
+	// Enhanced multi-layer octave calculations with cross-coupling and varied scales
+	// Position-based bias correction to neutralize directional preference
+	let biasCorrectionX = oct(ny * 0.01, nx * 0.01, 0.5, 19, octave) * 0.3;
+	let biasCorrectionY = oct(nx * 0.01, ny * 0.01, 0.5, 20, octave) * 0.3;
+
+	// Layer 1: Primary flow with cross-coupling and bias correction
+	dx = oct(nx, ny, scale1, 0, octave) - biasCorrectionX;
+	dy = oct(ny, nx, scale2, 2, octave) - biasCorrectionY; // Swapped coordinates for cross-coupling
 	nx += dx * a1;
 	ny += dy * a2;
 
-	dx = oct(nx, ny, scale1, 1, octave);
-	dy = oct(nx, ny, scale2, 3, octave);
-	nx += dx * a1;
-	ny += dy * a2;
+	// Layer 2: Secondary flow with different scales and offsets
+	dx = oct(nx * 0.7 + ny * 0.3, ny * 0.7 + nx * 0.3, scale1 * 1.3, 4, octave);
+	dy = oct(ny * 0.7 + nx * 0.3, nx * 0.7 + ny * 0.3, scale2 * 1.3, 5, octave);
+	nx += dx * a1 * 0.6;
+	ny += dy * a2 * 0.6;
 
-	dx = oct(nx, ny, scale1, 1, octave);
-	dy = oct(nx, ny, scale2, 2, octave);
-	nx += dx * a1;
-	ny += dy * a2;
+	// Layer 3: Fine detail layer with cross-coupling
+	dx = oct(nx, ny, scale1 * 0.5, 6, octave);
+	dy = oct(ny, nx, scale2 * 0.5, 7, octave);
+	nx += dx * a1 * 0.4;
+	ny += dy * a2 * 0.4;
 
-	un = sin(nx * (scale1 * scaleOffset1) + rseed) + cos(nx * (scale2 * scaleOffset2) + rseed) - sin(nx * (scale3 * scaleOffset3) + rseed);
-	vn = cos(ny * (scale1 * scaleOffset1) + rseed) + sin(ny * (scale2 * scaleOffset2) + rseed) - cos(ny * (scale3 * scaleOffset3) + rseed);
+	// Layer 4: Rotational component using mixed coordinates
+	let rotAngle = oct(nx * 0.5, ny * 0.5, scale3, 8, octave) * PI;
+	let rotX = cos(rotAngle) * nx - sin(rotAngle) * ny;
+	let rotY = sin(rotAngle) * nx + cos(rotAngle) * ny;
+	dx = oct(rotX, rotY, scale1 * 0.8, 9, octave);
+	dy = oct(rotY, rotX, scale2 * 0.8, 10, octave);
+	nx += dx * a1 * 0.3;
+	ny += dy * a2 * 0.3;
+
+	// Enhanced sine/cosine with cross-coupling and mixed scales
+	un =
+		sin(nx * (scale1 * scaleOffset1) + ny * (scale2 * scaleOffset2 * 0.5) + rseed) +
+		cos(nx * (scale2 * scaleOffset2) + ny * (scale1 * scaleOffset1 * 0.5) + rseed) -
+		sin(nx * (scale3 * scaleOffset3) + ny * (scale1 * scaleOffset1 * 0.3) + rseed) +
+		oct(ny * (scale1 * scaleOffset1), nx * (scale2 * scaleOffset2), 0.5, 11, octave) * 0.5;
+
+	vn =
+		cos(ny * (scale1 * scaleOffset1) + nx * (scale2 * scaleOffset2 * 0.5) + rseed) +
+		sin(ny * (scale2 * scaleOffset2) + nx * (scale1 * scaleOffset1 * 0.5) + rseed) -
+		cos(ny * (scale3 * scaleOffset3) + nx * (scale1 * scaleOffset1 * 0.3) + rseed) +
+		oct(nx * (scale2 * scaleOffset2), ny * (scale1 * scaleOffset1), 0.5, 11, octave) * 0.5;
 
 	//! sine x cos x oct
 	/*
@@ -194,11 +221,39 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minU = map(nx, xMin * width, xMax * width, -3, 3, true);
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
-	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset2) + rseed, noiseScale1, 1, octave), -0.0025, 0.0025, -1, 1, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset2) + rseed, nx * (scale1 * scaleOffset1) + rseed, noiseScale2, 2, octave), -0.0025, 0.0025, -1, 1, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset3) + rseed, ny * (scale1 * scaleOffset1) + rseed, noiseScale3, 0, octave), -0.0025, 0.0025, -1, 1, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset1) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.0025, 0.0025, -1, 1, true);
+	//! Enhanced pNoise x SineCos with cross-coupling and varied noise indices
+	let maxU = map(
+		oct(ny * (scale1 * scaleOffset1) + nx * (scale2 * scaleOffset2 * 0.3) + rseed, ny * (scale2 * scaleOffset2) + nx * (scale1 * scaleOffset1 * 0.3) + rseed, noiseScale1, 13, octave),
+		-0.0000025,
+		0.000025,
+		-1,
+		1,
+		true
+	);
+	let maxV = map(
+		oct(nx * (scale2 * scaleOffset2) + ny * (scale1 * scaleOffset1 * 0.3) + rseed, nx * (scale1 * scaleOffset1) + ny * (scale2 * scaleOffset2 * 0.3) + rseed, noiseScale2, 14, octave),
+		-0.0000025,
+		0.000025,
+		-1,
+		1,
+		true
+	);
+	let minU = map(
+		oct(ny * (scale3 * scaleOffset3) + nx * (scale1 * scaleOffset1 * 0.4) + rseed, ny * (scale1 * scaleOffset1) + nx * (scale3 * scaleOffset3 * 0.4) + rseed, noiseScale3, 15, octave),
+		-0.0000025,
+		0.000025,
+		-1,
+		1,
+		true
+	);
+	let minV = map(
+		oct(nx * (scale1 * scaleOffset1) + ny * (scale3 * scaleOffset3 * 0.4) + rseed, nx * (scale3 * scaleOffset3) + ny * (scale1 * scaleOffset1 * 0.4) + rseed, noiseScale4, 16, octave),
+		-0.0000025,
+		0.000025,
+		-1,
+		1,
+		true
+	);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
@@ -217,10 +272,33 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minU = -1;
 	let minV = -1; */
 
-	//! Introverted
-	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -1.5, -0.001), map(nx, xMin * width, xMax * width, 0.001, 1.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -1.5, -0.001), map(ny, yMin * height, yMax * height, 0.001, 1.5), minV, maxV, true);
+	//! Enhanced introverted with cross-coupling and dynamic range variation
+	//* Mix both nx/ny and ny/nx for more complex mapping
+	let nxRangeMin = map(nx, xMin * width, xMax * width, -1.5, -0.001);
+	let nxRangeMax = map(nx, xMin * width, xMax * width, 0.001, 1.5);
+	let nyRangeMin = map(ny, yMin * height, yMax * height, -1.5, -0.001);
+	let nyRangeMax = map(ny, yMin * height, yMax * height, 0.001, 1.5);
+
+	// Position-based modulation to counter directional bias
+	// Create alternating zones that reverse the bias
+	let posModX = sin((nx / width) * PI * 2 + rseed * 0.1) * 0.2;
+	let posModY = cos((ny / height) * PI * 2 + rseed * 0.1) * 0.2;
+
+	// Dynamic mixing ratios that vary based on position to break bias
+	let mixRatio1 = 0.5 + posModX; // Varies between 0.3 and 0.7
+	let mixRatio2 = 0.5 + posModY; // Varies between 0.3 and 0.7
+	let mixRatio3 = 0.5 - posModX; // Counter-balancing
+	let mixRatio4 = 0.5 - posModY; // Counter-balancing
+
+	// Cross-couple the mapping ranges with position-based variation
+	let uRangeMin = nxRangeMin * mixRatio1 + nyRangeMin * mixRatio3;
+	let uRangeMax = nxRangeMax * mixRatio1 + nyRangeMax * mixRatio3;
+	let vRangeMin = nyRangeMin * mixRatio2 + nxRangeMin * mixRatio4;
+	let vRangeMax = nyRangeMax * mixRatio2 + nxRangeMax * mixRatio4;
+
+	// Mix vn and un with dynamic cross-coupling to break directional bias
+	let u = map(vn * mixRatio1 + un * mixRatio3, uRangeMin, uRangeMax, minU, maxU, true);
+	let v = map(un * mixRatio2 + vn * mixRatio4, vRangeMin, vRangeMax, minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -229,12 +307,37 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	// Apply ZZ symmetrically - preserve sign but apply transformation to absolute value
-	let zzu = map(ZZ(u, 35, 80, 0.018), -11, 11, minU, maxU, true);
-	let zzv = map(ZZ(v, 35, 80, 0.018), -11, 11, minV, maxV, true);
+	// Apply ZZ with enhanced symmetry - transform both positive and negative values
+	// Add subtle asymmetry to break directional bias
+	let zzuPos = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, minU, maxU, true);
+	let zzvPos = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, minV, maxV, true);
+	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, -minU, -maxU, true) * 0.95; // Slight asymmetry
+	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, -minV, -maxV, true) * 0.95;
 
-	let zu = u < 0 ? u : zzu;
-	let zv = v < 0 ? v : zzv;
+	// Apply transformation preserving sign but with variation for both directions
+	let zu = u < 0 ? -zzuNeg : zzuPos;
+	let zv = v < 0 ? -zzvNeg : zzvPos;
+
+	// Position-based final cross-coupling to neutralize directional bias
+	// Use noise-based modulation to create balanced mixing
+	let finalMixX = 0.5 + oct(nx * 0.001, ny * 0.001, 1, 17, octave) * 0.3; // Varies 0.2-0.8
+	let finalMixY = 0.5 + oct(ny * 0.001, nx * 0.001, 1, 18, octave) * 0.3; // Varies 0.2-0.8
+
+	// Balanced cross-coupling that adapts to position
+	let finalU = zu * finalMixX + zv * (1 - finalMixX);
+	let finalV = zv * finalMixY + zu * (1 - finalMixY);
+
+	// Add counter-balancing term based on position to neutralize bottom-right bias
+	// Use a more subtle approach that creates balanced zones
+	let counterX = sin((nx / width) * PI * 4 + rseed) * 0.05;
+	let counterY = cos((ny / height) * PI * 4 + rseed) * 0.05;
+
+	// Additional noise-based counter to break any remaining bias
+	let noiseCounterX = oct(nx * 0.002, ny * 0.002, 0.3, 21, octave) * 0.03;
+	let noiseCounterY = oct(ny * 0.002, nx * 0.002, 0.3, 22, octave) * 0.03;
+
+	finalU += counterX + noiseCounterX;
+	finalV += counterY + noiseCounterY;
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
@@ -243,6 +346,6 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	/* 	let zu = ZZ(u, 2.1, 5.5, 0.01) * MULTIPLIER;
 	let zv = ZZ(v, 2.1, 5.5, 0.01) * MULTIPLIER; */
 
-	let p = createVector(zu, zv);
+	let p = createVector(finalU, finalV);
 	return p;
 }
