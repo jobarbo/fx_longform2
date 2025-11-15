@@ -22,7 +22,7 @@ let debugBounds = false;
 // ============================================================================
 
 // Base artwork dimensions (width: 1000, height: 1000 * 1.25)
-const ARTWORK_RATIO = 1.75;
+const ARTWORK_RATIO = 1.25;
 const BASE_WIDTH = 1000;
 const BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 const DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);

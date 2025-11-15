@@ -276,10 +276,11 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let nyRangeMax = map(ny, yMin * height, yMax * height, 0.001, 1.5);
 
 	// Cross-couple the mapping ranges for more intricate movement
-	let uRangeMin = nxRangeMin * 0.7 + nyRangeMin * 0.3;
-	let uRangeMax = nxRangeMax * 0.7 + nyRangeMax * 0.3;
-	let vRangeMin = nyRangeMin * 0.7 + nxRangeMin * 0.3;
-	let vRangeMax = nyRangeMax * 0.7 + nxRangeMax * 0.3;
+	//! really interesting to change the multipliers here
+	let uRangeMin = nxRangeMin * 10.7 + nyRangeMin * 100.3;
+	let uRangeMax = nxRangeMax * 10.7 + nyRangeMax * 100.3;
+	let vRangeMin = nyRangeMin * 10.7 + nxRangeMin * 100.3;
+	let vRangeMax = nyRangeMax * 10.7 + nxRangeMax * 100.3;
 
 	// Mix vn and un with cross-coupling
 	let u = map(vn * 0.7 + un * 0.3, uRangeMin, uRangeMax, minU, maxU, true);
@@ -294,10 +295,12 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 	// Apply ZZ with enhanced symmetry - transform both positive and negative values
 	// Add subtle asymmetry to break directional bias
-	let zzuPos = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, minU, maxU, true);
-	let zzvPos = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, minV, maxV, true);
-	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, -minU, -maxU, true) * 1.1; // Slight asymmetry
-	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, -minV, -maxV, true) * 1.1;
+
+	//! really interesting to change the multipliers at the end here
+	let zzuPos = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, minU, maxU, true) * 0.0001;
+	let zzvPos = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, minV, maxV, true) * 0.001;
+	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, minU, maxU, true) * 1; // Slight asymmetry
+	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, minV, maxV, true) * 1;
 
 	// Apply transformation preserving sign but with variation for both directions
 	let zu = u < 0 ? -zzuNeg : zzuPos;
