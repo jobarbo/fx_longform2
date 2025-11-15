@@ -43,7 +43,7 @@ class Mover {
 		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * 0.0025) / width;
 		this.reentryOffsetY = (min(width, height) * 0.0025) / height;
-		this.wrapPaddingMultiplier = 1; //! or 0.5
+		this.wrapPaddingMultiplier = 0.5; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -82,8 +82,8 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.021;
-		this.yRandDivider = 0.021;
+		this.xRandDivider = 0.016;
+		this.yRandDivider = 0.016;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -147,13 +147,9 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		a2 = amplitude2;
 
 	// Enhanced multi-layer octave calculations with cross-coupling and varied scales
-	// Position-based bias correction to neutralize directional preference
-	let biasCorrectionX = oct(ny * 0.01, nx * 0.01, 0.5, 19, octave) * 0.3;
-	let biasCorrectionY = oct(nx * 0.01, ny * 0.01, 0.5, 20, octave) * 0.3;
-
-	// Layer 1: Primary flow with cross-coupling and bias correction
-	dx = oct(nx, ny, scale1, 0, octave) - biasCorrectionX;
-	dy = oct(ny, nx, scale2, 2, octave) - biasCorrectionY; // Swapped coordinates for cross-coupling
+	// Layer 1: Primary flow with cross-coupling
+	dx = oct(nx, ny, scale1, 0, octave);
+	dy = oct(ny, nx, scale2, 2, octave); // Swapped coordinates for cross-coupling
 	nx += dx * a1;
 	ny += dy * a2;
 
@@ -224,32 +220,32 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	//! Enhanced pNoise x SineCos with cross-coupling and varied noise indices
 	let maxU = map(
 		oct(ny * (scale1 * scaleOffset1) + nx * (scale2 * scaleOffset2 * 0.3) + rseed, ny * (scale2 * scaleOffset2) + nx * (scale1 * scaleOffset1 * 0.3) + rseed, noiseScale1, 13, octave),
-		-0.0000025,
-		0.000025,
+		-0.0025,
+		0.0025,
 		-1,
 		1,
 		true
 	);
 	let maxV = map(
 		oct(nx * (scale2 * scaleOffset2) + ny * (scale1 * scaleOffset1 * 0.3) + rseed, nx * (scale1 * scaleOffset1) + ny * (scale2 * scaleOffset2 * 0.3) + rseed, noiseScale2, 14, octave),
-		-0.0000025,
-		0.000025,
+		-0.0025,
+		0.0025,
 		-1,
 		1,
 		true
 	);
 	let minU = map(
 		oct(ny * (scale3 * scaleOffset3) + nx * (scale1 * scaleOffset1 * 0.4) + rseed, ny * (scale1 * scaleOffset1) + nx * (scale3 * scaleOffset3 * 0.4) + rseed, noiseScale3, 15, octave),
-		-0.0000025,
-		0.000025,
+		-0.0025,
+		0.0025,
 		-1,
 		1,
 		true
 	);
 	let minV = map(
 		oct(nx * (scale1 * scaleOffset1) + ny * (scale3 * scaleOffset3 * 0.4) + rseed, nx * (scale3 * scaleOffset3) + ny * (scale1 * scaleOffset1 * 0.4) + rseed, noiseScale4, 16, octave),
-		-0.0000025,
-		0.000025,
+		-0.0025,
+		0.0025,
 		-1,
 		1,
 		true
@@ -279,26 +275,15 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let nyRangeMin = map(ny, yMin * height, yMax * height, -1.5, -0.001);
 	let nyRangeMax = map(ny, yMin * height, yMax * height, 0.001, 1.5);
 
-	// Position-based modulation to counter directional bias
-	// Create alternating zones that reverse the bias
-	let posModX = sin((nx / width) * PI * 2 + rseed * 0.1) * 0.2;
-	let posModY = cos((ny / height) * PI * 2 + rseed * 0.1) * 0.2;
+	// Cross-couple the mapping ranges for more intricate movement
+	let uRangeMin = nxRangeMin * 0.7 + nyRangeMin * 0.3;
+	let uRangeMax = nxRangeMax * 0.7 + nyRangeMax * 0.3;
+	let vRangeMin = nyRangeMin * 0.7 + nxRangeMin * 0.3;
+	let vRangeMax = nyRangeMax * 0.7 + nxRangeMax * 0.3;
 
-	// Dynamic mixing ratios that vary based on position to break bias
-	let mixRatio1 = 0.5 + posModX; // Varies between 0.3 and 0.7
-	let mixRatio2 = 0.5 + posModY; // Varies between 0.3 and 0.7
-	let mixRatio3 = 0.5 - posModX; // Counter-balancing
-	let mixRatio4 = 0.5 - posModY; // Counter-balancing
-
-	// Cross-couple the mapping ranges with position-based variation
-	let uRangeMin = nxRangeMin * mixRatio1 + nyRangeMin * mixRatio3;
-	let uRangeMax = nxRangeMax * mixRatio1 + nyRangeMax * mixRatio3;
-	let vRangeMin = nyRangeMin * mixRatio2 + nxRangeMin * mixRatio4;
-	let vRangeMax = nyRangeMax * mixRatio2 + nxRangeMax * mixRatio4;
-
-	// Mix vn and un with dynamic cross-coupling to break directional bias
-	let u = map(vn * mixRatio1 + un * mixRatio3, uRangeMin, uRangeMax, minU, maxU, true);
-	let v = map(un * mixRatio2 + vn * mixRatio4, vRangeMin, vRangeMax, minV, maxV, true);
+	// Mix vn and un with cross-coupling
+	let u = map(vn * 0.7 + un * 0.3, uRangeMin, uRangeMax, minU, maxU, true);
+	let v = map(un * 0.7 + vn * 0.3, vRangeMin, vRangeMax, minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -311,33 +296,16 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	// Add subtle asymmetry to break directional bias
 	let zzuPos = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, minU, maxU, true);
 	let zzvPos = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, minV, maxV, true);
-	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, -minU, -maxU, true) * 0.95; // Slight asymmetry
-	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, -minV, -maxV, true) * 0.95;
+	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, -minU, -maxU, true) * 1.1; // Slight asymmetry
+	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, -minV, -maxV, true) * 1.1;
 
 	// Apply transformation preserving sign but with variation for both directions
 	let zu = u < 0 ? -zzuNeg : zzuPos;
 	let zv = v < 0 ? -zzvNeg : zzvPos;
 
-	// Position-based final cross-coupling to neutralize directional bias
-	// Use noise-based modulation to create balanced mixing
-	let finalMixX = 0.5 + oct(nx * 0.001, ny * 0.001, 1, 17, octave) * 0.3; // Varies 0.2-0.8
-	let finalMixY = 0.5 + oct(ny * 0.001, nx * 0.001, 1, 18, octave) * 0.3; // Varies 0.2-0.8
-
-	// Balanced cross-coupling that adapts to position
-	let finalU = zu * finalMixX + zv * (1 - finalMixX);
-	let finalV = zv * finalMixY + zu * (1 - finalMixY);
-
-	// Add counter-balancing term based on position to neutralize bottom-right bias
-	// Use a more subtle approach that creates balanced zones
-	let counterX = sin((nx / width) * PI * 4 + rseed) * 0.05;
-	let counterY = cos((ny / height) * PI * 4 + rseed) * 0.05;
-
-	// Additional noise-based counter to break any remaining bias
-	let noiseCounterX = oct(nx * 0.002, ny * 0.002, 0.3, 21, octave) * 0.03;
-	let noiseCounterY = oct(ny * 0.002, nx * 0.002, 0.3, 22, octave) * 0.03;
-
-	finalU += counterX + noiseCounterX;
-	finalV += counterY + noiseCounterY;
+	// Add final cross-coupling layer for more intricate movement
+	let finalU = zu * 0.85 + zv * 0.15;
+	let finalV = zv * 0.85 + zu * 0.15;
 
 	//! PAGODA (below is noiseScale and scaleOffset)
 	//! 2
