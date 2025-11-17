@@ -219,33 +219,33 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	//! Enhanced pNoise x SineCos with cross-coupling and varied noise indices
 	let maxU = map(
-		oct(ny * (scale1 * scaleOffset1) + nx * (scale2 * scaleOffset2 * 0.3) + rseed, ny * (scale2 * scaleOffset2) + nx * (scale1 * scaleOffset1 * 0.3) + rseed, noiseScale1, 13, octave),
-		-0.0025,
-		0.0025,
+		oct(ny * (scale1 * scaleOffset1) + nx * (scale2 * scaleOffset2 * 1.3) + rseed, ny * (scale2 * scaleOffset2) + nx * (scale1 * scaleOffset1 * 1.3) + rseed, noiseScale1, 13, octave),
+		-0.000000025,
+		0.000000025,
 		-1,
 		1,
 		true
 	);
 	let maxV = map(
-		oct(nx * (scale2 * scaleOffset2) + ny * (scale1 * scaleOffset1 * 0.3) + rseed, nx * (scale1 * scaleOffset1) + ny * (scale2 * scaleOffset2 * 0.3) + rseed, noiseScale2, 14, octave),
-		-0.0025,
-		0.0025,
+		oct(nx * (scale2 * scaleOffset2) + ny * (scale1 * scaleOffset1 * 1.3) + rseed, nx * (scale1 * scaleOffset1) + ny * (scale2 * scaleOffset2 * 1.3) + rseed, noiseScale2, 14, octave),
+		-0.000000025,
+		0.000000025,
 		-1,
 		1,
 		true
 	);
 	let minU = map(
-		oct(ny * (scale3 * scaleOffset3) + nx * (scale1 * scaleOffset1 * 0.4) + rseed, ny * (scale1 * scaleOffset1) + nx * (scale3 * scaleOffset3 * 0.4) + rseed, noiseScale3, 15, octave),
-		-0.0025,
-		0.0025,
+		oct(ny * (scale3 * scaleOffset3) + nx * (scale1 * scaleOffset1 * 1.4) + rseed, ny * (scale1 * scaleOffset1) + nx * (scale3 * scaleOffset3 * 1.4) + rseed, noiseScale3, 15, octave),
+		-0.000000025,
+		0.000000025,
 		-1,
 		1,
 		true
 	);
 	let minV = map(
-		oct(nx * (scale1 * scaleOffset1) + ny * (scale3 * scaleOffset3 * 0.4) + rseed, nx * (scale3 * scaleOffset3) + ny * (scale1 * scaleOffset1 * 0.4) + rseed, noiseScale4, 16, octave),
-		-0.0025,
-		0.0025,
+		oct(nx * (scale1 * scaleOffset1) + ny * (scale3 * scaleOffset3 * 1.4) + rseed, nx * (scale3 * scaleOffset3) + ny * (scale1 * scaleOffset1 * 1.4) + rseed, noiseScale4, 16, octave),
+		-0.000000025,
+		0.000000025,
 		-1,
 		1,
 		true
@@ -297,10 +297,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	// Add subtle asymmetry to break directional bias
 
 	//! really interesting to change the multipliers at the end here
-	let zzuPos = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, minU, maxU, true) * 0.0001;
-	let zzvPos = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, minV, maxV, true) * 0.001;
-	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, minU, maxU, true) * 1; // Slight asymmetry
-	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, minV, maxV, true) * 1;
+	let zzuPos = map(ZZ(Math.abs(u), 35, 80, 0.0058), -11, 11, minU, maxU, true) * 0.0001;
+	let zzvPos = map(ZZ(Math.abs(v), 35, 80, 0.0058), -11, 11, minV, maxV, true) * 0.001;
+	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.0058), -11, 11, minU, maxU, true) * 1; // Slight asymmetry
+	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.0058), -11, 11, minV, maxV, true) * 1;
 
 	// Apply transformation preserving sign but with variation for both directions
 	let zu = u < 0 ? -zzuNeg : zzuPos;
