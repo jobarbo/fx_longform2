@@ -20,14 +20,15 @@
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
-		this.continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
-		this.applyShadersDuringSketch = false; // Set to true to apply shaders while sketching
+		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
+		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Frame rate for shader animation
 
 		// Animation state
 		this.shaderTime = 0;
 		this.shaderSeed = 0;
 		this.particleAnimationComplete = false;
+		this.loadingProgress = 0.0; // Loading progress from 0.0 (0%) to 1.0 (100%)
 
 		// Canvas references
 		this.mainCanvas = null;
@@ -170,7 +171,7 @@ class ShaderEffects {
 				},
 			},
 			chromatic: {
-				enabled: true,
+				enabled: false,
 				amount: 0.0015,
 				timeMultiplier: 0.0,
 				uniforms: {
@@ -197,6 +198,16 @@ class ShaderEffects {
 					uDotRadius: "dotRadius",
 					uDotFalloff: "dotFalloff",
 					uFilterMode: "filterMode",
+				},
+			},
+			loaderGlitch: {
+				enabled: true, // Enable to show glitch loader animation
+				timeMultiplier: 0.3, // Speed of block movement
+				uniforms: {
+					uProgress: "loadingProgress", // Progress from 0.0 (0%) to 1.0 (100%)
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 8888.0",
+					uResolution: "[width, height]",
 				},
 			},
 		};
@@ -240,6 +251,7 @@ class ShaderEffects {
 		shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
 		shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert");
 		shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert");
+		shaderManager.loadShader("loaderGlitch", "loader-glitch/fragment.frag", "loader-glitch/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
@@ -346,6 +358,15 @@ class ShaderEffects {
 	}
 
 	/**
+	 * Update loading progress - call this to sync with loading percentage
+	 * @param {number} progress - Loading progress from 0.0 (0%) to 1.0 (100%)
+	 */
+	setLoadingProgress(progress) {
+		this.loadingProgress = Math.max(0.0, Math.min(1.0, progress));
+		return this;
+	}
+
+	/**
 	 * Evaluate uniform value from string expression
 	 * @param {string|*} value - Value or expression
 	 * @param {object} effect - Effect configuration
@@ -393,6 +414,7 @@ class ShaderEffects {
 			// Handle global variable references
 			if (value === "shaderTime") return this.shaderTime;
 			if (value === "shaderSeed") return this.shaderSeed;
+			if (value === "loadingProgress") return this.loadingProgress;
 			if (value === "width") return this.mainCanvas.width;
 			if (value === "height") return this.mainCanvas.height;
 
