@@ -41,9 +41,9 @@ class Mover {
 		const wrapPaddingFactor = typeof WRAP_PADDING_FACTOR !== "undefined" ? WRAP_PADDING_FACTOR : 0.1;
 		this.wrapPaddingX = (min(width, height) * wrapPaddingFactor) / width;
 		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.0025) / width;
-		this.reentryOffsetY = (min(width, height) * 0.0025) / height;
-		this.wrapPaddingMultiplier = 0.5; //! or 0.5
+		this.reentryOffsetX = (min(width, height) * 0.0075) / width;
+		this.reentryOffsetY = (min(width, height) * 0.0075) / height;
+		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -82,8 +82,8 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.016;
-		this.yRandDivider = 0.016;
+		this.xRandDivider = 0.021;
+		this.yRandDivider = 0.021;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -185,7 +185,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		cos(ny * (scale1 * scaleOffset1) + nx * (scale2 * scaleOffset2 * 0.5) + rseed) +
 		sin(ny * (scale2 * scaleOffset2) + nx * (scale1 * scaleOffset1 * 0.5) + rseed) -
 		cos(ny * (scale3 * scaleOffset3) + nx * (scale1 * scaleOffset1 * 0.3) + rseed) +
-		oct(nx * (scale2 * scaleOffset2), ny * (scale1 * scaleOffset1), 0.5, 11, octave) * 0.5;
+		oct(nx * (scale2 * scaleOffset2), ny * (scale1 * scaleOffset1), 0.5, 12, octave) * 0.5;
 
 	//! sine x cos x oct
 	/*
@@ -220,32 +220,32 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	//! Enhanced pNoise x SineCos with cross-coupling and varied noise indices
 	let maxU = map(
 		oct(ny * (scale1 * scaleOffset1) + nx * (scale2 * scaleOffset2 * 0.3) + rseed, ny * (scale2 * scaleOffset2) + nx * (scale1 * scaleOffset1 * 0.3) + rseed, noiseScale1, 13, octave),
-		-0.0025,
-		0.0025,
+		-0.000025,
+		0.000025,
 		-1,
 		1,
 		true
 	);
 	let maxV = map(
 		oct(nx * (scale2 * scaleOffset2) + ny * (scale1 * scaleOffset1 * 0.3) + rseed, nx * (scale1 * scaleOffset1) + ny * (scale2 * scaleOffset2 * 0.3) + rseed, noiseScale2, 14, octave),
-		-0.0025,
-		0.0025,
+		-0.000025,
+		0.000025,
 		-1,
 		1,
 		true
 	);
 	let minU = map(
 		oct(ny * (scale3 * scaleOffset3) + nx * (scale1 * scaleOffset1 * 0.4) + rseed, ny * (scale1 * scaleOffset1) + nx * (scale3 * scaleOffset3 * 0.4) + rseed, noiseScale3, 15, octave),
-		-0.0025,
-		0.0025,
+		-0.000025,
+		0.000025,
 		-1,
 		1,
 		true
 	);
 	let minV = map(
 		oct(nx * (scale1 * scaleOffset1) + ny * (scale3 * scaleOffset3 * 0.4) + rseed, nx * (scale3 * scaleOffset3) + ny * (scale1 * scaleOffset1 * 0.4) + rseed, noiseScale4, 16, octave),
-		-0.0025,
-		0.0025,
+		-0.000025,
+		0.000025,
 		-1,
 		1,
 		true
