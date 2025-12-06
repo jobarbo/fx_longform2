@@ -146,6 +146,12 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		a1 = amplitude1,
 		a2 = amplitude2;
 
+	// Rotate inputs by a stable seed-based angle to avoid persistent 45° bias
+	const inputRot = (rseed * 0.000137 + nseed * 0.000019) % TAU;
+	const sinIn = sin(inputRot);
+	const cosIn = cos(inputRot);
+	[nx, ny] = [cosIn * nx - sinIn * ny, sinIn * nx + cosIn * ny];
+
 	// Enhanced multi-layer octave calculations with cross-coupling and varied scales
 	// Layer 1: Primary flow with cross-coupling
 	dx = oct(nx, ny, scale1, 0, octave);
