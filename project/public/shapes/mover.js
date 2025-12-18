@@ -43,7 +43,7 @@ class Mover {
 		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * 0.0025) / width;
 		this.reentryOffsetY = (min(width, height) * 0.0025) / height;
-		this.wrapPaddingMultiplier = 0.5; //! or 0.5
+		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -82,8 +82,8 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.016;
-		this.yRandDivider = 0.016;
+		this.xRandDivider = 0.046;
+		this.yRandDivider = 0.046;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -137,7 +137,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
 		noiseScale1 = 1,
-		noiseScale2 = 1,
+		noiseScale2 = 6,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
 		x_sine_scale = 1,
