@@ -14,6 +14,48 @@ const maxFrames = 25;
 const particleNum = 500000;
 const cycle = parseInt((maxFrames * particleNum) / 1150);
 
+// ============================================================================
+// BOOLEAN ALGEBRA CONFIGURATION (Genuary 2026 - Day 8)
+// ============================================================================
+// Theme: "Boolean algebra. Get inspired by Boolean algebra, in any way."
+//
+// Implementation approach:
+// 1. XOR/AND/OR operations on quantized flow fields create sharp transitions
+// 2. Bitwise operations (^, &, |) on coordinates generate geometric patterns
+// 3. Logic gate regions: canvas divided into quadrants (XOR, AND, OR, NAND)
+// 4. Binary quantization of noise values creates digital/analog hybrid
+// 5. Multiple scales of boolean operations create nested fractal-like structures
+//
+// Visual result: Organic particle flow interrupted by digital boolean logic,
+// creating a dialogue between continuous (analog) and discrete (digital) systems.
+//
+// Note: xorInfluence and bitwiseInfluence are randomized per generation
+// ============================================================================
+
+const BOOLEAN_CONFIG = {
+	// Enable boolean operations on flow fields
+	enableXOR: true,
+	enableAND: true,
+	enableOR: true,
+
+	// Quantization scales for creating binary patterns
+	binaryScale1: 1, // Larger scale = bigger boolean regions
+	binaryScale2: 1, // Multiple scales create nested patterns
+	binaryScale3: 100,
+
+	// Boolean operation mixing amounts (0-1) - randomized in setup()
+	xorInfluence: 0.7, // Will be randomized: 0.3 to 1.0
+	andInfluence: 0.3,
+	orInfluence: 0.2,
+
+	// Threshold for binary conversion (0-1)
+	binaryThreshold: 0.5,
+
+	// Bitwise operation scales for coordinate manipulation
+	bitwiseScale: 48,
+	bitwiseInfluence: 0.4, // Will be randomized: 0.2 to 0.8
+};
+
 // Debug flags
 let debugBounds = false;
 
@@ -109,7 +151,7 @@ async function setup() {
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
-	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
+	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 4;
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
@@ -161,10 +203,14 @@ async function setup() {
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
 
+	/* 	// Randomize boolean algebra parameters for unique variations per generation
+	BOOLEAN_CONFIG.xorInfluence = fxrand() * 0.7 + 0.3; // Range: 0.3 to 1.0
+	BOOLEAN_CONFIG.bitwiseInfluence = fxrand() * 0.6 + 0.2; // Range: 0.2 to 0.8 */
+
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.0;
-	let scaleFactorY = 1.0;
+	let scaleFactorX = 1.44;
+	let scaleFactorY = 1.44;
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
@@ -222,12 +268,22 @@ async function setup() {
 	setupMobileControls();
 
 	// Log available controls and performance settings
-	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
+	console.log("=== GENUARY 2026 - Day 8: Boolean Algebra ===");
+	console.log("\nRandomized Boolean Parameters:");
+	console.log(`  XOR Influence: ${BOOLEAN_CONFIG.xorInfluence.toFixed(3)}`);
+	console.log(`  Bitwise Influence: ${BOOLEAN_CONFIG.bitwiseInfluence.toFixed(3)}`);
+	console.log(`  Binary Scales: [${BOOLEAN_CONFIG.binaryScale1}, ${BOOLEAN_CONFIG.binaryScale2}, ${BOOLEAN_CONFIG.binaryScale3}]`);
+	console.log(`  Binary Threshold: ${BOOLEAN_CONFIG.binaryThreshold}`);
+	console.log("\nControls:");
+	console.log("  'D' - Toggle debug bounds (green=padding, red=movement)");
+	console.log("  'F' - Toggle FPS counter");
+	console.log("  'C' - Toggle controls panel");
+
 	if (shadersEnabled() && shaderCanvas) {
-		console.log(`Shader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
+		console.log(`\nShader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
 		console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
 	} else {
-		console.log("Running without shader effects");
+		console.log("\nRunning without shader effects");
 	}
 }
 

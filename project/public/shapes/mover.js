@@ -93,6 +93,7 @@ class Mover {
 		let maxColorIndex = this.palette.length - 1;
 		let mappedFrame = map(frameCount, 0, maxFrames / 1.25, maxColorIndex, 0, true);
 		this.colorIndex = Math.floor(mappedFrame);
+		//this.s = map(frameCount, 0, maxFrames / 1.25, 15.75, 0.5, true);
 
 		this.currentColor = this.palette[this.colorIndex];
 
@@ -127,6 +128,82 @@ class Mover {
 	}
 }
 
+// ============================================================================
+// BOOLEAN ALGEBRA HELPER FUNCTIONS (Genuary 2026 - Day 8)
+// ============================================================================
+
+// Convert continuous value to binary (0 or 1) based on threshold
+function toBinary(value, threshold = 0.5) {
+	return value > threshold ? 1 : 0;
+}
+
+// Boolean XOR operation - returns 1 if inputs differ, 0 if same
+function boolXOR(a, b) {
+	return (a || b) && !(a && b) ? 1 : 0;
+}
+
+// Boolean AND operation
+function boolAND(a, b) {
+	return a && b ? 1 : 0;
+}
+
+// Boolean OR operation
+function boolOR(a, b) {
+	return a || b ? 1 : 0;
+}
+
+// Boolean NOT operation
+function boolNOT(a) {
+	return a ? 0 : 1;
+}
+
+// Apply multiple boolean operations and blend them
+function booleanField(x, y, scale1, scale2, scale3, config) {
+	// Quantize coordinates at different scales to create binary patterns
+	let q1x = floor(x / scale1) % 2;
+	let q1y = floor(y / scale1) % 2;
+	let q2x = floor(x / scale2) % 2;
+	let q2y = floor(y / scale2) % 2;
+	let q3x = floor(x / scale3) % 2;
+	let q3y = floor(y / scale3) % 2;
+
+	// Apply boolean operations at different scales
+	let xor1 = boolXOR(q1x, q1y);
+	let xor2 = boolXOR(q2x, q2y);
+	let xor3 = boolXOR(q3x, q3y);
+
+	let and1 = boolAND(q1x, q1y);
+	let and2 = boolAND(q2x, q2y);
+
+	let or1 = boolOR(q1x, q1y);
+	let or2 = boolOR(q2x, q2y);
+
+	// Combine operations with XOR for complex patterns
+	let combined = boolXOR(xor1, boolXOR(xor2, xor3));
+	combined = boolXOR(combined, boolAND(and1, and2));
+	combined = boolXOR(combined, or1);
+
+	// Convert back to -1 to 1 range for movement influence
+	return combined * 2 - 1;
+}
+
+// Bitwise operations on coordinates for geometric patterns
+function bitwisePattern(x, y, scale) {
+	let ix = floor(x / scale);
+	let iy = floor(y / scale);
+
+	// Apply bitwise XOR, AND, OR operations
+	let xorResult = (ix ^ iy) % 32; // XOR with modulo to keep values reasonable
+	let andResult = (ix & iy) % 32;
+	let orResult = (ix | iy) % 32;
+
+	// Normalize and combine
+	let combined = (xorResult / 32) * 0.6 + (andResult / 32) * 0.3 + (orResult / 32) * 0.1;
+
+	// Map to -1 to 1 range
+	return combined * 2 - 1;
+}
+
 function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude1, amplitude2, xMin, yMin, xMax, yMax, rseed, nseed) {
 	let nx = x,
 		ny = y,
@@ -145,6 +222,20 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		octave = 1,
 		a1 = amplitude1,
 		a2 = amplitude2;
+
+	// Get boolean algebra configuration
+	const boolConfig =
+		typeof BOOLEAN_CONFIG !== "undefined"
+			? BOOLEAN_CONFIG
+			: {
+					enableXOR: true,
+					binaryScale1: 15,
+					binaryScale2: 30,
+					binaryScale3: 60,
+					xorInfluence: 0.7,
+					bitwiseScale: 8,
+					bitwiseInfluence: 0.4,
+			  };
 
 	// Rotate inputs by a stable seed-based angle to avoid persistent 45° bias
 	const inputRot = (rseed * 0.000137 + nseed * 0.000019) % TAU;
@@ -303,10 +394,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	// Add subtle asymmetry to break directional bias
 
 	//! really interesting to change the multipliers at the end here
-	let zzuPos = map(ZZ(Math.abs(u), 35, 80, 0.0058), -11, 11, minU, maxU, true) * 0.0001;
-	let zzvPos = map(ZZ(Math.abs(v), 35, 80, 0.0058), -11, 11, minV, maxV, true) * 0.001;
-	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.0058), -11, 11, minU, maxU, true) * 1; // Slight asymmetry
-	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.0058), -11, 11, minV, maxV, true) * 1;
+	let zzuPos = map(ZZ(Math.abs(u), 35, 80, 0.028), -11, 11, minU, maxU, true) * 0.0001;
+	let zzvPos = map(ZZ(Math.abs(v), 35, 80, 0.028), -11, 11, minV, maxV, true) * 0.001;
+	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.028), -11, 11, minU, maxU, true) * 1; // Slight asymmetry
+	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.028), -11, 11, minV, maxV, true) * 1;
 
 	// Apply transformation preserving sign but with variation for both directions
 	let zu = u < 0 ? -zzuNeg : zzuPos;
@@ -322,6 +413,68 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	//! 2
 	/* 	let zu = ZZ(u, 2.1, 5.5, 0.01) * MULTIPLIER;
 	let zv = ZZ(v, 2.1, 5.5, 0.01) * MULTIPLIER; */
+
+	// ============================================================================
+	// BOOLEAN ALGEBRA INTEGRATION (Genuary 2026 - Day 8)
+	// ============================================================================
+
+	// Calculate boolean field influence at multiple scales
+	let boolField1 = booleanField(x, y, boolConfig.binaryScale1, boolConfig.binaryScale2, boolConfig.binaryScale3, boolConfig);
+
+	// Calculate bitwise pattern influence
+	let bitwiseX = bitwisePattern(x, y, boolConfig.bitwiseScale);
+	let bitwiseY = bitwisePattern(y, x, boolConfig.bitwiseScale); // Swap for variation
+
+	// Quantize noise values to binary and apply XOR
+	if (boolConfig.enableXOR) {
+		let binaryU = toBinary((finalU + 1) / 2, boolConfig.binaryThreshold || 0.5);
+		let binaryV = toBinary((finalV + 1) / 2, boolConfig.binaryThreshold || 0.5);
+		let binaryField = toBinary((boolField1 + 1) / 2, 0.5);
+
+		// XOR creates sharp transitions and symmetry
+		let xorU = boolXOR(binaryU, binaryField);
+		let xorV = boolXOR(binaryV, binaryField);
+
+		// Blend XOR results back into flow field
+		let xorInfluence = boolConfig.xorInfluence || 0.7;
+		finalU = finalU * (1 - xorInfluence) + (xorU * 2 - 1) * xorInfluence;
+		finalV = finalV * (1 - xorInfluence) + (xorV * 2 - 1) * xorInfluence;
+	}
+
+	// Add bitwise pattern influence for geometric structures
+	let bitwiseInfluence = boolConfig.bitwiseInfluence || 0.4;
+	finalU = finalU * (1 - bitwiseInfluence) + bitwiseX * bitwiseInfluence;
+	finalV = finalV * (1 - bitwiseInfluence) + bitwiseY * bitwiseInfluence;
+
+	// Apply boolean field as directional modifier
+	finalU += boolField1 * 0.3;
+	finalV += boolField1 * 0.3;
+
+	// Create logic gate regions based on position
+	// Divide canvas into quadrants acting as different gates
+	let quadX = x > ((xMin + xMax) * width) / 2 ? 1 : 0;
+	let quadY = y > ((yMin + yMax) * height) / 2 ? 1 : 0;
+
+	// Apply different boolean operations per quadrant
+	let gateResult;
+	if (!quadX && !quadY) {
+		// Top-left: XOR gate
+		gateResult = boolXOR(toBinary((finalU + 1) / 2), toBinary((finalV + 1) / 2));
+	} else if (quadX && !quadY) {
+		// Top-right: AND gate
+		gateResult = boolAND(toBinary((finalU + 1) / 2), toBinary((finalV + 1) / 2));
+	} else if (!quadX && quadY) {
+		// Bottom-left: OR gate
+		gateResult = boolOR(toBinary((finalU + 1) / 2), toBinary((finalV + 1) / 2));
+	} else {
+		// Bottom-right: NAND gate (NOT AND)
+		gateResult = boolNOT(boolAND(toBinary((finalU + 1) / 2), toBinary((finalV + 1) / 2)));
+	}
+
+	// Subtle influence from logic gate regions
+	let gateInfluence = (gateResult * 2 - 1) * 0.4;
+	finalU += gateInfluence;
+	finalV += gateInfluence;
 
 	let p = createVector(finalU, finalV);
 	return p;
