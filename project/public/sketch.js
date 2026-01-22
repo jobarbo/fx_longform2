@@ -103,18 +103,18 @@ function setup() {
 		features.composition === "compressed"
 			? mainCanvas.width / 3.5
 			: features.composition === "constrained"
-			? mainCanvas.width / 3
-			: features.composition === "semiconstrained"
-			? mainCanvas.width / 2.35
-			: mainCanvas.width / 1.9;
+				? mainCanvas.width / 3
+				: features.composition === "semiconstrained"
+					? mainCanvas.width / 2.35
+					: mainCanvas.width / 1.9;
 	borderY =
 		features.composition === "compressed"
 			? mainCanvas.height / 2.75
 			: features.composition === "constrained"
-			? mainCanvas.height / 2.5
-			: features.composition === "semiconstrained"
-			? mainCanvas.height / 2.25
-			: mainCanvas.height / 1.9;
+				? mainCanvas.height / 2.5
+				: features.composition === "semiconstrained"
+					? mainCanvas.height / 2.25
+					: mainCanvas.height / 1.9;
 
 	// Set background for main canvas
 	let bgCol = color(220, 100, 5);
@@ -183,7 +183,7 @@ function INIT(seed) {
 	ang1 = 0;
 	ang2 = 0;
 
-	xRandDivider = random([0.08, 0.09, 0.1, 0.11, 0.12]);
+	xRandDivider = 0.01;
 	yRandDivider = xRandDivider;
 	xMin = -0.01;
 	xMax = 1.01;
