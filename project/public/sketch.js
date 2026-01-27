@@ -4,7 +4,7 @@ let maxDPI = 3;
 let RATIO = 1;
 
 // Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.0;
+let ARTWORK_RATIO = 1.25;
 let BASE_WIDTH = 1000;
 let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 
@@ -18,7 +18,7 @@ let MULTIPLIER;
 
 // Animation control
 let movers = [];
-let numMovers = 1400;
+let numMovers = 250;
 let maxFrames = 40; // Total frames to animate
 let generator; // Animation generator instance
 let executionTimer = new ExecutionTimer();
@@ -26,7 +26,7 @@ let executionTimer = new ExecutionTimer();
 let pixel_density = 2;
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects (if shaders enabled)
-let cycle = parseInt((maxFrames * numMovers) / 55); // Number of operations before updating display (lower = more updates = slower, higher = fewer updates = faster)
+let cycle = parseInt((maxFrames * numMovers) / 2); // Number of operations before updating display (lower = more updates = slower, higher = fewer updates = faster)
 function preload() {
 	// Initialize shader effects (optional - will work without it)
 	if (typeof shaderEffects !== "undefined") {
@@ -61,7 +61,7 @@ function setup() {
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.angleMode(DEGREES);
-	mainCanvas.background(50, 10, 0);
+	mainCanvas.background(50, 10, 100);
 
 	// Set global color mode
 	colorMode(HSB, 360, 100, 100, 100);
@@ -107,22 +107,6 @@ function setup() {
 
 			mainCanvas.stroke(0, 0, 100, 2);
 			mainCanvas.strokeWeight(0.5);
-
-			// Get current mover's position
-			let pos1 = mover.getPos();
-
-			// Get the index of current mover
-			let currentIndex = movers.indexOf(mover);
-
-			// Only draw connections to movers that come after this one
-			// This ensures each connection is drawn exactly once
-			for (let j = currentIndex + 1; j < movers.length; j++) {
-				let pos2 = movers[j].getPos();
-				let d = dist(pos1.x, pos1.y, pos2.x, pos2.y);
-				if (d < 150) {
-					mainCanvas.line(pos1.x, pos1.y, pos2.x, pos2.y);
-				}
-			}
 
 			mainCanvas.pop();
 		},

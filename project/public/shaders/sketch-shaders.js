@@ -69,26 +69,32 @@ class ShaderEffects {
 		// Effects configuration - customize these for your sketch
 		this.effectsConfig = {
 			deform: {
-				enabled: false,
-				amount: 0.1,
+				enabled: true,
+				resolutionScale: 0.1, // lower = fewer fbm octave
+				amount: 0.015,
 				timeMultiplier: 0.0,
-				octave: 4.0,
+				octave: 5.0,
+				noiseScale: 15.0,
+				emberMode: false,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed",
 					uAmount: "amount",
 					uOctave: "octave",
+					uNoiseScale: "noiseScale",
+					uResolutionScale: "resolutionScale",
+					uEmberMode: "emberMode",
 				},
 			},
 
 			collage: {
-				enabled: false,
-				amount: 1.0,
+				enabled: true,
+				amount: 0.1,
 				tileSize: 255.0,
 				tileSize2: 50.0,
 				tileSize3: 100.0,
-				sizeNoise: 23.0,
-				rotNoise: 24.0,
+				sizeNoise: 21.0,
+				rotNoise: 12.0,
 				timeMultiplier: 0.0,
 				uniforms: {
 					uSeed: "shaderSeed + 2222.0",
@@ -103,8 +109,8 @@ class ShaderEffects {
 			},
 
 			grain: {
-				enabled: false,
-				amount: 0.1,
+				enabled: true,
+				amount: 0.2,
 				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -115,13 +121,13 @@ class ShaderEffects {
 
 			pixelSort: {
 				enabled: true,
-				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
-				threshold: 0.3,
+				angle: 0, // 0 = vertical, Math.PI/2 = horizontal
+				threshold: 0.9,
 				sortAmount: 2.8,
-				sampleCount: 1.0, // Number of samples (8-64, higher = better quality but slower)
-				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
-				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 0.3,
+				sampleCount: 45.0, // Number of samples (8-64, higher = better quality but slower)
+				invert: 0.8, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
+				sortMode: 2.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
+				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 999.0",
@@ -136,7 +142,7 @@ class ShaderEffects {
 			},
 
 			symmetry: {
-				enabled: true,
+				enabled: false,
 				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
@@ -175,7 +181,7 @@ class ShaderEffects {
 				},
 			},
 			symmetry2: {
-				enabled: true,
+				enabled: false,
 				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
