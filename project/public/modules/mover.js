@@ -39,9 +39,9 @@ class Mover {
 	}
 
 	display(canvas) {
-		canvas.fill(random([35, 195, 220, 320]), random(40, 50), random([10, 25, 50, 60, 80, 80, 90, 90, 100, 100]), random(10, 100));
+		canvas.fill(random([0, 10, 25, 35]), random([30, 100]), random([0, 100]), random([100]));
 		canvas.noStroke();
-		canvas.rect(this.x, this.y, this.size * random(0.1, 225), this.size / 15);
+		canvas.rect(this.x, this.y, this.size * random(0.1, 225), this.size / random(2, 122));
 	}
 
 	// Get position for drawing lines between movers

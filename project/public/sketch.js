@@ -61,7 +61,7 @@ function setup() {
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.angleMode(DEGREES);
-	mainCanvas.background(50, 10, 100);
+	mainCanvas.background(50, 0, 100);
 
 	// Set global color mode
 	colorMode(HSB, 360, 100, 100, 100);
@@ -159,5 +159,17 @@ function customDraw() {
 		if (!result.done) {
 			requestAnimationFrame(customDraw);
 		}
+	}
+}
+
+// Keyboard controls
+function keyPressed() {
+	// Toggle FPS counter with 'F' key
+	if (key === 'f' || key === 'F') {
+		if (typeof shaderEffects !== "undefined") {
+			shaderEffects.toggleFPS();
+			console.log("FPS counter toggled");
+		}
+		return false; // Prevent default behavior
 	}
 }

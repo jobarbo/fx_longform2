@@ -71,7 +71,7 @@ class ShaderEffects {
 			deform: {
 				enabled: true,
 				resolutionScale: 0.1, // lower = fewer fbm octave
-				amount: 0.015,
+				amount: 0.1,
 				timeMultiplier: 0.0,
 				octave: 5.0,
 				noiseScale: 15.0,
@@ -88,7 +88,7 @@ class ShaderEffects {
 			},
 
 			collage: {
-				enabled: true,
+				enabled: false,
 				amount: 0.1,
 				tileSize: 255.0,
 				tileSize2: 50.0,
@@ -109,7 +109,7 @@ class ShaderEffects {
 			},
 
 			grain: {
-				enabled: true,
+				enabled: false,
 				amount: 0.2,
 				timeMultiplier: 0.0,
 				uniforms: {
@@ -119,30 +119,8 @@ class ShaderEffects {
 				},
 			},
 
-			pixelSort: {
-				enabled: true,
-				angle: 0, // 0 = vertical, Math.PI/2 = horizontal
-				threshold: 0.9,
-				sortAmount: 2.8,
-				sampleCount: 45.0, // Number of samples (8-64, higher = better quality but slower)
-				invert: 0.8, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
-				sortMode: 2.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 0.0,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 999.0",
-					uAngle: "angle",
-					uThreshold: "threshold",
-					uSortAmount: "sortAmount",
-					uSampleCount: "sampleCount",
-					uInvert: "invert",
-					uSortMode: "sortMode",
-					uResolution: "[width, height]",
-				},
-			},
-
 			symmetry: {
-				enabled: false,
+				enabled: true,
 				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
@@ -158,7 +136,7 @@ class ShaderEffects {
 				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.001, // Time multiplier for animation
+				timeMultiplier: 0.1, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
@@ -181,8 +159,8 @@ class ShaderEffects {
 				},
 			},
 			symmetry2: {
-				enabled: false,
-				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				enabled: true,
+				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
@@ -190,14 +168,14 @@ class ShaderEffects {
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
-				rotationSpeed: 0.0, // Speed of rotation
+				rotationSpeed: 2.1, // Speed of rotation
 				rotationOscillationSpeed: 0.0, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 0.5, // Starting angle for rotation (in radians, added to rotation)
+				rotationStartingAngle: 2, // Starting angle for rotation (in radians, added to rotation)
 				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 1.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.001, // Time multiplier for animation
+				timeMultiplier: 0.1, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
@@ -219,8 +197,29 @@ class ShaderEffects {
 					uRotationAmplitude: "rotationAmplitude",
 				},
 			},
-			chromatic: {
+			pixelSort: {
 				enabled: true,
+				angle: 20, // 0 = vertical, Math.PI/2 = horizontal
+				threshold: 0.0,
+				sortAmount: 0.8,
+				sampleCount: 42.0, // Number of samples (8-64, higher = better quality but slower)
+				invert: 1, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
+				sortMode: 4.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
+				timeMultiplier: 10.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 999.0",
+					uAngle: "angle",
+					uThreshold: "threshold",
+					uSortAmount: "sortAmount",
+					uSampleCount: "sampleCount",
+					uInvert: "invert",
+					uSortMode: "sortMode",
+					uResolution: "[width, height]",
+				},
+			},
+			chromatic: {
+				enabled: false,
 				amount: 0.0015,
 				timeMultiplier: 0.0,
 				uniforms: {
