@@ -72,11 +72,8 @@ function setup() {
 	var webkit = !!ua.match(/WebKit/i);
 	var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
 
-	if (iOSSafari) {
-		pixelDensity(1.0);
-	} else {
-		pixelDensity(3.0);
-	}
+	let pixelDensityValue = iOSSafari ? 1.0 : 2.0;
+	pixelDensity(pixelDensityValue);
 
 	C_WIDTH = min(windowWidth, windowHeight);
 	MULTIPLIER = C_WIDTH / 1200;
@@ -87,8 +84,8 @@ function setup() {
 	shaderCanvas = createCanvas(C_WIDTH, C_WIDTH * RATIO, WEBGL);
 
 	// Set up the rendering properties
-	mainCanvas.pixelDensity(3);
-	shaderCanvas.pixelDensity(3);
+	mainCanvas.pixelDensity(pixelDensityValue);
+	shaderCanvas.pixelDensity(pixelDensityValue);
 
 	mainCanvas.rectMode(CENTER);
 	rseed = randomSeed(fxrand() * 10000);
