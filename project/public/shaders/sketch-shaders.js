@@ -201,7 +201,7 @@ class ShaderEffects {
 				},
 			},
 			loaderGlitch: {
-				enabled: true, // Enable to show glitch loader animation
+				enabled: false, // Enable to show glitch loader animation
 				timeMultiplier: 0.3, // Speed of block movement
 				uniforms: {
 					uProgress: "loadingProgress", // Progress from 0.0 (0%) to 1.0 (100%)
