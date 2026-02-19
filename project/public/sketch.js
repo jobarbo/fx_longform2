@@ -13,6 +13,11 @@ let palette = [
 	{name: "Coral pink", hex: "ff9b85", rgb: [255, 155, 133], cmyk: [0, 39, 48, 0], hsb: [11, 48, 100], hsl: [11, 100, 76], lab: [74, 35, 27]},
 ];
 
+// randomize the palette starting index
+let startingIndex = Math.floor(Math.random() * palette.length);
+
+palette = palette.slice(startingIndex).concat(palette.slice(0, startingIndex));
+
 let maxDPI = 3;
 let RATIO = 1.41;
 
@@ -297,8 +302,8 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
-		sin_val = sin(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
+		cos_val = cos(generator_frameCount * 50); //! lower when col_cos is {sin} ex 12
+		sin_val = sin(generator_frameCount * 50); //! lower when col_cos is {sin} ex 12
 		noise_cos = sin(generator_frameCount * 40); //! try cos for different pattern
 		off_cos = sin(generator_frameCount * 800);
 		col_cos = cos(generator_frameCount * 50); //!change to sin for different color
