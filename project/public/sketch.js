@@ -47,7 +47,7 @@ let displacement1 = 0;
 let displacement2 = 100;
 
 //let angle1 = [45, 105, 165, 225, 285, 345];
-/* let angle1 = [0, 45, 90, 135, 180, 225, 270, 315]; */
+// let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
 //let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5];
 let angle1 = [225];
 //let angle1 = [45, 135, 225, 315];
@@ -337,8 +337,11 @@ function* drawGenerator() {
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
-			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true);
+			xoff_l = mapValue(cos_val, -1.0, 1.0, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, -1.0, 1.0, xoff_l_low, xoff_l_high, true);
+
+			/* 	xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true); */
 
 			/* 			xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
 			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true); */
@@ -463,7 +466,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let centeredX = x + centerOffsetX;
 	let centeredY = y + centerOffsetY;
 
-	let w = mapValue(abs(cos_val), 0, 1, 0.32, 0.46, true);
+	let w = mapValue(abs(cos_val), 0.9, 1, 0.32, 1.46, true);
 	let elW = w * MULTIPLIER;
 	let ab_x = centeredX * MULTIPLIER; // Use centered coordinates
 	let ab_y = centeredY * MULTIPLIER; // Use centered coordinates
@@ -482,13 +485,13 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 
 	/* 	hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
 		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true); */
-	bri_min = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 100, true);
-	bri_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
-	bri = mapValue(abs(cos_val), 0.95, 1, b - bri_max, b - bri_min, true);
+
+	bri = mapValue(abs(cos_val), 0.95, 1, b, 0, true);
 	a_min = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 50, true);
 	a_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
 	a = 100;
 	alpha = mapValue(abs(cos_val), 0.95, 1, 50 - a_min, 100 - a_max, true);
+	alpha = 100;
 	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 	drawingContext.fillRect(ab_x, ab_y, elW, elW);
 
