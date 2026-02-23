@@ -13,10 +13,12 @@ body {
 	background-color: hsl(0, 0%, 100%);
 }
 
-body {
+body,
+main {
 	background-color: transparent;
 	margin: 0;
 	height: 100vh;
+	width: 100%;
 	overflow: hidden;
 	display: flex;
 	align-items: center;
@@ -40,7 +42,7 @@ canvas.p5Canvas {
 	max-width: var(--wContent);
 	max-height: var(--hContent);
 	max-height: 100vh;
-	width: auto !important;
+	width: 100% !important;
 }
 
 /* Debug bounds overlay */
