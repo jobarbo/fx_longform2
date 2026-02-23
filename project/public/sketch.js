@@ -195,20 +195,23 @@ function setup() {
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
 	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
 
+	// Use pixel density 1 on Safari mobile for stability; otherwise use dpi(maxDPI)
+	const density = isSafariMobile() ? 1 : dpi(maxDPI);
+
 	// Create main canvas with WEBGL mode
 	c = createCanvas(C_WIDTH, C_WIDTH * RATIO, WEBGL);
-	pixelDensity(dpi(maxDPI));
+	pixelDensity(density);
 
 	// Create the offscreen graphics buffer for original content
 	graphicsOriginal = createGraphics(C_WIDTH, C_WIDTH * RATIO);
 	graphicsOriginal.colorMode(HSB, 360, 100, 100, 100);
-	graphicsOriginal.pixelDensity(dpi(maxDPI));
+	graphicsOriginal.pixelDensity(density);
 	graphicsOriginal.rectMode(CENTER);
 	graphicsOriginal.angleMode(DEGREES);
 
 	// Create a final buffer to store accumulated drawing
 	finalBuffer = createGraphics(C_WIDTH, C_WIDTH * RATIO);
-	finalBuffer.pixelDensity(dpi(maxDPI));
+	finalBuffer.pixelDensity(density);
 
 	// Setup main canvas settings
 	colorMode(HSB, 360, 100, 100, 100);
@@ -224,7 +227,7 @@ function setup() {
 		0,
 		graphicsOriginal.width / 2,
 		graphicsOriginal.height / 2,
-		graphicsOriginal.width / 2
+		graphicsOriginal.width / 2,
 	);
 	gradient.addColorStop(0.5, "hsl(0, 100%, 95%,100%)");
 	gradient.addColorStop(0.8, "hsl(10, 100%, 96%,100%)");
