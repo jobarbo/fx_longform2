@@ -307,14 +307,14 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 	// Apply ZZ with enhanced symmetry - transform both positive and negative values
 	// Add subtle asymmetry to break directional bias
-	let zzuPos = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, minU, maxU, true);
-	let zzvPos = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, minV, maxV, true);
-	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.018), -11, 11, -minU, -maxU, true) * 1.1; // Slight asymmetry
-	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.018), -11, 11, -minV, -maxV, true) * 1.1;
+	let zzuPos = map(ZZ(Math.abs(u), 35, 80, 0.0065), -11, 11, minU, maxU, true) * 1.1;
+	let zzvPos = map(ZZ(Math.abs(v), 35, 80, 0.0065), -11, 11, minV, maxV, true) * 1.01;
+	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.0065), -11, 11, minU, maxU, true) * 0.91; // Slight asymmetry
+	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.0065), -11, 11, minV, maxV, true) * 0.9;
 
 	// Apply transformation preserving sign but with variation for both directions
-	let zu = u < 0 ? -zzuNeg : zzuPos;
-	let zv = v < 0 ? -zzvNeg : zzvPos;
+	let zu = u < 0 ? zzuNeg : zzuPos;
+	let zv = v < 0 ? zzvNeg : zzvPos;
 
 	// Add final cross-coupling layer for more intricate movement
 	let finalU = zu * 0.85 + zv * 0.15;
