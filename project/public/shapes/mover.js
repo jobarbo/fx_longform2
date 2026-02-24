@@ -78,7 +78,9 @@ class Mover {
 			this.xMax,
 			this.yMax,
 			this.rseed,
-			this.nseed
+			this.nseed,
+			width / 2,
+			height / 2,
 		);
 
 		// Update position with slight randomization
@@ -127,7 +129,7 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude1, amplitude2, xMin, yMin, xMax, yMax, rseed, nseed) {
+function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude1, amplitude2, xMin, yMin, xMax, yMax, rseed, nseed, centerX, centerY) {
 	let nx = x,
 		ny = y,
 		scale1 = scl1,
@@ -147,10 +149,16 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		a2 = amplitude2;
 
 	// Rotate inputs by a stable seed-based angle to avoid persistent 45° bias
-	const inputRot = (rseed * 0.000137 + nseed * 0.000019) % TAU;
+	// Rotate inputs by a stable seed-based angle around composition center to avoid persistent 45° bias
+	const cx = centerX ?? width / 2;
+	const cy = centerY ?? height / 2;
+	const inputRot = (rseed * 0.000137 + nseed * 0.000024) % TAU;
 	const sinIn = sin(inputRot);
 	const cosIn = cos(inputRot);
-	[nx, ny] = [cosIn * nx - sinIn * ny, sinIn * nx + cosIn * ny];
+	const rx = nx - cx;
+	const ry = ny - cy;
+	nx = cosIn * rx - sinIn * ry + cx;
+	ny = sinIn * rx + cosIn * ry + cy;
 
 	// Enhanced multi-layer octave calculations with cross-coupling and varied scales
 	// Layer 1: Primary flow with cross-coupling
@@ -230,7 +238,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		0.000000025,
 		-1,
 		1,
-		true
+		true,
 	);
 	let maxV = map(
 		oct(nx * (scale2 * scaleOffset2) + ny * (scale1 * scaleOffset1 * 1.3) + rseed, nx * (scale1 * scaleOffset1) + ny * (scale2 * scaleOffset2 * 1.3) + rseed, noiseScale2, 14, octave),
@@ -238,7 +246,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		0.000000025,
 		-1,
 		1,
-		true
+		true,
 	);
 	let minU = map(
 		oct(ny * (scale3 * scaleOffset3) + nx * (scale1 * scaleOffset1 * 1.4) + rseed, ny * (scale1 * scaleOffset1) + nx * (scale3 * scaleOffset3 * 1.4) + rseed, noiseScale3, 15, octave),
@@ -246,7 +254,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		0.000000025,
 		-1,
 		1,
-		true
+		true,
 	);
 	let minV = map(
 		oct(nx * (scale1 * scaleOffset1) + ny * (scale3 * scaleOffset3 * 1.4) + rseed, nx * (scale3 * scaleOffset3) + ny * (scale1 * scaleOffset1 * 1.4) + rseed, noiseScale4, 16, octave),
@@ -254,7 +262,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		0.000000025,
 		-1,
 		1,
-		true
+		true,
 	);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
