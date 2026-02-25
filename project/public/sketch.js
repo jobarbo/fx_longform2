@@ -132,11 +132,11 @@ const numCases = angle1.length; // Number of cases you want
 //! original
 const baseLow_l = 1;
 const baseHigh_l = 0.148;
-const maxPatternValue_l = 3;
+const maxPatternValue_l = 5;
 
 const baseLow_h = 1.148;
 const baseHigh_h = 0;
-const maxPatternValue_h = 3;
+const maxPatternValue_h = 5;
 
 //! inverted
 /* const baseLow_l = 0.148;
@@ -379,7 +379,7 @@ function* drawGenerator() {
 
 			graphicsOriginal.push();
 			graphicsOriginal.rotate(angle1[i]);
-			graphicsOriginal.scale(1.25);
+			graphicsOriginal.scale(1.75);
 			for (let s = 0; s < particle_num; s++) {
 				paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val, sin_val, noise_cos, col_cos, off_cos);
 
