@@ -491,7 +491,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	/* 	hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
 		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true); */
 
-	bri = mapValue(abs(cos_val), 0.95, 1, b, 0, true);
+	bri = mapValue(abs(cos_val), 0.5, 1, b, 0, true);
 	a_min = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 50, true);
 	a_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
 	a = 100;
