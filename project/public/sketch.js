@@ -224,7 +224,7 @@ function setup() {
 		0,
 		graphicsOriginal.width / 2,
 		graphicsOriginal.height / 2,
-		graphicsOriginal.width / 2
+		graphicsOriginal.width / 2,
 	);
 	gradient.addColorStop(0.5, "hsl(0, 100%, 95%,100%)");
 	gradient.addColorStop(0.8, "hsl(10, 100%, 96%,100%)");
