@@ -21,7 +21,7 @@ class ShaderEffects {
 	constructor() {
 		// Shader animation control
 		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
-		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
+		this.applyShadersDuringSketch = false; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Frame rate for shader animation
 
 		// Animation state

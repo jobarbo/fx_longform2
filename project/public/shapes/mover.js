@@ -50,6 +50,11 @@ class Mover {
 		this.maxBoundX = (this.xMax + this.wrapPaddingX) * width;
 		this.minBoundY = (this.yMin - this.wrapPaddingY) * height;
 		this.maxBoundY = (this.yMax + this.wrapPaddingY) * height;
+
+		// Precompute rotation sin/cos once (rseed/nseed are constant for this mover)
+		const inputRot = (rseed * 0.000137 + nseed * 0.000024) % TAU;
+		this._rotSin = Math.sin(inputRot);
+		this._rotCos = Math.cos(inputRot);
 	}
 
 	show(canvas = null) {
@@ -81,6 +86,8 @@ class Mover {
 			this.nseed,
 			width / 2,
 			height / 2,
+			this._rotSin,
+			this._rotCos,
 		);
 
 		// Update position with slight randomization
@@ -129,7 +136,7 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude1, amplitude2, xMin, yMin, xMax, yMax, rseed, nseed, centerX, centerY) {
+function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude1, amplitude2, xMin, yMin, xMax, yMax, rseed, nseed, centerX, centerY, sinIn, cosIn) {
 	let nx = x,
 		ny = y,
 		scale1 = scl1,
@@ -139,7 +146,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
 		noiseScale1 = 1,
-		noiseScale2 = 6,
+		noiseScale2 = 1,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
 		x_sine_scale = 1,
@@ -148,13 +155,14 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		a1 = amplitude1,
 		a2 = amplitude2;
 
-	// Rotate inputs by a stable seed-based angle to avoid persistent 45° bias
 	// Rotate inputs by a stable seed-based angle around composition center to avoid persistent 45° bias
 	const cx = centerX ?? width / 2;
 	const cy = centerY ?? height / 2;
-	const inputRot = (rseed * 0.000137 + nseed * 0.000024) % TAU;
-	const sinIn = sin(inputRot);
-	const cosIn = cos(inputRot);
+	if (sinIn === undefined) {
+		const inputRot = (rseed * 0.000137 + nseed * 0.000024) % TAU;
+		sinIn = sin(inputRot);
+		cosIn = cos(inputRot);
+	}
 	const rx = nx - cx;
 	const ry = ny - cy;
 	nx = cosIn * rx - sinIn * ry + cx;
