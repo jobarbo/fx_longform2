@@ -149,11 +149,26 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		noiseScale2 = 1,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
-		x_sine_scale = 1,
-		y_sine_scale = 1,
 		octave = 1,
 		a1 = amplitude1,
 		a2 = amplitude2;
+
+	// Precompute repeated scale * scaleOffset and scale factors
+	const s1o1 = scale1 * scaleOffset1,
+		s2o2 = scale2 * scaleOffset2,
+		s3o3 = scale3 * scaleOffset3,
+		scale1_13 = scale1 * 1.3,
+		scale2_13 = scale2 * 1.3,
+		scale1_05 = scale1 * 0.5,
+		scale2_05 = scale2 * 0.5,
+		scale1_08 = scale1 * 0.8,
+		scale2_08 = scale2 * 0.8,
+		a1_06 = a1 * 0.6,
+		a2_06 = a2 * 0.6,
+		a1_04 = a1 * 0.4,
+		a2_04 = a2 * 0.4,
+		a1_03 = a1 * 0.3,
+		a2_03 = a2 * 0.3;
 
 	// Rotate inputs by a stable seed-based angle around composition center to avoid persistent 45° bias
 	const cx = centerX ?? width / 2;
@@ -176,38 +191,34 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	ny += dy * a2;
 
 	// Layer 2: Secondary flow with different scales and offsets
-	dx = oct(nx * 0.7 + ny * 0.3, ny * 0.7 + nx * 0.3, scale1 * 1.3, 4, octave);
-	dy = oct(ny * 0.7 + nx * 0.3, nx * 0.7 + ny * 0.3, scale2 * 1.3, 5, octave);
-	nx += dx * a1 * 0.6;
-	ny += dy * a2 * 0.6;
+	const mx1 = nx * 0.7 + ny * 0.3,
+		my1 = ny * 0.7 + nx * 0.3;
+	dx = oct(mx1, my1, scale1_13, 4, octave);
+	dy = oct(my1, mx1, scale2_13, 5, octave);
+	nx += dx * a1_06;
+	ny += dy * a2_06;
 
 	// Layer 3: Fine detail layer with cross-coupling
-	dx = oct(nx, ny, scale1 * 0.5, 6, octave);
-	dy = oct(ny, nx, scale2 * 0.5, 7, octave);
-	nx += dx * a1 * 0.4;
-	ny += dy * a2 * 0.4;
+	dx = oct(nx, ny, scale1_05, 6, octave);
+	dy = oct(ny, nx, scale2_05, 7, octave);
+	nx += dx * a1_04;
+	ny += dy * a2_04;
 
 	// Layer 4: Rotational component using mixed coordinates
-	let rotAngle = oct(nx * 0.5, ny * 0.5, scale3, 8, octave) * PI;
-	let rotX = cos(rotAngle) * nx - sin(rotAngle) * ny;
-	let rotY = sin(rotAngle) * nx + cos(rotAngle) * ny;
-	dx = oct(rotX, rotY, scale1 * 0.8, 9, octave);
-	dy = oct(rotY, rotX, scale2 * 0.8, 10, octave);
-	nx += dx * a1 * 0.3;
-	ny += dy * a2 * 0.3;
+	const rotAngle = oct(nx * 0.5, ny * 0.5, scale3, 8, octave) * PI,
+		crot = cos(rotAngle),
+		srot = sin(rotAngle),
+		rotX = crot * nx - srot * ny,
+		rotY = srot * nx + crot * ny;
+	dx = oct(rotX, rotY, scale1_08, 9, octave);
+	dy = oct(rotY, rotX, scale2_08, 10, octave);
+	nx += dx * a1_03;
+	ny += dy * a2_03;
 
 	// Enhanced sine/cosine with cross-coupling and mixed scales
-	un =
-		sin(nx * (scale1 * scaleOffset1) + ny * (scale2 * scaleOffset2 * 0.5) + rseed) +
-		cos(nx * (scale2 * scaleOffset2) + ny * (scale1 * scaleOffset1 * 0.5) + rseed) -
-		sin(nx * (scale3 * scaleOffset3) + ny * (scale1 * scaleOffset1 * 0.3) + rseed) +
-		oct(ny * (scale1 * scaleOffset1), nx * (scale2 * scaleOffset2), 0.5, 11, octave) * 0.5;
+	un = sin(nx * s1o1 + ny * (s2o2 * 0.5) + rseed) + cos(nx * s2o2 + ny * (s1o1 * 0.5) + rseed) - sin(nx * s3o3 + ny * (s1o1 * 0.3) + rseed) + oct(ny * s1o1, nx * s2o2, 0.5, 11, octave) * 0.5;
 
-	vn =
-		cos(ny * (scale1 * scaleOffset1) + nx * (scale2 * scaleOffset2 * 0.5) + rseed) +
-		sin(ny * (scale2 * scaleOffset2) + nx * (scale1 * scaleOffset1 * 0.5) + rseed) -
-		cos(ny * (scale3 * scaleOffset3) + nx * (scale1 * scaleOffset1 * 0.3) + rseed) +
-		oct(nx * (scale2 * scaleOffset2), ny * (scale1 * scaleOffset1), 0.5, 11, octave) * 0.5;
+	vn = cos(ny * s1o1 + nx * (s2o2 * 0.5) + rseed) + sin(ny * s2o2 + nx * (s1o1 * 0.5) + rseed) - cos(ny * s3o3 + nx * (s1o1 * 0.3) + rseed) + oct(nx * s2o2, ny * s1o1, 0.5, 11, octave) * 0.5;
 
 	//! sine x cos x oct
 	/*
@@ -240,38 +251,12 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! Enhanced pNoise x SineCos with cross-coupling and varied noise indices
-	let maxU = map(
-		oct(ny * (scale1 * scaleOffset1) + nx * (scale2 * scaleOffset2 * 1.3) + rseed, ny * (scale2 * scaleOffset2) + nx * (scale1 * scaleOffset1 * 1.3) + rseed, noiseScale1, 13, octave),
-		-0.000000025,
-		0.000000025,
-		-1,
-		1,
-		true,
-	);
-	let maxV = map(
-		oct(nx * (scale2 * scaleOffset2) + ny * (scale1 * scaleOffset1 * 1.3) + rseed, nx * (scale1 * scaleOffset1) + ny * (scale2 * scaleOffset2 * 1.3) + rseed, noiseScale2, 14, octave),
-		-0.000000025,
-		0.000000025,
-		-1,
-		1,
-		true,
-	);
-	let minU = map(
-		oct(ny * (scale3 * scaleOffset3) + nx * (scale1 * scaleOffset1 * 1.4) + rseed, ny * (scale1 * scaleOffset1) + nx * (scale3 * scaleOffset3 * 1.4) + rseed, noiseScale3, 15, octave),
-		-0.000000025,
-		0.000000025,
-		-1,
-		1,
-		true,
-	);
-	let minV = map(
-		oct(nx * (scale1 * scaleOffset1) + ny * (scale3 * scaleOffset3 * 1.4) + rseed, nx * (scale3 * scaleOffset3) + ny * (scale1 * scaleOffset1 * 1.4) + rseed, noiseScale4, 16, octave),
-		-0.000000025,
-		0.000000025,
-		-1,
-		1,
-		true,
-	);
+	const mapIn = -0.000000025,
+		mapOut = 0.000000025;
+	let maxU = map(oct(ny * s1o1 + nx * (s2o2 * 1.3) + rseed, ny * s2o2 + nx * (s1o1 * 1.3) + rseed, noiseScale1, 13, octave), mapIn, mapOut, -1, 1, true);
+	let maxV = map(oct(nx * s2o2 + ny * (s1o1 * 1.3) + rseed, nx * s1o1 + ny * (s2o2 * 1.3) + rseed, noiseScale2, 14, octave), mapIn, mapOut, -1, 1, true);
+	let minU = map(oct(ny * s3o3 + nx * (s1o1 * 1.4) + rseed, ny * s1o1 + nx * (s3o3 * 1.4) + rseed, noiseScale3, 15, octave), mapIn, mapOut, -1, 1, true);
+	let minV = map(oct(nx * s1o1 + ny * (s3o3 * 1.4) + rseed, nx * s3o3 + ny * (s1o1 * 1.4) + rseed, noiseScale4, 16, octave), mapIn, mapOut, -1, 1, true);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
@@ -292,10 +277,14 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	//! Enhanced introverted with cross-coupling and dynamic range variation
 	//* Mix both nx/ny and ny/nx for more complex mapping
-	let nxRangeMin = map(nx, xMin * width, xMax * width, -1.5, -0.001);
-	let nxRangeMax = map(nx, xMin * width, xMax * width, 0.001, 1.5);
-	let nyRangeMin = map(ny, yMin * height, yMax * height, -1.5, -0.001);
-	let nyRangeMax = map(ny, yMin * height, yMax * height, 0.001, 1.5);
+	const xMinW = xMin * width,
+		xMaxW = xMax * width,
+		yMinH = yMin * height,
+		yMaxH = yMax * height;
+	let nxRangeMin = map(nx, xMinW, xMaxW, -1.5, -0.001);
+	let nxRangeMax = map(nx, xMinW, xMaxW, 0.001, 1.5);
+	let nyRangeMin = map(ny, yMinH, yMaxH, -1.5, -0.001);
+	let nyRangeMax = map(ny, yMinH, yMaxH, 0.001, 1.5);
 
 	// Cross-couple the mapping ranges for more intricate movement
 	//! really interesting to change the multipliers here
@@ -319,10 +308,12 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	// Add subtle asymmetry to break directional bias
 
 	//! really interesting to change the multipliers at the end here
-	let zzuPos = map(ZZ(Math.abs(u), 35, 80, 0.0058), -11, 11, minU, maxU, true) * 0.0001;
-	let zzvPos = map(ZZ(Math.abs(v), 35, 80, 0.0058), -11, 11, minV, maxV, true) * 0.001;
-	let zzuNeg = map(ZZ(Math.abs(u), 35, 80, 0.0058), -11, 11, minU, maxU, true) * 1; // Slight asymmetry
-	let zzvNeg = map(ZZ(Math.abs(v), 35, 80, 0.0058), -11, 11, minV, maxV, true) * 1;
+	const zzU = ZZ(Math.abs(u), 35, 80, 0.0058),
+		zzV = ZZ(Math.abs(v), 35, 80, 0.0058);
+	let zzuPos = map(zzU, -11, 11, minU, maxU, true) * 0.0001;
+	let zzvPos = map(zzV, -11, 11, minV, maxV, true) * 0.001;
+	let zzuNeg = map(zzU, -11, 11, minU, maxU, true) * 1; // Slight asymmetry
+	let zzvNeg = map(zzV, -11, 11, minV, maxV, true) * 1;
 
 	// Apply transformation preserving sign but with variation for both directions
 	let zu = u < 0 ? -zzuNeg : zzuPos;
