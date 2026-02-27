@@ -7,11 +7,11 @@ const ENABLE_SHADERS = true;
 
 // Padding constants - centralized for consistency
 const BASE_PADDING = 0.2; // Base padding for artwork bounds (used in INIT)
-const WRAP_PADDING_FACTOR = 0.04; // Wrap padding factor for particle movement bounds (used in Mover class)
+const WRAP_PADDING_FACTOR = 0.045; // Wrap padding factor for particle movement bounds (used in Mover class)
 
 // Animation configuration
-const maxFrames = 25;
-const particleNum = 500000;
+const maxFrames = 30;
+const particleNum = 3500000;
 const cycle = parseInt((maxFrames * particleNum) / 1150);
 
 // Debug flags
@@ -109,7 +109,7 @@ async function setup() {
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
-	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
+	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 4;
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
@@ -224,14 +224,14 @@ async function setup() {
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.noFill();
 
-	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.88);
-	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.91);
+	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.913);
+	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.928);
 	const rectShrink = baseRectW / 35;
 	for (let i = 0; i < 10000; i++) {
 		let randShrink = fxrand() * rectShrink;
 		let rectW = baseRectW - randShrink;
 		let rectH = baseRectH - randShrink;
-		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5, 3, 0.1, true));
+		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5, 2, 0.1, true));
 		s_alpha = map(randShrink, rectShrink / 1.25, rectShrink, 100, 100, true);
 		s_sat = map(randShrink, 0, rectShrink * 1.2, 100, lastParticleColor.s, true);
 		s_bri = map(randShrink, 0, rectShrink * 1.2, 100, 10, true);
@@ -242,10 +242,10 @@ async function setup() {
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 
 	compHue = (firstParticleColor.h + 180) % 360;
-	mainCanvas.fill(compHue, 5, 100, 100);
+	mainCanvas.fill(compHue, 8, 100, 100);
 	mainCanvas.noStroke();
 
-	//mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW - rectShrink * 2, baseRectH - rectShrink * 2);
+	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW - rectShrink * 1, baseRectH - rectShrink * 1);
 	// Start the custom draw loop
 	customDraw();
 
@@ -329,7 +329,7 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette));
 	}
 
-	let bgCol = color(25, 5, 100);
+	let bgCol = color(25, 1, 100);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
