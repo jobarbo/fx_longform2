@@ -7,11 +7,11 @@ const ENABLE_SHADERS = true;
 
 // Padding constants - centralized for consistency
 const BASE_PADDING = 0.2; // Base padding for artwork bounds (used in INIT)
-const WRAP_PADDING_FACTOR = 0.045; // Wrap padding factor for particle movement bounds (used in Mover class)
+const WRAP_PADDING_FACTOR = 0.04015; // Wrap padding factor for particle movement bounds (used in Mover class)
 
 // Animation configuration
 const maxFrames = 30;
-const particleNum = 3500000;
+const particleNum = 500000;
 const cycle = parseInt((maxFrames * particleNum) / 1150);
 
 // Debug flags
@@ -109,7 +109,7 @@ async function setup() {
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
-	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 4;
+	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
@@ -225,7 +225,7 @@ async function setup() {
 	mainCanvas.noFill();
 
 	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.913);
-	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.928);
+	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.91);
 	const rectShrink = baseRectW / 35;
 	for (let i = 0; i < 10000; i++) {
 		let randShrink = fxrand() * rectShrink;

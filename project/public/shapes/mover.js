@@ -10,7 +10,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.3]) * MULTIPLIER;
+		this.s = random([0.8]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -43,7 +43,7 @@ class Mover {
 		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * 0.001) / width;
 		this.reentryOffsetY = (min(width, height) * 0.001) / height;
-		this.wrapPaddingMultiplier = 0.95; //! or 0.5
+		this.wrapPaddingMultiplier = 0.9; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
