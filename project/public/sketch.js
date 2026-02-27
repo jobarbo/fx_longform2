@@ -7,7 +7,7 @@ const ENABLE_SHADERS = true;
 
 // Padding constants - centralized for consistency
 const BASE_PADDING = 0.2; // Base padding for artwork bounds (used in INIT)
-const WRAP_PADDING_FACTOR = 0.01; // Wrap padding factor for particle movement bounds (used in Mover class)
+const WRAP_PADDING_FACTOR = 0.04; // Wrap padding factor for particle movement bounds (used in Mover class)
 
 // Animation configuration
 const maxFrames = 25;
@@ -163,8 +163,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.0;
-	let scaleFactorY = 1.0;
+	let scaleFactorX = 1.47;
+	let scaleFactorY = 1.47;
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
@@ -181,7 +181,7 @@ async function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > -1) {
+			if (currentFrame > 0) {
 				mover.show(mainCanvas);
 			}
 		},
@@ -211,7 +211,41 @@ async function setup() {
 	if (typeof createDownloadButton === "function") {
 		createDownloadButton();
 	}
+	mainCanvas.colorMode(HSL, 360, 100, 100, 100);
+	let firstParticleColor = baseHSLPalette[baseHSLPalette.length - 1];
+	let lastParticleColor = baseHSLPalette[2];
+	let s_hue = firstParticleColor.h;
+	let s_sat = firstParticleColor.s;
+	let s_bri = firstParticleColor.l;
+	let s_alpha = 1;
+	let compHue = (firstParticleColor.h + 180) % 360;
+	console.log(firstParticleColor);
 
+	mainCanvas.rectMode(CENTER);
+	mainCanvas.noFill();
+
+	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.88);
+	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.91);
+	const rectShrink = baseRectW / 35;
+	for (let i = 0; i < 10000; i++) {
+		let randShrink = fxrand() * rectShrink;
+		let rectW = baseRectW - randShrink;
+		let rectH = baseRectH - randShrink;
+		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5, 3, 0.1, true));
+		s_alpha = map(randShrink, rectShrink / 1.25, rectShrink, 100, 100, true);
+		s_sat = map(randShrink, 0, rectShrink * 1.2, 100, lastParticleColor.s, true);
+		s_bri = map(randShrink, 0, rectShrink * 1.2, 100, 10, true);
+
+		mainCanvas.stroke(compHue, s_sat, s_bri, s_alpha);
+		mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, rectW, rectH);
+	}
+	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
+
+	compHue = (firstParticleColor.h + 180) % 360;
+	mainCanvas.fill(compHue, 5, 100, 100);
+	mainCanvas.noStroke();
+
+	//mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW - rectShrink * 2, baseRectH - rectShrink * 2);
 	// Start the custom draw loop
 	customDraw();
 
@@ -266,7 +300,7 @@ function INIT(rseed, nseed) {
 	}
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.004 / MULTIPLIER;
+	scl1 = 0.002 / MULTIPLIER;
 	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.003 / MULTIPLIER;
 

@@ -41,9 +41,9 @@ class Mover {
 		const wrapPaddingFactor = typeof WRAP_PADDING_FACTOR !== "undefined" ? WRAP_PADDING_FACTOR : 0.1;
 		this.wrapPaddingX = (min(width, height) * wrapPaddingFactor) / width;
 		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.0025) / width;
-		this.reentryOffsetY = (min(width, height) * 0.0025) / height;
-		this.wrapPaddingMultiplier = 1; //! or 0.5
+		this.reentryOffsetX = (min(width, height) * 0.001) / width;
+		this.reentryOffsetY = (min(width, height) * 0.001) / height;
+		this.wrapPaddingMultiplier = 0.95; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -146,7 +146,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
 		noiseScale1 = 1,
-		noiseScale2 = 1,
+		noiseScale2 = 6,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
 		octave = 1,
@@ -163,12 +163,12 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scale2_05 = scale2 * 0.5,
 		scale1_08 = scale1 * 0.8,
 		scale2_08 = scale2 * 0.8,
-		a1_06 = a1 * 0.6,
-		a2_06 = a2 * 0.6,
-		a1_04 = a1 * 0.4,
-		a2_04 = a2 * 0.4,
-		a1_03 = a1 * 0.3,
-		a2_03 = a2 * 0.3;
+		a1_06 = a1 * 10.6,
+		a2_06 = a2 * 10.6,
+		a1_04 = a1 * 10.4,
+		a2_04 = a2 * 10.4,
+		a1_03 = a1 * 10.3,
+		a2_03 = a2 * 1120.3;
 
 	// Rotate inputs by a stable seed-based angle around composition center to avoid persistent 45° bias
 	const cx = centerX ?? width / 2;
@@ -316,8 +316,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let zzvNeg = map(zzV, -11, 11, minV, maxV, true) * 1;
 
 	// Apply transformation preserving sign but with variation for both directions
-	let zu = u < 0 ? -zzuNeg : zzuPos;
-	let zv = v < 0 ? -zzvNeg : zzvPos;
+	let zu = u < -1 ? -zzuNeg : zzuPos;
+	let zv = v < 5 ? -zzvNeg : zzvPos;
 
 	// Add final cross-coupling layer for more intricate movement
 	let finalU = zu * 0.85 + zv * 0.15;
