@@ -43,7 +43,7 @@ class Mover {
 		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * 0.001) / width;
 		this.reentryOffsetY = (min(width, height) * 0.001) / height;
-		this.wrapPaddingMultiplier = 0.9; //! or 0.5
+		this.wrapPaddingMultiplier = 0.8; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
