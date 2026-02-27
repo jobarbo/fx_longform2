@@ -7,7 +7,7 @@ const ENABLE_SHADERS = true;
 
 // Padding constants - centralized for consistency
 const BASE_PADDING = 0.2; // Base padding for artwork bounds (used in INIT)
-const WRAP_PADDING_FACTOR = 0.04015; // Wrap padding factor for particle movement bounds (used in Mover class)
+const WRAP_PADDING_FACTOR = 0.04; // Wrap padding factor for particle movement bounds (used in Mover class)
 
 // Animation configuration
 const maxFrames = 30;
@@ -223,9 +223,9 @@ async function setup() {
 
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.noFill();
-
+	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.913);
-	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.91);
+	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.93);
 	const rectShrink = baseRectW / 35;
 	for (let i = 0; i < 10000; i++) {
 		let randShrink = fxrand() * rectShrink;
@@ -233,16 +233,15 @@ async function setup() {
 		let rectH = baseRectH - randShrink;
 		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5, 2, 0.1, true));
 		s_alpha = map(randShrink, rectShrink / 1.25, rectShrink, 100, 100, true);
-		s_sat = map(randShrink, 0, rectShrink * 1.2, 100, lastParticleColor.s, true);
-		s_bri = map(randShrink, 0, rectShrink * 1.2, 100, 10, true);
+		s_sat = map(randShrink, 0, rectShrink, 10, 100, true);
+		s_bri = map(randShrink, rectShrink / 1.5, rectShrink * 2, 100, 1, true);
 
 		mainCanvas.stroke(compHue, s_sat, s_bri, s_alpha);
 		mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, rectW, rectH);
 	}
-	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 
 	compHue = (firstParticleColor.h + 180) % 360;
-	mainCanvas.fill(compHue, 8, 100, 100);
+	mainCanvas.fill(compHue, 4, 100, 100);
 	mainCanvas.noStroke();
 
 	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW - rectShrink * 1, baseRectH - rectShrink * 1);
