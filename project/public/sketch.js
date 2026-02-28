@@ -328,7 +328,7 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette));
 	}
 
-	let bgCol = color(25, 1, 100);
+	let bgCol = color(random(0, 35), 5, 100);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
