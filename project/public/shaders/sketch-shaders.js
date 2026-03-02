@@ -68,19 +68,6 @@ class ShaderEffects {
 
 		// Effects configuration - customize these for your sketch
 		this.effectsConfig = {
-			deform: {
-				enabled: false,
-				amount: 0.1,
-				timeMultiplier: 0.0,
-				octave: 4.0,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed",
-					uAmount: "amount",
-					uOctave: "octave",
-				},
-			},
-
 			collage: {
 				enabled: false,
 				amount: 1.0,
@@ -136,8 +123,8 @@ class ShaderEffects {
 			},
 
 			symmetry: {
-				enabled: true,
-				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				enabled: false,
+				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
@@ -176,7 +163,7 @@ class ShaderEffects {
 			},
 			symmetry2: {
 				enabled: false,
-				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
@@ -213,6 +200,38 @@ class ShaderEffects {
 					uRotationAmplitude: "rotationAmplitude",
 				},
 			},
+			zoom: {
+				enabled: true,
+				zoomSpeed: 0.5, // Speed of zoom animation
+				zoomAmount: 1, // Static absolute zoom (1.0 = 1x)
+				zoomOutAmount: 1.0, // Min zoom when animating (0.5 = 2x dezoom)
+				zoomInAmount: 1.0, // Max zoom when animating (2.0 = 2x zoom in)
+				animateZoom: 0.0, // 0.0 = static (use zoomAmount), 1.0 = animate between zoomOutAmount/zoomInAmount
+				center: [0.5, 0.5], // Zoom around canvas center in UV space
+				timeMultiplier: 1.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uZoomSpeed: "zoomSpeed",
+					uZoomAmount: "zoomAmount",
+					uZoomOutAmount: "zoomOutAmount",
+					uZoomInAmount: "zoomInAmount",
+					uAnimateZoom: "animateZoom",
+					uCenter: "center",
+				},
+			},
+			deform: {
+				enabled: false,
+				amount: 0.07,
+				timeMultiplier: 0.0,
+				octave: 60.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed",
+					uAmount: "amount",
+					uOctave: "octave",
+				},
+			},
+
 			chromatic: {
 				enabled: true,
 				amount: 0.0015,
@@ -224,12 +243,12 @@ class ShaderEffects {
 				},
 			},
 			crtDisplay: {
-				enabled: true,
+				enabled: false,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
 				rgbOpacity: 0.1, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
-				dotRadius: 0.5, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
+				dotRadius: 0.8, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
 				dotFalloff: 0.99, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
 				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
 				uniforms: {
@@ -274,6 +293,7 @@ class ShaderEffects {
 		// Load shaders - customize this list for your sketch
 		shaderManager.loadShader("copy", "copy/fragment.frag", "copy/vertex.vert");
 		shaderManager.loadShader("deform", "deform/fragment.frag", "deform/vertex.vert");
+		shaderManager.loadShader("zoom", "zoom/fragment.frag", "zoom/vertex.vert");
 		shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag", "chromatic-aberration/vertex.vert");
 		shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert");
 		shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
