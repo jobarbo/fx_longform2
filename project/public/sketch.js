@@ -42,14 +42,11 @@ function setup() {
 	const viewportW = BASE_WIDTH * MULTIPLIER;
 	const viewportH = BASE_HEIGHT * MULTIPLIER;
 
-	// Create main canvas: cover-sized when we have assets (so shaders can sample overflow), else viewport-sized
+	// Create main canvas: always match the viewport size.
+	// The asset loader will draw the image in 'cover' mode so it
+	// keeps its own aspect ratio while fully covering this canvas.
 	const hasAssets = typeof assetLoader !== "undefined" && assetLoader.getLoadedKeys().length > 0;
-	const coverSize = hasAssets ? assetLoader.getCoverDimensions(viewportW, viewportH) : null;
-	if (coverSize) {
-		mainCanvas = createGraphics(coverSize.w, coverSize.h);
-	} else {
-		mainCanvas = createGraphics(viewportW, viewportH);
-	}
+	mainCanvas = createGraphics(viewportW, viewportH);
 
 	// Create shader canvas (WEBGL) or regular canvas
 	if (typeof shaderEffects !== "undefined") {
