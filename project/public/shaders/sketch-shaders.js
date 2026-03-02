@@ -224,14 +224,14 @@ class ShaderEffects {
 				},
 			},
 			crtDisplay: {
-				enabled: false,
+				enabled: true,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
-				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
+				cellSize: 1.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
-				rgbOpacity: 0.5, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
+				rgbOpacity: 0.1, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
 				dotRadius: 0.5, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
 				dotFalloff: 0.99, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
-				filterMode: 1.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
+				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
 				uniforms: {
 					uResolution: "[width, height]",
 					uBrightness: "brightness",
