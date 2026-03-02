@@ -226,7 +226,7 @@ class ShaderEffects {
 			crtDisplay: {
 				enabled: true,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
-				cellSize: 1.0, // Size of CRT cells/pixels (2-10 typical range)
+				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
 				rgbOpacity: 0.1, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
 				dotRadius: 0.5, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
