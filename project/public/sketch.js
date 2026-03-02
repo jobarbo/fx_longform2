@@ -224,17 +224,17 @@ async function setup() {
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.noFill();
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
-	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.913);
-	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.93);
+	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.975);
+	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.975);
 	const rectShrink = baseRectW / 35;
 	for (let i = 0; i < 10000; i++) {
 		let randShrink = fxrand() * rectShrink;
-		let rectW = baseRectW - randShrink;
-		let rectH = baseRectH - randShrink;
+		let rectW = baseRectW + randShrink;
+		let rectH = baseRectH + randShrink;
 		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5, 2, 0.1, true));
-		s_alpha = map(randShrink, rectShrink / 1.25, rectShrink, 100, 100, true);
-		s_sat = map(randShrink, 0, rectShrink, 10, 100, true);
-		s_bri = map(randShrink, rectShrink / 1.5, rectShrink * 2, 100, 1, true);
+		s_alpha = map(randShrink, rectShrink, rectShrink / 1.25, 100, 100, true);
+		s_sat = map(randShrink, rectShrink, 0, 30, 100, true);
+		s_bri = map(randShrink, rectShrink / 1.5, -rectShrink / 1.5, 100, 1, true);
 
 		mainCanvas.stroke(compHue, s_sat, s_bri, s_alpha);
 		mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, rectW, rectH);

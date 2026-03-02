@@ -20,7 +20,7 @@
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
-		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
+		this.continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
 		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Frame rate for shader animation
 
@@ -77,14 +77,14 @@ class ShaderEffects {
 
 			grain: {
 				enabled: true,
-				amount: 0.12,
+				amount: 0.1,
 				timeMultiplier: 0.0,
 				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
-				thresholdMinX: 0.06, // left [0..1]
-				thresholdMaxX: 0.94, // right [0..1]
-				thresholdMinY: 0.06, // bottom [0..1]
-				thresholdMaxY: 0.94, // top [0..1]
-				thresholdSmooth: 0.01, // soft edge at boundaries (0 = hard edge)
+				thresholdMinX: 0.0, // left [0..1]
+				thresholdMaxX: 1.0, // right [0..1]
+				thresholdMinY: 0.0, // bottom [0..1]
+				thresholdMaxY: 1.0, // top [0..1]
+				thresholdSmooth: 0.001, // soft edge at boundaries (0 = hard edge)
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 345.0",
