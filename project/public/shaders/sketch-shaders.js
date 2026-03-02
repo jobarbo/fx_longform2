@@ -116,12 +116,12 @@ class ShaderEffects {
 			pixelSort: {
 				enabled: true,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
-				threshold: 0.3,
-				sortAmount: 2.8,
-				sampleCount: 1.0, // Number of samples (8-64, higher = better quality but slower)
+				threshold: 0.01,
+				sortAmount: 0.2,
+				sampleCount: 15.0, // Number of samples (8-64, higher = better quality but slower)
 				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
-				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 0.3,
+				sortMode: 3.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
+				timeMultiplier: 0.1,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 999.0",
@@ -137,11 +137,11 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
-				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
@@ -175,7 +175,7 @@ class ShaderEffects {
 				},
 			},
 			symmetry2: {
-				enabled: true,
+				enabled: false,
 				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)

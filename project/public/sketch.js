@@ -16,18 +16,15 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
-// Animation control
-let movers = [];
-let numMovers = 1400;
-let maxFrames = 40; // Total frames to animate
-let generator; // Animation generator instance
-let executionTimer = new ExecutionTimer();
 // Canvas references
 let pixel_density = 2;
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects (if shaders enabled)
-let cycle = parseInt((maxFrames * numMovers) / 55); // Number of operations before updating display (lower = more updates = slower, higher = fewer updates = faster)
 function preload() {
+	// Load assets from assets/images/ (optional - will work without it)
+	if (typeof assetLoader !== "undefined") {
+		assetLoader.preload(this);
+	}
 	// Initialize shader effects (optional - will work without it)
 	if (typeof shaderEffects !== "undefined") {
 		shaderEffects.preload(this);
@@ -36,23 +33,31 @@ function preload() {
 
 function setup() {
 	features = $fx.getFeatures();
-	executionTimer.start();
 
 	// Canvas setup
 	const screenRatio = window.innerWidth / window.innerHeight;
 	const baseRatio = BASE_WIDTH / BASE_HEIGHT;
 	MULTIPLIER = screenRatio < baseRatio ? window.innerWidth / BASE_WIDTH : window.innerHeight / BASE_HEIGHT;
 
-	// Create main canvas for artwork
-	mainCanvas = createGraphics(BASE_WIDTH * MULTIPLIER, BASE_HEIGHT * MULTIPLIER);
+	const viewportW = BASE_WIDTH * MULTIPLIER;
+	const viewportH = BASE_HEIGHT * MULTIPLIER;
+
+	// Create main canvas: cover-sized when we have assets (so shaders can sample overflow), else viewport-sized
+	const hasAssets = typeof assetLoader !== "undefined" && assetLoader.getLoadedKeys().length > 0;
+	const coverSize = hasAssets ? assetLoader.getCoverDimensions(viewportW, viewportH) : null;
+	if (coverSize) {
+		mainCanvas = createGraphics(coverSize.w, coverSize.h);
+	} else {
+		mainCanvas = createGraphics(viewportW, viewportH);
+	}
 
 	// Create shader canvas (WEBGL) or regular canvas
 	if (typeof shaderEffects !== "undefined") {
-		shaderCanvas = createCanvas(BASE_WIDTH * MULTIPLIER, BASE_HEIGHT * MULTIPLIER, WEBGL);
+		shaderCanvas = createCanvas(viewportW, viewportH, WEBGL);
 		shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
 		shaderCanvas.pixelDensity(pixel_density);
 	} else {
-		createCanvas(BASE_WIDTH * MULTIPLIER, BASE_HEIGHT * MULTIPLIER);
+		createCanvas(viewportW, viewportH);
 		pixelDensity(pixel_density);
 	}
 
@@ -63,6 +68,11 @@ function setup() {
 	mainCanvas.angleMode(DEGREES);
 	mainCanvas.background(50, 10, 0);
 
+	// Draw loaded asset (full cover size, no clipping – overflow stays in buffer for symmetry shader)
+	if (hasAssets) {
+		assetLoader.drawAsset(mainCanvas, {fit: "cover"});
+	}
+
 	// Set global color mode
 	colorMode(HSB, 360, 100, 100, 100);
 
@@ -70,110 +80,27 @@ function setup() {
 	setPixelRatio(dpi(pixel_density));
 	setDimensionAgnostic(DEFAULT_SIZE);
 
-	// Initialize random
-	randomSeed(fxrand() * 10000);
-	noiseSeed(fxrand() * 10000);
-
-	// Create movers using fixed coordinate system
-	for (let i = 0; i < numMovers; i++) {
-		const x = random(BASE_WIDTH * 1.1) - BASE_WIDTH * 1.1 * 0.5;
-		const y = random(BASE_HEIGHT * 1.1) - BASE_HEIGHT * 1.1 * 0.5;
-		movers.push(new Mover(x, y, random(1000), MULTIPLIER));
+	// No particle animation - mark complete and trigger fxhash preview
+	if (typeof shaderEffects !== "undefined") {
+		shaderEffects.setParticleAnimationComplete(true);
 	}
+	$fx.preview();
+	document.complete = true;
 
-	// Create animation generator with configuration
-	const animConfig = {
-		items: movers,
-		maxFrames: maxFrames,
-		startTime: frameCount,
-		cycleLength: cycle,
-		currentFrame: 0,
-		renderItem: (mover, currentFrame) => {
-			// Update position and render the mover
-			mover.update(currentFrame);
-			if (currentFrame > -1) {
-				mainCanvas.push();
-				mainCanvas.scale(MULTIPLIER);
-				mainCanvas.translate(BASE_WIDTH * 0.5, BASE_HEIGHT * 0.5);
-				mover.display(mainCanvas);
-				mainCanvas.pop();
-			}
-		},
-		moveItem: (mover, currentFrame) => {
-			// Draw connections from this mover to subsequent movers
-			mainCanvas.push();
-			mainCanvas.scale(MULTIPLIER);
-			mainCanvas.translate(BASE_WIDTH * 0.5, BASE_HEIGHT * 0.5);
-
-			mainCanvas.stroke(0, 0, 100, 2);
-			mainCanvas.strokeWeight(0.5);
-
-			// Get current mover's position
-			let pos1 = mover.getPos();
-
-			// Get the index of current mover
-			let currentIndex = movers.indexOf(mover);
-
-			// Only draw connections to movers that come after this one
-			// This ensures each connection is drawn exactly once
-			for (let j = currentIndex + 1; j < movers.length; j++) {
-				let pos2 = movers[j].getPos();
-				let d = dist(pos1.x, pos1.y, pos2.x, pos2.y);
-				if (d < 150) {
-					mainCanvas.line(pos1.x, pos1.y, pos2.x, pos2.y);
-				}
-			}
-
-			mainCanvas.pop();
-		},
-		onComplete: () => {
-			executionTimer.stop().logElapsedTime("Sketch completed in");
-			if (typeof shaderEffects !== "undefined") {
-				shaderEffects.setParticleAnimationComplete(true);
-			}
-			$fx.preview();
-			document.complete = true;
-			console.log("Animation complete!");
-		},
-	};
-
-	// Create and start the animation
-	generator = createAnimationGenerator(animConfig);
-
-	// Start the custom draw loop
+	// Start the draw loop (shaders only, image is static)
 	customDraw();
 }
 
-// Track sketch completion state
-let sketchComplete = false;
-
-// Custom draw loop - advances sketch animation and applies shader effects
+// Draw loop - applies shader effects to the image on mainCanvas
 function customDraw() {
-	// Only advance generator if sketch isn't complete yet
-	let result = {done: sketchComplete};
-	if (!sketchComplete) {
-		result = generator.next();
-		if (result.done) {
-			sketchComplete = true;
-		}
-	}
-
-	// Render shader effects for this frame (if shaders are enabled)
 	if (typeof shaderEffects !== "undefined") {
-		const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
-
-		// Continue animation if not complete
+		const shouldContinue = shaderEffects.renderFrame(true, customDraw);
 		if (shouldContinue) {
 			requestAnimationFrame(customDraw);
 		}
 	} else {
-		// No shaders - just copy mainCanvas to display canvas
 		clear();
 		image(mainCanvas, 0, 0);
-
-		// Continue animation if not complete
-		if (!result.done) {
-			requestAnimationFrame(customDraw);
-		}
+		requestAnimationFrame(customDraw);
 	}
 }
