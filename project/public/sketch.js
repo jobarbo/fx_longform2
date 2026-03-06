@@ -16,10 +16,15 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
+// Media mode: 0 = loaded image from assets, 1 = camera feed
+const MEDIA_MODE = 1;
+
 // Canvas references
 let pixel_density = 2;
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects (if shaders enabled)
+let capture; // Video capture when MEDIA_MODE === 1
+
 function preload() {
 	// Load assets from assets/images/ (optional - will work without it)
 	if (typeof assetLoader !== "undefined") {
@@ -42,10 +47,17 @@ function setup() {
 	const viewportW = BASE_WIDTH * MULTIPLIER;
 	const viewportH = BASE_HEIGHT * MULTIPLIER;
 
-	// Create main canvas: cover-sized when we have assets (so shaders can sample overflow), else viewport-sized
-	const hasAssets = typeof assetLoader !== "undefined" && assetLoader.getLoadedKeys().length > 0;
+	// Create main canvas: viewport-sized for camera; cover-sized for image when we have assets
+	const useCamera = MEDIA_MODE === 1;
+	const hasAssets = !useCamera && typeof assetLoader !== "undefined" && assetLoader.getLoadedKeys().length > 0;
 	const coverSize = hasAssets ? assetLoader.getCoverDimensions(viewportW, viewportH) : null;
-	if (coverSize) {
+
+	if (useCamera) {
+		capture = createCapture(VIDEO);
+		capture.hide();
+		capture.play(); // ensure live stream updates every frame
+		mainCanvas = createGraphics(viewportW, viewportH);
+	} else if (coverSize) {
 		mainCanvas = createGraphics(coverSize.w, coverSize.h);
 	} else {
 		mainCanvas = createGraphics(viewportW, viewportH);
@@ -68,7 +80,7 @@ function setup() {
 	mainCanvas.angleMode(DEGREES);
 	mainCanvas.background(50, 10, 0);
 
-	// Draw loaded asset (full cover size, no clipping – overflow stays in buffer for symmetry shader)
+	// Draw source: image (mode 0) or leave clear for camera (mode 1, drawn each frame)
 	if (hasAssets) {
 		assetLoader.drawAsset(mainCanvas, {fit: "cover"});
 	}
@@ -91,16 +103,44 @@ function setup() {
 	customDraw();
 }
 
+// Draw video to mainCanvas with cover fit (same logic as asset cover)
+function drawVideoCover(canvas, video) {
+	if (!video || video.width <= 0 || video.height <= 0) return;
+	const destW = canvas.width;
+	const destH = canvas.height;
+	const imgRatio = video.width / video.height;
+	const destRatio = destW / destH;
+	let w, h, x, y;
+	if (imgRatio > destRatio) {
+		h = destH;
+		w = destH * imgRatio;
+	} else {
+		w = destW;
+		h = destW / imgRatio;
+	}
+	x = (destW - w) / 2;
+	y = (destH - h) / 2;
+	canvas.image(video, x, y, w, h);
+}
+
 // Draw loop - applies shader effects to the image on mainCanvas
 function customDraw() {
+	// Camera mode: pass the video element directly so the pipeline samples the live stream each frame (no canvas cache)
+	const inputTexture = MEDIA_MODE === 1 && capture ? capture : null;
+
 	if (typeof shaderEffects !== "undefined") {
-		const shouldContinue = shaderEffects.renderFrame(true, customDraw);
+		const shouldContinue = shaderEffects.renderFrame(true, customDraw, inputTexture);
 		if (shouldContinue) {
 			requestAnimationFrame(customDraw);
 		}
 	} else {
 		clear();
-		image(mainCanvas, 0, 0);
+		if (inputTexture) {
+			drawVideoCover(mainCanvas, capture);
+			image(mainCanvas, 0, 0);
+		} else {
+			image(mainCanvas, 0, 0);
+		}
 		requestAnimationFrame(customDraw);
 	}
 }

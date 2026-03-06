@@ -120,8 +120,8 @@ class ShaderEffects {
 				sortAmount: 0.2,
 				sampleCount: 15.0, // Number of samples (8-64, higher = better quality but slower)
 				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
-				sortMode: 3.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 0.1,
+				sortMode: 2.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
+				timeMultiplier: 1.1,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 999.0",
@@ -224,7 +224,7 @@ class ShaderEffects {
 				},
 			},
 			crtDisplay: {
-				enabled: true,
+				enabled: false,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
@@ -579,11 +579,12 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Apply shader effects to the main canvas
-	 * Call this in your render loop
+	 * Apply shader effects to the main canvas or an optional input texture (e.g. live video)
+	 * @param {p5.Image|p5.MediaElement|p5.Graphics} [inputTexture] - Optional; when provided (e.g. camera capture), pipeline uses this instead of mainCanvas so the source updates live
 	 */
-	apply() {
-		if (!this.shaderManager || !this.mainCanvas) {
+	apply(inputTexture) {
+		const source = inputTexture != null ? inputTexture : this.mainCanvas;
+		if (!this.shaderManager || !source) {
 			console.warn("ShaderEffects not properly initialized");
 			return this;
 		}
@@ -617,17 +618,19 @@ class ShaderEffects {
 			this.lastEnabledEffects = [...currentEnabledEffects];
 		}
 
-		// Run pipeline from mainCanvas to the shader canvas
-		this.shaderPipeline.run(this.mainCanvas);
+		// Run pipeline from source (mainCanvas or live input) to the shader canvas
+		this.shaderPipeline.run(source);
 
 		return this;
 	}
 
 	/**
-	 * Apply copy shader (just display the main canvas without effects)
+	 * Apply copy shader (just display the main canvas or optional input without effects)
+	 * @param {p5.Image|p5.MediaElement|p5.Graphics} [inputTexture] - Optional; when provided, display this instead of mainCanvas
 	 */
-	applyCopy() {
-		if (!this.shaderManager || !this.mainCanvas) {
+	applyCopy(inputTexture) {
+		const source = inputTexture != null ? inputTexture : this.mainCanvas;
+		if (!this.shaderManager || !source) {
 			return this;
 		}
 
@@ -635,7 +638,7 @@ class ShaderEffects {
 			this.p5Instance.clear();
 		}
 
-		this.shaderManager.apply("copy", {uTexture: this.mainCanvas}, this.p5Instance).drawFullscreenQuad(this.p5Instance);
+		this.shaderManager.apply("copy", {uTexture: source}, this.p5Instance).drawFullscreenQuad(this.p5Instance);
 
 		return this;
 	}
@@ -820,22 +823,23 @@ class ShaderEffects {
 	 * Render frame - handles shader logic for each animation frame
 	 * @param {boolean} isSketchComplete - Whether the sketch animation is complete
 	 * @param {Function} continueCallback - Callback to continue animation loop
+	 * @param {p5.Image|p5.MediaElement|p5.Graphics} [inputTexture] - Optional live source (e.g. camera); when provided, pipeline uses it instead of mainCanvas so the feed updates every frame
 	 * @returns {boolean} Whether to continue the animation loop
 	 */
-	renderFrame(isSketchComplete, continueCallback) {
+	renderFrame(isSketchComplete, continueCallback, inputTexture) {
 		// Update FPS counter
 		this.updateFPS();
 
 		if (isSketchComplete) {
 			// Always apply shaders at least once when sketch is complete
 			if (!this.shouldApplyDuringSketch()) {
-				this.apply();
+				this.apply(inputTexture);
 			}
 
 			if (this.shouldContinueAfterCompletion()) {
 				// Keep shaders running even after particles are complete
 				this.updateTime(0.01);
-				this.apply();
+				this.apply(inputTexture);
 
 				// Draw FPS counter
 				this.drawFPS();
@@ -854,10 +858,10 @@ class ShaderEffects {
 
 		// Only apply shaders during sketching if enabled
 		if (this.shouldApplyDuringSketch()) {
-			this.apply();
+			this.apply(inputTexture);
 		} else {
 			// If not applying shaders during sketching, use copy shader to display base sketch
-			this.applyCopy();
+			this.applyCopy(inputTexture);
 		}
 
 		// Draw FPS counter
