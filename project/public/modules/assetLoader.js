@@ -6,9 +6,7 @@
  */
 
 const ASSET_BASE_PATH = "./assets/";
-const ASSET_IMAGE_PATHS = [
-	"images/stroch.jpeg",
-];
+const ASSET_IMAGE_PATHS = ["images/quebec_map.jpg"];
 
 const assetLoader = {
 	/** @type {Record<string, p5.Image>} */
@@ -65,7 +63,7 @@ const assetLoader = {
 		const img = this.getImage(keyOrIndex);
 		if (!img) return null;
 		const rect = this._computeFit(img.width, img.height, viewportW, viewportH, "cover");
-		return { w: Math.round(rect.w), h: Math.round(rect.h) };
+		return {w: Math.round(rect.w), h: Math.round(rect.h)};
 	},
 
 	/**
@@ -79,7 +77,7 @@ const assetLoader = {
 	 */
 	_computeFit(imgW, imgH, destW, destH, fit) {
 		if (fit === "stretch") {
-			return { x: 0, y: 0, w: destW, h: destH };
+			return {x: 0, y: 0, w: destW, h: destH};
 		}
 		const imgRatio = imgW / imgH;
 		const destRatio = destW / destH;
@@ -107,7 +105,7 @@ const assetLoader = {
 			x = (destW - w) / 2;
 			y = (destH - h) / 2;
 		}
-		return { x, y, w, h };
+		return {x, y, w, h};
 	},
 
 	/**
@@ -131,12 +129,7 @@ const assetLoader = {
 		const fit = options.fit || "cover";
 
 		let x, y, w, h;
-		if (
-			options.x !== undefined &&
-			options.y !== undefined &&
-			options.width !== undefined &&
-			options.height !== undefined
-		) {
+		if (options.x !== undefined && options.y !== undefined && options.width !== undefined && options.height !== undefined) {
 			x = options.x;
 			y = options.y;
 			w = options.width;
