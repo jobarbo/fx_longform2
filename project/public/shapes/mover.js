@@ -163,12 +163,12 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scale2_05 = scale2 * 0.5,
 		scale1_08 = scale1 * 0.8,
 		scale2_08 = scale2 * 0.8,
-		a1_06 = a1 * 10.6,
-		a2_06 = a2 * 10.6,
-		a1_04 = a1 * 10.4,
-		a2_04 = a2 * 10.4,
-		a1_03 = a1 * 10.3,
-		a2_03 = a2 * 1120.3;
+		a1_06 = a1 * 1.6,
+		a2_06 = a2 * 1.6,
+		a1_04 = a1 * 1.4,
+		a2_04 = a2 * 1.4,
+		a1_03 = a1 * 1.3,
+		a2_03 = a2 * 1.3;
 
 	// Rotate inputs by a stable seed-based angle around composition center to avoid persistent 45° bias
 	const cx = centerX ?? width / 2;
@@ -311,13 +311,13 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	const zzU = ZZ(Math.abs(u), 35, 80, 0.0058),
 		zzV = ZZ(Math.abs(v), 35, 80, 0.0058);
 	let zzuPos = map(zzU, -11, 11, minU, maxU, true) * 0.0001;
-	let zzvPos = map(zzV, -11, 11, minV, maxV, true) * 0.001;
+	let zzvPos = map(zzV, -11, 11, minV, maxV, true) * 0.0001;
 	let zzuNeg = map(zzU, -11, 11, minU, maxU, true) * 1; // Slight asymmetry
 	let zzvNeg = map(zzV, -11, 11, minV, maxV, true) * 1;
 
 	// Apply transformation preserving sign but with variation for both directions
-	let zu = u < -1 ? -zzuNeg : zzuPos;
-	let zv = v < 5 ? -zzvNeg : zzvPos;
+	let zu = u < 2 ? -zzuNeg : zzuPos;
+	let zv = v < 2 ? -zzvNeg : zzvPos;
 
 	// Add final cross-coupling layer for more intricate movement
 	let finalU = zu * 0.85 + zv * 0.15;

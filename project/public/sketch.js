@@ -181,7 +181,7 @@ async function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0) {
+			if (currentFrame > -1) {
 				mover.show(mainCanvas);
 			}
 		},
@@ -214,11 +214,11 @@ async function setup() {
 	mainCanvas.colorMode(HSL, 360, 100, 100, 100);
 	let firstParticleColor = baseHSLPalette[baseHSLPalette.length - 1];
 	let lastParticleColor = baseHSLPalette[2];
-	let s_hue = firstParticleColor.h;
-	let s_sat = firstParticleColor.s;
-	let s_bri = firstParticleColor.l;
+	let s_hue = lastParticleColor.h;
+	let s_sat = lastParticleColor.s;
+	let s_bri = lastParticleColor.l;
 	let s_alpha = 1;
-	let compHue = (firstParticleColor.h + 180) % 360;
+	let compHue = lastParticleColor.h;
 	console.log(firstParticleColor);
 
 	mainCanvas.rectMode(CENTER);
@@ -234,9 +234,9 @@ async function setup() {
 		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5, 2, 0.1, true));
 		s_alpha = map(randShrink, rectShrink, rectShrink / 1.25, 100, 100, true);
 		s_sat = map(randShrink, rectShrink, 0, 30, 100, true);
-		s_bri = map(randShrink, rectShrink / 1.5, -rectShrink / 1.5, 100, 1, true);
+		s_bri = map(randShrink, rectShrink / 1.5, -rectShrink / 1.5, 20, 1, true);
 
-		mainCanvas.stroke(compHue, s_sat, s_bri, s_alpha);
+		mainCanvas.stroke(s_hue, s_sat, s_bri, s_alpha);
 		mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, rectW, rectH);
 	}
 
