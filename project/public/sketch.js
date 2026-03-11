@@ -163,8 +163,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.47;
-	let scaleFactorY = 1.47;
+	let scaleFactorX = 1.1;
+	let scaleFactorY = 1.1;
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
@@ -299,7 +299,7 @@ function INIT(rseed, nseed) {
 	}
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.002 / MULTIPLIER;
+	scl1 = 0.004 / MULTIPLIER;
 	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.003 / MULTIPLIER;
 
