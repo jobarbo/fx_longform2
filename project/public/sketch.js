@@ -7,7 +7,7 @@ const ENABLE_SHADERS = true;
 
 // Padding constants - centralized for consistency
 const BASE_PADDING = 0.2; // Base padding for artwork bounds (used in INIT)
-const WRAP_PADDING_FACTOR = 0.1; // Wrap padding factor for particle movement bounds (used in Mover class)
+const WRAP_PADDING_FACTOR = 0.05; // Wrap padding factor for particle movement bounds (used in Mover class)
 
 // Animation configuration
 const maxFrames = 25;
@@ -211,7 +211,40 @@ async function setup() {
 	if (typeof createDownloadButton === "function") {
 		createDownloadButton();
 	}
+	mainCanvas.colorMode(HSL, 360, 100, 100, 100);
+	let firstParticleColor = baseHSLPalette[baseHSLPalette.length - 1];
+	let lastParticleColor = baseHSLPalette[2];
+	let s_hue = lastParticleColor.h;
+	let s_sat = lastParticleColor.s;
+	let s_bri = lastParticleColor.l;
+	let s_alpha = 1;
+	let compHue = lastParticleColor.h;
+	console.log(firstParticleColor);
 
+	mainCanvas.rectMode(CENTER);
+	mainCanvas.noFill();
+	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
+	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.975);
+	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.975);
+	const rectShrink = baseRectW / 35;
+	for (let i = 0; i < 10000; i++) {
+		let randShrink = fxrand() * rectShrink;
+		let rectW = baseRectW + randShrink;
+		let rectH = baseRectH + randShrink;
+		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5, 2, 0.1, true));
+		s_alpha = map(randShrink, rectShrink, rectShrink / 1.25, 100, 100, true);
+		s_sat = map(randShrink, rectShrink, 0, 30, 100, true);
+		s_bri = map(randShrink, rectShrink / 1.5, -rectShrink / 1.5, 20, 1, true);
+
+		mainCanvas.stroke(s_hue, s_sat, s_bri, s_alpha);
+		mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, rectW, rectH);
+	}
+
+	compHue = (firstParticleColor.h + 180) % 360;
+	mainCanvas.fill(compHue, 4, 100, 100);
+	mainCanvas.noStroke();
+
+	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW - rectShrink * 1, baseRectH - rectShrink * 1);
 	// Start the custom draw loop
 	customDraw();
 

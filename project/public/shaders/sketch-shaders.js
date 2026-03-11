@@ -28,6 +28,7 @@ class ShaderEffects {
 		this.shaderTime = 0;
 		this.shaderSeed = 0;
 		this.particleAnimationComplete = false;
+		this.loadingProgress = 0.0; // Loading progress from 0.0 (0%) to 1.0 (100%)
 
 		// Canvas references
 		this.mainCanvas = null;
@@ -78,10 +79,21 @@ class ShaderEffects {
 				enabled: true,
 				amount: 0.1,
 				timeMultiplier: 0.0,
+				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
+				thresholdMinX: 0.0, // left [0..1]
+				thresholdMaxX: 1.0, // right [0..1]
+				thresholdMinY: 0.0, // bottom [0..1]
+				thresholdMaxY: 1.0, // top [0..1]
+				thresholdSmooth: 0.001, // soft edge at boundaries (0 = hard edge)
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 345.0",
 					uAmount: "amount",
+					uThresholdMinX: "thresholdMinX",
+					uThresholdMaxX: "thresholdMaxX",
+					uThresholdMinY: "thresholdMinY",
+					uThresholdMaxY: "thresholdMaxY",
+					uThresholdSmooth: "thresholdSmooth",
 				},
 			},
 
@@ -170,7 +182,7 @@ class ShaderEffects {
 				},
 			},
 			chromatic: {
-				enabled: true,
+				enabled: false,
 				amount: 0.0015,
 				timeMultiplier: 0.0,
 				uniforms: {
@@ -197,6 +209,16 @@ class ShaderEffects {
 					uDotRadius: "dotRadius",
 					uDotFalloff: "dotFalloff",
 					uFilterMode: "filterMode",
+				},
+			},
+			loaderGlitch: {
+				enabled: false, // Enable to show glitch loader animation
+				timeMultiplier: 0.3, // Speed of block movement
+				uniforms: {
+					uProgress: "loadingProgress", // Progress from 0.0 (0%) to 1.0 (100%)
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 8888.0",
+					uResolution: "[width, height]",
 				},
 			},
 		};
@@ -240,6 +262,7 @@ class ShaderEffects {
 		shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
 		shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert");
 		shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert");
+		shaderManager.loadShader("loaderGlitch", "loader-glitch/fragment.frag", "loader-glitch/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
@@ -346,6 +369,15 @@ class ShaderEffects {
 	}
 
 	/**
+	 * Update loading progress - call this to sync with loading percentage
+	 * @param {number} progress - Loading progress from 0.0 (0%) to 1.0 (100%)
+	 */
+	setLoadingProgress(progress) {
+		this.loadingProgress = Math.max(0.0, Math.min(1.0, progress));
+		return this;
+	}
+
+	/**
 	 * Evaluate uniform value from string expression
 	 * @param {string|*} value - Value or expression
 	 * @param {object} effect - Effect configuration
@@ -393,6 +425,7 @@ class ShaderEffects {
 			// Handle global variable references
 			if (value === "shaderTime") return this.shaderTime;
 			if (value === "shaderSeed") return this.shaderSeed;
+			if (value === "loadingProgress") return this.loadingProgress;
 			if (value === "width") return this.mainCanvas.width;
 			if (value === "height") return this.mainCanvas.height;
 
