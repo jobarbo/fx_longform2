@@ -7,7 +7,7 @@ const ENABLE_SHADERS = true;
 
 // Padding constants - centralized for consistency
 const BASE_PADDING = 0.2; // Base padding for artwork bounds (used in INIT)
-const WRAP_PADDING_FACTOR = 0.05; // Wrap padding factor for particle movement bounds (used in Mover class)
+const WRAP_PADDING_FACTOR = 0.01; // Wrap padding factor for particle movement bounds (used in Mover class)
 
 // Animation configuration
 const maxFrames = 25;
@@ -181,7 +181,7 @@ async function setup() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > -1) {
+			if (currentFrame > 0) {
 				mover.show(mainCanvas);
 			}
 		},
@@ -213,7 +213,7 @@ async function setup() {
 	}
 	mainCanvas.colorMode(HSL, 360, 100, 100, 100);
 	let firstParticleColor = baseHSLPalette[baseHSLPalette.length - 1];
-	let lastParticleColor = baseHSLPalette[2];
+	let lastParticleColor = baseHSLPalette[0];
 	let s_hue = lastParticleColor.h;
 	let s_sat = lastParticleColor.s;
 	let s_bri = lastParticleColor.l;
@@ -224,17 +224,17 @@ async function setup() {
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.noFill();
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
-	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.975);
-	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.975);
-	const rectShrink = baseRectW / 35;
-	for (let i = 0; i < 10000; i++) {
+	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.995);
+	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.995);
+	const rectShrink = baseRectW / 6;
+	for (let i = 0; i < 1500; i++) {
 		let randShrink = fxrand() * rectShrink;
 		let rectW = baseRectW + randShrink;
 		let rectH = baseRectH + randShrink;
-		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5, 2, 0.1, true));
+		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5, 0.1, 0.1, true));
 		s_alpha = map(randShrink, rectShrink, rectShrink / 1.25, 100, 100, true);
 		s_sat = map(randShrink, rectShrink, 0, 30, 100, true);
-		s_bri = map(randShrink, rectShrink / 1.5, -rectShrink / 1.5, 20, 1, true);
+		s_bri = map(randShrink, rectShrink / 0.5, -rectShrink / 1.5, 50, 1, true);
 
 		mainCanvas.stroke(s_hue, s_sat, s_bri, s_alpha);
 		mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, rectW, rectH);
@@ -244,7 +244,7 @@ async function setup() {
 	mainCanvas.fill(compHue, 4, 100, 100);
 	mainCanvas.noStroke();
 
-	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW - rectShrink * 1, baseRectH - rectShrink * 1);
+	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW, baseRectH);
 	// Start the custom draw loop
 	customDraw();
 
