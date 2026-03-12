@@ -152,7 +152,7 @@ class ShaderEffects {
 				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.001, // Time multiplier for animation
+				timeMultiplier: 0.02, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
@@ -191,7 +191,7 @@ class ShaderEffects {
 				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 1.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.001, // Time multiplier for animation
+				timeMultiplier: 0.01, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",

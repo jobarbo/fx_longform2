@@ -5,6 +5,7 @@ let maxFrames = 25;
 let elapsedTime = 0;
 let particleNum = 500000;
 // Adjust cycle for smoother percentage updates (1% increments)
+const PADDING = 0.01;
 let cycle = parseInt((maxFrames * particleNum) / 1150);
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 let generator; // Animation generator instance
@@ -49,7 +50,7 @@ function updateDebugOverlay() {
 	debugOverlay.style.height = canvasHeight + "px";
 
 	// Base artwork padding (0.1 padding)
-	const padding = 0.1;
+	const padding = PADDING;
 	const basePaddingLeft = padding * canvasWidth;
 	const basePaddingTop = padding * canvasHeight;
 	const basePaddingWidth = (1 - 2 * padding) * canvasWidth;
@@ -213,8 +214,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 3.0;
-	let scaleFactorY = 3.0;
+	let scaleFactorX = 1.0;
+	let scaleFactorY = 1.0;
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
@@ -391,7 +392,7 @@ function INIT(rseed, nseed) {
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Simple 10% padding calculation with artwork rzatio
-	let padding = 0.1;
+	let padding = PADDING;
 	xMin = padding;
 	xMax = 1 - padding;
 	yMin = padding;
