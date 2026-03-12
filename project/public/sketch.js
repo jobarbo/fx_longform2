@@ -106,13 +106,13 @@ let isBordered = true;
 let img;
 let mask;
 
-// Base artwork dimensions (width: 948, height: 948 * 1.41)
-let ARTWORK_RATIO = 1.25;
+// Base artwork dimensions - aspect ratio matches viewport
+let ARTWORK_RATIO; // Set in setup() to windowWidth / windowHeight
 let BASE_WIDTH = 1000;
-let BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
+let BASE_HEIGHT; // Set in setup() from viewport aspect
 
-// This is our reference size for scaling
-let DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
+// This is our reference size for scaling (set in setup after ARTWORK_RATIO is known)
+let DEFAULT_SIZE;
 
 let W = window.innerWidth;
 let H = window.innerHeight;
@@ -159,19 +159,22 @@ async function setup() {
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
 	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
 
-	// canvas setup
-	// Take the smaller screen dimension to ensure it fits
+	// Canvas setup - match viewport aspect ratio
+	//! ARTWORK_RATIO = 1.24;
+	ARTWORK_RATIO = windowWidth / windowHeight;
+	BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
+	DEFAULT_SIZE = min(BASE_WIDTH, BASE_HEIGHT);
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
 
-	// Create main canvas for the artwork (will also handle debug overlays)
-	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
+	// Create main canvas for the artwork (same aspect as viewport)
+	mainCanvas = createGraphics(windowWidth, windowHeight);
 
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
 	if (typeof shaderEffects !== "undefined") {
 		try {
-			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
+			shaderCanvas = createCanvas(windowWidth, windowHeight, WEBGL);
 			// Initialize shader effects system
 			shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
 			// Set up shader canvas pixel density
@@ -182,13 +185,13 @@ async function setup() {
 			console.log("Falling back to sketch without shaders");
 			// Fallback: create regular canvas without shaders
 			shaderCanvas = null;
-			createCanvas(DIM / ARTWORK_RATIO, DIM);
+			createCanvas(windowWidth, windowHeight);
 			pixelDensity(pixel_density);
 			// Shaders are unavailable; continue without them
 		}
 	} else {
 		// No shaders - create regular canvas for display
-		createCanvas(DIM / ARTWORK_RATIO, DIM);
+		createCanvas(windowWidth, windowHeight);
 		pixelDensity(pixel_density);
 	}
 
