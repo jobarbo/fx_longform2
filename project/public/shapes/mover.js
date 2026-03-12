@@ -77,12 +77,12 @@ class Mover {
 			this.xMax,
 			this.yMax,
 			this.rseed,
-			this.nseed
+			this.nseed,
 		);
 
 		// Update position with slight randomization
 		this.xRandDivider = 0.4;
-		this.yRandDivider = 0.01;
+		this.yRandDivider = 0.4;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;

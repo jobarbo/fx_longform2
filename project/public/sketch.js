@@ -108,8 +108,8 @@ let mask;
 
 // Base artwork dimensions - aspect ratio matches viewport
 let ARTWORK_RATIO; // Set in setup() to windowWidth / windowHeight
-let BASE_WIDTH = 1000;
-let BASE_HEIGHT; // Set in setup() from viewport aspect
+let BASE_WIDTH = 240;
+let BASE_HEIGHT = 228; // Set in setup() from viewport aspect
 
 // This is our reference size for scaling (set in setup after ARTWORK_RATIO is known)
 let DEFAULT_SIZE;
@@ -157,24 +157,23 @@ async function setup() {
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
-	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
+	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 6;
 
 	// Canvas setup - match viewport aspect ratio
 	//! ARTWORK_RATIO = 1.24;
-	ARTWORK_RATIO = windowWidth / windowHeight;
-	BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
+	ARTWORK_RATIO = BASE_WIDTH / BASE_HEIGHT;
 	DEFAULT_SIZE = min(BASE_WIDTH, BASE_HEIGHT);
-	DIM = min(windowWidth, windowHeight);
+	DIM = min(BASE_WIDTH, BASE_HEIGHT);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
 
-	// Create main canvas for the artwork (same aspect as viewport)
-	mainCanvas = createGraphics(windowWidth, windowHeight);
+	// Create main canvas for the artwork (same aspect as BASE_WIDTH and BASE_HEIGHT)
+	mainCanvas = createGraphics(BASE_WIDTH, BASE_HEIGHT);
 
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
 	if (typeof shaderEffects !== "undefined") {
 		try {
-			shaderCanvas = createCanvas(windowWidth, windowHeight, WEBGL);
+			shaderCanvas = createCanvas(BASE_WIDTH, BASE_HEIGHT, WEBGL);
 			// Initialize shader effects system
 			shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
 			// Set up shader canvas pixel density
@@ -185,13 +184,13 @@ async function setup() {
 			console.log("Falling back to sketch without shaders");
 			// Fallback: create regular canvas without shaders
 			shaderCanvas = null;
-			createCanvas(windowWidth, windowHeight);
+			createCanvas(BASE_WIDTH, BASE_HEIGHT);
 			pixelDensity(pixel_density);
 			// Shaders are unavailable; continue without them
 		}
 	} else {
 		// No shaders - create regular canvas for display
-		createCanvas(windowWidth, windowHeight);
+		createCanvas(BASE_WIDTH, BASE_HEIGHT);
 		pixelDensity(pixel_density);
 	}
 
@@ -214,8 +213,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.24;
-	let scaleFactorY = 1.24;
+	let scaleFactorX = 3.0;
+	let scaleFactorY = 3.0;
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
