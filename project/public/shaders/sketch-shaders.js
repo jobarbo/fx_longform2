@@ -178,7 +178,7 @@ class ShaderEffects {
 			},
 			symmetry2: {
 				enabled: true,
-				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 0.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
@@ -217,25 +217,16 @@ class ShaderEffects {
 					uRotationAmplitude: "rotationAmplitude",
 				},
 			},
-			chromatic: {
-				enabled: true,
-				amount: 0.0015,
-				timeMultiplier: 0.0,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 777.0",
-					uAmount: "amount",
-				},
-			},
+
 			crtDisplay: {
 				enabled: false,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
-				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
-				rgbOpacity: 0.5, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
-				dotRadius: 0.5, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
-				dotFalloff: 0.99, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
-				filterMode: 1.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
+				gapOpacity: 0.5, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
+				rgbOpacity: 0.05, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
+				dotRadius: 0.4, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
+				dotFalloff: 0.2, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
+				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
 				uniforms: {
 					uResolution: "[width, height]",
 					uBrightness: "brightness",
@@ -245,6 +236,16 @@ class ShaderEffects {
 					uDotRadius: "dotRadius",
 					uDotFalloff: "dotFalloff",
 					uFilterMode: "filterMode",
+				},
+			},
+			chromatic: {
+				enabled: true,
+				amount: 0.0015,
+				timeMultiplier: 0.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 777.0",
+					uAmount: "amount",
 				},
 			},
 		};
