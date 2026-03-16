@@ -137,9 +137,10 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
+				center: [0.5, 0.5], // symmetry center in normalized coords
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
 				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
@@ -159,6 +160,7 @@ class ShaderEffects {
 					uSymmetryMode: "symmetryMode",
 					uAmount: "amount",
 					uDebug: "debug",
+					uCenter: "center",
 					uTime: "shaderTime * timeMultiplier",
 					uTranslationSpeed: "translationSpeed",
 					uTranslationMode: "translationMode",
@@ -176,21 +178,22 @@ class ShaderEffects {
 			},
 			symmetry2: {
 				enabled: true,
-				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
+				center: [0.5, 0.5], // symmetry center in normalized coords
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
-				translationMode: 0.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
 				rotationSpeed: 0.0, // Speed of rotation
-				rotationOscillationSpeed: 0.0, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 0.5, // Starting angle for rotation (in radians, added to rotation)
-				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
-				rotationNoiseScale: 0.3, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
+				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
+				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
+				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
+				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
-				rotationAmplitude: 1.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
+				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
 				timeMultiplier: 0.001, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
@@ -198,6 +201,7 @@ class ShaderEffects {
 					uSymmetryMode: "symmetryMode",
 					uAmount: "amount",
 					uDebug: "debug",
+					uCenter: "center",
 					uTime: "shaderTime * timeMultiplier",
 					uTranslationSpeed: "translationSpeed",
 					uTranslationMode: "translationMode",
