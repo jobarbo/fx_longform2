@@ -298,7 +298,7 @@ function renderOutsideFrame() {
 	}
 
 	compHue = (firstParticleColor.h + 180) % 360;
-	mainCanvas.fill(1, 4, 1, 1);
+	mainCanvas.fill(compHue, 4, 100, 100);
 	mainCanvas.noStroke();
 
 	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW, baseRectH);
@@ -412,7 +412,7 @@ function INIT(rseed, nseed) {
 	}
 
 	let bgCol = color(random(0, 35), 5, 100);
-	//mainCanvas.background(bgCol);
+	mainCanvas.background(bgCol);
 
 	//initGrid(50);
 }
