@@ -21,13 +21,14 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		outerFlowLevels: ["standard", "medium", "high"],
 		horizontalPatternIntensities: ["low", "normal", "high", "intense", "extreme"],
 		verticalPatternIntensities: ["low", "normal", "high", "intense", "extreme"],
+		octaveLevels: [1, 2, 3, 4, 5],
 		printDPIs: [1, 2, 3, 4, 5],
 		exposures: [10, 20, 30, 45, 60],
 		presentations: ["off", "on", "horizontal"],
 		externalFrame: ["on", "off"],
 		swirlIndex: ["none", "low", "medium", "high", "veryHigh", "extreme"],
 		zigzag: ["hairline", "fine", "normal", "large", "XL"],
-		noiseScale2: ["low", "medium", "high", "intense"],
+		noiseScale2: ["low", "medium", "high", "intense", "extreme"],
 		palettes: [], // filled once swatches are loaded
 	},
 
@@ -35,7 +36,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 	maps: {
 		swirl: {none: 0.3, low: 10, medium: 100, high: 500, veryHigh: 1000, extreme: 2000},
 		zigzag: {hairline: 0.0018, fine: 0.003, normal: 0.005, large: 0.007, XL: 0.009},
-		noiseScale2: {low: 1, medium: 2, high: 4, intense: 6},
+		noiseScale2: {low: 1, medium: 2, high: 4, intense: 6, extreme: 8},
 		patternIntensity: {low: 15, normal: 10, high: 5, intense: 1, extreme: 0.1},
 		speed: {
 			veryFast: 0.015,
@@ -68,6 +69,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		outerFlowLevel: "standard",
 		horizontalPatternIntensity: "normal",
 		verticalPatternIntensity: "normal",
+		octaveLevel: 1,
 		paletteName: "",
 		printDPI: 2,
 		exposure: 30,
@@ -132,7 +134,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		{
 			key: "horizontalPatternIntensity",
 			id: "param-horizontal-pattern-intensity",
-			label: "Horizontal linepattern intensity",
+			label: "Horizontal line pattern intensity",
 			optionsKey: "horizontalPatternIntensities",
 		},
 		{
@@ -141,6 +143,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			label: "Vertical line pattern intensity",
 			optionsKey: "verticalPatternIntensities",
 		},
+
 		{
 			key: "innerFlowLevel",
 			id: "param-inner-flow",
@@ -165,6 +168,12 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			id: "param-noise-scale-2",
 			label: "Detail complexity",
 			optionsKey: "noiseScale2",
+		},
+		{
+			key: "octaveLevel",
+			id: "param-octave-level",
+			label: "Octave",
+			optionsKey: "octaveLevels",
 		},
 		{
 			key: "printDPI",
@@ -204,6 +213,7 @@ window.resolveParams = function resolveParams() {
 		verticalSpeed: maps.speed[current.verticalSpeed] ?? maps.speed.standard,
 		innerFlowThreshold: maps.innerFlow[current.innerFlowLevel] ?? maps.innerFlow.standard,
 		outerFlowThreshold: maps.outerFlow[current.outerFlowLevel] ?? maps.outerFlow.standard,
+		octave: current.octaveLevel ?? 1,
 		horizontalPatternIntensity: maps.patternIntensity[current.horizontalPatternIntensity] ?? maps.patternIntensity.normal,
 		verticalPatternIntensity: maps.patternIntensity[current.verticalPatternIntensity] ?? maps.patternIntensity.normal,
 		paletteName: current.paletteName,
