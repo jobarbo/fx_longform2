@@ -128,102 +128,106 @@ console.log($fx.getParams());
 			});
 		}
 
-		const selPopulation = document.getElementById("param-population");
-		const selParticleSize = document.getElementById("param-particle-size");
-		const selPalette = document.getElementById("param-palette");
-		const selDpi = document.getElementById("param-dpi");
-		const selExposure = document.getElementById("param-exposure");
-		const selPresentation = document.getElementById("param-presentation");
-		const selExternalFrame = document.getElementById("param-external-frame");
-		const selSwirlIndex = document.getElementById("param-swirl-index");
-		const selZigzag = document.getElementById("param-zigzag");
-		const selNoiseScale2 = document.getElementById("param-noise-scale-2");
-		const selHorizontalSpeed = document.getElementById("param-horizontal-speed");
-		const selVerticalSpeed = document.getElementById("param-vertical-speed");
-		const selInnerFlow = document.getElementById("param-inner-flow");
-		const selOuterFlow = document.getElementById("param-outer-flow");
+		const form = document.querySelector(".controls-form");
+		if (!form) return;
+
+		// Build controls from PARAMS_UI.ui metadata
+		const controls = {};
+		const uiDefs = Array.isArray(p.ui) ? p.ui : [];
+
+		for (const def of uiDefs) {
+			const key = def.key;
+			if (!key) continue;
+
+			const selectId = def.id || `param-${key}`;
+			const labelText = def.label || key;
+
+			const row = document.createElement("label");
+			row.className = "select-row";
+
+			const span = document.createElement("span");
+			span.textContent = labelText;
+
+			const select = document.createElement("select");
+			select.id = selectId;
+
+			row.appendChild(span);
+			row.appendChild(select);
+			form.appendChild(row);
+
+			controls[key] = select;
+
+			// Populate options
+			const optionsKey = def.optionsKey;
+			if (key === "paletteName") {
+				// Palette starts with a synthetic random option; real palettes come from swatches:ready.
+				fillSelect(select, ["(random)"]);
+			} else if (optionsKey && Array.isArray(p.options[optionsKey])) {
+				const values = p.options[optionsKey];
+				let formatter;
+				if (key === "population") {
+					formatter = formatPopulation;
+				} else if (key === "horizontalSpeed" || key === "verticalSpeed") {
+					formatter = (val) => String(val).replace(/([A-Z])/g, " $1").toLowerCase();
+				}
+				fillSelect(select, values, {formatter});
+			}
+
+			// Initial value from PARAMS_UI.current
+			const currentValue = p.current[key];
+			if (key === "paletteName") {
+				if (currentValue) {
+					setSelectValue(select, currentValue);
+				} else {
+					setSelectValue(select, "(random)");
+				}
+			} else if (currentValue !== undefined) {
+				setSelectValue(select, currentValue);
+			}
+		}
+
+		const selPresentation = controls.presentation;
+		const selPalette = controls.paletteName;
+
 		const btnApply = document.getElementById("param-apply");
 		const btnDownload = document.getElementById("param-download");
 
-		if (
-			!selPopulation ||
-			!selParticleSize ||
-			!selPalette ||
-			!selDpi ||
-			!selExposure ||
-			!selPresentation ||
-			!selExternalFrame ||
-			!selSwirlIndex ||
-			!selZigzag ||
-			!selNoiseScale2 ||
-			!selHorizontalSpeed ||
-			!selVerticalSpeed ||
-			!selInnerFlow ||
-			!selOuterFlow ||
-			!btnApply
-		)
-			return;
+		if (!btnApply) return;
 
-		fillSelect(selPopulation, p.options.populations, {formatter: formatPopulation});
-		fillSelect(selParticleSize, p.options.particleSizes);
-		const formatSpeedLabel = (key) => key.replace(/([A-Z])/g, " $1").toLowerCase();
-		fillSelect(selHorizontalSpeed, p.options.horizontalSpeeds, {formatter: formatSpeedLabel});
-		fillSelect(selVerticalSpeed, p.options.verticalSpeeds, {formatter: formatSpeedLabel});
-		const formatFlowLabel = (key) => key; // low / standard / medium / high already friendly
-		fillSelect(selInnerFlow, p.options.innerFlowLevels, {formatter: formatFlowLabel});
-		fillSelect(selOuterFlow, p.options.outerFlowLevels, {formatter: formatFlowLabel});
-		fillSelect(selDpi, p.options.printDPIs);
-		fillSelect(selExposure, p.options.exposures);
-		fillSelect(selPresentation, p.options.presentations);
-		fillSelect(selExternalFrame, p.options.externalFrame);
-		fillSelect(selSwirlIndex, p.options.swirlIndex);
-		fillSelect(selZigzag, p.options.zigzag);
-		fillSelect(selNoiseScale2, p.options.noiseScale2);
-
-		// Palette select is filled once swatches are ready
-		fillSelect(selPalette, ["(random)"]);
-
-		setSelectValue(selPopulation, p.current.population);
-		setSelectValue(selParticleSize, p.current.particleSize);
-		setSelectValue(selHorizontalSpeed, p.current.horizontalSpeed);
-		setSelectValue(selVerticalSpeed, p.current.verticalSpeed);
-		setSelectValue(selInnerFlow, p.current.innerFlowLevel);
-		setSelectValue(selOuterFlow, p.current.outerFlowLevel);
-		setSelectValue(selDpi, p.current.printDPI);
-		setSelectValue(selExposure, p.current.exposure);
-		setSelectValue(selPresentation, p.current.presentation);
-		setSelectValue(selExternalFrame, p.current.externalFrame);
-		setSelectValue(selSwirlIndex, p.current.swirlIndex);
-		setSelectValue(selZigzag, p.current.zigzag);
-		setSelectValue(selNoiseScale2, p.current.noiseScale2);
-		if (p.current.paletteName) setSelectValue(selPalette, p.current.paletteName);
-
-		selPresentation.addEventListener("change", () => {
-			p.current.presentation = selPresentation.value;
-			applyPresentation(p.current.presentation);
-			renderDashboard();
-		});
+		if (selPresentation instanceof HTMLSelectElement) {
+			selPresentation.addEventListener("change", () => {
+				p.current.presentation = selPresentation.value;
+				applyPresentation(p.current.presentation);
+				renderDashboard();
+			});
+		}
 
 		btnApply.addEventListener("click", async () => {
 			setStatus(true);
 			setText(".kb-params.dashboard", "rendering…");
 			try {
-				p.current.population = parseInt(selPopulation.value, 10);
-				p.current.particleSize = parseFloat(selParticleSize.value);
-				p.current.printDPI = parseInt(selDpi.value, 10);
-				p.current.exposure = parseInt(selExposure.value, 10);
-				p.current.presentation = selPresentation.value;
-				p.current.externalFrame = selExternalFrame.value;
-				p.current.swirlIndex = selSwirlIndex.value;
-				p.current.zigzag = selZigzag.value;
-				p.current.noiseScale2 = selNoiseScale2.value;
-				p.current.horizontalSpeed = selHorizontalSpeed.value;
-				p.current.verticalSpeed = selVerticalSpeed.value;
-				p.current.innerFlowLevel = selInnerFlow.value;
-				p.current.outerFlowLevel = selOuterFlow.value;
+				// Sync all control values back into PARAMS_UI.current
+				for (const def of uiDefs) {
+					const key = def.key;
+					const select = controls[key];
+					if (!(select instanceof HTMLSelectElement)) continue;
 
-				const paletteVal = selPalette.value;
-				p.current.paletteName = paletteVal === "(random)" ? "" : paletteVal;
+					let raw = select.value;
+					if (key === "paletteName") {
+						p.current.paletteName = raw === "(random)" ? "" : raw;
+						continue;
+					}
+
+					const currentValue = p.current[key];
+					if (typeof currentValue === "number") {
+						const num = raw.includes(".") ? parseFloat(raw) : parseInt(raw, 10);
+						if (!Number.isNaN(num)) {
+							p.current[key] = num;
+						}
+					} else {
+						p.current[key] = raw;
+					}
+				}
 
 				// Re-resolve numeric values before notifying the sketch
 				if (typeof window.resolveParams === "function") window.resolveParams();
@@ -256,16 +260,18 @@ console.log($fx.getParams());
 			if (!Array.isArray(names)) return;
 			p.options.palettes = names;
 
-			selPalette.innerHTML = "";
-			for (const name of names) ensureOption(selPalette, name, name);
-			// Keep random as last option (still available)
-			ensureOption(selPalette, "(random)", "(random)");
+			if (selPalette instanceof HTMLSelectElement) {
+				selPalette.innerHTML = "";
+				for (const name of names) ensureOption(selPalette, name, name);
+				// Keep random as last option (still available)
+				ensureOption(selPalette, "(random)", "(random)");
 
-			const selected = e?.detail?.selected || p.current.paletteName;
-			if (selected) {
-				setSelectValue(selPalette, selected);
-			} else if (names.length > 0) {
-				setSelectValue(selPalette, names[0]);
+				const selected = e?.detail?.selected || p.current.paletteName;
+				if (selected) {
+					setSelectValue(selPalette, selected);
+				} else if (names.length > 0) {
+					setSelectValue(selPalette, names[0]);
+				}
 			}
 		});
 

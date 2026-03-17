@@ -320,8 +320,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let zzvNeg = map(zzV, -11, 11, minV, maxV, true) * 1;
 
 	// User-controlled thresholds for when to use inner vs outer flow
-	const innerThreshold = CURRENT_PARAMS.innerFlowThreshold ?? -1;
-	const outerThreshold = CURRENT_PARAMS.outerFlowThreshold ?? 5;
+	const innerThreshold = CURRENT_PARAMS.innerFlowThreshold ?? 0;
+	const outerThreshold = CURRENT_PARAMS.outerFlowThreshold ?? 0;
 
 	// Apply transformation preserving sign but with variation for both directions
 	let zu = u < innerThreshold ? zzuNeg : zzuPos;

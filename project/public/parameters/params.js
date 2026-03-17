@@ -73,6 +73,94 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		noiseScale2: "low",
 	},
 
+	// ---- UI metadata (drives dynamic control generation) ----
+	ui: [
+		{
+			key: "paletteName",
+			id: "param-palette",
+			label: "Palette",
+			optionsKey: "palettes", // populated via swatches:ready
+		},
+		{
+			key: "exposure",
+			id: "param-exposure",
+			label: "Exposure time (in frames)",
+			optionsKey: "exposures",
+		},
+		{
+			key: "population",
+			id: "param-population",
+			label: "Particle population",
+			optionsKey: "populations",
+		},
+		{
+			key: "particleSize",
+			id: "param-particle-size",
+			label: "Particle size",
+			optionsKey: "particleSizes",
+		},
+		{
+			key: "horizontalSpeed",
+			id: "param-horizontal-speed",
+			label: "Horizontal speed",
+			optionsKey: "horizontalSpeeds",
+		},
+		{
+			key: "verticalSpeed",
+			id: "param-vertical-speed",
+			label: "Vertical speed",
+			optionsKey: "verticalSpeeds",
+		},
+		{
+			key: "innerFlowLevel",
+			id: "param-inner-flow",
+			label: "Inner flow strength",
+			optionsKey: "innerFlowLevels",
+		},
+		{
+			key: "outerFlowLevel",
+			id: "param-outer-flow",
+			label: "Outer flow strength",
+			optionsKey: "outerFlowLevels",
+		},
+		{
+			key: "swirlIndex",
+			id: "param-swirl-index",
+			label: "Swirl intensity",
+			optionsKey: "swirlIndex",
+		},
+		{
+			key: "zigzag",
+			id: "param-zigzag",
+			label: "Line pattern thickness",
+			optionsKey: "zigzag",
+		},
+		{
+			key: "noiseScale2",
+			id: "param-noise-scale-2",
+			label: "Detail complexity",
+			optionsKey: "noiseScale2",
+		},
+		{
+			key: "printDPI",
+			id: "param-dpi",
+			label: "Print DPI",
+			optionsKey: "printDPIs",
+		},
+		{
+			key: "externalFrame",
+			id: "param-external-frame",
+			label: "Internal frame",
+			optionsKey: "externalFrame",
+		},
+		{
+			key: "presentation",
+			id: "param-presentation",
+			label: "Presentation mode",
+			optionsKey: "presentations",
+		},
+	],
+
 	// ---- Resolved values (numeric/boolean — read by sketch + mover) ----
 	resolved: {},
 
@@ -106,6 +194,7 @@ window.resolveParams = function resolveParams() {
 window.resolveParams();
 
 const CURRENT_PARAMS = window.PARAMS_UI?.resolved ?? {};
+console.log(CURRENT_PARAMS);
 
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
