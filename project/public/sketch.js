@@ -5,6 +5,10 @@
 // Shader effects toggle
 const ENABLE_SHADERS = true;
 
+// UI toggles
+const SHOW_FPS_UI = false; // FPS overlay + FPS toggle button
+const SHOW_DOWNLOAD_UI = true; // Download button
+
 // Padding constants - centralized for consistency
 const BASE_PADDING = 0.2; // Base padding for artwork bounds (used in INIT)
 const WRAP_PADDING_FACTOR = 0.04; // Wrap padding factor for particle movement bounds (used in Mover class)
@@ -198,7 +202,7 @@ async function setup() {
 			document.complete = true;
 
 			// Create download button after sketch is complete
-			if (typeof createDownloadButton === "function") {
+			if (SHOW_DOWNLOAD_UI && typeof createDownloadButton === "function") {
 				createDownloadButton();
 			}
 		},
@@ -208,7 +212,7 @@ async function setup() {
 	generator = createAnimationGenerator(animConfig);
 
 	// Create download button immediately (will only show if not in iframe)
-	if (typeof createDownloadButton === "function") {
+	if (SHOW_DOWNLOAD_UI && typeof createDownloadButton === "function") {
 		createDownloadButton();
 	}
 	mainCanvas.colorMode(HSL, 360, 100, 100, 100);
@@ -251,8 +255,8 @@ async function setup() {
 	// Initialize debug overlay after setup is complete
 	updateDebugOverlay();
 
-	// Setup mobile controls
-	setupMobileControls();
+	// Setup UI controls (if present)
+	setupControls();
 
 	// Log available controls and performance settings
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
@@ -371,42 +375,58 @@ function customDraw() {
 	}
 }
 
-// Setup mobile touch controls
-function setupMobileControls() {
-	// Hide entire controls container if in iframe
+function setFpsButtonState(toggleFpsButton) {
+	if (!toggleFpsButton || !SHOW_FPS_UI || !shadersEnabled()) return;
+	if (shaderEffects.showFPS) {
+		toggleFpsButton.classList.add("active");
+		toggleFpsButton.textContent = "FPS: ON";
+	} else {
+		toggleFpsButton.classList.remove("active");
+		toggleFpsButton.textContent = "FPS: OFF";
+	}
+}
+
+function toggleFps(from = "unknown") {
+	if (!SHOW_FPS_UI) return;
+	if (!shadersEnabled()) return;
+	// Don't allow FPS toggle if in iframe
+	if (typeof isInIframe === "function" && isInIframe()) return;
+
+	shaderEffects.toggleFPS();
+	setFpsButtonState(document.getElementById("toggle-fps"));
+	console.log(`FPS counter toggled (${from}): `, shaderEffects.showFPS);
+}
+
+// Setup UI controls (optional; markup may not exist)
+function setupControls() {
 	const controlsContainer = document.getElementById("controls");
-	if (controlsContainer && typeof isInIframe === "function" && isInIframe()) {
+	if (!controlsContainer) return;
+
+	// Hide entire controls container if in iframe
+	if (typeof isInIframe === "function" && isInIframe()) {
+		controlsContainer.style.display = "none";
+		return;
+	}
+
+	// If UI is fully disabled, hide controls container early
+	if (!SHOW_FPS_UI && !SHOW_DOWNLOAD_UI) {
 		controlsContainer.style.display = "none";
 		return;
 	}
 
 	const toggleFpsButton = document.getElementById("toggle-fps");
-	if (toggleFpsButton) {
-		toggleFpsButton.addEventListener("click", function () {
-			if (shadersEnabled()) {
-				shaderEffects.toggleFPS();
-				// Update button visual state
-				if (shaderEffects.showFPS) {
-					toggleFpsButton.classList.add("active");
-					toggleFpsButton.textContent = "FPS: ON";
-				} else {
-					toggleFpsButton.classList.remove("active");
-					toggleFpsButton.textContent = "FPS: OFF";
-				}
-				console.log("FPS counter toggled: ", shaderEffects.showFPS);
-			}
-		});
-
-		// Set initial button state
-		if (shadersEnabled()) {
-			if (shaderEffects.showFPS) {
-				toggleFpsButton.classList.add("active");
-				toggleFpsButton.textContent = "FPS: ON";
-			} else {
-				toggleFpsButton.textContent = "FPS: OFF";
-			}
-		}
+	if (!toggleFpsButton) return;
+	if (!SHOW_FPS_UI) {
+		toggleFpsButton.style.display = "none";
+		return;
 	}
+
+	toggleFpsButton.addEventListener("click", function () {
+		toggleFps("button");
+	});
+
+	// Set initial button state
+	setFpsButtonState(toggleFpsButton);
 }
 // Key controls for debugging and performance monitoring
 function keyPressed() {
@@ -417,14 +437,7 @@ function keyPressed() {
 	}
 
 	if (key === "F" || key === "f") {
-		// Don't allow FPS toggle if in iframe
-		if (typeof isInIframe === "function" && isInIframe()) {
-			return;
-		}
-		if (shadersEnabled()) {
-			shaderEffects.toggleFPS();
-			console.log("FPS counter toggled: ", shaderEffects.showFPS);
-		}
+		toggleFps("keyboard");
 	}
 
 	if (key === "G" || key === "g") {

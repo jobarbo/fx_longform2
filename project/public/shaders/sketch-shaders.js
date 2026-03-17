@@ -229,9 +229,9 @@ class ShaderEffects {
 		// FPS tracking
 		// Disable FPS counter on Safari mobile to prevent crashes
 		// Also disable FPS counter when in iframe
-		const isSafariMobileCheck = typeof isSafariMobile === "function" && isSafariMobile();
-		const isInIframeCheck = typeof isInIframe === "function" && isInIframe();
-		this.showFPS = !isSafariMobileCheck && !isInIframeCheck;
+		// NOTE: actual default is finalized in setup() so a sketch-level config constant
+		// (declared in sketch.js) can control it.
+		this.showFPS = false;
 		this.fpsHistory = [];
 		this.fpsHistorySize = 60; // Average over 60 frames
 		this.lastFrameTime = performance.now();
@@ -279,6 +279,12 @@ class ShaderEffects {
 	setup(width, height, mainCanvas, shaderCanvas) {
 		this.mainCanvas = mainCanvas;
 		this.shaderCanvas = shaderCanvas;
+
+		// FPS overlay default (can be controlled by sketch-level constant SHOW_FPS_UI)
+		const isSafariMobileCheck = typeof isSafariMobile === "function" && isSafariMobile();
+		const isInIframeCheck = typeof isInIframe === "function" && isInIframe();
+		const allowFpsUi = typeof SHOW_FPS_UI === "undefined" ? true : !!SHOW_FPS_UI;
+		this.showFPS = allowFpsUi && !isSafariMobileCheck && !isInIframeCheck;
 
 		// Initialize shader seed with fxhash if available
 		if (typeof fxrand === "function") {
@@ -676,6 +682,8 @@ class ShaderEffects {
 	 * @param {boolean} show - Show or hide FPS
 	 */
 	toggleFPS(show = null) {
+		// Respect sketch-level UI toggle if present
+		if (typeof SHOW_FPS_UI !== "undefined" && !SHOW_FPS_UI) return;
 		if (show === null) {
 			this.showFPS = !this.showFPS;
 		} else {
