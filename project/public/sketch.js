@@ -399,7 +399,7 @@ function INIT(rseed, nseed) {
 	}
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.003 / MULTIPLIER;
+	scl1 = 0.002 / MULTIPLIER;
 	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.003 / MULTIPLIER;
 

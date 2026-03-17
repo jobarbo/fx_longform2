@@ -162,11 +162,11 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scale2_05 = scale2 * 0.5,
 		scale1_08 = scale1 * 0.8,
 		scale2_08 = scale2 * 0.8,
-		a1_06 = a1 * 0.6,
-		a2_06 = a2 * 0.6,
-		a1_04 = a1 * 0.4,
-		a2_04 = a2 * 0.4,
-		a1_03 = a1 * 0.3,
+		a1_06 = a1 * 10.6,
+		a2_06 = a2 * 10.6,
+		a1_04 = a1 * 10.4,
+		a2_04 = a2 * 10.4,
+		a1_03 = a1 * 10.3,
 		a2_03 = a2 * CURRENT_PARAMS.swirlFactor;
 
 	// Rotate inputs by a stable seed-based angle around composition center to avoid persistent 45° bias
