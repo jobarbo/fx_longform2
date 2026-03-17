@@ -186,9 +186,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	mainCanvas.translate(width / 2, height / 2);
-	mainCanvas.scale(FRAME_SCALE_FACTOR_X, FRAME_SCALE_FACTOR_Y);
-	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
+
+	canvasSetup();
 
 	// Initialize from UI defaults if present
 	if (window.PARAMS_UI?.current) {
@@ -239,6 +238,35 @@ async function setup() {
 	}
 }
 
+function canvasSetup() {
+	try {
+		mainCanvas?.resetMatrix?.();
+	} catch {
+		// ignore
+	}
+	mainCanvas.translate(width / 2, height / 2);
+	mainCanvas.scale(FRAME_SCALE_FACTOR_X, FRAME_SCALE_FACTOR_Y);
+	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
+}
+
+function flushGraphicsStyleCache(g) {
+	// Some drawing code (e.g. `Mover.show`) writes directly to `g.drawingContext`,
+	// which can desync p5's internal style cache from the canvas context.
+	// Bust the cache by forcing a different fill once so the next `g.fill(...)`
+	// definitely re-applies `drawingContext.fillStyle`.
+	if (!g?.fill || !g?.colorMode) return;
+	try {
+		g.push();
+		g.colorMode(RGB, 255, 255, 255, 255);
+		g.fill(255, 0, 255, 255); // unlikely to match any intended fill
+		g.noStroke();
+		// No need to draw; we just want p5 to update its internal fill state.
+		g.pop();
+	} catch {
+		// ignore
+	}
+}
+
 function renderOutsideFrame() {
 	mainCanvas.colorMode(HSL, 360, 100, 100, 100);
 	let firstParticleColor = baseHSLPalette[baseHSLPalette.length - 1];
@@ -270,10 +298,10 @@ function renderOutsideFrame() {
 	}
 
 	compHue = (firstParticleColor.h + 180) % 360;
-	mainCanvas.fill(compHue, 4, 100, 100);
+	mainCanvas.fill(1, 4, 1, 1);
 	mainCanvas.noStroke();
 
-	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW - rectShrink * 1, baseRectH - rectShrink * 1);
+	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW, baseRectH);
 }
 
 function startAnimation() {
@@ -384,7 +412,7 @@ function INIT(rseed, nseed) {
 	}
 
 	let bgCol = color(random(0, 35), 5, 100);
-	mainCanvas.background(bgCol);
+	//mainCanvas.background(bgCol);
 
 	//initGrid(50);
 }
@@ -428,24 +456,24 @@ window.applyGenerativeSettings = async function applyGenerativeSettings(settings
 	rseed = locked.rseed;
 	nseed = locked.nseed;
 
+	// Allow reruns after the sketch has completed
+	document.complete = false;
+	if (shadersEnabled() && shaderCanvas) {
+		shaderEffects.setParticleAnimationComplete(false);
+	}
+
 	// Clear and re-init movers and generator
 	mainCanvas?.clear();
+	canvasSetup();
+	flushGraphicsStyleCache(mainCanvas);
 	// Re-apply the initial transform and redraw the frame layer
-	try {
-		mainCanvas?.resetMatrix?.();
-		mainCanvas.translate(width / 2, height / 2);
-		mainCanvas.scale(FRAME_SCALE_FACTOR_X, FRAME_SCALE_FACTOR_Y);
-		mainCanvas.translate(-width / 2, -height / 2);
-	} catch {
-		// ignore
-	}
+	renderOutsideFrame();
+
 	INIT(rseed, nseed);
-	try {
-		renderOutsideFrame();
-	} catch {
-		// ignore
-	}
+
 	startAnimation();
+	// Restart the render loop (it stops once generator completes)
+	customDraw();
 };
 
 //! CUSTOM UTILITIES FUNCTIONS ==========================================
