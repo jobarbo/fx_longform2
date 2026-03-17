@@ -1,3 +1,7 @@
+* {
+	box-sizing: border-box;
+}
+
 html {
 	flex-direction: column;
 }
@@ -229,20 +233,17 @@ hr {
 	position: absolute;
 	top: 5vh;
 	right: 5vh;
-	width: 2vw;
-	height: 2vw;
-	min-width: 30px;
-	min-height: 30px;
+	padding: 1.25em 1.5em;
 	display: none;
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
 	color: white;
 	background-color: black;
-	border: white 2px solid;
+	border-radius: 5px;
 	z-index: 10003;
-	border-radius: 50%;
 	font-family: helvetica, arial, sans-serif;
+	line-height: 1;
 	font-size: 80%;
 	font-weight: 400;
 	transform: scale(1);
@@ -251,11 +252,10 @@ hr {
 
 .info-toggle.show {
 	display: flex;
-	transform: scale(1.1);
-}
-
-.info-toggle:hover {
-	transform: scale(1.1);
+	font-family: helvetica, arial, sans-serif;
+	font-weight: 600;
+	font-size: 12px;
+	letter-spacing: 0.05em;
 }
 
 .controls-form {
@@ -363,8 +363,6 @@ hr {
 	.info-toggle {
 		top: 1em;
 		right: 1em;
-		width: 30px;
-		height: 30px;
 		font-size: 14px;
 	}
 

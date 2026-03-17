@@ -59,6 +59,7 @@ let startTime;
 let elapsedTime = 0;
 let executionTimer = new ExecutionTimer();
 let generator; // Animation generator instance
+let animationFrameId = null; // requestAnimationFrame handle for customDraw loop
 
 // ============================================================================
 // PALETTE SYSTEM
@@ -121,8 +122,7 @@ async function setup() {
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
-	const uiParams = window.PARAMS_UI?.current;
-	pixel_density = uiParams?.printDPI ?? (typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2);
+	pixel_density = CURRENT_PARAMS.printDPI ?? (typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2);
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
@@ -189,12 +189,10 @@ async function setup() {
 
 	canvasSetup();
 
-	// Initialize from UI defaults if present
-	if (window.PARAMS_UI?.current) {
-		maxFrames = window.PARAMS_UI.current.exposure ?? maxFrames;
-		particleNum = window.PARAMS_UI.current.population ?? particleNum;
-		cycle = computeCycle(maxFrames, particleNum);
-	}
+	// Initialize from UI resolved values
+	maxFrames = CURRENT_PARAMS.exposure ?? maxFrames;
+	particleNum = CURRENT_PARAMS.population ?? particleNum;
+	cycle = computeCycle(maxFrames, particleNum);
 
 	INIT(rseed, nseed);
 
@@ -218,7 +216,9 @@ async function setup() {
 
 	startAnimation();
 
-	renderOutsideFrame();
+	if (CURRENT_PARAMS.showExternalFrame !== false) {
+		renderOutsideFrame();
+	}
 	// Start the custom draw loop
 	customDraw();
 
@@ -281,8 +281,8 @@ function renderOutsideFrame() {
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.noFill();
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
-	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.985);
-	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.99);
+	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 2);
+	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 2);
 	const rectShrink = baseRectW / 35;
 	for (let i = 0; i < 10000; i++) {
 		let randShrink = fxrand() * rectShrink;
@@ -377,7 +377,7 @@ function INIT(rseed, nseed) {
 	const sortedSwatchNames = [...swatchNames].sort();
 
 	// Allow UI to force palette selection by name (stable), otherwise default to deterministic selection
-	const forcedPaletteName = window.PARAMS_UI?.current?.paletteName;
+	const forcedPaletteName = CURRENT_PARAMS.paletteName;
 	if (forcedPaletteName && sortedSwatchNames.includes(forcedPaletteName)) {
 		currentPaletteName = forcedPaletteName;
 		selectedPalette = sortedSwatchNames.indexOf(forcedPaletteName);
@@ -386,7 +386,10 @@ function INIT(rseed, nseed) {
 		const paletteSelectionRand = fxrand();
 		selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
 		currentPaletteName = sortedSwatchNames[selectedPalette];
-		if (window.PARAMS_UI?.current) window.PARAMS_UI.current.paletteName = currentPaletteName;
+		if (window.PARAMS_UI?.current) {
+			window.PARAMS_UI.current.paletteName = currentPaletteName;
+			if (typeof window.resolveParams === "function") window.resolveParams();
+		}
 	}
 
 	baseHSLPalette = swatchPalette.getPalette(currentPaletteName);
@@ -442,14 +445,20 @@ window.applyGenerativeSettings = async function applyGenerativeSettings(settings
 	const locked = window.PARAMS_UI?.lockedSeeds;
 	if (!locked) return;
 
-	// Update runtime parameters
-	if (typeof settings.exposure === "number") maxFrames = settings.exposure;
-	if (typeof settings.population === "number") particleNum = settings.population;
+	// Merge incoming settings into current, then resolve to numeric values
+	if (window.PARAMS_UI?.current) {
+		window.PARAMS_UI.current = {...window.PARAMS_UI.current, ...settings};
+	}
+	if (typeof window.resolveParams === "function") window.resolveParams();
+
+	// Update runtime parameters from resolved values
+	maxFrames = CURRENT_PARAMS.exposure ?? maxFrames;
+	particleNum = CURRENT_PARAMS.population ?? particleNum;
 	cycle = computeCycle(maxFrames, particleNum);
 
 	// Print DPI -> pixel density
-	if (typeof settings.printDPI === "number") {
-		pixel_density = settings.printDPI;
+	if (typeof CURRENT_PARAMS.printDPI === "number") {
+		pixel_density = CURRENT_PARAMS.printDPI;
 		try {
 			pixelDensity(pixel_density);
 			mainCanvas?.pixelDensity(pixel_density);
@@ -459,31 +468,39 @@ window.applyGenerativeSettings = async function applyGenerativeSettings(settings
 		}
 	}
 
-	// Palette (by name) is read inside INIT()
-	if (window.PARAMS_UI?.current) {
-		window.PARAMS_UI.current = {...window.PARAMS_UI.current, ...settings};
-	}
-
 	// Reset seeds (deterministic re-init)
 	randomSeed(locked.mainRandomSeed);
 	noiseSeed(locked.mainNoiseSeed);
 	rseed = locked.rseed;
 	nseed = locked.nseed;
 
+	// Stop any in-flight animation loop before starting a new one
+	if (animationFrameId !== null) {
+		try {
+			cancelAnimationFrame(animationFrameId);
+		} catch {
+			// ignore
+		}
+		animationFrameId = null;
+	}
+
 	// Allow reruns after the sketch has completed
 	document.complete = false;
 	if (shadersEnabled() && shaderCanvas) {
 		shaderEffects.setParticleAnimationComplete(false);
 	}
-
 	// Clear and re-init movers and generator
 	mainCanvas?.clear();
 	canvasSetup();
 	flushGraphicsStyleCache(mainCanvas);
-	// Re-apply the initial transform and redraw the frame layer
-	renderOutsideFrame();
 
+	// Rebuild movers with current palette/params
 	INIT(rseed, nseed);
+
+	// Re-apply the frame layer *after* INIT sets background and palette
+	if (CURRENT_PARAMS.showExternalFrame !== false) {
+		renderOutsideFrame();
+	}
 
 	startAnimation();
 	// Restart the render loop (it stops once generator completes)
@@ -499,6 +516,8 @@ function shadersEnabled() {
 
 // Custom draw loop - advances sketch animation and applies shader effects
 function customDraw() {
+	if (!generator) return;
+
 	const result = generator.next();
 
 	// Render shader effects for this frame (if shaders are enabled)
@@ -507,7 +526,7 @@ function customDraw() {
 
 		// Continue animation if not complete
 		if (shouldContinue) {
-			requestAnimationFrame(customDraw);
+			animationFrameId = requestAnimationFrame(customDraw);
 		}
 	} else {
 		// No shaders - just copy mainCanvas to main display canvas
@@ -522,7 +541,7 @@ function customDraw() {
 
 		// Continue animation if not complete
 		if (!result.done) {
-			requestAnimationFrame(customDraw);
+			animationFrameId = requestAnimationFrame(customDraw);
 		}
 	}
 }

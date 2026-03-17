@@ -10,9 +10,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		const uiParticleSize = typeof window !== "undefined" ? window.PARAMS_UI?.current?.particleSize : undefined;
-		const baseParticleSize = typeof uiParticleSize === "number" ? uiParticleSize : 0.75;
-		this.s = baseParticleSize * MULTIPLIER;
+		this.s = (CURRENT_PARAMS.particleSize ?? 0.75) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -23,8 +21,9 @@ class Mover {
 		this.amplitude2 = amplitude2;
 		this.rseed = rseed;
 		this.nseed = nseed;
-		this.xRandDivider = 0.01;
-		this.yRandDivider = 0.01;
+		// Base randomization dividers are driven by UI speeds (horizontal/vertical)
+		this.xRandDivider = CURRENT_PARAMS.horizontalSpeed ?? 0.046;
+		this.yRandDivider = CURRENT_PARAMS.verticalSpeed ?? 0.046;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperOffset = 0.0;
@@ -93,8 +92,6 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.046;
-		this.yRandDivider = 0.046;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -148,7 +145,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
 		noiseScale1 = 1,
-		noiseScale2 = 1,
+		noiseScale2 = CURRENT_PARAMS.noiseScale2 ?? 1,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
 		octave = 1,
@@ -170,7 +167,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		a1_04 = a1 * 0.4,
 		a2_04 = a2 * 0.4,
 		a1_03 = a1 * 0.3,
-		a2_03 = a2 * 0.3;
+		a2_03 = a2 * CURRENT_PARAMS.swirlFactor;
 
 	// Rotate inputs by a stable seed-based angle around composition center to avoid persistent 45° bias
 	const cx = centerX ?? width / 2;
@@ -310,8 +307,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	// Add subtle asymmetry to break directional bias
 
 	//! really interesting to change the multipliers at the end here
-	const zzU = ZZ(Math.abs(u), 35, 80, 0.0058),
-		zzV = ZZ(Math.abs(v), 35, 80, 0.0058);
+	const zzU = ZZ(Math.abs(u), 35, 80, CURRENT_PARAMS.zigzagStrength),
+		zzV = ZZ(Math.abs(v), 35, 80, CURRENT_PARAMS.zigzagStrength);
 
 	//! to test the effect of the multipliers with zzPos and zzNeg
 	/* 	let zzuMult = map(zzU, -1, 1, 0.000001, 1, true);
@@ -322,9 +319,13 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let zzuNeg = map(zzU, -11, 11, minU, maxU, true) * 1; // Slight asymmetry
 	let zzvNeg = map(zzV, -11, 11, minV, maxV, true) * 1;
 
+	// User-controlled thresholds for when to use inner vs outer flow
+	const innerThreshold = CURRENT_PARAMS.innerFlowThreshold ?? -1;
+	const outerThreshold = CURRENT_PARAMS.outerFlowThreshold ?? 5;
+
 	// Apply transformation preserving sign but with variation for both directions
-	let zu = u < 0 ? zzuNeg : zzuPos;
-	let zv = v < 0 ? zzvNeg : zzvPos;
+	let zu = u < innerThreshold ? zzuNeg : zzuPos;
+	let zv = v < outerThreshold ? zzvNeg : zzvPos;
 
 	// Add final cross-coupling layer for more intricate movement
 	let finalU = zu * 0.85 + zv * 0.15;
