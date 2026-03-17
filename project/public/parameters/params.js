@@ -19,6 +19,8 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		verticalSpeeds: ["veryFast", "fast", "standard", "slow", "snail"],
 		innerFlowLevels: ["low", "standard", "medium", "high"],
 		outerFlowLevels: ["standard", "medium", "high"],
+		horizontalPatternIntensities: ["low", "normal", "high", "intense", "extreme"],
+		verticalPatternIntensities: ["low", "normal", "high", "intense", "extreme"],
 		printDPIs: [1, 2, 3, 4, 5],
 		exposures: [10, 20, 30, 45, 60],
 		presentations: ["off", "on", "horizontal"],
@@ -32,8 +34,9 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 	// ---- Lookup maps (single source of truth for every enum → value) ----
 	maps: {
 		swirl: {none: 0.3, low: 10, medium: 100, high: 500, veryHigh: 1000, extreme: 2000},
-		zigzag: {hairline: 0.001, fine: 0.003, normal: 0.005, large: 0.007, XL: 0.009},
+		zigzag: {hairline: 0.0018, fine: 0.003, normal: 0.005, large: 0.007, XL: 0.009},
 		noiseScale2: {low: 1, medium: 2, high: 4, intense: 6},
+		patternIntensity: {low: 15, normal: 10, high: 5, intense: 1, extreme: 0.1},
 		speed: {
 			veryFast: 0.015,
 			fast: 0.025,
@@ -63,13 +66,16 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		verticalSpeed: "standard",
 		innerFlowLevel: "standard",
 		outerFlowLevel: "standard",
+		horizontalPatternIntensity: "normal",
+		verticalPatternIntensity: "normal",
 		paletteName: "",
 		printDPI: 2,
 		exposure: 30,
 		presentation: "off",
 		externalFrame: "on",
 		swirlIndex: "none",
-		zigzag: "normal",
+		horizontalZigzag: "normal",
+		verticalZigzag: "normal",
 		noiseScale2: "low",
 	},
 
@@ -112,6 +118,30 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			optionsKey: "verticalSpeeds",
 		},
 		{
+			key: "horizontalZigzag",
+			id: "param-horizontal-zigzag",
+			label: "Horizontal line pattern thickness",
+			optionsKey: "zigzag",
+		},
+		{
+			key: "verticalZigzag",
+			id: "param-vertical-zigzag",
+			label: "Vertical line pattern thickness",
+			optionsKey: "zigzag",
+		},
+		{
+			key: "horizontalPatternIntensity",
+			id: "param-horizontal-pattern-intensity",
+			label: "Horizontal linepattern intensity",
+			optionsKey: "horizontalPatternIntensities",
+		},
+		{
+			key: "verticalPatternIntensity",
+			id: "param-vertical-pattern-intensity",
+			label: "Vertical line pattern intensity",
+			optionsKey: "verticalPatternIntensities",
+		},
+		{
 			key: "innerFlowLevel",
 			id: "param-inner-flow",
 			label: "Inner flow strength",
@@ -123,17 +153,12 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			label: "Outer flow strength",
 			optionsKey: "outerFlowLevels",
 		},
+
 		{
 			key: "swirlIndex",
 			id: "param-swirl-index",
 			label: "Swirl intensity",
 			optionsKey: "swirlIndex",
-		},
-		{
-			key: "zigzag",
-			id: "param-zigzag",
-			label: "Line pattern thickness",
-			optionsKey: "zigzag",
 		},
 		{
 			key: "noiseScale2",
@@ -179,13 +204,16 @@ window.resolveParams = function resolveParams() {
 		verticalSpeed: maps.speed[current.verticalSpeed] ?? maps.speed.standard,
 		innerFlowThreshold: maps.innerFlow[current.innerFlowLevel] ?? maps.innerFlow.standard,
 		outerFlowThreshold: maps.outerFlow[current.outerFlowLevel] ?? maps.outerFlow.standard,
+		horizontalPatternIntensity: maps.patternIntensity[current.horizontalPatternIntensity] ?? maps.patternIntensity.normal,
+		verticalPatternIntensity: maps.patternIntensity[current.verticalPatternIntensity] ?? maps.patternIntensity.normal,
 		paletteName: current.paletteName,
 		printDPI: current.printDPI,
 		exposure: current.exposure,
 		presentation: current.presentation,
 		showExternalFrame: current.externalFrame !== "off",
 		swirlFactor: maps.swirl[current.swirlIndex] ?? maps.swirl.none,
-		zigzagStrength: maps.zigzag[current.zigzag] ?? maps.zigzag.normal,
+		horizontalZigzagStrength: maps.zigzag[current.horizontalZigzag] ?? maps.zigzag.normal,
+		verticalZigzagStrength: maps.zigzag[current.verticalZigzag] ?? maps.zigzag.normal,
 		noiseScale2: maps.noiseScale2[current.noiseScale2] ?? maps.noiseScale2.low,
 	});
 };

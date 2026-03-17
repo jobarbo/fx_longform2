@@ -307,17 +307,21 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	// Add subtle asymmetry to break directional bias
 
 	//! really interesting to change the multipliers at the end here
-	const zzU = ZZ(Math.abs(u), 35, 80, CURRENT_PARAMS.zigzagStrength),
-		zzV = ZZ(Math.abs(v), 35, 80, CURRENT_PARAMS.zigzagStrength);
+	const zzU = ZZ(Math.abs(u), 35, 300, CURRENT_PARAMS.horizontalZigzagStrength),
+		zzV = ZZ(Math.abs(v), 35, 300, CURRENT_PARAMS.verticalZigzagStrength);
 
 	//! to test the effect of the multipliers with zzPos and zzNeg
 	/* 	let zzuMult = map(zzU, -1, 1, 0.000001, 1, true);
 	let zzvMult = map(zzV, -1, 1, 0.000001, 1, true); */
 
-	let zzuPos = map(zzU, -11, 11, minU, maxU, true) * 0.0001;
-	let zzvPos = map(zzV, -11, 11, minV, maxV, true) * 0.001;
-	let zzuNeg = map(zzU, -11, 11, minU, maxU, true) * 1; // Slight asymmetry
-	let zzvNeg = map(zzV, -11, 11, minV, maxV, true) * 1;
+	// Pattern intensity controls (UI-driven). Lower numeric value = stronger intensity.
+	const hPattern = CURRENT_PARAMS.horizontalPatternIntensity ?? 10; // "normal"
+	const vPattern = CURRENT_PARAMS.verticalPatternIntensity ?? 10; // "normal"
+
+	let zzuPos = map(zzU, -hPattern, hPattern, minU, maxU, true) * 0.0001;
+	let zzvPos = map(zzV, -vPattern, vPattern, minV, maxV, true) * 0.001;
+	let zzuNeg = map(zzU, -hPattern, hPattern, minU, maxU, true) * 1; // Slight asymmetry retained via base values
+	let zzvNeg = map(zzV, -vPattern, vPattern, minV, maxV, true) * 1;
 
 	// User-controlled thresholds for when to use inner vs outer flow
 	const innerThreshold = CURRENT_PARAMS.innerFlowThreshold ?? 0;
