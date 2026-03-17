@@ -6,6 +6,31 @@ rand = fxrand;
 features = $fx.getFeatures();
 seed = parseInt(fxrand() * 10000000);
 
+// ============================================================================
+// RUNTIME UI PARAMETERS (EXLIBRIS-style control panel)
+// ============================================================================
+
+// Keep options centralized here. Sketch + UI read from this object.
+window.PARAMS_UI = window.PARAMS_UI ?? {
+	options: {
+		populations: [100000, 300000, 500000, 1000000, 1500000, 2000000, 3000000],
+		particleSizes: [0.5, 0.75, 1.0, 1.25, 1.5, 2.0],
+		printDPIs: [1, 2, 3, 4, 5],
+		exposures: [10, 20, 30, 45, 60],
+		presentations: ["off", "on", "horizontal"],
+		palettes: [], // filled once swatches are loaded
+	},
+	current: {
+		population: 500000,
+		particleSize: 0.75,
+		paletteName: "",
+		printDPI: 2,
+		exposure: 30,
+		presentation: "off",
+	},
+	lockedSeeds: null,
+};
+
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 

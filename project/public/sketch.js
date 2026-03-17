@@ -7,16 +7,20 @@ const ENABLE_SHADERS = true;
 
 // UI toggles
 const SHOW_FPS_UI = false; // FPS overlay + FPS toggle button
-const SHOW_DOWNLOAD_UI = true; // Download button
+const SHOW_DOWNLOAD_UI = false; // Download button (mounted in panel)
 
 // Padding constants - centralized for consistency
 const BASE_PADDING = 0.2; // Base padding for artwork bounds (used in INIT)
 const WRAP_PADDING_FACTOR = 0.04; // Wrap padding factor for particle movement bounds (used in Mover class)
 
 // Animation configuration
-const maxFrames = 30;
-const particleNum = 500000;
-const cycle = parseInt((maxFrames * particleNum) / 1150);
+let maxFrames = 30;
+let particleNum = 500000;
+let cycle = computeCycle(maxFrames, particleNum);
+
+function computeCycle(frames, population) {
+	return parseInt((frames * population) / 1150);
+}
 
 // Debug flags
 let debugBounds = false;
@@ -78,6 +82,10 @@ let rseed, nseed; // Random and noise seeds
 let xMin, xMax, yMin, yMax;
 let isBordered = true;
 
+// Re-applied on UI Apply so the composition doesn't shift
+const FRAME_SCALE_FACTOR_X = 1.47;
+const FRAME_SCALE_FACTOR_Y = 1.47;
+
 function preload() {
 	// Initialize shader effects (will load all shaders) - optional
 	if (shadersEnabled()) {
@@ -113,7 +121,8 @@ async function setup() {
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
-	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
+	const uiParams = window.PARAMS_UI?.current;
+	pixel_density = uiParams?.printDPI ?? (typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2);
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
@@ -165,56 +174,72 @@ async function setup() {
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
 
+	// Lock seeds on first run so Apply doesn't change the underlying randomness
+	if (window.PARAMS_UI && !window.PARAMS_UI.lockedSeeds) {
+		window.PARAMS_UI.lockedSeeds = {
+			mainRandomSeed,
+			mainNoiseSeed,
+			rseed,
+			nseed,
+		};
+	}
+
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.47;
-	let scaleFactorY = 1.47;
 	mainCanvas.translate(width / 2, height / 2);
-	mainCanvas.scale(scaleFactorX, scaleFactorY);
+	mainCanvas.scale(FRAME_SCALE_FACTOR_X, FRAME_SCALE_FACTOR_Y);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
+
+	// Initialize from UI defaults if present
+	if (window.PARAMS_UI?.current) {
+		maxFrames = window.PARAMS_UI.current.exposure ?? maxFrames;
+		particleNum = window.PARAMS_UI.current.population ?? particleNum;
+		cycle = computeCycle(maxFrames, particleNum);
+	}
 
 	INIT(rseed, nseed);
 
+	// Inform UI about available swatches + selected palette (after INIT chooses it)
+	try {
+		const swatchNames = swatchPalette.getSwatchNames();
+		const sortedSwatchNames = [...swatchNames].sort();
+		window.dispatchEvent(
+			new CustomEvent("swatches:ready", {
+				detail: {
+					names: sortedSwatchNames,
+					selected: currentPaletteName,
+				},
+			}),
+		);
+	} catch {
+		// ignore (UI will fall back gracefully)
+	}
+
 	// Calculate the center offset based on scale
 
-	// Create animation generator with configuration
-	const animConfig = {
-		items: movers,
-		maxFrames: maxFrames,
-		startTime: startTime,
-		cycleLength: cycle,
-		currentFrame: 0, // Add current frame tracking
-		renderItem: (mover, currentFrame) => {
-			if (currentFrame > -1) {
-				mover.show(mainCanvas);
-			}
-		},
-		moveItem: (mover, currentFrame) => {
-			// Simple movement - no complex color calculations needed
-			mover.move(currentFrame, maxFrames);
-		},
-		onComplete: () => {
-			executionTimer.stop().logElapsedTime("Sketch completed in");
-			if (shadersEnabled() && shaderCanvas) {
-				shaderEffects.setParticleAnimationComplete(true);
-			}
-			$fx.preview();
-			document.complete = true;
+	startAnimation();
 
-			// Create download button after sketch is complete
-			if (SHOW_DOWNLOAD_UI && typeof createDownloadButton === "function") {
-				createDownloadButton();
-			}
-		},
-	};
+	renderOutsideFrame();
+	// Start the custom draw loop
+	customDraw();
 
-	// Create and start the animation
-	generator = createAnimationGenerator(animConfig);
+	// Initialize debug overlay after setup is complete
+	updateDebugOverlay();
 
-	// Create download button immediately (will only show if not in iframe)
-	if (SHOW_DOWNLOAD_UI && typeof createDownloadButton === "function") {
-		createDownloadButton();
+	// Setup UI controls (if present)
+	setupControls();
+
+	// Log available controls and performance settings
+	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
+	if (shadersEnabled() && shaderCanvas) {
+		console.log(`Shader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
+		console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
+	} else {
+		console.log("Running without shader effects");
 	}
+}
+
+function renderOutsideFrame() {
 	mainCanvas.colorMode(HSL, 360, 100, 100, 100);
 	let firstParticleColor = baseHSLPalette[baseHSLPalette.length - 1];
 	let lastParticleColor = baseHSLPalette[2];
@@ -249,23 +274,42 @@ async function setup() {
 	mainCanvas.noStroke();
 
 	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW - rectShrink * 1, baseRectH - rectShrink * 1);
-	// Start the custom draw loop
-	customDraw();
+}
 
-	// Initialize debug overlay after setup is complete
-	updateDebugOverlay();
+function startAnimation() {
+	// Create animation generator with configuration
+	const animConfig = {
+		items: movers,
+		maxFrames: maxFrames,
+		startTime: startTime,
+		cycleLength: cycle,
+		currentFrame: 0, // Add current frame tracking
+		renderItem: (mover, currentFrame) => {
+			if (currentFrame > -1) {
+				mover.show(mainCanvas);
+			}
+		},
+		moveItem: (mover, currentFrame) => {
+			// Simple movement - no complex color calculations needed
+			mover.move(currentFrame, maxFrames);
+		},
+		onComplete: () => {
+			executionTimer.stop().logElapsedTime("Sketch completed in");
+			if (shadersEnabled() && shaderCanvas) {
+				shaderEffects.setParticleAnimationComplete(true);
+			}
+			$fx.preview();
+			document.complete = true;
 
-	// Setup UI controls (if present)
-	setupControls();
+			// Create download button after sketch is complete
+			if (SHOW_DOWNLOAD_UI && typeof createDownloadButton === "function") {
+				createDownloadButton();
+			}
+		},
+	};
 
-	// Log available controls and performance settings
-	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
-	if (shadersEnabled() && shaderCanvas) {
-		console.log(`Shader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
-		console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
-	} else {
-		console.log("Running without shader effects");
-	}
+	// Create and start the animation
+	generator = createAnimationGenerator(animConfig);
 }
 
 function INIT(rseed, nseed) {
@@ -279,9 +323,6 @@ function INIT(rseed, nseed) {
 	// Reset the random seed to ensure consistent state
 	$fx.rand.reset();
 
-	// Store the fxrand value we'll use for selection to ensure consistency
-	const paletteSelectionRand = fxrand();
-
 	// Use ONLY swatch palettes - no hardcoded fallback
 	const swatchNames = swatchPalette.getSwatchNames();
 
@@ -293,9 +334,19 @@ function INIT(rseed, nseed) {
 	// across different environments regardless of loading timing
 	const sortedSwatchNames = [...swatchNames].sort();
 
-	// Select directly from sorted swatch palettes
-	selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
-	currentPaletteName = sortedSwatchNames[selectedPalette];
+	// Allow UI to force palette selection by name (stable), otherwise default to deterministic selection
+	const forcedPaletteName = window.PARAMS_UI?.current?.paletteName;
+	if (forcedPaletteName && sortedSwatchNames.includes(forcedPaletteName)) {
+		currentPaletteName = forcedPaletteName;
+		selectedPalette = sortedSwatchNames.indexOf(forcedPaletteName);
+	} else {
+		// Store the fxrand value we'll use for selection to ensure consistency
+		const paletteSelectionRand = fxrand();
+		selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
+		currentPaletteName = sortedSwatchNames[selectedPalette];
+		if (window.PARAMS_UI?.current) window.PARAMS_UI.current.paletteName = currentPaletteName;
+	}
+
 	baseHSLPalette = swatchPalette.getPalette(currentPaletteName);
 
 	if (!baseHSLPalette || baseHSLPalette.length === 0) {
@@ -337,6 +388,65 @@ function INIT(rseed, nseed) {
 
 	//initGrid(50);
 }
+
+// ============================================================================
+// UI APPLY HOOK (minimal surface)
+// ============================================================================
+
+window.applyGenerativeSettings = async function applyGenerativeSettings(settings) {
+	if (!settings) return;
+
+	// Lock seeds if not already locked
+	const locked = window.PARAMS_UI?.lockedSeeds;
+	if (!locked) return;
+
+	// Update runtime parameters
+	if (typeof settings.exposure === "number") maxFrames = settings.exposure;
+	if (typeof settings.population === "number") particleNum = settings.population;
+	cycle = computeCycle(maxFrames, particleNum);
+
+	// Print DPI -> pixel density
+	if (typeof settings.printDPI === "number") {
+		pixel_density = settings.printDPI;
+		try {
+			pixelDensity(pixel_density);
+			mainCanvas?.pixelDensity(pixel_density);
+			if (shaderCanvas?.pixelDensity) shaderCanvas.pixelDensity(pixel_density);
+		} catch {
+			// ignore
+		}
+	}
+
+	// Palette (by name) is read inside INIT()
+	if (window.PARAMS_UI?.current) {
+		window.PARAMS_UI.current = {...window.PARAMS_UI.current, ...settings};
+	}
+
+	// Reset seeds (deterministic re-init)
+	randomSeed(locked.mainRandomSeed);
+	noiseSeed(locked.mainNoiseSeed);
+	rseed = locked.rseed;
+	nseed = locked.nseed;
+
+	// Clear and re-init movers and generator
+	mainCanvas?.clear();
+	// Re-apply the initial transform and redraw the frame layer
+	try {
+		mainCanvas?.resetMatrix?.();
+		mainCanvas.translate(width / 2, height / 2);
+		mainCanvas.scale(FRAME_SCALE_FACTOR_X, FRAME_SCALE_FACTOR_Y);
+		mainCanvas.translate(-width / 2, -height / 2);
+	} catch {
+		// ignore
+	}
+	INIT(rseed, nseed);
+	try {
+		renderOutsideFrame();
+	} catch {
+		// ignore
+	}
+	startAnimation();
+};
 
 //! CUSTOM UTILITIES FUNCTIONS ==========================================
 

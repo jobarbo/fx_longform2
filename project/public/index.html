@@ -19,6 +19,80 @@
 		<!-- if you need to import js scripts do it here -->
 	</head>
 	<body>
+		<div class="info-toggle"><p class="icon">i</p></div>
+		<div class="container" aria-label="Controls panel">
+			<div class="title-wrapper">
+				<h1 class="title">Controls</h1>
+				<h6 class="spec">Apply updates without changing seed/hash</h6>
+				<p class="status">
+					Activity status:
+					<span class="spin-container">
+						<span class="spin">.</span>
+					</span>
+				</p>
+			</div>
+
+			<div class="info-wrapper">
+				<hr />
+				<p class="info-container"><span class="info">Hash : </span><span class="kb-params hash"></span></p>
+				<hr />
+				<p class="info-container"><span class="info">Population : </span><span class="kb-params population"></span></p>
+				<hr />
+				<p class="info-container"><span class="info">Particle size : </span><span class="kb-params particleSize"></span></p>
+				<hr />
+				<p class="info-container"><span class="info">Palette : </span><span class="kb-params palette"></span></p>
+				<hr />
+				<p class="info-container"><span class="info">Print DPI : </span><span class="kb-params dpi"></span></p>
+				<hr />
+				<p class="info-container"><span class="info">Exposure : </span><span class="kb-params exposure"></span></p>
+				<hr />
+				<p class="info-container"><span class="info">Presentation : </span><span class="kb-params presentation"></span></p>
+				<hr />
+				<p class="info-container"><span class="info">Information : </span><span class="kb-params dashboard"></span></p>
+				<hr />
+			</div>
+
+			<div class="controls-form">
+				<label class="select-row">
+					<span>Particle population</span>
+					<select id="param-population"></select>
+				</label>
+				<label class="select-row">
+					<span>Particle size</span>
+					<select id="param-particle-size"></select>
+				</label>
+				<label class="select-row">
+					<span>Palette</span>
+					<select id="param-palette"></select>
+				</label>
+				<label class="select-row">
+					<span>Print DPI</span>
+					<select id="param-dpi"></select>
+				</label>
+				<label class="select-row">
+					<span>Exposure</span>
+					<select id="param-exposure"></select>
+				</label>
+				<label class="select-row">
+					<span>Presentation</span>
+					<select id="param-presentation"></select>
+				</label>
+			</div>
+
+			<div class="save-wrapper">
+				<button class="button btn-apply" id="param-apply">
+					<span>Apply</span>
+				</button>
+				<button class="button btn-download" id="param-download" style="margin-top: 10px">
+					<span>Download</span>
+				</button>
+			</div>
+		</div>
+
+		<main class="main">
+			<span class="frame"></span>
+		</main>
+
 		<!-- Debug bounds overlay -->
 		<div id="debug-bounds" class="debug-bounds">
 			<div id="debug-base-padding" class="debug-rect base-padding"></div>
