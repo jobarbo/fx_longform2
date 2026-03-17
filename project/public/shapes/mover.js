@@ -146,7 +146,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
 		noiseScale1 = 1,
-		noiseScale2 = 3,
+		noiseScale2 = 1,
 		noiseScale3 = 1,
 		noiseScale4 = 1,
 		octave = 1,
@@ -321,8 +321,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let zzvNeg = map(zzV, -11, 11, minV, maxV, true) * 1;
 
 	// Apply transformation preserving sign but with variation for both directions
-	let zu = u < 0 ? -zzuNeg : zzuPos;
-	let zv = v < 0 ? -zzvNeg : zzvPos;
+	let zu = u < 0 ? zzuNeg : zzuPos;
+	let zv = v < 0 ? zzvNeg : zzvPos;
 
 	// Add final cross-coupling layer for more intricate movement
 	let finalU = zu * 0.85 + zv * 0.15;

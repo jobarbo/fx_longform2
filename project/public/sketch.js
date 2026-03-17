@@ -163,8 +163,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.1;
-	let scaleFactorY = 1.1;
+	let scaleFactorX = 1.47;
+	let scaleFactorY = 1.47;
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
@@ -224,8 +224,8 @@ async function setup() {
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.noFill();
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
-	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.975);
-	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.975);
+	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 1.985);
+	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 1.99);
 	const rectShrink = baseRectW / 35;
 	for (let i = 0; i < 10000; i++) {
 		let randShrink = fxrand() * rectShrink;
@@ -299,7 +299,7 @@ function INIT(rseed, nseed) {
 	}
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.004 / MULTIPLIER;
+	scl1 = 0.003 / MULTIPLIER;
 	scl2 = 0.002 / MULTIPLIER;
 	scl3 = 0.003 / MULTIPLIER;
 
