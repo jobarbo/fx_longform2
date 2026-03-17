@@ -305,6 +305,13 @@ function renderOutsideFrame() {
 }
 
 function startAnimation() {
+	// Notify UI that a render is starting (panel spinner, status text, etc.)
+	try {
+		window.dispatchEvent(new CustomEvent("render:started"));
+	} catch {
+		// ignore
+	}
+
 	// Create animation generator with configuration
 	const animConfig = {
 		items: movers,
@@ -328,6 +335,13 @@ function startAnimation() {
 			}
 			$fx.preview();
 			document.complete = true;
+
+			// Notify UI that render is complete
+			try {
+				window.dispatchEvent(new CustomEvent("render:completed"));
+			} catch {
+				// ignore
+			}
 
 			// Create download button after sketch is complete
 			if (SHOW_DOWNLOAD_UI && typeof createDownloadButton === "function") {

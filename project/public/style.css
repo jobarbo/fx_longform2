@@ -259,16 +259,17 @@ hr {
 }
 
 .controls-form {
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
 	gap: 10px;
 	margin-top: 12px;
 }
 
 .select-row {
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
 	gap: 12px;
 	font-family: helvetica, arial, sans-serif;
 	font-weight: 600;
@@ -277,6 +278,7 @@ hr {
 
 .select-row select {
 	min-width: 170px;
+	width: 100%;
 	padding: 8px 10px;
 	border-radius: 10px;
 	border: 2px solid rgba(0, 0, 0, 0.85);

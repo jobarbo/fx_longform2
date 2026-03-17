@@ -164,6 +164,7 @@ console.log($fx.getParams());
 
 		btnApply.addEventListener('click', async () => {
 			setStatus(true);
+			setText('.kb-params.dashboard', 'rendering…');
 			try {
 				p.current.population = parseInt(selPopulation.value, 10);
 				p.current.particleSize = parseFloat(selParticleSize.value);
@@ -183,7 +184,7 @@ console.log($fx.getParams());
 					setText('.kb-params.dashboard', 'sketch not ready');
 				}
 			} finally {
-				setStatus(false);
+				// Rendering continues asynchronously; completion will flip status off.
 			}
 		});
 
@@ -213,6 +214,16 @@ console.log($fx.getParams());
 			} else if (names.length > 0) {
 				setSelectValue(selPalette, names[0]);
 			}
+		});
+
+		// Listen to sketch lifecycle events to drive spinner + status text.
+		window.addEventListener('render:started', () => {
+			setStatus(true);
+			setText('.kb-params.dashboard', 'rendering…');
+		});
+		window.addEventListener('render:completed', () => {
+			setStatus(false);
+			setText('.kb-params.dashboard', 'complete');
 		});
 
 		renderDashboard();
