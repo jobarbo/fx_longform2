@@ -307,8 +307,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	// Add subtle asymmetry to break directional bias
 
 	//! really interesting to change the multipliers at the end here
-	const zzU = ZZ(Math.abs(u), 35, 80, CURRENT_PARAMS.horizontalZigzagStrength),
-		zzV = ZZ(Math.abs(v), 35, 80, CURRENT_PARAMS.verticalZigzagStrength);
+	const zzU = ZZ(Math.abs(u), 35, 200, CURRENT_PARAMS.horizontalZigzagStrength),
+		zzV = ZZ(Math.abs(v), 35, 200, CURRENT_PARAMS.verticalZigzagStrength);
 
 	//! to test the effect of the multipliers with zzPos and zzNeg
 	/* 	let zzuMult = map(zzU, -1, 1, 0.000001, 1, true);

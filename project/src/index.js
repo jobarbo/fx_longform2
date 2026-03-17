@@ -123,8 +123,11 @@ console.log($fx.getParams());
 		const container = document.querySelector(".container");
 		if (toggle && container) {
 			toggle.classList.add("show");
+			// Set initial label
+			toggle.textContent = "Edit parameters";
 			toggle.addEventListener("click", () => {
-				container.classList.toggle("show");
+				const isOpen = container.classList.toggle("show");
+				toggle.textContent = isOpen ? "Close tab" : "Edit parameters";
 			});
 		}
 
@@ -168,7 +171,10 @@ console.log($fx.getParams());
 				if (key === "population") {
 					formatter = formatPopulation;
 				} else if (key === "horizontalSpeed" || key === "verticalSpeed") {
-					formatter = (val) => String(val).replace(/([A-Z])/g, " $1").toLowerCase();
+					formatter = (val) =>
+						String(val)
+							.replace(/([A-Z])/g, " $1")
+							.toLowerCase();
 				}
 				fillSelect(select, values, {formatter});
 			}
