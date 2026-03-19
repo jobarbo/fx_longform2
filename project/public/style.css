@@ -10,7 +10,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: hsl(0, 0%, 100%);
+	background-color: hsl(0, 0%, 0%);
 }
 
 body {
@@ -26,6 +26,10 @@ body {
 	--hContent: var(--min);
 	--wContent: var(--min);
 }
+main {
+	height: 100% !important;
+	width: 100% !important;
+}
 canvas.p5Canvas {
 	display: block;
 	padding-left: 0;
@@ -36,11 +40,13 @@ canvas.p5Canvas {
 	margin-right: auto;
 	margin-top: 0;
 	margin-bottom: 0;
-	height: auto !important;
 	max-width: var(--wContent);
 	max-height: var(--hContent);
 	max-height: 100vh;
-	width: auto !important;
+	/* height: auto !important; */
+	/* width: auto !important; */
+	height: 100% !important;
+	width: 100% !important;
 }
 
 /* Debug bounds overlay */
@@ -145,4 +151,9 @@ canvas.p5Canvas {
 		display: flex;
 		flex-direction: row;
 	}
+}
+
+/* Hide FPS toggle + download controls */
+.controls {
+	display: none !important;
 }

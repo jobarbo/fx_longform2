@@ -158,7 +158,7 @@ async function setup() {
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
-	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 6;
+	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 1;
 
 	// Canvas setup - match viewport aspect ratio
 	//! ARTWORK_RATIO = 1.24;

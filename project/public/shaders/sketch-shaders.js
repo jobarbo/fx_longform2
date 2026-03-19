@@ -114,7 +114,7 @@ class ShaderEffects {
 			},
 
 			pixelSort: {
-				enabled: false,
+				enabled: true,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.3,
 				sortAmount: 2.8,
@@ -137,11 +137,11 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationSpeed: 1.5, // Speed of horizontal/vertical movement
+				translationSpeed: 0.5, // Speed of horizontal/vertical movement
 				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
@@ -177,12 +177,12 @@ class ShaderEffects {
 				},
 			},
 			symmetry2: {
-				enabled: true,
+				enabled: false,
 				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationSpeed: 1.5, // Speed of horizontal/vertical movement
+				translationSpeed: 0.5, // Speed of horizontal/vertical movement
 				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
@@ -228,7 +228,7 @@ class ShaderEffects {
 				},
 			},
 			crtDisplay: {
-				enabled: true,
+				enabled: false,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 1.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.5, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
@@ -252,9 +252,8 @@ class ShaderEffects {
 		// Cache for last enabled effects (to detect changes)
 		this.lastEnabledEffects = null;
 
-		// FPS tracking
-		// Disable FPS counter on Safari mobile to prevent crashes
-		this.showFPS = typeof isSafariMobile === "function" && isSafariMobile() ? false : true;
+		// FPS overlay off by default (toggle via shaderEffects.toggleFPS(true) if needed)
+		this.showFPS = false;
 		this.fpsHistory = [];
 		this.fpsHistorySize = 60; // Average over 60 frames
 		this.lastFrameTime = performance.now();
