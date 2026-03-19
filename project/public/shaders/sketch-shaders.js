@@ -136,7 +136,7 @@ class ShaderEffects {
 			},
 
 			symmetry: {
-				enabled: true,
+				enabled: false,
 				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				center: [0.5, 0.5],
@@ -178,7 +178,7 @@ class ShaderEffects {
 				},
 			},
 			symmetry2: {
-				enabled: true,
+				enabled: false,
 				center: [0.5, 0.5],
 				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
@@ -222,12 +222,12 @@ class ShaderEffects {
 			},
 
 			crtDisplay: {
-				enabled: false,
+				enabled: true,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
-				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
+				cellSize: 28.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.5, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
-				rgbOpacity: 0.05, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
-				dotRadius: 0.4, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
+				rgbOpacity: 0.0, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
+				dotRadius: 0.99, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
 				dotFalloff: 0.2, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
 				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
 				uniforms: {
@@ -242,9 +242,9 @@ class ShaderEffects {
 				},
 			},
 			chromatic: {
-				enabled: true,
-				amount: 0.0015,
-				timeMultiplier: 0.0,
+				enabled: false,
+				amount: 0.015,
+				timeMultiplier: 0.5,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 777.0",

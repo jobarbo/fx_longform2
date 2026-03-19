@@ -412,7 +412,10 @@ function INIT(rseed, nseed) {
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette));
 	}
 
-	let bgCol = color(25, 5, 100);
+	const middleIndex = Math.floor(baseHSLPalette.length / 2);
+	const middleColor = baseHSLPalette[middleIndex];
+	const complementaryHue = (middleColor.h + 180) % 360;
+	let bgCol = color(complementaryHue, middleColor.s, middleColor.l);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
