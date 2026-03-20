@@ -375,11 +375,14 @@ function* drawGenerator() {
 		if (elapsedTime > MAX_FRAMES && drawing) {
 			window.rendered = c.canvas;
 			//hl.token.capturePreview();
-			document.complete = true;
-			// calculate the time it took to render the image
-			let endTime = Date.now();
-			let timeDiff = endTime - renderStart;
-			console.log("Render time: " + timeDiff + " ms");
+			/// add a 20s delay before setting document.complete to true to ensure the preview is captured correctly
+			setTimeout(() => {
+				document.complete = true;
+				// calculate the time it took to render the image
+				let endTime = Date.now();
+				let timeDiff = endTime - renderStart;
+				console.log("Render time: " + timeDiff + " ms");
+			}, 2000);
 
 			noLoop();
 			return;
@@ -394,7 +397,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	yoff = ZZ(yoff, 1.15, -0.001, 0.001); */
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(6, 0.4);
+	noiseDetail(4, 0.6);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -471,7 +474,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let centeredX = x + centerOffsetX;
 	let centeredY = y + centerOffsetY;
 
-	let w = mapValue(abs(cos_val), 0.9, 1, 0.32, 1.46, true);
+	let w = mapValue(abs(cos_val), 0.9, 1, 0.42, 1.46, true);
 	let elW = w * MULTIPLIER;
 	let ab_x = centeredX * MULTIPLIER; // Use centered coordinates
 	let ab_y = centeredY * MULTIPLIER; // Use centered coordinates
