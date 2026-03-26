@@ -253,12 +253,12 @@ class ShaderEffects {
 			},
 
 			pixelGrid: {
-				enabled: false,
+				enabled: true,
 				gridCols: 240.0, // Number of columns
 				gridRows: 20.0, // Number of rows
 				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
 				mode: 1.0, // 0.0 = pixel mode, 1.0 = diffuse mode
-				diffuse: 0.2, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
+				diffuse: 1.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
 				gapSize: 0.05, // Gap border fraction per side (0.0 = no gap)
 				gapBrightness: 1.0, // 0.0 = black gaps, 1.0 = cell color in gap area
 				uniforms: {

@@ -1,5 +1,5 @@
 class Mover {
-	constructor(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette) {
+	constructor(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, colorLoop, colorLoopSpeed, preCalculatedPalette) {
 		this.x = x;
 		this.initX = x;
 		this.y = y;
@@ -7,10 +7,12 @@ class Mover {
 		this.palette = preCalculatedPalette;
 		this.colorIndex = this.palette.length - 1;
 		this.colorDirection = -1; // 1 for forward, -1 for backward
+		this.colorLoop = colorLoop; // when true, palette cycles continuously
+		this.colorLoopSpeed = colorLoopSpeed || 1; // cycle speed multiplier
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.75]) * MULTIPLIER;
+		this.s = random([30]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -61,6 +63,8 @@ class Mover {
 	}
 
 	move(frameCount, maxFrames) {
+		this.amplitude1 += 0.1;
+		this.scl1 += random(-0.0001, 0.0001);
 		let p = superCurve(
 			this.x,
 			this.y,
@@ -81,8 +85,8 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 0.4;
-		this.yRandDivider = 0.01;
+		this.xRandDivider = 1.4;
+		this.yRandDivider = 1.4;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -90,8 +94,13 @@ class Mover {
 
 		// Map frame progression to color index, inverted (last to first)
 		let maxColorIndex = this.palette.length - 1;
-		let mappedFrame = map(frameCount, 0, maxFrames / 1.25, maxColorIndex, 0, true);
-		this.colorIndex = Math.floor(mappedFrame);
+		const colorPeriod = (maxFrames || 25) / 1.25 / this.colorLoopSpeed;
+		if (this.colorLoop) {
+			const t = (frameCount % colorPeriod) / colorPeriod;
+			this.colorIndex = maxColorIndex - Math.floor(t * (maxColorIndex + 1));
+		} else {
+			this.colorIndex = Math.floor(map(frameCount, 0, colorPeriod, maxColorIndex, 0, true));
+		}
 
 		this.currentColor = this.palette[this.colorIndex];
 

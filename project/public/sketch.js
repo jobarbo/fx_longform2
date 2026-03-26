@@ -1,11 +1,13 @@
 let features = "";
 let movers = [];
 let startTime;
-let maxFrames = 25;
+let maxFrames = null; // null = unlimited, number = limited (e.g. 25)
+let colorLoop = true; // when true, each mover cycles through the palette continuously
+let colorLoopSpeed = 0.01; // cycle speed multiplier: 1 = default, 2 = twice as fast, 0.5 = half speed
 let elapsedTime = 0;
-let particleNum = 1;
+let particleNum = 1150;
 // Adjust cycle for smoother percentage updates (1% increments)
-let cycle = parseInt((maxFrames * particleNum) / 1150);
+let cycle = maxFrames ? parseInt((maxFrames * particleNum) / 1150) : 11123;
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 let generator; // Animation generator instance
 
@@ -410,7 +412,9 @@ function INIT(rseed, nseed) {
 		let y = random(yMin, yMax) * height;
 
 		// Use the swatch palette directly - no variations needed
-		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette));
+		movers.push(
+			new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, colorLoop, colorLoopSpeed, baseHSLPalette),
+		);
 	}
 
 	const middleIndex = Math.floor(baseHSLPalette.length / 2);
