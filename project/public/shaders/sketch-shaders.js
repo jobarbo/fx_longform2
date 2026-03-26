@@ -114,9 +114,9 @@ class ShaderEffects {
 			},
 
 			pixelSort: {
-				enabled: false,
+				enabled: true,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
-				threshold: 0.3,
+				threshold: 0.0,
 				sortAmount: 2.8,
 				sampleCount: 1.0, // Number of samples (8-64, higher = better quality but slower)
 				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
@@ -136,7 +136,7 @@ class ShaderEffects {
 			},
 
 			symmetry: {
-				enabled: false,
+				enabled: true,
 				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				center: [0.5, 0.5],
@@ -154,7 +154,7 @@ class ShaderEffects {
 				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.001, // Time multiplier for animation
+				timeMultiplier: 0.02, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
@@ -255,11 +255,11 @@ class ShaderEffects {
 			pixelGrid: {
 				enabled: true,
 				gridCols: 240.0, // Number of columns
-				gridRows: 20.0, // Number of rows
+				gridRows: 4.0, // Number of rows
 				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
 				mode: 1.0, // 0.0 = pixel mode, 1.0 = diffuse mode
 				diffuse: 1.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
-				gapSize: 0.05, // Gap border fraction per side (0.0 = no gap)
+				gapSize: 0.28, // Gap border fraction per side (0.0 = no gap)
 				gapBrightness: 1.0, // 0.0 = black gaps, 1.0 = cell color in gap area
 				uniforms: {
 					uResolution: "[width, height]",

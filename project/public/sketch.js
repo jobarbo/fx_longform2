@@ -3,11 +3,13 @@ let movers = [];
 let startTime;
 let maxFrames = null; // null = unlimited, number = limited (e.g. 25)
 let colorLoop = true; // when true, each mover cycles through the palette continuously
-let colorLoopSpeed = 0.01; // cycle speed multiplier: 1 = default, 2 = twice as fast, 0.5 = half speed
+let colorYoyo = true; // when true, palette ping-pongs forward then backward
+let colorLoopSpeed = 0.03; // cycle speed multiplier: 1 = default, 2 = twice as fast, 0.5 = half speed
+let colorLoopSpeedOffset = 0.000001; // random speed variance per particle: 0 = uniform, higher = more variation
+let colorRandomStart = false; // when true, each particle begins at a random point in the palette cycle
+let useFrameMode = true; // true = draw-loop style (all particles per frame); false = cycle rendering (original)
 let elapsedTime = 0;
-let particleNum = 1150;
-// Adjust cycle for smoother percentage updates (1% increments)
-let cycle = maxFrames ? parseInt((maxFrames * particleNum) / 1150) : 11123;
+let particleNum = 12150;
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 let generator; // Animation generator instance
 
@@ -83,14 +85,162 @@ function updateDebugOverlay() {
 // Global color mapping optimization
 // Simplified color management - no more complex calculations needed
 
-// Removed hardcoded palettes - now using exclusively swatch palettes from /swatches/ folder
+// Color palette — hex array used directly (no image swatches)
+const HEX_PALETTE = [
+	"#ffff8a",
+	"#fffb86",
+	"#fff882",
+	"#fff47f",
+	"#fff07d",
+	"#ffec7a",
+	"#ffe879",
+	"#ffe377",
+	"#ffdf77",
+	"#ffdb77",
+	"#ffd777",
+	"#ffd278",
+	"#ffce79",
+	"#ffc97b",
+	"#ffc57d",
+	"#ffc07f",
+	"#ffbc82",
+	"#ffb785",
+	"#ffb389",
+	"#ffaf8d",
+	"#ffaa91",
+	"#ffa695",
+	"#ffa29a",
+	"#ff9e9f",
+	"#ff9aa4",
+	"#ff97a9",
+	"#ff94af",
+	"#ff91b5",
+	"#ff8eba",
+	"#ff8cc0",
+	"#ff8ac6",
+	"#ff88cc",
+	"#ff87d2",
+	"#ff86d8",
+	"#ff85de",
+	"#ff85e4",
+	"#ff85ea",
+	"#ff85f0",
+	"#ff86f6",
+	"#ff87fb",
+	"#fe88ff",
+	"#fc88ff",
+	"#fa88ff",
+	"#f888ff",
+	"#f788ff",
+	"#f588ff",
+	"#f389ff",
+	"#f189ff",
+	"#ef89ff",
+	"#ed89ff",
+	"#eb89ff",
+	"#e989ff",
+	"#e789ff",
+	"#e589ff",
+	"#e289ff",
+	"#e089ff",
+	"#de89ff",
+	"#dc89ff",
+	"#da89ff",
+	"#d889ff",
+	"#d68aff",
+	"#d48aff",
+	"#d28aff",
+	"#d08aff",
+	"#ce8aff",
+	"#cc8aff",
+	"#ca8aff",
+	"#c88aff",
+	"#c58aff",
+	"#c38aff",
+	"#c18aff",
+	"#bf8aff",
+	"#bd8aff",
+	"#bb8aff",
+	"#b98aff",
+	"#b68aff",
+	"#b48aff",
+	"#b28aff",
+	"#b08aff",
+	"#ae8aff",
+	"#aa87fc",
+	"#a583f7",
+	"#a17ff2",
+	"#9c7aed",
+	"#9776e9",
+	"#9372e4",
+	"#8e6edf",
+	"#896adb",
+	"#8565d6",
+	"#8061d1",
+	"#7c5dcd",
+	"#7759c8",
+	"#7255c3",
+	"#6e51bf",
+	"#694dba",
+	"#6549b6",
+	"#6045b1",
+	"#5c41ad",
+	"#573ea8",
+	"#523aa4",
+	"#4e369f",
+	"#49329b",
+	"#452e96",
+	"#402b92",
+	"#3b278d",
+	"#362389",
+	"#311f85",
+	"#2c1c80",
+	"#27187c",
+	"#211478",
+	"#1b1074",
+	"#140d6f",
+	"#0c096b",
+	"#020567",
+	"#000263",
+	"#00005f",
+	"#00005b",
+	"#000057",
+	"#000053",
+	"#000000",
+];
+
+function hexToHsl(hex) {
+	const r = parseInt(hex.slice(1, 3), 16) / 255;
+	const g = parseInt(hex.slice(3, 5), 16) / 255;
+	const b = parseInt(hex.slice(5, 7), 16) / 255;
+	const max = Math.max(r, g, b),
+		min = Math.min(r, g, b);
+	let h,
+		s,
+		l = (max + min) / 2;
+	if (max === min) {
+		h = s = 0;
+	} else {
+		const d = max - min;
+		s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+		switch (max) {
+			case r:
+				h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+				break;
+			case g:
+				h = ((b - r) / d + 2) / 6;
+				break;
+			case b:
+				h = ((r - g) / d + 4) / 6;
+				break;
+		}
+	}
+	return {h: h * 360, s: s * 100, l: l * 100};
+}
 
 let selectedPalette; // Will store the randomly selected palette
 let baseHSLPalette; // Keep for backward compatibility
 let currentPaletteName = ""; // Store the name of the current palette for debug
-
-// Pre-calculated color variations (1000 different palettes)
-// No color variations needed - using swatches directly
 
 let scl1;
 let scl2;
@@ -129,9 +279,6 @@ function preload() {
 	if (typeof shaderEffects !== "undefined") {
 		shaderEffects.preload(this);
 	}
-
-	// Initialize swatch palette system
-	swatchPalette = new SwatchPalette();
 }
 
 async function setup() {
@@ -143,18 +290,8 @@ async function setup() {
 	// Reset the random seed to ensure consistency
 	$fx.rand.reset();
 
-	// Load swatch palettes - REQUIRED for this project (no hardcoded fallback)
-	try {
-		await swatchPalette.loadFromManifest("swatches/manifest.json");
-		swatchesLoaded = true;
-		if (!swatchPalette.isReady()) {
-			throw new Error("Swatch palette loaded but not ready");
-		}
-	} catch (error) {
-		console.error("Failed to load swatch palettes:", error);
-		swatchesLoaded = false;
-		throw error; // Stop execution if swatch palettes can't be loaded
-	}
+	// Using direct hex palette — no image swatches needed
+	swatchesLoaded = true;
 
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
@@ -231,7 +368,7 @@ async function setup() {
 		items: movers,
 		maxFrames: maxFrames,
 		startTime: startTime,
-		cycleLength: cycle,
+		frameMode: useFrameMode,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
 			if (currentFrame > -1) {
@@ -348,44 +485,14 @@ function customDraw() {
 function INIT(rseed, nseed) {
 	movers = [];
 
-	// Verify that swatch palettes are available (required for this project)
-	if (!swatchesLoaded || !swatchPalette.isReady()) {
-		throw new Error("CRITICAL: Swatch palettes are required but not available. Cannot proceed with palette selection.");
-	}
-
-	// Reset the random seed to ensure consistent state
-	$fx.rand.reset();
-
-	// Store the fxrand value we'll use for selection to ensure consistency
-	const paletteSelectionRand = fxrand();
-
-	// Use ONLY swatch palettes - no hardcoded fallback
-	const swatchNames = swatchPalette.getSwatchNames();
-
-	if (swatchNames.length === 0) {
-		throw new Error("No swatch palettes available for selection");
-	}
-
-	// Sort swatch names alphabetically to ensure consistent order
-	// across different environments regardless of loading timing
-	const sortedSwatchNames = [...swatchNames].sort();
-
-	// Select directly from sorted swatch palettes
-	selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
-	currentPaletteName = sortedSwatchNames[selectedPalette];
-	console.log(`Selected swatch palette: ${currentPaletteName}`);
-	baseHSLPalette = swatchPalette.getPalette(currentPaletteName);
-
-	if (!baseHSLPalette || baseHSLPalette.length === 0) {
-		throw new Error(`Selected swatch palette '${currentPaletteName}' is empty or invalid`);
-	}
-
-	// No color variations needed - using swatches directly
+	// Build HSL palette directly from hex array
+	baseHSLPalette = HEX_PALETTE.map(hexToHsl);
+	currentPaletteName = "hex_palette";
 
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.002 / MULTIPLIER;
-	scl2 = 0.002 / MULTIPLIER;
-	scl3 = 0.002 / MULTIPLIER;
+	scl1 = 0.001 / MULTIPLIER;
+	scl2 = 0.001 / MULTIPLIER;
+	scl3 = 0.001 / MULTIPLIER;
 
 	let sclOffset1 = 1;
 	let sclOffset2 = 1;
@@ -413,7 +520,31 @@ function INIT(rseed, nseed) {
 
 		// Use the swatch palette directly - no variations needed
 		movers.push(
-			new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, colorLoop, colorLoopSpeed, baseHSLPalette),
+			new Mover(
+				x,
+				y,
+				scl1,
+				scl2,
+				scl3,
+				sclOffset1,
+				sclOffset2,
+				sclOffset3,
+				amplitude1,
+				amplitude2,
+				xMin,
+				xMax,
+				yMin,
+				yMax,
+				isBordered,
+				rseed,
+				nseed,
+				colorLoop,
+				colorYoyo,
+				colorLoopSpeed,
+				colorLoopSpeedOffset,
+				colorRandomStart,
+				baseHSLPalette,
+			),
 		);
 	}
 

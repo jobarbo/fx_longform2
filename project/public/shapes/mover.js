@@ -1,5 +1,29 @@
 class Mover {
-	constructor(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, colorLoop, colorLoopSpeed, preCalculatedPalette) {
+	constructor(
+		x,
+		y,
+		scl1,
+		scl2,
+		scl3,
+		sclOffset1,
+		sclOffset2,
+		sclOffset3,
+		amplitude1,
+		amplitude2,
+		xMin,
+		xMax,
+		yMin,
+		yMax,
+		isBordered,
+		rseed,
+		nseed,
+		colorLoop,
+		colorYoyo,
+		colorLoopSpeed,
+		colorLoopSpeedOffset,
+		colorRandomStart,
+		preCalculatedPalette,
+	) {
 		this.x = x;
 		this.initX = x;
 		this.y = y;
@@ -8,7 +32,10 @@ class Mover {
 		this.colorIndex = this.palette.length - 1;
 		this.colorDirection = -1; // 1 for forward, -1 for backward
 		this.colorLoop = colorLoop; // when true, palette cycles continuously
-		this.colorLoopSpeed = colorLoopSpeed || 1; // cycle speed multiplier
+		this.colorYoyo = colorYoyo; // when true, palette ping-pongs
+		const speedVariance = colorLoopSpeedOffset > 0 ? random(-colorLoopSpeedOffset, colorLoopSpeedOffset) : 0;
+		this.colorLoopSpeed = Math.max(0.0001, (colorLoopSpeed || 1) + speedVariance);
+		this.colorFrameOffset = colorRandomStart ? Math.floor(random(0, 10000)) : 0;
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
@@ -40,10 +67,10 @@ class Mover {
 		this.colorIndex = this.palette.length - 1;
 
 		// Pre-calculate padding valuesd
-		this.wrapPaddingX = -(min(width, height) * 0.000003) / width;
-		this.wrapPaddingY = -((min(width, height) * 0.000003) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.01) / width;
-		this.reentryOffsetY = (min(width, height) * 0.01) / height;
+		this.wrapPaddingX = (min(width, height) * 0.1) / width;
+		this.wrapPaddingY = ((min(width, height) * 0.1) / height) * ARTWORK_RATIO;
+		this.reentryOffsetX = (min(width, height) * 0.000001) / width;
+		this.reentryOffsetY = (min(width, height) * 0.000001) / height;
 		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
@@ -63,8 +90,7 @@ class Mover {
 	}
 
 	move(frameCount, maxFrames) {
-		this.amplitude1 += 0.1;
-		this.scl1 += random(-0.0001, 0.0001);
+		//this.scl1 += random(-0.0001, 0.0001);
 		let p = superCurve(
 			this.x,
 			this.y,
@@ -85,8 +111,8 @@ class Mover {
 		);
 
 		// Update position with slight randomization
-		this.xRandDivider = 1.4;
-		this.yRandDivider = 1.4;
+		this.xRandDivider = 0.26;
+		this.yRandDivider = 0.26;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
@@ -95,11 +121,18 @@ class Mover {
 		// Map frame progression to color index, inverted (last to first)
 		let maxColorIndex = this.palette.length - 1;
 		const colorPeriod = (maxFrames || 25) / 1.25 / this.colorLoopSpeed;
+		const f = frameCount + this.colorFrameOffset;
 		if (this.colorLoop) {
-			const t = (frameCount % colorPeriod) / colorPeriod;
-			this.colorIndex = maxColorIndex - Math.floor(t * (maxColorIndex + 1));
+			if (this.colorYoyo) {
+				const cycle2 = f % (colorPeriod * 2);
+				const forward = cycle2 < colorPeriod ? cycle2 / colorPeriod : 1 - (cycle2 - colorPeriod) / colorPeriod;
+				this.colorIndex = maxColorIndex - Math.min(Math.floor(forward * (maxColorIndex + 1)), maxColorIndex);
+			} else {
+				const t = (f % colorPeriod) / colorPeriod;
+				this.colorIndex = maxColorIndex - Math.floor(t * (maxColorIndex + 1));
+			}
 		} else {
-			this.colorIndex = Math.floor(map(frameCount, 0, colorPeriod, maxColorIndex, 0, true));
+			this.colorIndex = Math.floor(map(f, 0, colorPeriod, maxColorIndex, 0, true));
 		}
 
 		this.currentColor = this.palette[this.colorIndex];
@@ -203,10 +236,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset2) + rseed, noiseScale1, 1, octave), -0.005, 0.005, -11, 11, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset2) + rseed, nx * (scale1 * scaleOffset1) + rseed, noiseScale2, 2, octave), -0.005, 0.005, 0.25, 0.5, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset3) + rseed, ny * (scale1 * scaleOffset1) + rseed, noiseScale3, 0, octave), -0.005, 0.005, -11, 11, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset1) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.005, 0.005, 0.0, 0.25, true);
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset2) + rseed, noiseScale1, 1, octave), -1.005, 1.005, -11, 11, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset2) + rseed, nx * (scale1 * scaleOffset1) + rseed, noiseScale2, 2, octave), -1.005, 1.005, -11, 11, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset3) + rseed, ny * (scale1 * scaleOffset1) + rseed, noiseScale3, 0, octave), -1.005, 1.005, -11, 11, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset1) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -1.005, 1.005, -11, 11, true);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
@@ -227,8 +260,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	//! Introverted
 	//* higher max gives particles a more introverted movement
-	let u = map(vn, map(nx, xMin * width, xMax * width, -25.5, -0.0000001), map(nx, xMin * width, xMax * width, 0.0000001, 25.5), minU, maxU, true);
-	let v = map(un, map(ny, yMin * height, yMax * height, -25.5, -0.0000001), map(ny, yMin * height, yMax * height, 0.0000001, 25.5), minV, maxV, true);
+	let u = map(vn, map(nx, xMin * width, xMax * width, -25.5, 25.0000001), map(nx, xMin * width, xMax * width, -25.0000001, 25.5), minU, maxU, true);
+	let v = map(un, map(ny, yMin * height, yMax * height, -25.5, 25.0000001), map(ny, yMin * height, yMax * height, -25.0000001, 25.5), minV, maxV, true);
 
 	//! Extroverted
 	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
@@ -238,7 +271,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 	// Apply ZZ symmetrically - preserve sign but apply transformation to absolute value
-	let zzu = map(ZZ(u, 35, 80, 0.08), -1, 1, minU, maxU, true);
+	let zzu = map(ZZ(u, 35, 80, 0.2), -1, 1, minU, maxU, true);
 	let zzv = map(ZZ(v, 35, 80, 0.2), -1, 1, minV, maxV, true);
 
 	let zu = u < 0 ? u : zzu;
