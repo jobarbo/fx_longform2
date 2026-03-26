@@ -196,7 +196,7 @@ class ShaderEffects {
 				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.001, // Time multiplier for animation
+				timeMultiplier: 0.01, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
@@ -224,7 +224,7 @@ class ShaderEffects {
 			crtDisplay: {
 				enabled: false,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
-				cellSize: 28.0, // Size of CRT cells/pixels (2-10 typical range)
+				cellSize: 120.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.5, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
 				rgbOpacity: 0.0, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
 				dotRadius: 0.99, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
@@ -253,12 +253,12 @@ class ShaderEffects {
 			},
 
 			pixelGrid: {
-				enabled: true,
+				enabled: false,
 				gridCols: 240.0, // Number of columns
-				gridRows: 3.0, // Number of rows
+				gridRows: 20.0, // Number of rows
 				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
-				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
-				diffuse: 1.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
+				mode: 1.0, // 0.0 = pixel mode, 1.0 = diffuse mode
+				diffuse: 0.2, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
 				gapSize: 0.05, // Gap border fraction per side (0.0 = no gap)
 				gapBrightness: 1.0, // 0.0 = black gaps, 1.0 = cell color in gap area
 				uniforms: {

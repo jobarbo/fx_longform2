@@ -77,7 +77,7 @@ class Mover {
 			this.xMax,
 			this.yMax,
 			this.rseed,
-			this.nseed
+			this.nseed,
 		);
 
 		// Update position with slight randomization
