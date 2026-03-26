@@ -114,7 +114,7 @@ class ShaderEffects {
 			},
 
 			pixelSort: {
-				enabled: true,
+				enabled: false,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.3,
 				sortAmount: 2.8,
@@ -222,7 +222,7 @@ class ShaderEffects {
 			},
 
 			crtDisplay: {
-				enabled: true,
+				enabled: false,
 				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 28.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.5, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
@@ -249,6 +249,26 @@ class ShaderEffects {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 777.0",
 					uAmount: "amount",
+				},
+			},
+
+			pixelGrid: {
+				enabled: true,
+				gridCols: 240.0, // Number of columns
+				gridRows: 3.0, // Number of rows
+				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
+				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
+				diffuse: 1.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
+				gapSize: 0.05, // Gap border fraction per side (0.0 = no gap)
+				gapBrightness: 1.0, // 0.0 = black gaps, 1.0 = cell color in gap area
+				uniforms: {
+					uResolution: "[width, height]",
+					uGridSize: "[gridCols, gridRows]",
+					uCellRatio: "cellRatio",
+					uMode: "mode",
+					uDiffuse: "diffuse",
+					uGapSize: "gapSize",
+					uGapBrightness: "gapBrightness",
 				},
 			},
 		};
@@ -289,6 +309,7 @@ class ShaderEffects {
 		shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
 		shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert");
 		shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert");
+		shaderManager.loadShader("pixelGrid", "pixel-grid/fragment.frag", "pixel-grid/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
@@ -534,6 +555,10 @@ class ShaderEffects {
 			// Handle special cases
 			if (value === "[width, height]") {
 				return [this.mainCanvas.width, this.mainCanvas.height];
+			}
+
+			if (value === "[gridCols, gridRows]") {
+				return [effect.gridCols, effect.gridRows];
 			}
 
 			// Handle expressions like 'shaderSeed + 777.0'

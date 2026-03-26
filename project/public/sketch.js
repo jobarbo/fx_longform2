@@ -160,21 +160,21 @@ async function setup() {
 	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
 
 	// Canvas setup - match viewport aspect ratio
-	//! ARTWORK_RATIO = 1.24;
-	ARTWORK_RATIO = windowWidth / windowHeight;
+	ARTWORK_RATIO = 1.0;
+	//ARTWORK_RATIO = windowWidth / windowHeight;
 	BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 	DEFAULT_SIZE = min(BASE_WIDTH, BASE_HEIGHT);
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
-
 	// Create main canvas for the artwork (same aspect as viewport)
-	mainCanvas = createGraphics(windowWidth, windowHeight);
+	//mainCanvas = createGraphics(windowWidth, windowHeight);
+	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
 
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
 	if (typeof shaderEffects !== "undefined") {
 		try {
-			shaderCanvas = createCanvas(windowWidth, windowHeight, WEBGL);
+			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
 			// Initialize shader effects system
 			shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
 			// Set up shader canvas pixel density
@@ -185,13 +185,13 @@ async function setup() {
 			console.log("Falling back to sketch without shaders");
 			// Fallback: create regular canvas without shaders
 			shaderCanvas = null;
-			createCanvas(windowWidth, windowHeight);
+			createCanvas(DIM / ARTWORK_RATIO, DIM);
 			pixelDensity(pixel_density);
 			// Shaders are unavailable; continue without them
 		}
 	} else {
 		// No shaders - create regular canvas for display
-		createCanvas(windowWidth, windowHeight);
+		createCanvas(DIM / ARTWORK_RATIO, DIM);
 		pixelDensity(pixel_density);
 	}
 
@@ -371,6 +371,7 @@ function INIT(rseed, nseed) {
 	// Select directly from sorted swatch palettes
 	selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
 	currentPaletteName = sortedSwatchNames[selectedPalette];
+	console.log(`Selected swatch palette: ${currentPaletteName}`);
 	baseHSLPalette = swatchPalette.getPalette(currentPaletteName);
 
 	if (!baseHSLPalette || baseHSLPalette.length === 0) {
@@ -415,7 +416,7 @@ function INIT(rseed, nseed) {
 	const middleIndex = Math.floor(baseHSLPalette.length / 2);
 	const middleColor = baseHSLPalette[middleIndex];
 	const complementaryHue = (middleColor.h + 180) % 360;
-	let bgCol = color(complementaryHue, middleColor.s, middleColor.l);
+	let bgCol = color(complementaryHue, 0, 100);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
