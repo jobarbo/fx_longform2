@@ -19,7 +19,9 @@ let particleNum = 500000;
 let cycle = computeCycle(maxFrames, particleNum);
 
 function computeCycle(frames, population) {
-	return parseInt((frames * population) / 1150);
+	// Divisor scales with population: 1150 @ 500k, ~150 @ 100k
+	const divisor = Math.max(1, Math.round(1150 * Math.pow(population / 500000, 1.25)));
+	return parseInt((frames * population) / divisor);
 }
 
 // Debug flags
