@@ -240,8 +240,8 @@ class ShaderEffects {
 			},
 			chromatic: {
 				enabled: true,
-				amount: 0.0025,
-				timeMultiplier: 0.5,
+				amount: 0.0015,
+				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 777.0",
