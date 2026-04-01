@@ -299,7 +299,7 @@ async function setup() {
 	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
 
 	// Canvas setup - match viewport aspect ratio
-	ARTWORK_RATIO = 1.0;
+	ARTWORK_RATIO = 1.6;
 	//ARTWORK_RATIO = windowWidth / windowHeight;
 	BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 	DEFAULT_SIZE = min(BASE_WIDTH, BASE_HEIGHT);
