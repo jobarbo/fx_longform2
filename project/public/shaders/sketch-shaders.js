@@ -227,7 +227,7 @@ class ShaderEffects {
 				},
 			},
 			pixelSort: {
-				enabled: true,
+				enabled: false,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.25,
 				sortAmount: 0.28,
@@ -285,32 +285,6 @@ class ShaderEffects {
 					uVignette: "vignette",
 				},
 			},
-
-			blur: {
-				enabled: true,
-				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
-				blurAmount: 60.0, // Blur radius/intensity in pixels
-				blurQuality: 122.0, // Sampling quality (1-8, higher = better but slower)
-				blurDirection: 0.0, // Angle in radians for directional mode
-				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
-				blurStart: 0.6, // Radial mode: starting radius (0-1, blur kicks in beyond this distance)
-				blurCrt: 1.0, // Radial mode: 0.0 = circular, 1.0 = super-ellipse (CRT shape)
-				blurCrtPower: 27.0, // Super-ellipse exponent (2.0 = ellipse, 4.0+ = more rectangular/CRT-like)
-				blurMin: 60.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
-				uniforms: {
-					uResolution: "[width, height]",
-					uBlurMode: "blurMode",
-					uBlurAmount: "blurAmount",
-					uBlurQuality: "blurQuality",
-					uBlurDirection: "blurDirection",
-					uBlurCenter: "blurCenter",
-					uBlurStart: "blurStart",
-					uBlurCrt: "blurCrt",
-					uBlurCrtPower: "blurCrtPower",
-					uBlurMin: "blurMin",
-				},
-			},
-
 			crtDisplay: {
 				enabled: true,
 				brightness: 0.99, // Brightness boost (0.0 = none, higher = brighter)
@@ -329,6 +303,30 @@ class ShaderEffects {
 					uDotRadius: "dotRadius",
 					uDotFalloff: "dotFalloff",
 					uFilterMode: "filterMode",
+				},
+			},
+			blur: {
+				enabled: true,
+				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
+				blurAmount: 60.0, // Blur radius/intensity in pixels
+				blurQuality: 122.0, // Sampling quality (1-8, higher = better but slower)
+				blurDirection: PI, // Angle in radians for directional mode
+				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
+				blurStart: 0.6, // Radial mode: starting radius (0-1, blur kicks in beyond this distance)
+				blurCrt: 1.0, // Radial mode: 0.0 = circular, 1.0 = super-ellipse (CRT shape)
+				blurCrtPower: 27.0, // Super-ellipse exponent (2.0 = ellipse, 4.0+ = more rectangular/CRT-like)
+				blurMin: 60.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
+				uniforms: {
+					uResolution: "[width, height]",
+					uBlurMode: "blurMode",
+					uBlurAmount: "blurAmount",
+					uBlurQuality: "blurQuality",
+					uBlurDirection: "blurDirection",
+					uBlurCenter: "blurCenter",
+					uBlurStart: "blurStart",
+					uBlurCrt: "blurCrt",
+					uBlurCrtPower: "blurCrtPower",
+					uBlurMin: "blurMin",
 				},
 			},
 		};
