@@ -271,13 +271,33 @@ class ShaderEffects {
 				},
 			},
 
+			crtWarp: {
+				enabled: true,
+				warpAmount: 0.74, // Barrel distortion (0.0 = flat, 0.3-0.5 = subtle TV, 1.0+ = heavy)
+				cornerRadius: 0.0, // Corner rounding (0.0 = square, 0.1 = slight rounding)
+				cornerSmooth: 0.0, // Softness of corner fade
+				borderColor: 1.0, // 0.0 = black outside, 1.0 = mirror/clamp
+				vignette: 0.5, // Edge darkening (0.0 = none, 1.0 = strong)
+				uniforms: {
+					uResolution: "[width, height]",
+					uWarpAmount: "warpAmount",
+					uCornerRadius: "cornerRadius",
+					uCornerSmooth: "cornerSmooth",
+					uBorderColor: "borderColor",
+					uVignette: "vignette",
+				},
+			},
 			blur: {
 				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
-				blurAmount: 120.0, // Blur radius/intensity in pixels
+				blurAmount: 60.0, // Blur radius/intensity in pixels
 				blurQuality: 122.0, // Sampling quality (1-8, higher = better but slower)
 				blurDirection: 0.0, // Angle in radians for directional mode
-				blurCenter: [0.5, 1.0], // Center for radial mode (normalized 0-1)
+				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
+				blurStart: 0.6, // Radial mode: starting radius (0-1, blur kicks in beyond this distance)
+				blurCrt: 1.0, // Radial mode: 0.0 = circular, 1.0 = super-ellipse (CRT shape)
+				blurCrtPower: 27.0, // Super-ellipse exponent (2.0 = ellipse, 4.0+ = more rectangular/CRT-like)
+				blurMin: 120.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
 				uniforms: {
 					uResolution: "[width, height]",
 					uBlurMode: "blurMode",
@@ -285,11 +305,15 @@ class ShaderEffects {
 					uBlurQuality: "blurQuality",
 					uBlurDirection: "blurDirection",
 					uBlurCenter: "blurCenter",
+					uBlurStart: "blurStart",
+					uBlurCrt: "blurCrt",
+					uBlurCrtPower: "blurCrtPower",
+					uBlurMin: "blurMin",
 				},
 			},
 			crtDisplay: {
 				enabled: true,
-				brightness: 0.6, // Brightness boost (0.0 = none, higher = brighter)
+				brightness: 0.99, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 2.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
 				rgbOpacity: 0.0, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
@@ -348,6 +372,7 @@ class ShaderEffects {
 		shaderManager.loadShader("pixelGrid", "pixel-grid/fragment.frag", "pixel-grid/vertex.vert");
 		shaderManager.loadShader("blur", "blur/fragment.frag", "blur/vertex.vert");
 		shaderManager.loadShader("zoom", "zoom/fragment.frag", "zoom/vertex.vert");
+		shaderManager.loadShader("crtWarp", "crt-warp/fragment.frag", "crt-warp/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
