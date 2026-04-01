@@ -270,6 +270,26 @@ class ShaderEffects {
 					uGapBrightness: "gapBrightness",
 				},
 			},
+			zoom: {
+				enabled: true,
+				zoomAmount: 0.0, // Static zoom level (1.0 = no zoom, 2.0 = 2x in, 0.5 = 2x out)
+				zoomSpeed: 0.8, // Animation speed
+				zoomOutAmount: 0.05, // Min zoom when animating
+				zoomInAmount: 1.0, // Max zoom when animating
+				animateZoom: 1.0, // 0.0 = static, 1.0 = animate between out/in
+				center: [0.5, 0.5], // Zoom center point (normalized 0-1)
+				timeMultiplier: 1.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uZoomSpeed: "zoomSpeed",
+					uZoomAmount: "zoomAmount",
+					uZoomOutAmount: "zoomOutAmount",
+					uZoomInAmount: "zoomInAmount",
+					uAnimateZoom: "animateZoom",
+					uCenter: "center",
+				},
+			},
+
 			blur: {
 				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
@@ -326,6 +346,7 @@ class ShaderEffects {
 		shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert");
 		shaderManager.loadShader("pixelGrid", "pixel-grid/fragment.frag", "pixel-grid/vertex.vert");
 		shaderManager.loadShader("blur", "blur/fragment.frag", "blur/vertex.vert");
+		shaderManager.loadShader("zoom", "zoom/fragment.frag", "zoom/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
