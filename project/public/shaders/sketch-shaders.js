@@ -114,14 +114,14 @@ class ShaderEffects {
 			},
 
 			pixelSort: {
-				enabled: false,
+				enabled: true,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.0,
-				sortAmount: 2.8,
+				sortAmount: 0.28,
 				sampleCount: 1.0, // Number of samples (8-64, higher = better quality but slower)
 				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
 				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 0.3,
+				timeMultiplier: 1.3,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 999.0",
@@ -141,19 +141,19 @@ class ShaderEffects {
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.95], // symmetry center in normalized coords
-				translationSpeed: 2.5, // Speed of horizontal/vertical movement
+				translationSpeed: 0.5, // Speed of horizontal/vertical movement
 				translationMode: 2.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
-				rotationSpeed: 12.81, // Speed of rotation
+				rotationSpeed: 0.81, // Speed of rotation
 				rotationOscillationSpeed: 0.5, // Speed of oscillation (controls how fast it alternates between positive/negative)
 				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
 				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.1, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.02, // Time multiplier for animation
+				timeMultiplier: 0.0002, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
@@ -232,8 +232,8 @@ class ShaderEffects {
 
 			pixelGrid: {
 				enabled: true,
-				gridCols: 240.0, // Number of columns
-				gridRows: 56.0, // Number of rows
+				gridCols: 228.0, // Number of columns
+				gridRows: 20.0, // Number of rows
 				cellRatio: 21.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
 				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
 				diffuse: 0.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
@@ -253,8 +253,8 @@ class ShaderEffects {
 				enabled: true,
 				zoomAmount: 0.0, // Static zoom level (1.0 = no zoom, 2.0 = 2x in, 0.5 = 2x out)
 				zoomSpeed: 0.8, // Animation speed
-				zoomOutAmount: 3.25, // Min zoom when animating
-				zoomInAmount: 5.5, // Max zoom when animating
+				zoomOutAmount: 2.25, // Min zoom when animating
+				zoomInAmount: 4.5, // Max zoom when animating
 				animateZoom: 1.0, // 0.0 = static, 1.0 = animate between out/in
 				easingMode: 4.0, // 0=sine, 1=linear, 2=ease-in, 3=ease-out, 4=ease-in-out, 5=bounce
 				center: [0.5, 0.5], // Zoom center point (normalized 0-1)
@@ -316,7 +316,7 @@ class ShaderEffects {
 				brightness: 0.99, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 2.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
-				rgbOpacity: 0.0, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
+				rgbOpacity: 0.4, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
 				dotRadius: 0.8, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
 				dotFalloff: 0.6, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
 				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)

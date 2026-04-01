@@ -9,7 +9,7 @@ let colorLoopSpeedOffset = 0.0; // random speed variance per particle: 0 = unifo
 let colorRandomStart = false; // when true, each particle begins at a random point in the palette cycle
 let useFrameMode = true; // true = draw-loop style (all particles per frame); false = cycle rendering (original)
 let elapsedTime = 0;
-let particleNum = 12150;
+let particleNum = 50;
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 let generator; // Animation generator instance
 
@@ -551,7 +551,7 @@ function INIT(rseed, nseed) {
 	const middleIndex = Math.floor(baseHSLPalette.length / 2);
 	const middleColor = baseHSLPalette[middleIndex];
 	const complementaryHue = (middleColor.h + 180) % 360;
-	let bgCol = color(complementaryHue, 0, 100);
+	let bgCol = color(complementaryHue, 100, 60);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);
