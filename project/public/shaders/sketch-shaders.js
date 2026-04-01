@@ -113,28 +113,6 @@ class ShaderEffects {
 				},
 			},
 
-			pixelSort: {
-				enabled: true,
-				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
-				threshold: 0.0,
-				sortAmount: 0.28,
-				sampleCount: 1.0, // Number of samples (8-64, higher = better quality but slower)
-				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
-				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 1.3,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 999.0",
-					uAngle: "angle",
-					uThreshold: "threshold",
-					uSortAmount: "sortAmount",
-					uSampleCount: "sampleCount",
-					uInvert: "invert",
-					uSortMode: "sortMode",
-					uResolution: "[width, height]",
-				},
-			},
-
 			symmetry: {
 				enabled: true,
 				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
@@ -221,7 +199,7 @@ class ShaderEffects {
 
 			pixelGrid: {
 				enabled: true,
-				gridCols: 228.0, // Number of columns
+				gridCols: 10.0, // Number of columns
 				gridRows: 20.0, // Number of rows
 				cellRatio: 21.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
 				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
@@ -246,6 +224,27 @@ class ShaderEffects {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 777.0",
 					uAmount: "amount",
+				},
+			},
+			pixelSort: {
+				enabled: true,
+				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
+				threshold: 0.5,
+				sortAmount: 10.28,
+				sampleCount: 1141.0, // Number of samples (8-64, higher = better quality but slower)
+				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
+				sortMode: 2.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
+				timeMultiplier: 1.3,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 999.0",
+					uAngle: "angle",
+					uThreshold: "threshold",
+					uSortAmount: "sortAmount",
+					uSampleCount: "sampleCount",
+					uInvert: "invert",
+					uSortMode: "sortMode",
+					uResolution: "[width, height]",
 				},
 			},
 			zoom: {
