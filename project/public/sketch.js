@@ -551,7 +551,7 @@ function INIT(rseed, nseed) {
 	const middleIndex = Math.floor(baseHSLPalette.length / 2);
 	const middleColor = baseHSLPalette[middleIndex];
 	const complementaryHue = (middleColor.h + 180) % 360;
-	let bgCol = color(complementaryHue, 100, 60);
+	let bgCol = color(complementaryHue, 100, 30);
 	mainCanvas.background(bgCol);
 
 	//initGrid(50);

@@ -199,9 +199,9 @@ class ShaderEffects {
 
 			pixelGrid: {
 				enabled: true,
-				gridCols: 10.0, // Number of columns
-				gridRows: 20.0, // Number of rows
-				cellRatio: 21.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
+				gridCols: 240.0, // Number of columns
+				gridRows: 30.0, // Number of rows
+				cellRatio: 100.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
 				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
 				diffuse: 0.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
 				gapSize: 0.0, // Gap border fraction per side (0.0 = no gap)
@@ -227,7 +227,7 @@ class ShaderEffects {
 				},
 			},
 			pixelSort: {
-				enabled: true,
+				enabled: false,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.5,
 				sortAmount: 10.28,
