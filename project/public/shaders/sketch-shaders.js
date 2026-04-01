@@ -137,16 +137,16 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationSpeed: 0.5, // Speed of horizontal/vertical movement
+				center: [0.5, 0.95], // symmetry center in normalized coords
+				translationSpeed: 2.5, // Speed of horizontal/vertical movement
 				translationMode: 2.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
-				rotationSpeed: 2.81, // Speed of rotation
+				rotationSpeed: 12.81, // Speed of rotation
 				rotationOscillationSpeed: 0.5, // Speed of oscillation (controls how fast it alternates between positive/negative)
 				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
 				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
@@ -178,7 +178,6 @@ class ShaderEffects {
 			},
 			symmetry2: {
 				enabled: false,
-				center: [0.5, 0.5],
 				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
@@ -220,29 +219,9 @@ class ShaderEffects {
 				},
 			},
 
-			crtDisplay: {
-				enabled: false,
-				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
-				cellSize: 120.0, // Size of CRT cells/pixels (2-10 typical range)
-				gapOpacity: 0.5, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
-				rgbOpacity: 0.0, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
-				dotRadius: 0.99, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
-				dotFalloff: 0.2, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
-				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
-				uniforms: {
-					uResolution: "[width, height]",
-					uBrightness: "brightness",
-					uCellSize: "cellSize",
-					uGapOpacity: "gapOpacity",
-					uRgbOpacity: "rgbOpacity",
-					uDotRadius: "dotRadius",
-					uDotFalloff: "dotFalloff",
-					uFilterMode: "filterMode",
-				},
-			},
 			chromatic: {
-				enabled: false,
-				amount: 0.015,
+				enabled: true,
+				amount: 0.0015,
 				timeMultiplier: 0.5,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -274,9 +253,10 @@ class ShaderEffects {
 				enabled: true,
 				zoomAmount: 0.0, // Static zoom level (1.0 = no zoom, 2.0 = 2x in, 0.5 = 2x out)
 				zoomSpeed: 0.8, // Animation speed
-				zoomOutAmount: 0.05, // Min zoom when animating
-				zoomInAmount: 1.0, // Max zoom when animating
+				zoomOutAmount: 3.25, // Min zoom when animating
+				zoomInAmount: 5.5, // Max zoom when animating
 				animateZoom: 1.0, // 0.0 = static, 1.0 = animate between out/in
+				easingMode: 4.0, // 0=sine, 1=linear, 2=ease-in, 3=ease-out, 4=ease-in-out, 5=bounce
 				center: [0.5, 0.5], // Zoom center point (normalized 0-1)
 				timeMultiplier: 1.0,
 				uniforms: {
@@ -286,6 +266,7 @@ class ShaderEffects {
 					uZoomOutAmount: "zoomOutAmount",
 					uZoomInAmount: "zoomInAmount",
 					uAnimateZoom: "animateZoom",
+					uEasingMode: "easingMode",
 					uCenter: "center",
 				},
 			},
@@ -296,7 +277,7 @@ class ShaderEffects {
 				blurAmount: 120.0, // Blur radius/intensity in pixels
 				blurQuality: 122.0, // Sampling quality (1-8, higher = better but slower)
 				blurDirection: 0.0, // Angle in radians for directional mode
-				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
+				blurCenter: [0.5, 1.0], // Center for radial mode (normalized 0-1)
 				uniforms: {
 					uResolution: "[width, height]",
 					uBlurMode: "blurMode",
@@ -304,6 +285,26 @@ class ShaderEffects {
 					uBlurQuality: "blurQuality",
 					uBlurDirection: "blurDirection",
 					uBlurCenter: "blurCenter",
+				},
+			},
+			crtDisplay: {
+				enabled: true,
+				brightness: 0.6, // Brightness boost (0.0 = none, higher = brighter)
+				cellSize: 2.0, // Size of CRT cells/pixels (2-10 typical range)
+				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
+				rgbOpacity: 0.0, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
+				dotRadius: 0.8, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
+				dotFalloff: 0.6, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
+				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
+				uniforms: {
+					uResolution: "[width, height]",
+					uBrightness: "brightness",
+					uCellSize: "cellSize",
+					uGapOpacity: "gapOpacity",
+					uRgbOpacity: "rgbOpacity",
+					uDotRadius: "dotRadius",
+					uDotFalloff: "dotFalloff",
+					uFilterMode: "filterMode",
 				},
 			},
 		};
