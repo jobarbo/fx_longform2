@@ -219,17 +219,6 @@ class ShaderEffects {
 				},
 			},
 
-			chromatic: {
-				enabled: true,
-				amount: 0.0015,
-				timeMultiplier: 0.5,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 777.0",
-					uAmount: "amount",
-				},
-			},
-
 			pixelGrid: {
 				enabled: true,
 				gridCols: 228.0, // Number of columns
@@ -247,6 +236,16 @@ class ShaderEffects {
 					uDiffuse: "diffuse",
 					uGapSize: "gapSize",
 					uGapBrightness: "gapBrightness",
+				},
+			},
+			chromatic: {
+				enabled: true,
+				amount: 0.0025,
+				timeMultiplier: 0.5,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 777.0",
+					uAmount: "amount",
 				},
 			},
 			zoom: {
@@ -287,6 +286,7 @@ class ShaderEffects {
 					uVignette: "vignette",
 				},
 			},
+
 			blur: {
 				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
@@ -311,6 +311,7 @@ class ShaderEffects {
 					uBlurMin: "blurMin",
 				},
 			},
+
 			crtDisplay: {
 				enabled: true,
 				brightness: 0.99, // Brightness boost (0.0 = none, higher = brighter)
