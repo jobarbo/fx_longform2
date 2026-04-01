@@ -114,7 +114,7 @@ class ShaderEffects {
 			},
 
 			pixelSort: {
-				enabled: true,
+				enabled: false,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.0,
 				sortAmount: 2.8,
@@ -137,21 +137,20 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
-				center: [0.5, 0.5],
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationSpeed: 1.5, // Speed of horizontal/vertical movement
-				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
-				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
+				translationSpeed: 0.5, // Speed of horizontal/vertical movement
+				translationMode: 2.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
-				rotationSpeed: 0.0, // Speed of rotation
-				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
+				rotationSpeed: 2.81, // Speed of rotation
+				rotationOscillationSpeed: 0.5, // Speed of oscillation (controls how fast it alternates between positive/negative)
 				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
-				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
-				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
+				rotationMode: 0.0, // 0=cosine oscillation, 1=noise, 2=FBM
+				rotationNoiseScale: 0.1, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
 				timeMultiplier: 0.02, // Time multiplier for animation
@@ -255,11 +254,11 @@ class ShaderEffects {
 			pixelGrid: {
 				enabled: true,
 				gridCols: 240.0, // Number of columns
-				gridRows: 4.0, // Number of rows
-				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
-				mode: 1.0, // 0.0 = pixel mode, 1.0 = diffuse mode
-				diffuse: 1.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
-				gapSize: 0.28, // Gap border fraction per side (0.0 = no gap)
+				gridRows: 56.0, // Number of rows
+				cellRatio: 21.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
+				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
+				diffuse: 0.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
+				gapSize: 0.0, // Gap border fraction per side (0.0 = no gap)
 				gapBrightness: 1.0, // 0.0 = black gaps, 1.0 = cell color in gap area
 				uniforms: {
 					uResolution: "[width, height]",
@@ -269,6 +268,22 @@ class ShaderEffects {
 					uDiffuse: "diffuse",
 					uGapSize: "gapSize",
 					uGapBrightness: "gapBrightness",
+				},
+			},
+			blur: {
+				enabled: true,
+				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
+				blurAmount: 120.0, // Blur radius/intensity in pixels
+				blurQuality: 122.0, // Sampling quality (1-8, higher = better but slower)
+				blurDirection: 0.0, // Angle in radians for directional mode
+				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
+				uniforms: {
+					uResolution: "[width, height]",
+					uBlurMode: "blurMode",
+					uBlurAmount: "blurAmount",
+					uBlurQuality: "blurQuality",
+					uBlurDirection: "blurDirection",
+					uBlurCenter: "blurCenter",
 				},
 			},
 		};
@@ -310,6 +325,7 @@ class ShaderEffects {
 		shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert");
 		shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert");
 		shaderManager.loadShader("pixelGrid", "pixel-grid/fragment.frag", "pixel-grid/vertex.vert");
+		shaderManager.loadShader("blur", "blur/fragment.frag", "blur/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
