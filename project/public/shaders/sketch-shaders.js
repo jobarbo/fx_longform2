@@ -115,7 +115,7 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 6.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
@@ -201,9 +201,9 @@ class ShaderEffects {
 				enabled: true,
 				gridCols: 240.0, // Number of columns
 				gridRows: 30.0, // Number of rows
-				cellRatio: 100.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
+				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
 				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
-				diffuse: 0.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
+				diffuse: 1.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
 				gapSize: 0.0, // Gap border fraction per side (0.0 = no gap)
 				gapBrightness: 1.0, // 0.0 = black gaps, 1.0 = cell color in gap area
 				uniforms: {
@@ -227,11 +227,11 @@ class ShaderEffects {
 				},
 			},
 			pixelSort: {
-				enabled: false,
+				enabled: true,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
-				threshold: 0.5,
-				sortAmount: 10.28,
-				sampleCount: 1141.0, // Number of samples (8-64, higher = better quality but slower)
+				threshold: 0.25,
+				sortAmount: 0.28,
+				sampleCount: 2.0, // Number of samples (8-64, higher = better quality but slower)
 				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
 				sortMode: 2.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
 				timeMultiplier: 1.3,
@@ -296,7 +296,7 @@ class ShaderEffects {
 				blurStart: 0.6, // Radial mode: starting radius (0-1, blur kicks in beyond this distance)
 				blurCrt: 1.0, // Radial mode: 0.0 = circular, 1.0 = super-ellipse (CRT shape)
 				blurCrtPower: 27.0, // Super-ellipse exponent (2.0 = ellipse, 4.0+ = more rectangular/CRT-like)
-				blurMin: 120.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
+				blurMin: 60.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
 				uniforms: {
 					uResolution: "[width, height]",
 					uBlurMode: "blurMode",
@@ -314,9 +314,9 @@ class ShaderEffects {
 			crtDisplay: {
 				enabled: true,
 				brightness: 0.99, // Brightness boost (0.0 = none, higher = brighter)
-				cellSize: 2.0, // Size of CRT cells/pixels (2-10 typical range)
+				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
-				rgbOpacity: 0.0, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
+				rgbOpacity: 0.6, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
 				dotRadius: 0.8, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
 				dotFalloff: 0.6, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
 				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)

@@ -9,7 +9,7 @@ let colorLoopSpeedOffset = 0.0; // random speed variance per particle: 0 = unifo
 let colorRandomStart = false; // when true, each particle begins at a random point in the palette cycle
 let useFrameMode = true; // true = draw-loop style (all particles per frame); false = cycle rendering (original)
 let elapsedTime = 0;
-let particleNum = 50;
+let particleNum = 100;
 let executionTimer = new ExecutionTimer(); // Replace executionStartTime with timer instance
 let generator; // Animation generator instance
 
@@ -24,6 +24,19 @@ let shaderCanvas; // WEBGL canvas for shader effects
 // Shader effects are now managed by shaderEffects module (loaded from shaders/sketch-shaders.js)
 // To configure shaders, modify the effectsConfig in shaders/sketch-shaders.js
 let debugBounds = false;
+
+/** Per-particle lifecycle: optional timed reset + respawn (see Mover). */
+let particleLifecycle = {
+	enabled: true,
+	schedule: "sync", // "off" | "sync" | "random" | "window"
+	syncPeriod: 4,
+	randomIntervalMin: 60,
+	randomIntervalMax: 180,
+	windowStart: 30,
+	windowEnd: 90,
+	resetPosition: "spawn", // "spawn" | "random"
+	cullOnReset: false, // one-frame invisible flash on reset (restored next move)
+};
 
 // CSS overlay debug bounds functions
 function updateDebugOverlay() {
@@ -353,8 +366,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.24;
-	let scaleFactorY = 1.24;
+	let scaleFactorX = 1.27;
+	let scaleFactorY = 1.27;
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(scaleFactorX, scaleFactorY);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
@@ -544,6 +557,8 @@ function INIT(rseed, nseed) {
 				colorLoopSpeedOffset,
 				colorRandomStart,
 				baseHSLPalette,
+				particleLifecycle,
+				maxFrames,
 			),
 		);
 	}

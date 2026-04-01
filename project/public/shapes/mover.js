@@ -23,6 +23,8 @@ class Mover {
 		colorLoopSpeedOffset,
 		colorRandomStart,
 		preCalculatedPalette,
+		lifecycleConfig = null,
+		maxFramesCap = null,
 	) {
 		this.x = x;
 		this.initX = x;
@@ -78,6 +80,88 @@ class Mover {
 		this.maxBoundX = (this.xMax + this.wrapPaddingX) * width;
 		this.minBoundY = (this.yMin - this.wrapPaddingY) * height;
 		this.maxBoundY = (this.yMax + this.wrapPaddingY) * height;
+
+		this.lifecycle = lifecycleConfig && typeof lifecycleConfig === "object" ? lifecycleConfig : {};
+		this.lifecycleMaxFrames = maxFramesCap;
+		this._lifecycleRestoreAlpha = false;
+		this.nextResetFrame = null;
+		const schedule = this.lifecycle.schedule || "off";
+		const enabled = !!this.lifecycle.enabled && schedule !== "off";
+		this._lifecycleEnabled = enabled;
+		this._lifecycleSchedule = enabled ? schedule : "off";
+
+		if (enabled && (schedule === "random" || schedule === "window")) {
+			this.nextResetFrame = this._lifecycleInitialNextFrame(schedule);
+		}
+	}
+
+	_clampResetFrame(f) {
+		const n = Math.max(0, Math.floor(f));
+		if (this.lifecycleMaxFrames == null) return n;
+		return Math.min(n, Math.max(0, this.lifecycleMaxFrames - 1));
+	}
+
+	_lifecycleInitialNextFrame(schedule) {
+		if (schedule === "random") {
+			const min = Math.max(1, this.lifecycle.randomIntervalMin ?? 60);
+			const max = Math.max(min, this.lifecycle.randomIntervalMax ?? 180);
+			return this._clampResetFrame(random(min, max));
+		}
+		if (schedule === "window") {
+			const ws = this.lifecycle.windowStart ?? 0;
+			const we = this.lifecycle.windowEnd ?? 90;
+			const lo = Math.min(ws, we);
+			const hi = Math.max(ws, we);
+			return this._clampResetFrame(random(lo, hi));
+		}
+		return null;
+	}
+
+	_lifecycleScheduleAfterReset(currentFrame, maxFrames) {
+		const schedule = this._lifecycleSchedule;
+		if (schedule === "sync") return;
+		const capFrames = this.lifecycleMaxFrames != null ? this.lifecycleMaxFrames : maxFrames;
+		if (schedule !== "random" && schedule !== "window") return;
+		const min = Math.max(1, this.lifecycle.randomIntervalMin ?? 60);
+		const max = Math.max(min, this.lifecycle.randomIntervalMax ?? 180);
+		const next = currentFrame + floor(random(min, max));
+		if (capFrames == null) {
+			this.nextResetFrame = next;
+			return;
+		}
+		const lastIdx = capFrames - 1;
+		if (next > lastIdx) {
+			this.nextResetFrame = null;
+		} else {
+			this.nextResetFrame = next;
+		}
+	}
+
+	_shouldLifecycleReset(frameCount) {
+		if (!this._lifecycleEnabled) return false;
+		const schedule = this._lifecycleSchedule;
+		if (schedule === "sync") {
+			const p = Math.max(1, this.lifecycle.syncPeriod ?? 120);
+			return frameCount > 0 && frameCount % p === 0;
+		}
+		if (this.nextResetFrame == null) return false;
+		return frameCount >= this.nextResetFrame;
+	}
+
+	_applyLifecycleRespawn() {
+		if (this.lifecycle.resetPosition === "random") {
+			this.x = random(this.xMin, this.xMax) * width;
+			this.y = random(this.yMin, this.yMax) * height;
+		} else {
+			this.x = this.initX;
+			this.y = this.initY;
+		}
+		if (this.lifecycle.cullOnReset) {
+			this.a = 0;
+			this._lifecycleRestoreAlpha = true;
+		} else {
+			this.a = this.initAlpha;
+		}
 	}
 
 	show(canvas = null) {
@@ -90,6 +174,11 @@ class Mover {
 	}
 
 	move(frameCount, maxFrames) {
+		if (this._lifecycleRestoreAlpha) {
+			this.a = this.initAlpha;
+			this._lifecycleRestoreAlpha = false;
+		}
+
 		//this.scl1 += random(-0.0001, 0.0001);
 		let p = superCurve(
 			this.x,
@@ -137,6 +226,11 @@ class Mover {
 
 		this.currentColor = this.palette[this.colorIndex];
 
+		if (this._lifecycleEnabled && this._shouldLifecycleReset(frameCount)) {
+			this._applyLifecycleRespawn();
+			this._lifecycleScheduleAfterReset(frameCount, maxFrames);
+		}
+
 		if (this.isBordered) {
 			// Wrap to opposite side with slight offset
 			if (this.isOutside()) {
@@ -161,7 +255,9 @@ class Mover {
 			}
 		}
 
-		this.a = this.isOutside() ? 0 : this.initAlpha;
+		if (!this._lifecycleRestoreAlpha) {
+			this.a = this.isOutside() ? 0 : this.initAlpha;
+		}
 	}
 	isOutside() {
 		return this.x < this.minBoundX || this.x > this.maxBoundX || this.y < this.minBoundY || this.y > this.maxBoundY;
