@@ -199,8 +199,8 @@ class ShaderEffects {
 			pixelSort: {
 				enabled: true,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
-				threshold: 0.25,
-				sortAmount: 0.28,
+				threshold: 0.0,
+				sortAmount: 0.0,
 				sampleCount: 2.0, // Number of samples (8-64, higher = better quality but slower)
 				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
 				sortMode: 2.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
@@ -221,9 +221,9 @@ class ShaderEffects {
 				enabled: true,
 				gridCols: 420.0, // Number of columns
 				gridRows: 20.0, // Number of rows
-				cellRatio: 100.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
+				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
 				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
-				diffuse: 1.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
+				diffuse: 0.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
 				gapSize: 0.0, // Gap border fraction per side (0.0 = no gap)
 				gapBrightness: 1.0, // 0.0 = black gaps, 1.0 = cell color in gap area
 				uniforms: {
@@ -237,7 +237,7 @@ class ShaderEffects {
 				},
 			},
 			chromatic: {
-				enabled: false,
+				enabled: true,
 				amount: 0.0015,
 				timeMultiplier: 0.0,
 				uniforms: {
@@ -286,7 +286,7 @@ class ShaderEffects {
 				},
 			},
 			crtDisplay: {
-				enabled: false,
+				enabled: true,
 				brightness: 0.99, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
@@ -308,8 +308,8 @@ class ShaderEffects {
 			blur: {
 				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
-				blurAmount: 6100.0, // Blur radius/intensity in pixels
-				blurQuality: 60.0, // Sampling quality (1-8, higher = better but slower)
+				blurAmount: 1231100.0, // Blur radius/intensity in pixels
+				blurQuality: 30.0, // Sampling quality (1-8, higher = better but slower)
 				blurDirection: 0, // Angle in radians for directional mode
 				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
 				blurStart: 0.6, // Radial mode: starting radius (0-1, blur kicks in beyond this distance)

@@ -7,8 +7,8 @@ const CANVAS_CONFIG = {
 	ARTWORK_RATIO: 1.0,
 	ARTWORK_PADDING: 0.1,
 	WRAP_PADDING_FACTOR: 0.05,
-	SCALE_FACTOR_X: 1.27,
-	SCALE_FACTOR_Y: 1.27,
+	SCALE_FACTOR_X: 2.27,
+	SCALE_FACTOR_Y: 2.27,
 };
 
 const DEBUG_CONFIG = {
@@ -324,7 +324,7 @@ async function setup() {
 	// --- Audio-reactive uniforms (uncomment to activate) ---
 	audioKnob
 		.setSource("microphone") // or 'chime'
-		.map("energy", "zoom", "zoomOutAmount", 16.2, 2.2);
+		.map("energy", "zoom", "zoomOutAmount", 3.2, 12.2);
 
 	if (typeof createDownloadButton === "function") {
 		createDownloadButton();
