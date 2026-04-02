@@ -326,6 +326,10 @@ async function setup() {
 		.setSource("microphone") // or 'chime'
 		.map("energy", "zoom", "zoomOutAmount", 3.2, 12.2);
 
+	// --- MIDI knob smoothing ---
+	const initAngle = shaderEffects.effectsConfig.symmetry.rotationStartingAngle;
+	addKnobSmooth(32, "symmetry", "rotationStartingAngle", initAngle, 0.08);
+
 	if (typeof createDownloadButton === "function") {
 		createDownloadButton();
 	}
@@ -374,6 +378,7 @@ function setupMobileControls() {
 function customDraw() {
 	// Update audio-reactive uniforms each frame
 	if (typeof audioKnob !== "undefined") audioKnob.update();
+	updateKnobSmoothing();
 
 	const result = generator.next();
 

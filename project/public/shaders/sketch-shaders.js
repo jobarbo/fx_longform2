@@ -115,7 +115,7 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 6.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
@@ -200,7 +200,7 @@ class ShaderEffects {
 			pixelGrid: {
 				enabled: true,
 				gridCols: 420.0, // Number of columns
-				gridRows: 420.0, // Number of rows
+				gridRows: 20.0, // Number of rows
 				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
 				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
 				diffuse: 0.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
@@ -315,7 +315,7 @@ class ShaderEffects {
 				blurStart: 0.6, // Radial mode: starting radius (0-1, blur kicks in beyond this distance)
 				blurCrt: 1.0, // Radial mode: 0.0 = circular, 1.0 = super-ellipse (CRT shape)
 				blurCrtPower: 27.0, // Super-ellipse exponent (2.0 = ellipse, 4.0+ = more rectangular/CRT-like)
-				blurMin: 60.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
+				blurMin: 20.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
 				uniforms: {
 					uResolution: "[width, height]",
 					uBlurMode: "blurMode",
