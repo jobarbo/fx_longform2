@@ -10,7 +10,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: hsl(0, 0%, 100%);
+	background-color: hsl(0, 0%, 0%);
 }
 
 body {
@@ -145,4 +145,11 @@ canvas.p5Canvas {
 		display: flex;
 		flex-direction: row;
 	}
+}
+
+#download-button {
+	display: none;
+}
+#toggle-fps {
+	display: none;
 }

@@ -115,7 +115,7 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 6.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 0.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
@@ -196,38 +196,8 @@ class ShaderEffects {
 					uRotationAmplitude: "rotationAmplitude",
 				},
 			},
-
-			pixelGrid: {
-				enabled: true,
-				gridCols: 240.0, // Number of columns
-				gridRows: 30.0, // Number of rows
-				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
-				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
-				diffuse: 1.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
-				gapSize: 0.0, // Gap border fraction per side (0.0 = no gap)
-				gapBrightness: 1.0, // 0.0 = black gaps, 1.0 = cell color in gap area
-				uniforms: {
-					uResolution: "[width, height]",
-					uGridSize: "[gridCols, gridRows]",
-					uCellRatio: "cellRatio",
-					uMode: "mode",
-					uDiffuse: "diffuse",
-					uGapSize: "gapSize",
-					uGapBrightness: "gapBrightness",
-				},
-			},
-			chromatic: {
-				enabled: true,
-				amount: 0.0015,
-				timeMultiplier: 0.0,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 777.0",
-					uAmount: "amount",
-				},
-			},
 			pixelSort: {
-				enabled: false,
+				enabled: true,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.25,
 				sortAmount: 0.28,
@@ -247,6 +217,36 @@ class ShaderEffects {
 					uResolution: "[width, height]",
 				},
 			},
+			pixelGrid: {
+				enabled: true,
+				gridCols: 420.0, // Number of columns
+				gridRows: 20.0, // Number of rows
+				cellRatio: 100.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
+				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
+				diffuse: 1.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
+				gapSize: 0.0, // Gap border fraction per side (0.0 = no gap)
+				gapBrightness: 1.0, // 0.0 = black gaps, 1.0 = cell color in gap area
+				uniforms: {
+					uResolution: "[width, height]",
+					uGridSize: "[gridCols, gridRows]",
+					uCellRatio: "cellRatio",
+					uMode: "mode",
+					uDiffuse: "diffuse",
+					uGapSize: "gapSize",
+					uGapBrightness: "gapBrightness",
+				},
+			},
+			chromatic: {
+				enabled: false,
+				amount: 0.0015,
+				timeMultiplier: 0.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 777.0",
+					uAmount: "amount",
+				},
+			},
+
 			zoom: {
 				enabled: true,
 				zoomAmount: 0.0, // Static zoom level (1.0 = no zoom, 2.0 = 2x in, 0.5 = 2x out)
@@ -256,7 +256,7 @@ class ShaderEffects {
 				animateZoom: 1.0, // 0.0 = static, 1.0 = animate between out/in
 				easingMode: 4.0, // 0=sine, 1=linear, 2=ease-in, 3=ease-out, 4=ease-in-out, 5=bounce
 				center: [0.5, 0.5], // Zoom center point (normalized 0-1)
-				timeMultiplier: 1.0,
+				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uZoomSpeed: "zoomSpeed",
@@ -286,7 +286,7 @@ class ShaderEffects {
 				},
 			},
 			crtDisplay: {
-				enabled: true,
+				enabled: false,
 				brightness: 0.99, // Brightness boost (0.0 = none, higher = brighter)
 				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
 				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
@@ -308,9 +308,9 @@ class ShaderEffects {
 			blur: {
 				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
-				blurAmount: 60.0, // Blur radius/intensity in pixels
-				blurQuality: 122.0, // Sampling quality (1-8, higher = better but slower)
-				blurDirection: PI, // Angle in radians for directional mode
+				blurAmount: 6100.0, // Blur radius/intensity in pixels
+				blurQuality: 60.0, // Sampling quality (1-8, higher = better but slower)
+				blurDirection: 0, // Angle in radians for directional mode
 				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
 				blurStart: 0.6, // Radial mode: starting radius (0-1, blur kicks in beyond this distance)
 				blurCrt: 1.0, // Radial mode: 0.0 = circular, 1.0 = super-ellipse (CRT shape)

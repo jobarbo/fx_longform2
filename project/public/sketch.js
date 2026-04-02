@@ -4,7 +4,7 @@
 
 const CANVAS_CONFIG = {
 	BASE_WIDTH: 1000,
-	ARTWORK_RATIO: 1.6,
+	ARTWORK_RATIO: 1.0,
 	ARTWORK_PADDING: 0.1,
 	WRAP_PADDING_FACTOR: 0.05,
 	SCALE_FACTOR_X: 1.27,
@@ -26,7 +26,7 @@ const config = {
 	animation: {
 		maxFrames: null, // null = unlimited, number = limited (e.g. 25)
 		useFrameMode: true, // true = draw-loop style; false = cycle rendering
-		particleNum: 100,
+		particleNum: 200,
 	},
 
 	// Color System
@@ -321,6 +321,11 @@ async function setup() {
 
 	generator = createAnimationGenerator(animConfig);
 
+	// --- Audio-reactive uniforms (uncomment to activate) ---
+	audioKnob
+		.setSource("microphone") // or 'chime'
+		.map("energy", "zoom", "zoomOutAmount", 16.2, 2.2);
+
 	if (typeof createDownloadButton === "function") {
 		createDownloadButton();
 	}
@@ -367,6 +372,9 @@ function setupMobileControls() {
 }
 
 function customDraw() {
+	// Update audio-reactive uniforms each frame
+	if (typeof audioKnob !== "undefined") audioKnob.update();
+
 	const result = generator.next();
 
 	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
@@ -457,8 +465,9 @@ function initializeParticles(rseed, nseed) {
 	// Set background color based on complementary hue
 	const middleIndex = Math.floor(baseHSLPalette.length / 2);
 	const middleColor = baseHSLPalette[middleIndex];
-	const complementaryHue = (middleColor.h + 180) % 360;
-	const bgCol = color(complementaryHue, 100, 100);
+	//const complementaryHue = (middleColor.h + 180) % 360;
+	const complementaryHue = 35;
+	const bgCol = color(complementaryHue, 100, 0);
 	mainCanvas.background(bgCol);
 }
 
