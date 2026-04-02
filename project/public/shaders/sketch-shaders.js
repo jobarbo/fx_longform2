@@ -115,7 +115,7 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 0.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 6.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
@@ -196,31 +196,11 @@ class ShaderEffects {
 					uRotationAmplitude: "rotationAmplitude",
 				},
 			},
-			pixelSort: {
-				enabled: true,
-				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
-				threshold: 0.0,
-				sortAmount: 0.0,
-				sampleCount: 2.0, // Number of samples (8-64, higher = better quality but slower)
-				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
-				sortMode: 2.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 1.3,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 999.0",
-					uAngle: "angle",
-					uThreshold: "threshold",
-					uSortAmount: "sortAmount",
-					uSampleCount: "sampleCount",
-					uInvert: "invert",
-					uSortMode: "sortMode",
-					uResolution: "[width, height]",
-				},
-			},
+
 			pixelGrid: {
 				enabled: true,
 				gridCols: 420.0, // Number of columns
-				gridRows: 20.0, // Number of rows
+				gridRows: 420.0, // Number of rows
 				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
 				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
 				diffuse: 0.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
@@ -268,14 +248,34 @@ class ShaderEffects {
 					uCenter: "center",
 				},
 			},
-
+			pixelSort: {
+				enabled: true,
+				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
+				threshold: 0.0,
+				sortAmount: 0.0,
+				sampleCount: 2.0, // Number of samples (8-64, higher = better quality but slower)
+				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
+				sortMode: 2.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
+				timeMultiplier: 1.3,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 999.0",
+					uAngle: "angle",
+					uThreshold: "threshold",
+					uSortAmount: "sortAmount",
+					uSampleCount: "sampleCount",
+					uInvert: "invert",
+					uSortMode: "sortMode",
+					uResolution: "[width, height]",
+				},
+			},
 			crtWarp: {
 				enabled: true,
 				warpAmount: 0.74, // Barrel distortion (0.0 = flat, 0.3-0.5 = subtle TV, 1.0+ = heavy)
 				cornerRadius: 0.0, // Corner rounding (0.0 = square, 0.1 = slight rounding)
 				cornerSmooth: 0.0, // Softness of corner fade
-				borderColor: 1.0, // 0.0 = black outside, 1.0 = mirror/clamp
-				vignette: 0.5, // Edge darkening (0.0 = none, 1.0 = strong)
+				borderColor: 2.0, // 0.0 = black outside, 1.0 = clamp to edge, 2.0 = infinite mirror
+				vignette: 0.0, // Edge darkening (0.0 = none, 1.0 = strong)
 				uniforms: {
 					uResolution: "[width, height]",
 					uWarpAmount: "warpAmount",
@@ -308,8 +308,8 @@ class ShaderEffects {
 			blur: {
 				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
-				blurAmount: 1231100.0, // Blur radius/intensity in pixels
-				blurQuality: 30.0, // Sampling quality (1-8, higher = better but slower)
+				blurAmount: 123.0, // Blur radius/intensity in pixels
+				blurQuality: 120.0, // Sampling quality (1-8, higher = better but slower)
 				blurDirection: 0, // Angle in radians for directional mode
 				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
 				blurStart: 0.6, // Radial mode: starting radius (0-1, blur kicks in beyond this distance)

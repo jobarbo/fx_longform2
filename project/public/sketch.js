@@ -47,7 +47,7 @@ const config = {
 	lifecycle: {
 		enabled: true,
 		schedule: "sync", // "off" | "sync" | "random" | "window"
-		syncPeriod: 4,
+		syncPeriod: 2,
 		randomIntervalMin: 60,
 		randomIntervalMax: 180,
 		windowStart: 30,
@@ -467,7 +467,7 @@ function initializeParticles(rseed, nseed) {
 	const middleColor = baseHSLPalette[middleIndex];
 	//const complementaryHue = (middleColor.h + 180) % 360;
 	const complementaryHue = 35;
-	const bgCol = color(complementaryHue, 100, 0);
+	const bgCol = color(complementaryHue, 0, 2);
 	mainCanvas.background(bgCol);
 }
 
