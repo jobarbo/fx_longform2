@@ -6,8 +6,8 @@
 const ENABLE_SHADERS = true;
 
 // Padding constants - centralized for consistency
-const BASE_PADDING = 0.2; // Base padding for artwork bounds (used in INIT)
-const WRAP_PADDING_FACTOR = 0.1; // Wrap padding factor for particle movement bounds (used in Mover class)
+const BASE_PADDING = 0.02; // Base padding for artwork bounds (used in INIT)
+const WRAP_PADDING_FACTOR = 0.01; // Wrap padding factor for particle movement bounds (used in Mover class)
 
 // Animation configuration
 const maxFrames = 25;
@@ -109,7 +109,7 @@ async function setup() {
 	// Calculate optimal pixel density before creating canvases
 	// Set pixel density for all devices
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
-	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 2 : 3;
+	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
 
 	// canvas setup
 	// Take the smaller screen dimension to ensure it fits
