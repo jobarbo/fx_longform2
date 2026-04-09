@@ -7,8 +7,8 @@ const CANVAS_CONFIG = {
 	ARTWORK_RATIO: 1.0,
 	ARTWORK_PADDING: 0.1,
 	WRAP_PADDING_FACTOR: 0.05,
-	SCALE_FACTOR_X: 2.27,
-	SCALE_FACTOR_Y: 2.27,
+	SCALE_FACTOR_X: 1.0,
+	SCALE_FACTOR_Y: 1.0,
 };
 
 const DEBUG_CONFIG = {
@@ -24,43 +24,8 @@ const DEBUG_CONFIG = {
 const config = {
 	// Animation & Rendering
 	animation: {
-		maxFrames: null, // null = unlimited, number = limited (e.g. 25)
-		useFrameMode: true, // true = draw-loop style; false = cycle rendering
-		particleNum: 200,
-	},
-
-	// Color System
-	color: {
-		loop: true, // cycles through palette continuously
-		yoyo: true, // ping-pongs forward then backward
-		loopSpeed: 0.03, // cycle speed multiplier: 1 = default, 2 = twice as fast, 0.5 = half speed
-		loopSpeedOffset: 0.0, // random speed variance per particle
-		randomStart: false, // each particle begins at a random point in the palette cycle
-	},
-
-	// Particle Behavior
-	particles: {
-		bordered: true,
-	},
-
-	// Particle Lifecycle
-	lifecycle: {
-		enabled: true,
-		schedule: "sync", // "off" | "sync" | "random" | "window"
-		syncPeriod: 2,
-		randomIntervalMin: 60,
-		randomIntervalMax: 180,
-		windowStart: 30,
-		windowEnd: 90,
-		resetPosition: "spawn", // "spawn" | "random"
-		cullOnReset: false,
-	},
-
-	// Noise & Scaling
-	noise: {
-		scaleBase: [0.001, 0.002, 0.003],
-		offsetBase: [1, 2, 3],
-		amplitudeBase: [1, 2, 3],
+		maxFrames: null,
+		useFrameMode: true,
 	},
 
 	// UI & Debug
@@ -93,21 +58,6 @@ let swatchesLoaded = false;
 // Canvas & Rendering
 let mainCanvas = null;
 let shaderCanvas = null;
-
-// Noise seeds & scaling
-let rseed = 0;
-let nseed = 0;
-let scl1 = 0;
-let scl2 = 0;
-let scl3 = 0;
-let ang1 = 0;
-let ang2 = 0;
-
-// Bounds
-let xMin = 0;
-let xMax = 1;
-let yMin = 0;
-let yMax = 1;
 
 // Display dimensions
 let ARTWORK_RATIO = 1.6;
@@ -275,20 +225,15 @@ async function setup() {
 	mainCanvas.drawingContext.globalCompositeOperation = "source-over";
 
 	// Initialize random seeds from fxrand for deterministic behavior
-	let mainRandomSeed = fxrand() * 10000;
-	let mainNoiseSeed = fxrand() * 10000;
-	rseed = fxrand() * 10000;
-	nseed = fxrand() * 10000;
-
-	randomSeed(mainRandomSeed);
-	noiseSeed(mainNoiseSeed);
+	randomSeed(fxrand() * 10000);
+	noiseSeed(fxrand() * 10000);
 
 	// Apply scale transformation
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(CANVAS_CONFIG.SCALE_FACTOR_X, CANVAS_CONFIG.SCALE_FACTOR_Y);
 	mainCanvas.translate(-width / 2, -height / 2);
 
-	initializeParticles(rseed, nseed);
+	initializeParticles();
 
 	// Create animation generator with configuration
 	const animConfig = {
@@ -376,6 +321,7 @@ function setupMobileControls() {
 }
 
 function customDraw() {
+	mainCanvas.background(0, 0, 100);
 	// Update audio-reactive uniforms each frame
 	if (typeof audioKnob !== "undefined") audioKnob.update();
 	updateKnobSmoothing();
@@ -402,78 +348,19 @@ function customDraw() {
 	}
 }
 
-function initializeParticles(rseed, nseed) {
+function initializeParticles() {
 	movers = [];
 
 	// Build HSL palette directly from hex array
 	const hexPalette = getPalette("hex_palette");
 	baseHSLPalette = hexPalette.map(hexToHsl);
-	currentPaletteName = "hex_palette";
 
-	// Scale noise values based on MULTIPLIER
-	scl1 = config.noise.scaleBase[0] / MULTIPLIER;
-	scl2 = config.noise.scaleBase[1] / MULTIPLIER;
-	scl3 = config.noise.scaleBase[2] / MULTIPLIER;
+	// Single rect in center
+	const cx = mainCanvas.width / 2;
+	const cy = mainCanvas.height / 2;
+	const rectSize = min(mainCanvas.width, mainCanvas.height) * 0.25;
 
-	const sclOffset1 = config.noise.offsetBase[0];
-	const sclOffset2 = config.noise.offsetBase[1];
-	const sclOffset3 = config.noise.offsetBase[2];
-
-	const amplitude1 = config.noise.amplitudeBase[0] * MULTIPLIER;
-	const amplitude2 = config.noise.amplitudeBase[1] * MULTIPLIER;
-	const amplitude3 = config.noise.amplitudeBase[2] * MULTIPLIER;
-
-	// Simple padding calculation
-	const padding = CANVAS_CONFIG.ARTWORK_PADDING;
-	xMin = padding;
-	xMax = 1 - padding;
-	yMin = padding;
-	yMax = 1 - padding;
-
-	// Create particles
-	const particleCount = config.animation.particleNum;
-	for (let i = 0; i < particleCount; i++) {
-		const x = random(xMin, xMax) * width;
-		const y = random(yMin, yMax) * height;
-
-		movers.push(
-			new Mover(
-				x,
-				y,
-				scl1,
-				scl2,
-				scl3,
-				sclOffset1,
-				sclOffset2,
-				sclOffset3,
-				amplitude1,
-				amplitude2,
-				xMin,
-				xMax,
-				yMin,
-				yMax,
-				config.particles.bordered,
-				rseed,
-				nseed,
-				config.color.loop,
-				config.color.yoyo,
-				config.color.loopSpeed,
-				config.color.loopSpeedOffset,
-				config.color.randomStart,
-				baseHSLPalette,
-				config.lifecycle,
-				config.animation.maxFrames,
-			),
-		);
-	}
-
-	// Set background color based on complementary hue
-	const middleIndex = Math.floor(baseHSLPalette.length / 2);
-	const middleColor = baseHSLPalette[middleIndex];
-	//const complementaryHue = (middleColor.h + 180) % 360;
-	const complementaryHue = 35;
-	const bgCol = color(complementaryHue, 0, 2);
-	mainCanvas.background(bgCol);
+	movers.push(new Mover(cx, cy, rectSize, baseHSLPalette));
 }
 
 function keyPressed() {
