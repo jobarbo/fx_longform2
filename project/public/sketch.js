@@ -26,7 +26,7 @@ const config = {
 	animation: {
 		maxFrames: null, // null = unlimited, number = limited (e.g. 25)
 		useFrameMode: true, // true = draw-loop style; false = cycle rendering
-		particleNum: 200,
+		particleNum: 20,
 	},
 
 	// Color System
@@ -47,7 +47,7 @@ const config = {
 	lifecycle: {
 		enabled: true,
 		schedule: "sync", // "off" | "sync" | "random" | "window"
-		syncPeriod: 2,
+		syncPeriod: 200,
 		randomIntervalMin: 60,
 		randomIntervalMax: 180,
 		windowStart: 30,
@@ -322,9 +322,8 @@ async function setup() {
 	generator = createAnimationGenerator(animConfig);
 
 	// --- Audio-reactive uniforms (uncomment to activate) ---
-	audioKnob
-		.setSource("microphone") // or 'chime'
-		.map("energy", "zoom", "zoomOutAmount", 3.2, 12.2);
+	audioKnob.setSource("microphone"); // or 'chime'
+	audioKnob.map("energy", "zoom", "zoomOutAmount", 2.0, 2.8);
 
 	// --- MIDI knob smoothing ---
 	const initAngle = shaderEffects.effectsConfig.symmetry.rotationStartingAngle;
@@ -472,7 +471,7 @@ function initializeParticles(rseed, nseed) {
 	const middleColor = baseHSLPalette[middleIndex];
 	//const complementaryHue = (middleColor.h + 180) % 360;
 	const complementaryHue = 35;
-	const bgCol = color(complementaryHue, 0, 2);
+	const bgCol = color(complementaryHue, 0);
 	mainCanvas.background(bgCol);
 }
 

@@ -41,7 +41,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([30]) * MULTIPLIER;
+		this.s = random([20]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -52,8 +52,8 @@ class Mover {
 		this.amplitude2 = amplitude2;
 		this.rseed = rseed;
 		this.nseed = nseed;
-		this.xRandDivider = 0.01;
-		this.yRandDivider = 0.01;
+		this.xRandDivider = 0.2;
+		this.yRandDivider = 0.2;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperOffset = 0.0;
