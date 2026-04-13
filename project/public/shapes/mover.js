@@ -10,20 +10,27 @@ class Mover {
 	}
 
 	show(canvas) {
-		const drawingCtx = canvas ? canvas.drawingContext : drawingContext;
-		const { h, s, l } = this.currentColor;
+		const {h, s, l} = this.currentColor;
+		canvas.colorMode(HSL);
 
-		drawingCtx.save();
-		drawingCtx.translate(this.x, this.y);
-		drawingCtx.rotate(this.angle);
-		drawingCtx.fillStyle = `hsl(${h}, ${s}%, ${l}%)`;
-		drawingCtx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
-		drawingCtx.restore();
+		canvas.rectMode(CENTER);
+
+		canvas.translate(width / 2, height / 2);
+		canvas.rotate(this.angle / 4);
+		canvas.fill(h, s, l);
+		canvas.rect(0, 0, this.size, this.size);
+		canvas.resetMatrix();
+
+		canvas.translate(width / 2, height / 2);
+		canvas.rotate(this.angle);
+		canvas.fill(10, 100, 50, 100);
+		canvas.rect(0, 0, this.size / 4, this.size / 4);
+		canvas.resetMatrix();
 	}
 
-	move(frameCount, maxFrames) {
-		this.angle += 0.02;
-		this.colorIndex = Math.floor(frameCount * 0.5) % this.palette.length;
+	move(frameCount) {
+		this.angle += 0.2;
+		this.colorIndex = Math.floor(frameCount * 0.05) % this.palette.length;
 		this.currentColor = this.palette[this.colorIndex];
 	}
 }

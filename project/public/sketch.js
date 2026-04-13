@@ -40,10 +40,9 @@ const config = {
 
 // Lifecycle & Animation
 let features = "";
-let startTime = null;
 let elapsedTime = 0;
 let executionTimer = new ExecutionTimer();
-let generator = null;
+let sketchFrame = 0;
 
 // Particle system
 let movers = [];
@@ -175,7 +174,6 @@ function preload() {
 async function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
-	startTime = frameCount;
 	executionTimer.start();
 
 	// Reset the random seed to ensure consistency
@@ -235,41 +233,10 @@ async function setup() {
 
 	initializeParticles();
 
-	// Create animation generator with configuration
-	const animConfig = {
-		items: movers,
-		maxFrames: config.animation.maxFrames,
-		startTime: startTime,
-		frameMode: config.animation.useFrameMode,
-		currentFrame: 0,
-		renderItem: (mover, currentFrame) => {
-			if (currentFrame > -1) {
-				mover.show(mainCanvas);
-			}
-		},
-		moveItem: (mover, currentFrame) => {
-			mover.move(currentFrame, config.animation.maxFrames);
-		},
-		onComplete: () => {
-			executionTimer.stop().logElapsedTime("Sketch completed in");
-			if (typeof shaderEffects !== "undefined" && shaderCanvas) {
-				shaderEffects.setParticleAnimationComplete(true);
-			}
-			$fx.preview();
-			document.complete = true;
-
-			if (typeof createDownloadButton === "function") {
-				createDownloadButton();
-			}
-		},
-	};
-
-	generator = createAnimationGenerator(animConfig);
-
 	// --- Audio-reactive uniforms (uncomment to activate) ---
 	audioKnob
 		.setSource("microphone") // or 'chime'
-		.map("energy", "zoom", "zoomOutAmount", 3.2, 12.2);
+		.map("bass", "zoom", "zoomOutAmount", 1.2, 4.2);
 
 	// --- MIDI knob smoothing ---
 	const initAngle = shaderEffects.effectsConfig.symmetry.rotationStartingAngle;
@@ -279,7 +246,6 @@ async function setup() {
 		createDownloadButton();
 	}
 
-	customDraw();
 	updateDebugOverlay();
 	setupMobileControls();
 
@@ -320,18 +286,38 @@ function setupMobileControls() {
 	}
 }
 
-function customDraw() {
-	mainCanvas.background(0, 0, 100);
-	// Update audio-reactive uniforms each frame
+function draw() {
+	mainCanvas.background(0, 0, 1);
 	if (typeof audioKnob !== "undefined") audioKnob.update();
 	updateKnobSmoothing();
 
-	const result = generator.next();
+	const maxFrames = config.animation.maxFrames;
+
+	if (maxFrames == null || sketchFrame < maxFrames) {
+		for (let i = 0; i < movers.length; i++) {
+			movers[i].show(mainCanvas);
+			movers[i].move(sketchFrame, maxFrames);
+		}
+		sketchFrame++;
+		if (maxFrames != null && sketchFrame >= maxFrames) {
+			executionTimer.stop().logElapsedTime("Sketch completed in");
+			if (typeof shaderEffects !== "undefined" && shaderCanvas) {
+				shaderEffects.setParticleAnimationComplete(true);
+			}
+			$fx.preview();
+			document.complete = true;
+			if (typeof createDownloadButton === "function") {
+				createDownloadButton();
+			}
+		}
+	}
+
+	const isSketchComplete = maxFrames != null && sketchFrame >= maxFrames;
 
 	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
-		const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
-		if (shouldContinue) {
-			requestAnimationFrame(customDraw);
+		const shouldContinue = shaderEffects.renderFrame(isSketchComplete, null);
+		if (!shouldContinue) {
+			noLoop();
 		}
 	} else {
 		clear();
@@ -342,8 +328,8 @@ function customDraw() {
 			shaderEffects.drawFPS();
 		}
 
-		if (!result.done) {
-			requestAnimationFrame(customDraw);
+		if (isSketchComplete) {
+			noLoop();
 		}
 	}
 }
@@ -358,7 +344,7 @@ function initializeParticles() {
 	// Single rect in center
 	const cx = mainCanvas.width / 2;
 	const cy = mainCanvas.height / 2;
-	const rectSize = min(mainCanvas.width, mainCanvas.height) * 0.25;
+	const rectSize = min(mainCanvas.width, mainCanvas.height) * 0.425;
 
 	movers.push(new Mover(cx, cy, rectSize, baseHSLPalette));
 }

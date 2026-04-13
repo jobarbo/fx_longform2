@@ -20,8 +20,8 @@
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
-		this.continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
-		this.applyShadersDuringSketch = false; // Set to true to apply shaders while sketching
+		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
+		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Frame rate for shader animation
 
 		// Animation state
@@ -115,15 +115,15 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
 				translationSpeed: 0.005, // Speed of horizontal/vertical movement
-				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
-				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
-				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
+				translationPhaseX: -0.5, // Accumulated phase for X translation (prevents jumps)
+				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
 				rotationSpeed: 0.81, // Speed of rotation
 				rotationOscillationSpeed: 0.5, // Speed of oscillation (controls how fast it alternates between positive/negative)
 				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
@@ -155,16 +155,16 @@ class ShaderEffects {
 				},
 			},
 			symmetry2: {
-				enabled: false,
+				enabled: true,
 				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
 				translationSpeed: 1.5, // Speed of horizontal/vertical movement
-				translationMode: 1.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
-				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
-				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
+				translationPhaseX: -0.5, // Accumulated phase for X translation (prevents jumps)
+				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
 				rotationSpeed: 0.0, // Speed of rotation
 				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
 				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
@@ -199,8 +199,8 @@ class ShaderEffects {
 
 			pixelGrid: {
 				enabled: true,
-				gridCols: 420.0, // Number of columns
-				gridRows: 20.0, // Number of rows
+				gridCols: 40.0, // Number of columns
+				gridRows: 40.0, // Number of rows
 				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
 				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
 				diffuse: 0.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
@@ -287,10 +287,10 @@ class ShaderEffects {
 			},
 			crtDisplay: {
 				enabled: true,
-				brightness: 0.99, // Brightness boost (0.0 = none, higher = brighter)
-				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
-				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
-				rgbOpacity: 0.6, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
+				brightness: 0.0, // Brightness boost (0.0 = none, higher = brighter)
+				cellSize: 1.0, // Size of CRT cells/pixels (2-10 typical range)
+				gapOpacity: 0.0, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
+				rgbOpacity: 0.0, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
 				dotRadius: 0.8, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
 				dotFalloff: 0.6, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
 				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
