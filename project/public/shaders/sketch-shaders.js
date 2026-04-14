@@ -269,42 +269,6 @@ class ShaderEffects {
 					uResolution: "[width, height]",
 				},
 			},
-			crtWarp: {
-				enabled: true,
-				warpAmount: 0.74, // Barrel distortion (0.0 = flat, 0.3-0.5 = subtle TV, 1.0+ = heavy)
-				cornerRadius: 0.0, // Corner rounding (0.0 = square, 0.1 = slight rounding)
-				cornerSmooth: 0.0, // Softness of corner fade
-				borderColor: 2.0, // 0.0 = black outside, 1.0 = clamp to edge, 2.0 = infinite mirror
-				vignette: 0.0, // Edge darkening (0.0 = none, 1.0 = strong)
-				uniforms: {
-					uResolution: "[width, height]",
-					uWarpAmount: "warpAmount",
-					uCornerRadius: "cornerRadius",
-					uCornerSmooth: "cornerSmooth",
-					uBorderColor: "borderColor",
-					uVignette: "vignette",
-				},
-			},
-			crtDisplay: {
-				enabled: true,
-				brightness: 0.0, // Brightness boost (0.0 = none, higher = brighter)
-				cellSize: 1.0, // Size of CRT cells/pixels (2-10 typical range)
-				gapOpacity: 0.0, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
-				rgbOpacity: 0.0, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
-				dotRadius: 0.8, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
-				dotFalloff: 0.6, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
-				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
-				uniforms: {
-					uResolution: "[width, height]",
-					uBrightness: "brightness",
-					uCellSize: "cellSize",
-					uGapOpacity: "gapOpacity",
-					uRgbOpacity: "rgbOpacity",
-					uDotRadius: "dotRadius",
-					uDotFalloff: "dotFalloff",
-					uFilterMode: "filterMode",
-				},
-			},
 			glitchDisplacement: {
 				enabled: true,
 				intensity: 12.0, // Horizontal displacement in pixels
@@ -321,6 +285,44 @@ class ShaderEffects {
 					uThreshold: "threshold",
 				},
 			},
+			crtDisplay: {
+				enabled: true,
+				brightness: 0.4, // Brightness boost (0.0 = none, higher = brighter)
+				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
+				gapOpacity: 0.5, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
+				rgbOpacity: 0.0, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
+				dotRadius: 0.08, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
+				dotFalloff: 0.99, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
+				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
+				uniforms: {
+					uResolution: "[width, height]",
+					uBrightness: "brightness",
+					uCellSize: "cellSize",
+					uGapOpacity: "gapOpacity",
+					uRgbOpacity: "rgbOpacity",
+					uDotRadius: "dotRadius",
+					uDotFalloff: "dotFalloff",
+					uFilterMode: "filterMode",
+				},
+			},
+
+			crtWarp: {
+				enabled: true,
+				warpAmount: 0.74, // Barrel distortion (0.0 = flat, 0.3-0.5 = subtle TV, 1.0+ = heavy)
+				cornerRadius: 0.0, // Corner rounding (0.0 = square, 0.1 = slight rounding)
+				cornerSmooth: 0.0, // Softness of corner fade
+				borderColor: 2.0, // 0.0 = black outside, 1.0 = clamp to edge, 2.0 = infinite mirror
+				vignette: 0.0, // Edge darkening (0.0 = none, 1.0 = strong)
+				uniforms: {
+					uResolution: "[width, height]",
+					uWarpAmount: "warpAmount",
+					uCornerRadius: "cornerRadius",
+					uCornerSmooth: "cornerSmooth",
+					uBorderColor: "borderColor",
+					uVignette: "vignette",
+				},
+			},
+
 			blur: {
 				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
