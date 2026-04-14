@@ -305,6 +305,22 @@ class ShaderEffects {
 					uFilterMode: "filterMode",
 				},
 			},
+			glitchDisplacement: {
+				enabled: true,
+				intensity: 12.0, // Horizontal displacement in pixels
+				lineDensity: 214.0, // Number of scanline bands
+				speed: 21.0, // How quickly scanline offsets re-sample
+				threshold: 0.89, // Fraction of lines affected [0..1]
+				timeMultiplier: 1.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uResolution: "[width, height]",
+					uIntensity: "intensity",
+					uLineDensity: "lineDensity",
+					uSpeed: "speed",
+					uThreshold: "threshold",
+				},
+			},
 			blur: {
 				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
@@ -360,6 +376,7 @@ class ShaderEffects {
 		// Load shaders - customize this list for your sketch
 		shaderManager.loadShader("copy", "copy/fragment.frag", "copy/vertex.vert");
 		shaderManager.loadShader("deform", "deform/fragment.frag", "deform/vertex.vert");
+		shaderManager.loadShader("glitchDisplacement", "glitch-displacement/fragment.frag", "glitch-displacement/vertex.vert");
 		shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag", "chromatic-aberration/vertex.vert");
 		shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert");
 		shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
