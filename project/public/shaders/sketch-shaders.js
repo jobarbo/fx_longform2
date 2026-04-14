@@ -20,8 +20,8 @@
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
-		this.continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
-		this.applyShadersDuringSketch = false; // Set to true to apply shaders while sketching
+		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
+		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Frame rate for shader animation
 
 		// Animation state
@@ -191,15 +191,98 @@ class ShaderEffects {
 					uAmount: "amount",
 				},
 			},
-			crtDisplay: {
+
+			loaderGlitch: {
+				enabled: false, // Enable to show glitch loader animation
+				timeMultiplier: 0.3, // Speed of block movement
+				uniforms: {
+					uProgress: "loadingProgress", // Progress from 0.0 (0%) to 1.0 (100%)
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 8888.0",
+					uResolution: "[width, height]",
+				},
+			},
+
+			zoom: {
+				enabled: true,
+				timeMultiplier: 1.0,
+				zoomSpeed: 1.0,
+				zoomAmount: 0.91,
+				zoomOutAmount: 0.85,
+				zoomInAmount: 1.15,
+				animateZoom: 0.0,
+				center: [0.5, 0.5],
+				easingMode: 0.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uZoomSpeed: "zoomSpeed",
+					uZoomAmount: "zoomAmount",
+					uZoomOutAmount: "zoomOutAmount",
+					uZoomInAmount: "zoomInAmount",
+					uAnimateZoom: "animateZoom",
+					uCenter: "center",
+					uEasingMode: "easingMode",
+				},
+			},
+
+			pixelGrid: {
 				enabled: false,
-				brightness: 0.15, // Brightness boost (0.0 = none, higher = brighter)
-				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
-				gapOpacity: 0.6, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
-				rgbOpacity: 0.5, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
-				dotRadius: 0.5, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
-				dotFalloff: 0.99, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
-				filterMode: 1.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
+				gridSize: [422.0, 422.0],
+				cellRatio: 0.1,
+				gridMode: 1.0,
+				diffuse: 1.5,
+				gapSize: 0.0,
+				gapBrightness: 0.7,
+				uniforms: {
+					uResolution: "[width, height]",
+					uGridSize: "gridSize",
+					uCellRatio: "cellRatio",
+					uMode: "gridMode",
+					uDiffuse: "diffuse",
+					uGapSize: "gapSize",
+					uGapBrightness: "gapBrightness",
+				},
+			},
+
+			dither: {
+				enabled: true,
+				ditherMode: 0.0, // 0=bayer4, 1=bayer8, 2=hash, 3=line, 4=clustered
+				levels: 1.0,
+				mix: 1.0,
+				strength: 1.0,
+				scale: 1.0,
+				colorMode: 1.0, // 0=luma quantize, 1=per-channel quantize
+				uniforms: {
+					uResolution: "[width, height]",
+					uDitherMode: "ditherMode",
+					uLevels: "levels",
+					uMix: "mix",
+					uStrength: "strength",
+					uScale: "scale",
+					uColorMode: "colorMode",
+					uSeed: "shaderSeed + 4321.0",
+				},
+			},
+			colorQuantize: {
+				enabled: true,
+				levels: 16.0,
+				mix: 1.0,
+				uniforms: {
+					uLevels: "levels",
+					uMix: "mix",
+				},
+			},
+
+			crtDisplay: {
+				enabled: true,
+				brightness: 0.95,
+				cellSize: 3.0,
+				gapOpacity: 0.9,
+				rgbOpacity: 0.0,
+				rgbGain: [1.0, 1.0, 1.0],
+				dotRadius: 0.41,
+				dotFalloff: 0.4,
+				filterMode: 1.0,
 				uniforms: {
 					uResolution: "[width, height]",
 					uBrightness: "brightness",
@@ -211,14 +294,67 @@ class ShaderEffects {
 					uFilterMode: "filterMode",
 				},
 			},
-			loaderGlitch: {
-				enabled: false, // Enable to show glitch loader animation
-				timeMultiplier: 0.3, // Speed of block movement
+			blur: {
+				enabled: true,
+				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
+				blurAmount: 123.0, // Blur radius/intensity in pixels
+				blurQuality: 120.0, // Sampling quality (1-8, higher = better but slower)
+				blurDirection: 0, // Angle in radians for directional mode
+				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
+				blurStart: 0.6, // Radial mode: starting radius (0-1, blur kicks in beyond this distance)
+				blurCrt: 1.0, // Radial mode: 0.0 = circular, 1.0 = super-ellipse (CRT shape)
+				blurCrtPower: 27.0, // Super-ellipse exponent (2.0 = ellipse, 4.0+ = more rectangular/CRT-like)
+				blurMin: 20.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
 				uniforms: {
-					uProgress: "loadingProgress", // Progress from 0.0 (0%) to 1.0 (100%)
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 8888.0",
 					uResolution: "[width, height]",
+					uBlurMode: "blurMode",
+					uBlurAmount: "blurAmount",
+					uBlurQuality: "blurQuality",
+					uBlurDirection: "blurDirection",
+					uBlurCenter: "blurCenter",
+					uBlurStart: "blurStart",
+					uBlurCrt: "blurCrt",
+					uBlurCrtPower: "blurCrtPower",
+					uBlurMin: "blurMin",
+				},
+			},
+
+			crtWarp: {
+				enabled: true,
+				warpAmount: 0.25,
+				aspectCorrect: 1.0,
+				borderColor: 2.0,
+				vignette: 0.0,
+				cornerSmooth: 0.015,
+				cornerRadius: 0.2,
+				boundsInset: 0.1,
+				rgbGain: [1.0, 1.0, 1.0],
+				uniforms: {
+					uResolution: "[width, height]",
+					uWarpAmount: "warpAmount",
+					uAspectCorrect: "aspectCorrect",
+					uCornerRadius: "cornerRadius",
+					uCornerSmooth: "cornerSmooth",
+					uBorderColor: "borderColor",
+					uVignette: "vignette",
+					uBoundsInset: "boundsInset",
+					uRgbGain: "rgbGain",
+				},
+			},
+			glitchDisplacement: {
+				enabled: true,
+				timeMultiplier: 21.0,
+				intensity: 6.6,
+				lineDensity: 12310.0,
+				speed: 12.0,
+				threshold: 0.85,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uResolution: "[width, height]",
+					uIntensity: "intensity",
+					uLineDensity: "lineDensity",
+					uSpeed: "speed",
+					uThreshold: "threshold",
 				},
 			},
 		};
@@ -263,6 +399,13 @@ class ShaderEffects {
 		shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert");
 		shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert");
 		shaderManager.loadShader("loaderGlitch", "loader-glitch/fragment.frag", "loader-glitch/vertex.vert");
+		shaderManager.loadShader("zoom", "zoom/fragment.frag", "zoom/vertex.vert");
+		shaderManager.loadShader("pixelGrid", "pixel-grid/fragment.frag", "pixel-grid/vertex.vert");
+		shaderManager.loadShader("colorQuantize", "color-quantize/fragment.frag", "color-quantize/vertex.vert");
+		shaderManager.loadShader("dither", "dither/fragment.frag", "dither/vertex.vert");
+		shaderManager.loadShader("crtWarp", "crt-warp/fragment.frag", "crt-warp/vertex.vert");
+		shaderManager.loadShader("blur", "blur/fragment.frag", "blur/vertex.vert");
+		shaderManager.loadShader("glitchDisplacement", "glitch-displacement/fragment.frag", "glitch-displacement/vertex.vert");
 
 		this.shaderManager = shaderManager;
 
