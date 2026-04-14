@@ -43,6 +43,7 @@ let features = "";
 let elapsedTime = 0;
 let executionTimer = new ExecutionTimer();
 let sketchFrame = 0;
+let hasDisplayedFirstFrame = false;
 
 // Particle system
 let movers = [];
@@ -331,6 +332,12 @@ function draw() {
 		if (isSketchComplete) {
 			noLoop();
 		}
+	}
+
+	// Fade the previous live-reload frame once the new sketch is visibly rendering.
+	if (!hasDisplayedFirstFrame) {
+		hasDisplayedFirstFrame = true;
+		window.liveReloadTransition?.onSketchReady?.();
 	}
 }
 

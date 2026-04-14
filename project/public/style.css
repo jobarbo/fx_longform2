@@ -26,6 +26,32 @@ body {
 	--hContent: var(--min);
 	--wContent: var(--min);
 }
+
+.reload-transition {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	z-index: 10000;
+	opacity: 1;
+}
+
+.reload-transition--fade-out {
+	opacity: 0;
+	transition: opacity 700ms ease;
+}
+
+.reload-transition__image {
+	display: block;
+	height: auto;
+	width: auto;
+	max-width: var(--wContent);
+	max-height: min(var(--hContent), 100vh);
+	image-rendering: auto;
+}
+
 canvas.p5Canvas {
 	display: block;
 	padding-left: 0;
