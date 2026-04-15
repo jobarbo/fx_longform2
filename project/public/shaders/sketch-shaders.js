@@ -181,16 +181,6 @@ class ShaderEffects {
 					uRotationNoiseScale: "rotationNoiseScale",
 				},
 			},
-			chromatic: {
-				enabled: false,
-				amount: 0.0015,
-				timeMultiplier: 0.0,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 777.0",
-					uAmount: "amount",
-				},
-			},
 
 			loaderGlitch: {
 				enabled: false, // Enable to show glitch loader animation
@@ -207,7 +197,7 @@ class ShaderEffects {
 				enabled: true,
 				timeMultiplier: 1.0,
 				zoomSpeed: 1.0,
-				zoomAmount: 0.91,
+				zoomAmount: 0.95,
 				zoomOutAmount: 0.85,
 				zoomInAmount: 1.15,
 				animateZoom: 0.0,
@@ -265,24 +255,34 @@ class ShaderEffects {
 			},
 			colorQuantize: {
 				enabled: true,
-				levels: 16.0,
+				levels: 3.0,
 				mix: 1.0,
 				uniforms: {
 					uLevels: "levels",
 					uMix: "mix",
 				},
 			},
+			chromatic: {
+				enabled: true,
+				amount: 0.00015,
+				timeMultiplier: 0.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 777.0",
+					uAmount: "amount",
+				},
+			},
 
 			crtDisplay: {
 				enabled: true,
-				brightness: 0.95,
-				cellSize: 3.0,
-				gapOpacity: 0.9,
+				brightness: 0.0,
+				cellSize: 2.0,
+				gapOpacity: 0.0,
 				rgbOpacity: 0.0,
 				rgbGain: [1.0, 1.0, 1.0],
 				dotRadius: 0.41,
 				dotFalloff: 0.4,
-				filterMode: 1.0,
+				filterMode: 0.0,
 				uniforms: {
 					uResolution: "[width, height]",
 					uBrightness: "brightness",
@@ -297,14 +297,14 @@ class ShaderEffects {
 			blur: {
 				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
-				blurAmount: 123.0, // Blur radius/intensity in pixels
+				blurAmount: 43.0, // Blur radius/intensity in pixels
 				blurQuality: 120.0, // Sampling quality (1-8, higher = better but slower)
 				blurDirection: 0, // Angle in radians for directional mode
 				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
 				blurStart: 0.6, // Radial mode: starting radius (0-1, blur kicks in beyond this distance)
 				blurCrt: 1.0, // Radial mode: 0.0 = circular, 1.0 = super-ellipse (CRT shape)
 				blurCrtPower: 27.0, // Super-ellipse exponent (2.0 = ellipse, 4.0+ = more rectangular/CRT-like)
-				blurMin: 20.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
+				blurMin: 0.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
 				uniforms: {
 					uResolution: "[width, height]",
 					uBlurMode: "blurMode",
@@ -322,12 +322,12 @@ class ShaderEffects {
 			crtWarp: {
 				enabled: true,
 				warpAmount: 0.25,
-				aspectCorrect: 1.0,
+				aspectCorrect: 0.0,
 				borderColor: 2.0,
-				vignette: 0.0,
+				vignette: 0.5,
 				cornerSmooth: 0.015,
-				cornerRadius: 0.2,
-				boundsInset: 0.1,
+				cornerRadius: 0.1,
+				boundsInset: 0.075,
 				rgbGain: [1.0, 1.0, 1.0],
 				uniforms: {
 					uResolution: "[width, height]",
@@ -346,7 +346,7 @@ class ShaderEffects {
 				timeMultiplier: 21.0,
 				intensity: 6.6,
 				lineDensity: 12310.0,
-				speed: 12.0,
+				speed: 100.0,
 				threshold: 0.85,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
