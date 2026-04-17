@@ -298,7 +298,7 @@ class ShaderEffects {
 		this.mainCanvas = mainCanvas;
 		this.shaderCanvas = shaderCanvas;
 
-		// Initialize shader seed with fxhash if available
+		// Initialize shader seed from seeded PRNG when available
 		if (typeof fxrand === "function") {
 			this.shaderSeed = fxrand() * 10000;
 		} else {
