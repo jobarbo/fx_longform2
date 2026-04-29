@@ -323,6 +323,15 @@ class ShaderEffects {
 				},
 			},
 
+			wave: {
+				enabled: true,
+				timeMultiplier: 1.0,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uResolution: "[width, height]",
+				},
+			},
+
 			blur: {
 				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
@@ -390,6 +399,7 @@ class ShaderEffects {
 		shaderManager.loadShader("blur", "blur/fragment.frag", "blur/vertex.vert");
 		shaderManager.loadShader("zoom", "zoom/fragment.frag", "zoom/vertex.vert");
 		shaderManager.loadShader("crtWarp", "crt-warp/fragment.frag", "crt-warp/vertex.vert");
+		shaderManager.loadShader("wave", "wave/fragment.frag", "wave/vertex.frag");
 
 		this.shaderManager = shaderManager;
 
