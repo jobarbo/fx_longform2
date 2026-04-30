@@ -12,7 +12,7 @@ const CANVAS_CONFIG = {
 };
 
 const DEBUG_CONFIG = {
-	DEFAULT_PIXEL_DENSITY_DESKTOP: 2,
+	DEFAULT_PIXEL_DENSITY_DESKTOP: 1,
 	DEFAULT_PIXEL_DENSITY_MOBILE: 1,
 	HELP_TEXT: "Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)",
 };
@@ -172,7 +172,7 @@ function preload() {
 	}
 }
 
-async function setup() {
+function setup() {
 	console.log(features);
 	features = $fx.getFeatures();
 	executionTimer.start();
@@ -288,7 +288,7 @@ function setupMobileControls() {
 }
 
 function draw() {
-	mainCanvas.background(0, 0, 1);
+	mainCanvas.background(190, 100, 10, 100);
 	if (typeof audioKnob !== "undefined") audioKnob.update();
 	updateKnobSmoothing();
 

@@ -106,10 +106,43 @@ class ShaderEffects {
 				enabled: false,
 				amount: 0.1,
 				timeMultiplier: 0.0,
+				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
+				thresholdMinX: 0.0, // left [0..1]
+				thresholdMaxX: 1.0, // right [0..1]
+				thresholdMinY: 0.0, // bottom [0..1]
+				thresholdMaxY: 1.0, // top [0..1]
+				thresholdSmooth: 0.001, // soft edge at boundaries (0 = hard edge)
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 345.0",
 					uAmount: "amount",
+					uThresholdMinX: "thresholdMinX",
+					uThresholdMaxX: "thresholdMaxX",
+					uThresholdMinY: "thresholdMinY",
+					uThresholdMaxY: "thresholdMaxY",
+					uThresholdSmooth: "thresholdSmooth",
+				},
+			},
+
+			pixelSort: {
+				enabled: true,
+				angle: 0.0, // 0x = vertical, Math.PI/2 = horizontal
+				threshold: 0.3,
+				sortAmount: 2.8,
+				sampleCount: 1.0, // Number of samples (8-64, higher = better quality but slower)
+				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
+				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
+				timeMultiplier: 0.3,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 999.0",
+					uAngle: "angle",
+					uThreshold: "threshold",
+					uSortAmount: "sortAmount",
+					uSampleCount: "sampleCount",
+					uInvert: "invert",
+					uSortMode: "sortMode",
+					uResolution: "[width, height]",
 				},
 			},
 
@@ -197,38 +230,8 @@ class ShaderEffects {
 				},
 			},
 
-			pixelGrid: {
-				enabled: true,
-				gridCols: 40.0, // Number of columns
-				gridRows: 40.0, // Number of rows
-				cellRatio: 1.0, // 1.0 = natural cell shape; >1.0 compresses pixel vertically
-				mode: 0.0, // 0.0 = pixel mode, 1.0 = diffuse mode
-				diffuse: 0.0, // Color bleeding in diffuse mode (0.0 = sharp, 1.0 = full blur)
-				gapSize: 0.0, // Gap border fraction per side (0.0 = no gap)
-				gapBrightness: 1.0, // 0.0 = black gaps, 1.0 = cell color in gap area
-				uniforms: {
-					uResolution: "[width, height]",
-					uGridSize: "[gridCols, gridRows]",
-					uCellRatio: "cellRatio",
-					uMode: "mode",
-					uDiffuse: "diffuse",
-					uGapSize: "gapSize",
-					uGapBrightness: "gapBrightness",
-				},
-			},
-			chromatic: {
-				enabled: true,
-				amount: 0.0015,
-				timeMultiplier: 0.0,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 777.0",
-					uAmount: "amount",
-				},
-			},
-
 			zoom: {
-				enabled: true,
+				enabled: false,
 				zoomAmount: 0.0, // Static zoom level (1.0 = no zoom, 2.0 = 2x in, 0.5 = 2x out)
 				zoomSpeed: 0.8, // Animation speed
 				zoomOutAmount: 2.25, // Min zoom when animating
@@ -244,56 +247,88 @@ class ShaderEffects {
 					uZoomOutAmount: "zoomOutAmount",
 					uZoomInAmount: "zoomInAmount",
 					uAnimateZoom: "animateZoom",
+					uCenter: "center",
 					uEasingMode: "easingMode",
 					uCenter: "center",
 				},
 			},
-			pixelSort: {
+
+			pixelGrid: {
 				enabled: true,
-				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
-				threshold: 0.0,
-				sortAmount: 0.0,
-				sampleCount: 2.0, // Number of samples (8-64, higher = better quality but slower)
-				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
-				sortMode: 2.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 1.3,
+				gridSize: [4.0, 4.0],
+				cellRatio: 1.0,
+				gridMode: 0.0,
+				diffuse: 1.0,
+				gapSize: 0.0,
+				gapBrightness: 1.07,
+				uniforms: {
+					uResolution: "[width, height]",
+					uGridSize: "gridSize",
+					uCellRatio: "cellRatio",
+					uMode: "gridMode",
+					uDiffuse: "diffuse",
+					uGapSize: "gapSize",
+					uGapBrightness: "gapBrightness",
+				},
+			},
+
+			dither: {
+				enabled: false,
+				ditherMode: 0.0, // 0=bayer4, 1=bayer8, 2=hash, 3=line, 4=clustered
+				levels: 1.0,
+				mix: 1.0,
+				strength: 1.0,
+				scale: 1.0,
+				colorMode: 1.0, // 0=luma quantize, 1=per-channel quantize
+				uniforms: {
+					uResolution: "[width, height]",
+					uDitherMode: "ditherMode",
+					uLevels: "levels",
+					uMix: "mix",
+					uStrength: "strength",
+					uScale: "scale",
+					uColorMode: "colorMode",
+					uSeed: "shaderSeed + 4321.0",
+				},
+			},
+			colorQuantize: {
+				enabled: false,
+				levels: 3.0,
+				mix: 1.0,
+				uniforms: {
+					uLevels: "levels",
+					uMix: "mix",
+				},
+			},
+			wave: {
+				enabled: true,
+				timeMultiplier: 10.1,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 999.0",
-					uAngle: "angle",
-					uThreshold: "threshold",
-					uSortAmount: "sortAmount",
-					uSampleCount: "sampleCount",
-					uInvert: "invert",
-					uSortMode: "sortMode",
 					uResolution: "[width, height]",
 				},
 			},
-			glitchDisplacement: {
-				enabled: true,
-				intensity: 12.0, // Horizontal displacement in pixels
-				lineDensity: 214.0, // Number of scanline bands
-				speed: 21.0, // How quickly scanline offsets re-sample
-				threshold: 0.89, // Fraction of lines affected [0..1]
-				timeMultiplier: 1.0,
+			chromatic: {
+				enabled: false,
+				amount: 0.0015,
+				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
-					uResolution: "[width, height]",
-					uIntensity: "intensity",
-					uLineDensity: "lineDensity",
-					uSpeed: "speed",
-					uThreshold: "threshold",
+					uSeed: "shaderSeed + 777.0",
+					uAmount: "amount",
 				},
 			},
+
 			crtDisplay: {
-				enabled: true,
-				brightness: 0.4, // Brightness boost (0.0 = none, higher = brighter)
-				cellSize: 3.0, // Size of CRT cells/pixels (2-10 typical range)
-				gapOpacity: 0.5, // Gap opacity between phosphor dots (0.0 = no gaps, 1.0 = full dark gaps)
-				rgbOpacity: 0.0, // RGB color separation opacity (0.0 = no separation, 1.0 = full RGB isolation)
-				dotRadius: 0.08, // Size of phosphor dots (0.0-0.5, smaller = larger gaps)
-				dotFalloff: 0.99, // Softness of phosphor dot edges (0.0 = sharp, 1.0 = very soft)
-				filterMode: 0.0, // Display mode: 0.0 = true pixel display (sample at cell center), 1.0 = filter overlay (sample at actual position)
+				enabled: false,
+				brightness: 0.0,
+				cellSize: 3.0,
+				gapOpacity: 0.2,
+				rgbOpacity: 0.5,
+				rgbGain: [1.0, 1.0, 1.0],
+				dotRadius: 0.41,
+				dotFalloff: 0.4,
+				filterMode: 1.0,
 				uniforms: {
 					uResolution: "[width, height]",
 					uBrightness: "brightness",
@@ -305,44 +340,33 @@ class ShaderEffects {
 					uFilterMode: "filterMode",
 				},
 			},
-
-			crtWarp: {
-				enabled: true,
-				warpAmount: 0.74, // Barrel distortion (0.0 = flat, 0.3-0.5 = subtle TV, 1.0+ = heavy)
-				cornerRadius: 0.0, // Corner rounding (0.0 = square, 0.1 = slight rounding)
-				cornerSmooth: 0.0, // Softness of corner fade
-				borderColor: 2.0, // 0.0 = black outside, 1.0 = clamp to edge, 2.0 = infinite mirror
-				vignette: 0.0, // Edge darkening (0.0 = none, 1.0 = strong)
-				uniforms: {
-					uResolution: "[width, height]",
-					uWarpAmount: "warpAmount",
-					uCornerRadius: "cornerRadius",
-					uCornerSmooth: "cornerSmooth",
-					uBorderColor: "borderColor",
-					uVignette: "vignette",
-				},
-			},
-
-			wave: {
-				enabled: true,
-				timeMultiplier: 1.0,
+			glitchDisplacement: {
+				enabled: false,
+				timeMultiplier: 0.1,
+				intensity: 100.6,
+				lineDensity: 100.0,
+				speed: 100.0,
+				threshold: 0.85,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uResolution: "[width, height]",
+					uIntensity: "intensity",
+					uLineDensity: "lineDensity",
+					uSpeed: "speed",
+					uThreshold: "threshold",
 				},
 			},
-
 			blur: {
 				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
-				blurAmount: 123.0, // Blur radius/intensity in pixels
+				blurAmount: 43.0, // Blur radius/intensity in pixels
 				blurQuality: 120.0, // Sampling quality (1-8, higher = better but slower)
 				blurDirection: 0, // Angle in radians for directional mode
 				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
 				blurStart: 0.6, // Radial mode: starting radius (0-1, blur kicks in beyond this distance)
 				blurCrt: 1.0, // Radial mode: 0.0 = circular, 1.0 = super-ellipse (CRT shape)
 				blurCrtPower: 27.0, // Super-ellipse exponent (2.0 = ellipse, 4.0+ = more rectangular/CRT-like)
-				blurMin: 20.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
+				blurMin: 0.0, // Radial mode: minimum blur amount at blurStart (0 = sharp center, >0 = always some blur)
 				uniforms: {
 					uResolution: "[width, height]",
 					uBlurMode: "blurMode",
@@ -354,6 +378,29 @@ class ShaderEffects {
 					uBlurCrt: "blurCrt",
 					uBlurCrtPower: "blurCrtPower",
 					uBlurMin: "blurMin",
+				},
+			},
+
+			crtWarp: {
+				enabled: true,
+				warpAmount: 0.25,
+				aspectCorrect: 0.0,
+				borderColor: 2.0,
+				vignette: 0.5,
+				cornerSmooth: 0.015,
+				cornerRadius: 0.1,
+				boundsInset: 0.075,
+				rgbGain: [1.0, 1.0, 1.0],
+				uniforms: {
+					uResolution: "[width, height]",
+					uWarpAmount: "warpAmount",
+					uAspectCorrect: "aspectCorrect",
+					uCornerRadius: "cornerRadius",
+					uCornerSmooth: "cornerSmooth",
+					uBorderColor: "borderColor",
+					uVignette: "vignette",
+					uBoundsInset: "boundsInset",
+					uRgbGain: "rgbGain",
 				},
 			},
 		};
@@ -400,6 +447,8 @@ class ShaderEffects {
 		shaderManager.loadShader("zoom", "zoom/fragment.frag", "zoom/vertex.vert");
 		shaderManager.loadShader("crtWarp", "crt-warp/fragment.frag", "crt-warp/vertex.vert");
 		shaderManager.loadShader("wave", "wave/fragment.frag", "wave/vertex.frag");
+		shaderManager.loadShader("colorQuantize", "color-quantize/fragment.frag", "color-quantize/vertex.vert");
+		shaderManager.loadShader("dither", "dither/fragment.frag", "dither/vertex.vert");
 
 		this.shaderManager = shaderManager;
 

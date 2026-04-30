@@ -16,15 +16,15 @@ class Mover {
 		canvas.rectMode(CENTER);
 
 		canvas.translate(width / 2, height / 2);
-		canvas.rotate(this.angle / 4);
-		canvas.fill(h, s, l);
-		canvas.rect(0, 0, this.size, this.size);
+		//canvas.rotate(this.angle / 4);
+		canvas.fill(30, 100, 100);
+		canvas.rect(0, 0, this.size, this.size * 4);
 		canvas.resetMatrix();
 
 		canvas.translate(width / 2, height / 2);
-		canvas.rotate(this.angle);
-		canvas.fill(10, 100, 50, 100);
-		canvas.rect(0, 0, this.size / 4, this.size / 4);
+		//canvas.rotate(this.angle / 12);
+		canvas.fill(0, 100, 50, 100);
+		canvas.rect(0, 0, this.size / 2, this.size / 2);
 		canvas.resetMatrix();
 	}
 
