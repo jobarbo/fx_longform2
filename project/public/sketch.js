@@ -237,8 +237,10 @@ function setup() {
 	// --- Audio-reactive uniforms (uncomment to activate) ---
 	audioKnob
 		.setSource("microphone") // or 'chime'
-		.map("bass", "zoom", "zoomOutAmount", 1.2, 4.2);
-
+		.map("energy", "zoom", "zoomOutAmount", 1.2, 5.4, 0, 1, 2, 0.85)
+		//.map("energy", "pixelSort", "threshold", 0, 1, 0, 1, 10, 0.75)
+		.map("energy", "pixelSort", "sortAmount", 0, 120, 0, 1, 1, 0.75) /* s */
+		.map("energy", "pixelSort", "threshold", 0, 1, 0, 1, 1, 0.75); /* s */
 	// --- MIDI knob smoothing ---
 	const initAngle = shaderEffects.effectsConfig.symmetry.rotationStartingAngle;
 	addKnobSmooth(32, "symmetry", "rotationStartingAngle", initAngle, 0.08);
@@ -288,7 +290,7 @@ function setupMobileControls() {
 }
 
 function draw() {
-	mainCanvas.background(190, 100, 10, 100);
+	mainCanvas.background(190, 100, 0, 100);
 	if (typeof audioKnob !== "undefined") audioKnob.update();
 	updateKnobSmoothing();
 

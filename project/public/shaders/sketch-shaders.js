@@ -124,31 +124,10 @@ class ShaderEffects {
 				},
 			},
 
-			pixelSort: {
-				enabled: true,
-				angle: 0.0, // 0x = vertical, Math.PI/2 = horizontal
-				threshold: 0.3,
-				sortAmount: 2.8,
-				sampleCount: 1.0, // Number of samples (8-64, higher = better quality but slower)
-				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
-				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 0.3,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 999.0",
-					uAngle: "angle",
-					uThreshold: "threshold",
-					uSortAmount: "sortAmount",
-					uSampleCount: "sampleCount",
-					uInvert: "invert",
-					uSortMode: "sortMode",
-					uResolution: "[width, height]",
-				},
-			},
-
 			symmetry: {
 				enabled: true,
-				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 3.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
@@ -189,7 +168,7 @@ class ShaderEffects {
 			},
 			symmetry2: {
 				enabled: true,
-				symmetryMode: 2.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
@@ -229,9 +208,85 @@ class ShaderEffects {
 					uRotationAmplitude: "rotationAmplitude",
 				},
 			},
+			wave: {
+				enabled: true,
+				timeMultiplier: 1.1,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uResolution: "[width, height]",
+				},
+			},
+
+			pixelGrid: {
+				enabled: true,
+				gridSize: [24.0, 24.0],
+				cellRatio: 1.0,
+				gridMode: 0.0,
+				diffuse: 1.0,
+				gapSize: 0.0,
+				gapBrightness: 1.07,
+				uniforms: {
+					uResolution: "[width, height]",
+					uGridSize: "gridSize",
+					uCellRatio: "cellRatio",
+					uMode: "gridMode",
+					uDiffuse: "diffuse",
+					uGapSize: "gapSize",
+					uGapBrightness: "gapBrightness",
+				},
+			},
+			pixelSort: {
+				enabled: true,
+				angle: 0.0, // 0x = vertical, Math.PI/2 = horizontal
+				threshold: 0.3,
+				sortAmount: 2.8,
+				sampleCount: 1.0, // Number of samples (8-64, higher = better quality but slower)
+				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
+				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
+				timeMultiplier: 0.3,
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 999.0",
+					uAngle: "angle",
+					uThreshold: "threshold",
+					uSortAmount: "sortAmount",
+					uSampleCount: "sampleCount",
+					uInvert: "invert",
+					uSortMode: "sortMode",
+					uResolution: "[width, height]",
+				},
+			},
+			colorQuantize: {
+				enabled: false,
+				levels: 1.0,
+				mix: 0.0,
+				uniforms: {
+					uLevels: "levels",
+					uMix: "mix",
+				},
+			},
+			dither: {
+				enabled: false,
+				ditherMode: 0.0, // 0=bayer4, 1=bayer8, 2=hash, 3=line, 4=clustered
+				levels: 1.0,
+				mix: 3.0,
+				strength: 1.0,
+				scale: 0.1,
+				colorMode: 0.0, // 0=luma quantize, 1=per-channel quantize
+				uniforms: {
+					uResolution: "[width, height]",
+					uDitherMode: "ditherMode",
+					uLevels: "levels",
+					uMix: "mix",
+					uStrength: "strength",
+					uScale: "scale",
+					uColorMode: "colorMode",
+					uSeed: "shaderSeed + 4321.0",
+				},
+			},
 
 			zoom: {
-				enabled: false,
+				enabled: true,
 				zoomAmount: 0.0, // Static zoom level (1.0 = no zoom, 2.0 = 2x in, 0.5 = 2x out)
 				zoomSpeed: 0.8, // Animation speed
 				zoomOutAmount: 2.25, // Min zoom when animating
@@ -252,65 +307,9 @@ class ShaderEffects {
 					uCenter: "center",
 				},
 			},
-
-			pixelGrid: {
-				enabled: true,
-				gridSize: [4.0, 4.0],
-				cellRatio: 1.0,
-				gridMode: 0.0,
-				diffuse: 1.0,
-				gapSize: 0.0,
-				gapBrightness: 1.07,
-				uniforms: {
-					uResolution: "[width, height]",
-					uGridSize: "gridSize",
-					uCellRatio: "cellRatio",
-					uMode: "gridMode",
-					uDiffuse: "diffuse",
-					uGapSize: "gapSize",
-					uGapBrightness: "gapBrightness",
-				},
-			},
-
-			dither: {
-				enabled: false,
-				ditherMode: 0.0, // 0=bayer4, 1=bayer8, 2=hash, 3=line, 4=clustered
-				levels: 1.0,
-				mix: 1.0,
-				strength: 1.0,
-				scale: 1.0,
-				colorMode: 1.0, // 0=luma quantize, 1=per-channel quantize
-				uniforms: {
-					uResolution: "[width, height]",
-					uDitherMode: "ditherMode",
-					uLevels: "levels",
-					uMix: "mix",
-					uStrength: "strength",
-					uScale: "scale",
-					uColorMode: "colorMode",
-					uSeed: "shaderSeed + 4321.0",
-				},
-			},
-			colorQuantize: {
-				enabled: false,
-				levels: 3.0,
-				mix: 1.0,
-				uniforms: {
-					uLevels: "levels",
-					uMix: "mix",
-				},
-			},
-			wave: {
-				enabled: true,
-				timeMultiplier: 10.1,
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uResolution: "[width, height]",
-				},
-			},
 			chromatic: {
-				enabled: false,
-				amount: 0.0015,
+				enabled: true,
+				amount: 0.015,
 				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -357,7 +356,7 @@ class ShaderEffects {
 				},
 			},
 			blur: {
-				enabled: true,
+				enabled: false,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
 				blurAmount: 43.0, // Blur radius/intensity in pixels
 				blurQuality: 120.0, // Sampling quality (1-8, higher = better but slower)
@@ -382,11 +381,11 @@ class ShaderEffects {
 			},
 
 			crtWarp: {
-				enabled: true,
+				enabled: false,
 				warpAmount: 0.25,
 				aspectCorrect: 0.0,
 				borderColor: 2.0,
-				vignette: 0.5,
+				vignette: 0.0,
 				cornerSmooth: 0.015,
 				cornerRadius: 0.1,
 				boundsInset: 0.075,
