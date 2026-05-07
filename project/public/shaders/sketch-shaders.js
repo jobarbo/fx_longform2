@@ -219,7 +219,7 @@ class ShaderEffects {
 
 			pixelGrid: {
 				enabled: true,
-				gridSize: [24.0, 24.0],
+				gridSize: [4.0, 1224.0],
 				cellRatio: 1.0,
 				gridMode: 0.0,
 				diffuse: 1.0,
@@ -309,8 +309,8 @@ class ShaderEffects {
 			},
 			chromatic: {
 				enabled: true,
-				amount: 0.015,
-				timeMultiplier: 0.0,
+				amount: 0.00515,
+				timeMultiplier: 2.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 777.0",
@@ -319,7 +319,7 @@ class ShaderEffects {
 			},
 
 			crtDisplay: {
-				enabled: false,
+				enabled: true,
 				brightness: 0.0,
 				cellSize: 3.0,
 				gapOpacity: 0.2,
@@ -356,7 +356,7 @@ class ShaderEffects {
 				},
 			},
 			blur: {
-				enabled: false,
+				enabled: true,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
 				blurAmount: 43.0, // Blur radius/intensity in pixels
 				blurQuality: 120.0, // Sampling quality (1-8, higher = better but slower)
@@ -381,7 +381,7 @@ class ShaderEffects {
 			},
 
 			crtWarp: {
-				enabled: false,
+				enabled: true,
 				warpAmount: 0.25,
 				aspectCorrect: 0.0,
 				borderColor: 2.0,
