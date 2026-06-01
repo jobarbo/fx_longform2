@@ -194,7 +194,7 @@ class ShaderEffects {
 			},
 
 			zoom: {
-				enabled: true,
+				enabled: false,
 				timeMultiplier: 1.0,
 				zoomSpeed: 1.0,
 				zoomAmount: 0.95,
@@ -235,7 +235,7 @@ class ShaderEffects {
 			},
 
 			dither: {
-				enabled: true,
+				enabled: false,
 				ditherMode: 0.0, // 0=bayer4, 1=bayer8, 2=hash, 3=line, 4=clustered
 				levels: 1.0,
 				mix: 1.0,
@@ -254,7 +254,7 @@ class ShaderEffects {
 				},
 			},
 			colorQuantize: {
-				enabled: true,
+				enabled: false,
 				levels: 3.0,
 				mix: 1.0,
 				uniforms: {
@@ -274,7 +274,7 @@ class ShaderEffects {
 			},
 
 			crtDisplay: {
-				enabled: true,
+				enabled: false,
 				brightness: 0.0,
 				cellSize: 2.0,
 				gapOpacity: 0.0,
@@ -295,7 +295,7 @@ class ShaderEffects {
 				},
 			},
 			blur: {
-				enabled: true,
+				enabled: false,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
 				blurAmount: 43.0, // Blur radius/intensity in pixels
 				blurQuality: 120.0, // Sampling quality (1-8, higher = better but slower)
@@ -320,7 +320,7 @@ class ShaderEffects {
 			},
 
 			crtWarp: {
-				enabled: true,
+				enabled: false,
 				warpAmount: 0.25,
 				aspectCorrect: 0.0,
 				borderColor: 2.0,
@@ -342,7 +342,7 @@ class ShaderEffects {
 				},
 			},
 			glitchDisplacement: {
-				enabled: true,
+				enabled: false,
 				timeMultiplier: 21.0,
 				intensity: 6.6,
 				lineDensity: 12310.0,

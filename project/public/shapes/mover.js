@@ -91,9 +91,21 @@ class Mover {
 			this._rotCos,
 		);
 
-		// Update position with slight randomization
-		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
-		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
+		const speed = abs(p.x + p.y);
+
+		this.xRandSkipperOffset = map(speed, 0, 0.0015, 2.0, 0.0, true);
+		this.yRandSkipperOffset = map(speed, 0, 0.0015, 2.0, 0.0, true);
+		this.s = map(speed, 0, 0.015, 0.2, 0.75, true);
+
+		// Slow flow: random jitter. Fast flow: move along the field without offset.
+		if (speed < 0.0015) {
+			this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
+			this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
+		} else {
+			this.xRandSkipper = 0;
+			this.yRandSkipper = 0;
+		}
+
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
