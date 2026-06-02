@@ -1,3 +1,42 @@
+// Piecewise speed → value knots [speed, output]. Linear within each segment, not one global map().
+// Y-values are tuned for FELT_REFERENCE_PARTICLE_SIZE; scaled at runtime by CURRENT_PARAMS.particleSize.
+const FELT_REFERENCE_PARTICLE_SIZE = 0.75;
+
+const FELT_SKIPPER_KNOTS = [
+	[0, 2.0],
+	[0.0005, 1.5],
+	[0.0015, 0.0],
+	[0.005, 1.15],
+	[0.015, 0.0],
+];
+const FELT_SIZE_KNOTS = [
+	[0, 0.1],
+	[0.0005, 0.1],
+	[0.0015, 0.2],
+	[0.005, 0.3],
+	[0.015, 0.45],
+];
+const FELT_JITTER_KNOTS = [
+	[0, 1.0],
+	[0.0015, 0.5],
+	[0.005, 1.0],
+	[0.015, 0.0],
+];
+
+function feltParticleScale() {
+	return (CURRENT_PARAMS.particleSize ?? FELT_REFERENCE_PARTICLE_SIZE) / FELT_REFERENCE_PARTICLE_SIZE;
+}
+
+function mapPiecewise(value, knots, yScale = 1) {
+	const v = constrain(value, knots[0][0], knots[knots.length - 1][0]);
+	for (let i = 0; i < knots.length - 1; i++) {
+		const [x0, y0] = knots[i];
+		const [x1, y1] = knots[i + 1];
+		if (v <= x1) return map(v, x0, x1, y0, y1, true) * yScale;
+	}
+	return knots[knots.length - 1][1] * yScale;
+}
+
 class Mover {
 	constructor(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette) {
 		this.x = x;
@@ -68,7 +107,7 @@ class Mover {
 	}
 
 	move(frameCount, maxFrames) {
-		let p = superCurve(
+		const p = superCurve(
 			this.x,
 			this.y,
 			this.scl1,
@@ -91,16 +130,27 @@ class Mover {
 			this._rotCos,
 		);
 
+		this._applyFieldDisplacement(p);
+		this._updateColor(frameCount, maxFrames);
+		this._handleBounds();
+		this.a = this.isOutside() ? 0 : this.initAlpha;
+	}
+
+	_applyFieldDisplacement(p) {
 		const speed = abs(p.x + p.y);
+		const speedX = abs(p.x);
+		const speedY = abs(p.y);
 
-		this.xRandSkipperOffset = map(speed, 0, 0.0015, 2.0, 0.0, true);
-		this.yRandSkipperOffset = map(speed, 0, 0.0015, 2.0, 0.0, true);
-		this.s = map(speed, 0, 0.015, 0.2, 0.75, true);
+		// Multi-stage felt → soft → transition → flow (piecewise, not one linear map)
+		const feltScale = feltParticleScale();
+		this.xRandSkipperOffset = mapPiecewise(speedX, FELT_SKIPPER_KNOTS, feltScale);
+		this.yRandSkipperOffset = mapPiecewise(speedY, FELT_SKIPPER_KNOTS, feltScale);
+		this.s = mapPiecewise(speed, FELT_SIZE_KNOTS, feltScale);
 
-		// Slow flow: random jitter. Fast flow: move along the field without offset.
-		if (speed < 0.0015) {
-			this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
-			this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
+		const jitterStrength = mapPiecewise(speed, FELT_JITTER_KNOTS);
+		if (jitterStrength > 0) {
+			this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER * jitterStrength;
+			this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER * jitterStrength;
 		} else {
 			this.xRandSkipper = 0;
 			this.yRandSkipper = 0;
@@ -108,16 +158,17 @@ class Mover {
 
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
+	}
 
-		// Map frame progression to color index, inverted (last to first)
-		let maxColorIndex = this.palette.length - 1;
-		let mappedFrame = map(frameCount, 0, maxFrames / 1.25, maxColorIndex, 0, true);
+	_updateColor(frameCount, maxFrames) {
+		const maxColorIndex = this.palette.length - 1;
+		const mappedFrame = map(frameCount, 0, maxFrames / 1.25, maxColorIndex, 0, true);
 		this.colorIndex = Math.floor(mappedFrame);
-
 		this.currentColor = this.palette[this.colorIndex];
+	}
 
+	_handleBounds() {
 		if (this.isBordered) {
-			// Wrap to opposite side with slight offset
 			if (this.isOutside()) {
 				this.hasBeenOutside = true;
 			}
@@ -132,16 +183,12 @@ class Mover {
 			} else if (this.y > this.maxBoundY) {
 				this.y = (this.yMin - this.wrapPaddingY * this.wrapPaddingMultiplier + random(0, this.reentryOffsetY)) * height;
 			}
-		} else {
-			// Reset to initial position if not bordered
-			if (this.isOutside()) {
-				this.x = this.initX;
-				this.y = this.initY;
-			}
+		} else if (this.isOutside()) {
+			this.x = this.initX;
+			this.y = this.initY;
 		}
-
-		this.a = this.isOutside() ? 0 : this.initAlpha;
 	}
+
 	isOutside() {
 		return this.x < this.minBoundX || this.x > this.maxBoundX || this.y < this.minBoundY || this.y > this.maxBoundY;
 	}
@@ -156,10 +203,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
-		noiseScale1 = 1,
+		noiseScale1 = 2,
 		noiseScale2 = CURRENT_PARAMS.noiseScale2 ?? 1,
-		noiseScale3 = 1,
-		noiseScale4 = 1,
+		noiseScale3 = 0.001,
+		noiseScale4 = 3,
 		octave = CURRENT_PARAMS.octave ?? 1,
 		a1 = amplitude1,
 		a2 = amplitude2;
