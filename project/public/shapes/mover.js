@@ -1,3 +1,35 @@
+// Piecewise speed → value knots [speed, output]. Linear within each segment, not one global map().
+const FELT_SKIPPER_KNOTS = [
+	[0, 2.0],
+	[0.0005, 1.5],
+	[0.0015, 0.0],
+	[0.005, 1.15],
+	[0.015, 0.0],
+];
+const FELT_SIZE_KNOTS = [
+	[0, 0.1],
+	[0.0005, 0.1],
+	[0.0015, 0.4],
+	[0.005, 0.3],
+	[0.015, 0.75],
+];
+const FELT_JITTER_KNOTS = [
+	[0, 1.0],
+	[0.0015, 0.5],
+	[0.005, 1.0],
+	[0.015, 0.0],
+];
+
+function mapPiecewise(value, knots) {
+	const v = constrain(value, knots[0][0], knots[knots.length - 1][0]);
+	for (let i = 0; i < knots.length - 1; i++) {
+		const [x0, y0] = knots[i];
+		const [x1, y1] = knots[i + 1];
+		if (v <= x1) return map(v, x0, x1, y0, y1, true);
+	}
+	return knots[knots.length - 1][1];
+}
+
 class Mover {
 	constructor(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette) {
 		this.x = x;
@@ -10,7 +42,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = 0.2 * MULTIPLIER;
+		this.s = 0.4 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -92,17 +124,18 @@ class Mover {
 
 	_applyFieldDisplacement(p) {
 		const speed = abs(p.x + p.y);
-		const speed_x = abs(p.x);
-		const speed_y = abs(p.y);
+		const speedX = abs(p.x);
+		const speedY = abs(p.y);
 
-		// Felt texture: slow flow gets jitter + smaller dots; fast flow follows the field cleanly
-		this.xRandSkipperOffset = map(speed_x, 0, 0.0015, 2.0, 0.0, true);
-		this.yRandSkipperOffset = map(speed_y, 0, 0.0015, 2.0, 0.0, true);
-		this.s = map(speed, 0, 0.015, 0.1, 0.75, true);
+		// Multi-stage felt → soft → transition → flow (piecewise, not one linear map)
+		this.xRandSkipperOffset = mapPiecewise(speedX, FELT_SKIPPER_KNOTS);
+		this.yRandSkipperOffset = mapPiecewise(speedY, FELT_SKIPPER_KNOTS);
+		this.s = mapPiecewise(speed, FELT_SIZE_KNOTS);
 
-		if (speed < 0.0015) {
-			this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
-			this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
+		const jitterStrength = mapPiecewise(speed, FELT_JITTER_KNOTS);
+		if (jitterStrength > 0) {
+			this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER * jitterStrength;
+			this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER * jitterStrength;
 		} else {
 			this.xRandSkipper = 0;
 			this.yRandSkipper = 0;
