@@ -278,7 +278,7 @@ function startAnimation() {
 		cycleLength: cycle,
 		currentFrame: 0,
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0) {
+			if (currentFrame > -1) {
 				mover.show(mainCanvas);
 			}
 		},

@@ -10,7 +10,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.5]) * MULTIPLIER;
+		this.s = 0.2 * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -21,8 +21,8 @@ class Mover {
 		this.amplitude2 = amplitude2;
 		this.rseed = rseed;
 		this.nseed = nseed;
-		this.xRandDivider = 0.01;
-		this.yRandDivider = 0.01;
+		this.xRandDivider = 0.041;
+		this.yRandDivider = 0.041;
 		this.xRandSkipper = 0;
 		this.yRandSkipper = 0;
 		this.xRandSkipperOffset = 0.0;
@@ -91,10 +91,23 @@ class Mover {
 	}
 
 	_applyFieldDisplacement(p) {
-		this.xRandDivider = 0.041;
-		this.yRandDivider = 0.041;
-		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
-		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
+		const speed = abs(p.x + p.y);
+		const speed_x = abs(p.x);
+		const speed_y = abs(p.y);
+
+		// Felt texture: slow flow gets jitter + smaller dots; fast flow follows the field cleanly
+		this.xRandSkipperOffset = map(speed_x, 0, 0.0015, 2.0, 0.0, true);
+		this.yRandSkipperOffset = map(speed_y, 0, 0.0015, 2.0, 0.0, true);
+		this.s = map(speed, 0, 0.015, 0.1, 0.75, true);
+
+		if (speed < 0.0015) {
+			this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
+			this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
+		} else {
+			this.xRandSkipper = 0;
+			this.yRandSkipper = 0;
+		}
+
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 	}
@@ -303,8 +316,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		zzV = ZZ(Math.abs(v), 35, 80, 0.018);
 	let zzuPos = map(zzU, -11, 11, minU, maxU, true) * 1.1;
 	let zzvPos = map(zzV, -11, 11, minV, maxV, true) * 1.01;
-	let zzuNeg = map(zzU, -11, 11, -minU, -maxU, true) * 0.91;
-	let zzvNeg = map(zzV, -11, 11, -minV, -maxV, true) * 0.9;
+	let zzuNeg = map(zzU, -11, 11, -minU, -maxU, true) * 0.001;
+	let zzvNeg = map(zzV, -11, 11, -minV, -maxV, true) * 0.01;
 
 	let zu = u < 0 ? -zzuNeg : zzuPos;
 	let zv = v < 0 ? -zzvNeg : zzvPos;
