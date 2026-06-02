@@ -264,7 +264,7 @@ class ShaderEffects {
 			},
 			chromatic: {
 				enabled: true,
-				amount: 0.00015,
+				amount: 0.0015,
 				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",

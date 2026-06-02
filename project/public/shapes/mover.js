@@ -294,8 +294,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	// --- Noise bounds (pNoise x SineCos) ---
-	const mapIn = -0.000025,
-		mapOut = 0.000025;
+	const mapIn = -0.0000000025,
+		mapOut = 0.0000000025;
 	let maxU = map(oct(ny * s1o1 + nx * (s2o2 * 0.3) + rseed, ny * s2o2 + nx * (s1o1 * 0.3) + rseed, noiseScale1, 13, octave), mapIn, mapOut, -1, 1, true);
 	let maxV = map(oct(nx * s2o2 + ny * (s1o1 * 0.3) + rseed, nx * s1o1 + ny * (s2o2 * 0.3) + rseed, noiseScale2, 14, octave), mapIn, mapOut, -1, 1, true);
 	let minU = map(oct(ny * s3o3 + nx * (s1o1 * 0.4) + rseed, ny * s1o1 + nx * (s3o3 * 0.4) + rseed, noiseScale3, 15, octave), mapIn, mapOut, -1, 1, true);
