@@ -10,7 +10,7 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.25]) * MULTIPLIER;
+		this.s = random([0.5]) * MULTIPLIER;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;
@@ -34,35 +34,34 @@ class Mover {
 		this.isBordered = isBordered;
 		this.hasBeenOutside = false;
 
-		// Start from the last color (inverted progression)
-		this.colorIndex = this.palette.length - 1;
-
 		// Pre-calculate padding values - use global constant if available
 		const wrapPaddingFactor = typeof WRAP_PADDING_FACTOR !== "undefined" ? WRAP_PADDING_FACTOR : 0.1;
 		this.wrapPaddingX = (min(width, height) * wrapPaddingFactor) / width;
 		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.0035) / width;
-		this.reentryOffsetY = (min(width, height) * 0.0035) / height;
-		this.wrapPaddingMultiplier = 0.05; //! or 0.5
+		this.reentryOffsetX = (min(width, height) * 0.001) / width;
+		this.reentryOffsetY = (min(width, height) * 0.001) / height;
+		this.wrapPaddingMultiplier = 0.8; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
 		this.maxBoundX = (this.xMax + this.wrapPaddingX) * width;
 		this.minBoundY = (this.yMin - this.wrapPaddingY) * height;
 		this.maxBoundY = (this.yMax + this.wrapPaddingY) * height;
+
+		// Precompute rotation sin/cos once (rseed/nseed are constant for this mover)
+		const inputRot = (rseed * 0.000137 + nseed * 0.000024) % TAU;
+		this._rotSin = sin(inputRot);
+		this._rotCos = cos(inputRot);
 	}
 
 	show(canvas = null) {
-		// Get the drawing context - either from provided canvas or default
 		const drawingCtx = canvas ? canvas.drawingContext : drawingContext;
-
-		// Use the original color format that preserves vibrancy
 		drawingCtx.fillStyle = `hsla(${this.currentColor.h}, ${this.currentColor.s}%, ${this.currentColor.l}%, ${this.a}%)`;
 		drawingCtx.fillRect(this.x, this.y, this.s, this.s);
 	}
 
 	move(frameCount, maxFrames) {
-		let p = superCurve(
+		const p = superCurve(
 			this.x,
 			this.y,
 			this.scl1,
@@ -81,25 +80,34 @@ class Mover {
 			this.nseed,
 			width / 2,
 			height / 2,
+			this._rotSin,
+			this._rotCos,
 		);
 
-		// Update position with slight randomization
+		this._applyFieldDisplacement(p);
+		this._updateColor(frameCount, maxFrames);
+		this._handleBounds();
+		this.a = this.isOutside() ? 0 : this.initAlpha;
+	}
+
+	_applyFieldDisplacement(p) {
 		this.xRandDivider = 0.041;
 		this.yRandDivider = 0.041;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
+	}
 
-		// Map frame progression to color index, inverted (last to first)
-		let maxColorIndex = this.palette.length - 1;
-		let mappedFrame = map(frameCount, 0, maxFrames / 1.25, maxColorIndex, 0, true);
+	_updateColor(frameCount, maxFrames) {
+		const maxColorIndex = this.palette.length - 1;
+		const mappedFrame = map(frameCount, 0, maxFrames / 1.25, maxColorIndex, 0, true);
 		this.colorIndex = Math.floor(mappedFrame);
-
 		this.currentColor = this.palette[this.colorIndex];
+	}
 
+	_handleBounds() {
 		if (this.isBordered) {
-			// Wrap to opposite side with slight offset
 			if (this.isOutside()) {
 				this.hasBeenOutside = true;
 			}
@@ -114,22 +122,18 @@ class Mover {
 			} else if (this.y > this.maxBoundY) {
 				this.y = (this.yMin - this.wrapPaddingY * this.wrapPaddingMultiplier + random(0, this.reentryOffsetY)) * height;
 			}
-		} else {
-			// Reset to initial position if not bordered
-			if (this.isOutside()) {
-				this.x = this.initX;
-				this.y = this.initY;
-			}
+		} else if (this.isOutside()) {
+			this.x = this.initX;
+			this.y = this.initY;
 		}
-
-		this.a = this.isOutside() ? 0 : this.initAlpha;
 	}
+
 	isOutside() {
 		return this.x < this.minBoundX || this.x > this.maxBoundX || this.y < this.minBoundY || this.y > this.maxBoundY;
 	}
 }
 
-function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude1, amplitude2, xMin, yMin, xMax, yMax, rseed, nseed, centerX, centerY) {
+function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude1, amplitude2, xMin, yMin, xMax, yMax, rseed, nseed, centerX, centerY, sinIn, cosIn) {
 	let nx = x,
 		ny = y,
 		scale1 = scl1,
@@ -146,7 +150,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		a1 = amplitude1,
 		a2 = amplitude2;
 
-	// Precompute repeated scale * scaleOffset and scale factors
+	// --- Scale precomputes ---
 	const s1o1 = scale1 * scaleOffset1,
 		s2o2 = scale2 * scaleOffset2,
 		s3o3 = scale3 * scaleOffset3,
@@ -163,22 +167,23 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		a1_03 = a1 * 0.003,
 		a2_03 = a2 * 0.0003;
 
-	// Rotate inputs by a stable seed-based angle around composition center to avoid persistent 45° bias
-	//! Comment for original effect
+	// --- Input rotation (seed-based, around composition center) ---
 	const cx = centerX ?? width / 2;
 	const cy = centerY ?? height / 2;
-	const inputRot = (rseed * 0.000137 + nseed * 0.000024) % TAU;
-	const sinIn = sin(inputRot);
-	const cosIn = cos(inputRot);
+	if (sinIn === undefined) {
+		const inputRot = (rseed * 0.000137 + nseed * 0.000024) % TAU;
+		sinIn = sin(inputRot);
+		cosIn = cos(inputRot);
+	}
 	const rx = nx - cx;
 	const ry = ny - cy;
 	nx = cosIn * rx - sinIn * ry + cx;
 	ny = sinIn * rx + cosIn * ry + cy;
 
-	// Enhanced multi-layer octave calculations with cross-coupling and varied scales
+	// --- Multi-layer octave flow ---
 	// Layer 1: Primary flow with cross-coupling
 	dx = oct(nx, ny, scale1, 0, octave);
-	dy = oct(ny, nx, scale2, 2, octave); // Swapped coordinates for cross-coupling
+	dy = oct(ny, nx, scale2, 2, octave);
 	nx += dx * a1;
 	ny += dy * a2;
 
@@ -207,14 +212,14 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	nx += dx * a1_03;
 	ny += dy * a2_03;
 
-	// Enhanced sine/cosine with cross-coupling and mixed scales
+	// --- Sine/cosine field components ---
 	un = sin(nx * s1o1 + ny * (s2o2 * 0.5) + rseed) + cos(nx * s2o2 + ny * (s1o1 * 0.5) + rseed) - sin(nx * s3o3 + ny * (s1o1 * 0.3) + rseed) + oct(ny * s1o1, nx * s2o2, 0.5, 11, octave) * 0.5;
 
 	vn = cos(ny * s1o1 + nx * (s2o2 * 0.5) + rseed) + sin(ny * s2o2 + nx * (s1o1 * 0.5) + rseed) - cos(ny * s3o3 + nx * (s1o1 * 0.3) + rseed) + oct(nx * s2o2, ny * s1o1, 0.5, 12, octave) * 0.5;
 
 	//! sine x cos x oct
 	/*
-	let time = millis() * 0.000000001; // Introduce a time variable for dynamic movement
+	let time = millis() * 0.000000001;
 	let un =
 		sin(y * scl1 * scaleOffset1 + time) +
 		cos(y * scl2 * scaleOffset2 + time) +
@@ -242,7 +247,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minU = map(nx, xMin * width, xMax * width, -3, 3, true);
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
-	//! Enhanced pNoise x SineCos with cross-coupling and varied noise indices
+	// --- Noise bounds (pNoise x SineCos) ---
 	const mapIn = -0.000025,
 		mapOut = 0.000025;
 	let maxU = map(oct(ny * s1o1 + nx * (s2o2 * 0.3) + rseed, ny * s2o2 + nx * (s1o1 * 0.3) + rseed, noiseScale1, 13, octave), mapIn, mapOut, -1, 1, true);
@@ -267,8 +272,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minU = -1;
 	let minV = -1; */
 
-	//! Enhanced introverted with cross-coupling and dynamic range variation
-	//* Mix both nx/ny and ny/nx for more complex mapping
+	// --- Range coupling (introverted, cross-coupled) ---
 	const xMinW = xMin * width,
 		xMaxW = xMax * width,
 		yMinH = yMin * height,
@@ -278,13 +282,11 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let nyRangeMin = map(ny, yMinH, yMaxH, -1.5, -0.001);
 	let nyRangeMax = map(ny, yMinH, yMaxH, 0.001, 1.5);
 
-	// Cross-couple the mapping ranges for more intricate movement
 	let uRangeMin = nxRangeMin * 0.7 + nyRangeMin * 0.3;
 	let uRangeMax = nxRangeMax * 0.7 + nyRangeMax * 0.3;
 	let vRangeMin = nyRangeMin * 0.7 + nxRangeMin * 0.3;
 	let vRangeMax = nyRangeMax * 0.7 + nxRangeMax * 0.3;
 
-	// Mix vn and un with cross-coupling
 	let u = map(vn * 0.7 + un * 0.3, uRangeMin, uRangeMax, minU, maxU, true);
 	let v = map(un * 0.7 + vn * 0.3, vRangeMin, vRangeMax, minV, maxV, true);
 
@@ -295,20 +297,19 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
-	// Apply ZZ with enhanced symmetry - transform both positive and negative values
-	// Add subtle asymmetry to break directional bias
+
+	// --- ZZ transform (zigzag symmetry with sign split) ---
 	const zzU = ZZ(Math.abs(u), 35, 80, 0.018),
 		zzV = ZZ(Math.abs(v), 35, 80, 0.018);
 	let zzuPos = map(zzU, -11, 11, minU, maxU, true) * 1.1;
 	let zzvPos = map(zzV, -11, 11, minV, maxV, true) * 1.01;
-	let zzuNeg = map(zzU, -11, 11, -minU, -maxU, true) * 0.91; // Slight asymmetry
+	let zzuNeg = map(zzU, -11, 11, -minU, -maxU, true) * 0.91;
 	let zzvNeg = map(zzV, -11, 11, -minV, -maxV, true) * 0.9;
 
-	// Apply transformation preserving sign but with variation for both directions
 	let zu = u < 0 ? -zzuNeg : zzuPos;
 	let zv = v < 0 ? -zzvNeg : zzvPos;
 
-	// Add final cross-coupling layer for more intricate movement
+	// --- Final cross-coupling ---
 	let finalU = zu * 0.85 + zv * 0.15;
 	let finalV = zv * 0.85 + zu * 0.15;
 
@@ -319,6 +320,5 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	/* 	let zu = ZZ(u, 2.1, 5.5, 0.01) * MULTIPLIER;
 	let zv = ZZ(v, 2.1, 5.5, 0.01) * MULTIPLIER; */
 
-	let p = createVector(finalU, finalV);
-	return p;
+	return createVector(finalU, finalV);
 }
