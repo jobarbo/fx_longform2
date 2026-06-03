@@ -13,14 +13,14 @@ let startTime;
 let frameIterator = 0;
 let currentFrame = 0;
 //let maxFrames = 20;
-let maxFrames = 64 * 32;
+let maxFrames = 64;
 //let maxFrames = 64 * 120;
 //let particleNum = 800000;
-let particleNum = 10250;
+let particleNum = 580250;
 //let particleNum = 2250;
 
 // viewport
-let DEFAULT_SIZE = 3600;
+let DEFAULT_SIZE = 948;
 let W = window.innerWidth;
 let H = window.innerHeight;
 let DIM;
@@ -40,7 +40,7 @@ function setup() {
 	//pixelDensity(dpi(4));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 1.3);
+	c = createCanvas(DIM, DIM * 1.33);
 	//A4 is 1.4142
 
 	/*
@@ -56,7 +56,7 @@ function setup() {
 	frameIterator = maxFrames / maxFrames;
 	scl1 = fxrand() * (0.0022 - 0.001) + 0.001;
 	scl2 = fxrand() * (0.0022 - 0.001) + 0.001;
-	ang1 = parseInt(fxrand() * (500, 1200) + 500);
+	ang1 = parseInt(fxrand() * (3500, 1200) + 500);
 	ang2 = parseInt(fxrand() * (1000, 1200) + 1000);
 
 	// change how drastically it changes with the SDF
@@ -74,6 +74,7 @@ function setup() {
 	let bga = 100;
 	console.log(bghue, bgsat, bgbri, bga);
 	bgCol = color(bghue, bgsat, bgbri, bga);
+	bgCol_array = [bghue, bgsat, bgbri, bga];
 
 	INIT();
 
@@ -175,6 +176,7 @@ function INIT() {
 				ang1Zone * MULTIPLIER,
 				ang2Zone * MULTIPLIER,
 				maxFrames,
+				bgCol_array,
 			),
 		);
 	}

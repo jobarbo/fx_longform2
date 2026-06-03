@@ -3,11 +3,11 @@ class Mover {
 		this.x = x;
 		this.y = y;
 		this.maxFrames = maxFrames;
-		this.initHue = parseInt(hue);
-		this.initSat = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
+		this.initHue = parseInt(35);
+		this.initSat = [0, 0, 10, 100][Math.floor(fxrand() * 4)];
 		this.initBri = [0, 0, 10, 20][Math.floor(fxrand() * 4)];
 		this.initAlpha = 100;
-		this.initS = 0.5 * MULTIPLIER;
+		this.initS = 0.03 * MULTIPLIER;
 		this.s = this.initS;
 		this.hue = this.initHue;
 		this.sat = this.initSat;
@@ -39,7 +39,7 @@ class Mover {
 		this.yMax = yMax;
 		this.xLimit = 0.00015;
 		this.yLimit = 0.00015;
-		this.oct = 6;
+		this.oct = 10;
 		this.centerX = width / 2;
 		this.centerY = height / 2;
 		this.borderX = width / 2;
@@ -91,8 +91,8 @@ class Mover {
  */
 		//! CHECK WHY ANG AND SCL IS NOT AGNOSTIC TO MULTIPLIER
 		let p = superCurve(this.x, this.y, this.scl1, this.scl2, this.ang1, this.ang2, this.oct);
-		let randMultX = map(frameCount, 0, this.maxFrames / 5, 1, 6, true);
-		let randMultY = map(frameCount, 0, this.maxFrames / 5, 1, 6, true);
+		let randMultX = map(frameCount, 0, this.maxFrames / 5, 6, 16, true);
+		let randMultY = map(frameCount, 0, this.maxFrames / 5, 6, 16, true);
 		this.xRandDivider = fxrand() * randMultX;
 		this.yRandDivider = fxrand() * randMultY;
 
@@ -109,13 +109,13 @@ class Mover {
 			//!complexion standard (vegetation variant)
 			/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS * 4, this.initS, true);
 		this.a = mapValue(this.speed, 2, 2.01, 40, 100, true); */
-			this.initS = map(frameCount, 0, this.maxFrames, 0.75, 0.5, true) * MULTIPLIER;
+			this.initS = map(frameCount, 0, this.maxFrames, 0.2, 0.1, true) * MULTIPLIER;
 			/* 		let alpha_min = map(frameCount, 0, this.maxFrames / 2, 10, 70, true);
 			let alpha_max = map(frameCount, 0, this.maxFrames / 2, 40, 100, true); */
 
 			//!complexion inverser (goldenfold variant)
-			this.s = mapValue(this.speed, 0, 1.01, this.initS * 2, this.initS * 3, true);
-			this.a = mapValue(this.speed, 2, 2.01, 100, 70, true);
+			this.s = mapValue(this.speed, 0, 1.01, this.initS * 1, this.initS * 0.8, true);
+			this.a = mapValue(this.speed, 2, 2.01, 100, 100, true);
 
 			//!complexion inverser (malachite variant)
 			/* 		this.s = mapValue(this.speed, 0, 2.01, this.initS, this.initS * 2, true);
@@ -123,10 +123,10 @@ class Mover {
 		}
 
 		//!goldenfold variant
-		if (this.speed < 1) {
-			this.hue = 35;
-			this.sat = this.initSat + 80;
-			this.bri = this.initBri + 30;
+		if (this.speed < 0.51) {
+			this.hue = 15;
+			this.sat = this.initSat + 100;
+			this.bri = this.initBri + random([-30, -20, -10, 0, 10, 50]);
 		} else {
 			this.hue = this.initHue;
 			this.sat = this.initSat;
@@ -162,17 +162,17 @@ class Mover {
 
 		// if this.x is outside of xmin and xmax, set the alpha to 0;
 
-		if (this.x < (this.xMin - this.xLimit) * width - 50) {
-			this.x = (this.xMax + this.xLimit) * width + 50;
+		if (this.x < (this.xMin - this.xLimit) * width - 10) {
+			this.x = (this.xMax + this.xLimit) * width + 10;
 		}
-		if (this.x > (this.xMax + this.xLimit) * width + 50) {
-			this.x = (this.xMin - this.xLimit) * width - 50;
+		if (this.x > (this.xMax + this.xLimit) * width + 10) {
+			this.x = (this.xMin - this.xLimit) * width - 10;
 		}
-		if (this.y < (this.yMin - this.yLimit) * height - 50) {
-			this.y = (this.yMax + this.yLimit) * height + 50;
+		if (this.y < (this.yMin - this.yLimit) * height - 10) {
+			this.y = (this.yMax + this.yLimit) * height + 10;
 		}
-		if (this.y > (this.yMax + this.yLimit) * height + 50) {
-			this.y = (this.yMin - this.yLimit) * height - 50;
+		if (this.y > (this.yMax + this.yLimit) * height + 10) {
+			this.y = (this.yMin - this.yLimit) * height - 10;
 		}
 	}
 }
@@ -205,8 +205,8 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 	let un = oct(nx, ny, scale1, 3, octave);
 	let vn = oct(nx, ny, scale2, 2, octave);
 
-	let sun = smoothstep(-0.5, 0.15, un);
-	let svn = smoothstep(-0.15, 0.5, vn);
+	let sun = smoothstep(-0.005, 0.005, un);
+	let svn = smoothstep(-2.005, 2.005, vn);
 
 	/* 	let u = clamp(un, 0, 1) * 21 - 20;
 	let v = clamp(vn, 0, 1) * 21 - 1; */
@@ -219,7 +219,7 @@ function superCurve(x, y, scl1, scl2, ang1, ang2, octave) {
 
 	/* 	let u = mapValue(un, -0.5, 0.5, -aValue, bValue);
 	let v = mapValue(vn, -0.5, 0.5, -bValue, aValue);*/
-	let u = mapValue(sun, 0, 1, -bValue, aValue);
+	let u = mapValue(sun, 0, 3, -bValue, aValue);
 	let v = mapValue(svn, 0, 1, -aValue, bValue);
 
 	//let p = createVector(u, v);
