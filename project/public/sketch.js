@@ -40,7 +40,7 @@ function setup() {
 	//pixelDensity(dpi(4));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM * 2, DIM);
+	c = createCanvas(DIM, DIM * 1.3);
 	//A4 is 1.4142
 
 	/*
@@ -142,8 +142,8 @@ function INIT() {
 	let hue = fxrand() * 360;
 	xMin = 0.02;
 	xMax = 0.98;
-	yMin = 0.04;
-	yMax = 0.96;
+	yMin = 0.015;
+	yMax = 0.985;
 	/* 	xMin = -0.01;
 	xMax = 1.01;
 	yMin = -0.01;
@@ -174,8 +174,8 @@ function INIT() {
 				scl2Zone * MULTIPLIER,
 				ang1Zone * MULTIPLIER,
 				ang2Zone * MULTIPLIER,
-				maxFrames
-			)
+				maxFrames,
+			),
 		);
 	}
 }
