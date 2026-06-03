@@ -40,7 +40,7 @@ function setup() {
 	//pixelDensity(dpi(4));
 	DIM = min(windowWidth, windowHeight);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
-	c = createCanvas(DIM, DIM * 3);
+	c = createCanvas(DIM, DIM * 1.5);
 	//A4 is 1.4142
 
 	/*
@@ -174,8 +174,8 @@ function INIT() {
 				scl2Zone * MULTIPLIER,
 				ang1Zone * MULTIPLIER,
 				ang2Zone * MULTIPLIER,
-				maxFrames
-			)
+				maxFrames,
+			),
 		);
 	}
 }
