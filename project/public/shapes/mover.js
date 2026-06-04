@@ -41,8 +41,8 @@ class Mover {
 		const wrapPaddingFactor = typeof WRAP_PADDING_FACTOR !== "undefined" ? WRAP_PADDING_FACTOR : 0.1;
 		this.wrapPaddingX = (min(width, height) * wrapPaddingFactor) / width;
 		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
-		this.reentryOffsetX = (min(width, height) * 0.0075) / width;
-		this.reentryOffsetY = (min(width, height) * 0.0075) / height;
+		this.reentryOffsetX = (min(width, height) * random(0.025, 0.08)) / width;
+		this.reentryOffsetY = (min(width, height) * random(0.025, 0.08)) / height;
 		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
@@ -86,6 +86,8 @@ class Mover {
 		this.yRandDivider = 0.021;
 		this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER;
 		this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER;
+		this.reentryOffsetX = map(frameCount, 0, maxFrames / 1.01, this.reentryOffsetX, 0.001);
+		this.reentryOffsetY = map(frameCount, 0, maxFrames / 1.01, this.reentryOffsetY, 0.001);
 		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
 		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
 
