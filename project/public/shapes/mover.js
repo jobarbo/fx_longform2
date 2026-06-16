@@ -1,6 +1,6 @@
 // Piecewise speed → value knots [speed, output]. Linear within each segment, not one global map().
 // Y-values are tuned for FELT_REFERENCE_PARTICLE_SIZE; scaled at runtime by CURRENT_PARAMS.particleSize.
-const FELT_REFERENCE_PARTICLE_SIZE = 0.75;
+const FELT_REFERENCE_PARTICLE_SIZE = CURRENT_PARAMS.particleSize ?? 0.75 * MULTIPLIER;
 
 const FELT_SKIPPER_KNOTS = [
 	[0, 2.0],
@@ -10,11 +10,20 @@ const FELT_SKIPPER_KNOTS = [
 	[0.015, 0.0],
 ];
 const FELT_SIZE_KNOTS = [
-	[0, 0.1],
-	[0.0005, 0.1],
-	[0.0015, 0.2],
-	[0.005, 0.3],
-	[0.015, 0.45],
+	[0, FELT_REFERENCE_PARTICLE_SIZE * 0.1],
+	[0.0005, FELT_REFERENCE_PARTICLE_SIZE * 0.1],
+	[0.0015, FELT_REFERENCE_PARTICLE_SIZE * 0.4],
+	[0.005, FELT_REFERENCE_PARTICLE_SIZE * 0.3],
+	[0.015, FELT_REFERENCE_PARTICLE_SIZE * 0.2],
+	[0.025, FELT_REFERENCE_PARTICLE_SIZE * 0.1],
+	[0.05, FELT_REFERENCE_PARTICLE_SIZE * 0.15],
+	[0.075, FELT_REFERENCE_PARTICLE_SIZE * 0.05],
+	[0.1, FELT_REFERENCE_PARTICLE_SIZE * 0.1],
+	[0.15, FELT_REFERENCE_PARTICLE_SIZE * 0.15],
+	[0.2, FELT_REFERENCE_PARTICLE_SIZE * 0.2],
+	[0.3, FELT_REFERENCE_PARTICLE_SIZE * 0.4],
+	[0.4, FELT_REFERENCE_PARTICLE_SIZE * 0.6],
+	[0.5, FELT_REFERENCE_PARTICLE_SIZE],
 ];
 const FELT_JITTER_KNOTS = [
 	[0, 1.0],
@@ -145,7 +154,7 @@ class Mover {
 		const feltScale = feltParticleScale();
 		this.xRandSkipperOffset = mapPiecewise(speedX, FELT_SKIPPER_KNOTS, feltScale);
 		this.yRandSkipperOffset = mapPiecewise(speedY, FELT_SKIPPER_KNOTS, feltScale);
-		this.s = mapPiecewise(speed, FELT_SIZE_KNOTS, feltScale);
+		this.s = mapPiecewise(speed, FELT_SIZE_KNOTS, feltScale) * MULTIPLIER;
 
 		const jitterStrength = mapPiecewise(speed, FELT_JITTER_KNOTS);
 		if (jitterStrength > 0) {
