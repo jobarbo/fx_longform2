@@ -60,6 +60,7 @@ class ShaderEffects {
 		// Canvas references
 		this.mainCanvas = null;
 		this.shaderCanvas = null;
+		this.pixelDensity = 1;
 
 		// Shader system references
 		this.shaderManager = null;
@@ -99,28 +100,6 @@ class ShaderEffects {
 					uRotNoise: "rotNoise",
 					uAmount: "amount",
 					uResolution: "[width, height]",
-				},
-			},
-
-			grain: {
-				enabled: false,
-				amount: 0.1,
-				timeMultiplier: 0.0,
-				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
-				thresholdMinX: 0.0, // left [0..1]
-				thresholdMaxX: 1.0, // right [0..1]
-				thresholdMinY: 0.0, // bottom [0..1]
-				thresholdMaxY: 1.0, // top [0..1]
-				thresholdSmooth: 0.001, // soft edge at boundaries (0 = hard edge)
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 345.0",
-					uAmount: "amount",
-					uThresholdMinX: "thresholdMinX",
-					uThresholdMaxX: "thresholdMaxX",
-					uThresholdMinY: "thresholdMinY",
-					uThresholdMaxY: "thresholdMaxY",
-					uThresholdSmooth: "thresholdSmooth",
 				},
 			},
 
@@ -319,7 +298,7 @@ class ShaderEffects {
 			},
 
 			crtDisplay: {
-				enabled: true,
+				enabled: false,
 				brightness: 0.0,
 				cellSize: 3.0,
 				gapOpacity: 0.2,
@@ -402,6 +381,27 @@ class ShaderEffects {
 					uRgbGain: "rgbGain",
 				},
 			},
+			grain: {
+				enabled: false,
+				amount: 0.1,
+				timeMultiplier: 0.0,
+				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
+				thresholdMinX: 0.0, // left [0..1]
+				thresholdMaxX: 1.0, // right [0..1]
+				thresholdMinY: 0.0, // bottom [0..1]
+				thresholdMaxY: 1.0, // top [0..1]
+				thresholdSmooth: 0.001, // soft edge at boundaries (0 = hard edge)
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 345.0",
+					uAmount: "amount",
+					uThresholdMinX: "thresholdMinX",
+					uThresholdMaxX: "thresholdMaxX",
+					uThresholdMinY: "thresholdMinY",
+					uThresholdMaxY: "thresholdMaxY",
+					uThresholdSmooth: "thresholdSmooth",
+				},
+			},
 		};
 
 		// Cache for last enabled effects (to detect changes)
@@ -461,9 +461,10 @@ class ShaderEffects {
 	 * @param {p5.Graphics} mainCanvas - Main graphics buffer for artwork
 	 * @param {p5.Graphics} shaderCanvas - WEBGL canvas for shader effects
 	 */
-	setup(width, height, mainCanvas, shaderCanvas) {
+	setup(width, height, mainCanvas, shaderCanvas, pixelDensity = 1) {
 		this.mainCanvas = mainCanvas;
 		this.shaderCanvas = shaderCanvas;
+		this.pixelDensity = pixelDensity ?? mainCanvas?.pixelDensity?.() ?? 1;
 
 		// Initialize shader seed with fxhash if available
 		if (typeof fxrand === "function") {
@@ -475,7 +476,7 @@ class ShaderEffects {
 		// Initialize shader pipeline with enabled effects
 		const enabledEffects = Object.keys(this.effectsConfig).filter((name) => this.effectsConfig[name].enabled);
 
-		this.shaderPipeline = new ShaderPipeline(this.shaderManager, this.p5Instance).init(width, height, enabledEffects);
+		this.shaderPipeline = new ShaderPipeline(this.shaderManager, this.p5Instance).init(width, height, enabledEffects, this.pixelDensity);
 
 		// Make it globally accessible (for backward compatibility)
 		window.shaderPipeline = this.shaderPipeline;
@@ -527,9 +528,11 @@ class ShaderEffects {
 	 * Reinitialize shader pipeline when effects change
 	 */
 	reinitializePipeline() {
-		if (this.shaderPipeline && this.shaderManager) {
+		if (this.shaderPipeline && this.shaderManager && this.mainCanvas) {
 			const enabledEffects = Object.keys(this.effectsConfig).filter((name) => this.effectsConfig[name].enabled);
-			this.shaderPipeline.init(this.mainCanvas.width, this.mainCanvas.height, enabledEffects);
+			const density = this.mainCanvas.pixelDensity?.() ?? this.pixelDensity ?? 1;
+			this.pixelDensity = density;
+			this.shaderPipeline.init(this.mainCanvas.width, this.mainCanvas.height, enabledEffects, density);
 		}
 		return this;
 	}

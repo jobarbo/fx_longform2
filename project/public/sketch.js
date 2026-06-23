@@ -12,7 +12,7 @@ const CANVAS_CONFIG = {
 };
 
 const DEBUG_CONFIG = {
-	DEFAULT_PIXEL_DENSITY_DESKTOP: 1,
+	DEFAULT_PIXEL_DENSITY_DESKTOP: 2,
 	DEFAULT_PIXEL_DENSITY_MOBILE: 1,
 	HELP_TEXT: "Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)",
 };
@@ -196,13 +196,14 @@ function setup() {
 
 	// Create main canvas for the artwork
 	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
+	mainCanvas.pixelDensity(pixel_density);
 
 	// Try to create shader canvas for the WEBGL renderer
 	if (typeof shaderEffects !== "undefined") {
 		try {
 			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
-			shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
 			shaderCanvas.pixelDensity(pixel_density);
+			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
 			console.log("Shader effects initialized successfully");
 		} catch (error) {
 			console.warn("Failed to initialize shader effects:", error);
@@ -217,7 +218,6 @@ function setup() {
 	}
 
 	// Set up the main canvas rendering properties
-	mainCanvas.pixelDensity(pixel_density);
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	mainCanvas.drawingContext.imageSmoothingEnabled = false;
