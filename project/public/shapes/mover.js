@@ -213,7 +213,6 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
-		noiseScale1 = 2,
 		noiseScale2 = CURRENT_PARAMS.noiseScale2 ?? 1,
 		noiseScale3 = 0.001,
 		noiseScale4 = 3,
@@ -321,7 +320,7 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	//! Enhanced pNoise x SineCos with cross-coupling and varied noise indices
 	const mapIn = -0.000000025,
 		mapOut = 0.000000025;
-	let maxU = map(oct(ny * s1o1 + nx * (s2o2 * 1.3) + rseed, ny * s2o2 + nx * (s1o1 * 1.3) + rseed, noiseScale1, 13, octave), mapIn, mapOut, -1, 1, true);
+	let maxU = map(oct(ny * s1o1 + nx * (s2o2 * 1.3) + rseed, ny * s2o2 + nx * (s1o1 * 1.3) + rseed, noiseScale2, 13, octave), mapIn, mapOut, -1, 1, true);
 	let maxV = map(oct(nx * s2o2 + ny * (s1o1 * 1.3) + rseed, nx * s1o1 + ny * (s2o2 * 1.3) + rseed, noiseScale2, 14, octave), mapIn, mapOut, -1, 1, true);
 	let minU = map(oct(ny * s3o3 + nx * (s1o1 * 1.4) + rseed, ny * s1o1 + nx * (s3o3 * 1.4) + rseed, noiseScale3, 15, octave), mapIn, mapOut, -1, 1, true);
 	let minV = map(oct(nx * s1o1 + ny * (s3o3 * 1.4) + rseed, nx * s3o3 + ny * (s1o1 * 1.4) + rseed, noiseScale4, 16, octave), mapIn, mapOut, -1, 1, true);

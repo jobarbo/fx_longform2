@@ -124,7 +124,7 @@ class ShaderEffects {
 				symmetryMode: 3.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				center: [0.5, 0.0], // symmetry center in normalized coords
+				center: [0.5, 1.5], // symmetry center in normalized coords
 				translationSpeed: 0.005, // Speed of horizontal/vertical movement
 				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
@@ -162,7 +162,7 @@ class ShaderEffects {
 			},
 			symmetry2: {
 				enabled: true,
-				symmetryMode: 3.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
@@ -173,7 +173,7 @@ class ShaderEffects {
 				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
 				rotationSpeed: 0.0, // Speed of rotation
 				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
+				rotationStartingAngle: 0.1, // Starting angle for rotation (in radians, added to rotation)
 				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)

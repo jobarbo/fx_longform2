@@ -10,9 +10,8 @@ const SHOW_FPS_UI = false; // FPS overlay + FPS toggle button
 const SHOW_DOWNLOAD_UI = false; // Download button (mounted in panel)
 
 // Padding constants - centralized for consistency
-const BASE_PADDING = 0.0; // Base padding for artwork bounds (used in INIT)
-const WRAP_PADDING_FACTOR = 0.0; // Wrap padding factor for particle movement bounds (used in Mover class)
-
+const BASE_PADDING = 0.22; // Base padding for artwork bounds (used in INIT)
+const WRAP_PADDING_FACTOR = 0.04; // Wrap padding factor for particle movement bounds (used in Mover class)
 // Animation configuration
 let maxFrames = 30;
 let particleNum = 500000;
@@ -86,8 +85,8 @@ let xMin, xMax, yMin, yMax;
 let isBordered = true;
 
 // Re-applied on UI Apply so the composition doesn't shift
-const FRAME_SCALE_FACTOR_X = 2.47;
-const FRAME_SCALE_FACTOR_Y = 2.47;
+const FRAME_SCALE_FACTOR_X = 1.75;
+const FRAME_SCALE_FACTOR_Y = 1.75;
 
 function preload() {
 	// Initialize shader effects (will load all shaders) - optional
@@ -219,7 +218,7 @@ async function setup() {
 	startAnimation();
 
 	if (CURRENT_PARAMS.showExternalFrame !== false) {
-		//();
+		renderOutsideFrame();
 	}
 	// Start the custom draw loop
 	customDraw();
