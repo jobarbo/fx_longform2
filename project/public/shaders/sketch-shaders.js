@@ -33,6 +33,7 @@ class ShaderEffects {
 		// Canvas references
 		this.mainCanvas = null;
 		this.shaderCanvas = null;
+		this.pixelDensity = 1;
 
 		// Shader system references
 		this.shaderManager = null;
@@ -75,28 +76,6 @@ class ShaderEffects {
 				},
 			},
 
-			grain: {
-				enabled: true,
-				amount: 0.1,
-				timeMultiplier: 0.0,
-				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
-				thresholdMinX: 0.0, // left [0..1]
-				thresholdMaxX: 1.0, // right [0..1]
-				thresholdMinY: 0.0, // bottom [0..1]
-				thresholdMaxY: 1.0, // top [0..1]
-				thresholdSmooth: 0.001, // soft edge at boundaries (0 = hard edge)
-				uniforms: {
-					uTime: "shaderTime * timeMultiplier",
-					uSeed: "shaderSeed + 345.0",
-					uAmount: "amount",
-					uThresholdMinX: "thresholdMinX",
-					uThresholdMaxX: "thresholdMaxX",
-					uThresholdMinY: "thresholdMinY",
-					uThresholdMaxY: "thresholdMaxY",
-					uThresholdSmooth: "thresholdSmooth",
-				},
-			},
-
 			pixelSort: {
 				enabled: false,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
@@ -124,7 +103,7 @@ class ShaderEffects {
 				symmetryMode: 3.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				center: [0.5, 1.5], // symmetry center in normalized coords
+				center: [0.5, 1.0], // symmetry center in normalized coords
 				translationSpeed: 0.005, // Speed of horizontal/vertical movement
 				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
@@ -160,6 +139,7 @@ class ShaderEffects {
 					uRotationAmplitude: "rotationAmplitude",
 				},
 			},
+
 			symmetry2: {
 				enabled: true,
 				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
@@ -213,17 +193,16 @@ class ShaderEffects {
 					uResolution: "[width, height]",
 				},
 			},
-
 			zoom: {
-				enabled: false,
-				timeMultiplier: 1.0,
-				zoomSpeed: 1.0,
-				zoomAmount: 0.95,
-				zoomOutAmount: 0.85,
-				zoomInAmount: 1.15,
-				animateZoom: 0.0,
-				center: [0.5, 0.5],
-				easingMode: 0.0,
+				enabled: true,
+				zoomAmount: 1.0, // Static zoom level (1.0 = no zoom, 2.0 = 2x in, 0.5 = 2x out)
+				zoomSpeed: 0.8, // Animation speed
+				zoomOutAmount: 2.25, // Min zoom when animating
+				zoomInAmount: 4.5, // Max zoom when animating
+				animateZoom: 0.0, // 0.0 = static, 1.0 = animate between out/in
+				easingMode: 4.0, // 0=sine, 1=linear, 2=ease-in, 3=ease-out, 4=ease-in-out, 5=bounce
+				center: [0.5, 0.5], // Zoom center point (normalized 0-1)
+				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uZoomSpeed: "zoomSpeed",
@@ -233,9 +212,9 @@ class ShaderEffects {
 					uAnimateZoom: "animateZoom",
 					uCenter: "center",
 					uEasingMode: "easingMode",
+					uCenter: "center",
 				},
 			},
-
 			pixelGrid: {
 				enabled: false,
 				gridSize: [1233.0, 1233.0],
@@ -378,6 +357,27 @@ class ShaderEffects {
 					uThreshold: "threshold",
 				},
 			},
+			grain: {
+				enabled: true,
+				amount: 0.1,
+				timeMultiplier: 0.0,
+				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
+				thresholdMinX: 0.0, // left [0..1]
+				thresholdMaxX: 1.0, // right [0..1]
+				thresholdMinY: 0.0, // bottom [0..1]
+				thresholdMaxY: 1.0, // top [0..1]
+				thresholdSmooth: 0.001, // soft edge at boundaries (0 = hard edge)
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uSeed: "shaderSeed + 345.0",
+					uAmount: "amount",
+					uThresholdMinX: "thresholdMinX",
+					uThresholdMaxX: "thresholdMaxX",
+					uThresholdMinY: "thresholdMinY",
+					uThresholdMaxY: "thresholdMaxY",
+					uThresholdSmooth: "thresholdSmooth",
+				},
+			},
 		};
 
 		// Cache for last enabled effects (to detect changes)
@@ -440,9 +440,10 @@ class ShaderEffects {
 	 * @param {p5.Graphics} mainCanvas - Main graphics buffer for artwork
 	 * @param {p5.Graphics} shaderCanvas - WEBGL canvas for shader effects
 	 */
-	setup(width, height, mainCanvas, shaderCanvas) {
+	setup(width, height, mainCanvas, shaderCanvas, pixelDensity = 1) {
 		this.mainCanvas = mainCanvas;
 		this.shaderCanvas = shaderCanvas;
+		this.pixelDensity = pixelDensity;
 
 		// FPS overlay default (can be controlled by sketch-level constant SHOW_FPS_UI)
 		const isSafariMobileCheck = typeof isSafariMobile === "function" && isSafariMobile();
@@ -460,7 +461,7 @@ class ShaderEffects {
 		// Initialize shader pipeline with enabled effects
 		const enabledEffects = Object.keys(this.effectsConfig).filter((name) => this.effectsConfig[name].enabled);
 
-		this.shaderPipeline = new ShaderPipeline(this.shaderManager, this.p5Instance).init(width, height, enabledEffects);
+		this.shaderPipeline = new ShaderPipeline(this.shaderManager, this.p5Instance).init(width, height, enabledEffects, pixelDensity);
 
 		// Make it globally accessible (for backward compatibility)
 		window.shaderPipeline = this.shaderPipeline;
@@ -509,12 +510,32 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Reinitialize shader pipeline when effects change
+	 * Physical canvas resolution in pixels (logical size × pixel density).
+	 */
+	getPhysicalResolution() {
+		const density = this.mainCanvas?.pixelDensity?.() ?? this.pixelDensity ?? 1;
+		return [this.mainCanvas.width * density, this.mainCanvas.height * density];
+	}
+
+	/**
+	 * Update pixel density and rebuild intermediate shader buffers.
+	 * @param {number} density
+	 */
+	setPixelDensity(density) {
+		this.pixelDensity = density;
+		this.reinitializePipeline();
+		return this;
+	}
+
+	/**
+	 * Reinitialize shader pipeline when effects or resolution change
 	 */
 	reinitializePipeline() {
-		if (this.shaderPipeline && this.shaderManager) {
+		if (this.shaderPipeline && this.shaderManager && this.mainCanvas) {
 			const enabledEffects = Object.keys(this.effectsConfig).filter((name) => this.effectsConfig[name].enabled);
-			this.shaderPipeline.init(this.mainCanvas.width, this.mainCanvas.height, enabledEffects);
+			const density = this.mainCanvas.pixelDensity?.() ?? this.pixelDensity ?? 1;
+			this.pixelDensity = density;
+			this.shaderPipeline.init(this.mainCanvas.width, this.mainCanvas.height, enabledEffects, density);
 		}
 		return this;
 	}
@@ -557,18 +578,19 @@ class ShaderEffects {
 		if (typeof value === "string") {
 			// Handle special cases
 			if (value === "[width, height]") {
-				return [this.mainCanvas.width, this.mainCanvas.height];
+				return this.getPhysicalResolution();
 			}
 
 			// Handle expressions like 'shaderSeed + 777.0'
 			if (value.includes("+") || value.includes("-") || value.includes("*") || value.includes("/")) {
 				try {
+					const [physW, physH] = this.getPhysicalResolution();
 					// Create a safe evaluation context with available variables
 					const evalContext = {
 						shaderTime: this.shaderTime,
 						shaderSeed: this.shaderSeed,
-						width: this.mainCanvas.width,
-						height: this.mainCanvas.height,
+						width: physW,
+						height: physH,
 						...effect, // Include effect properties
 					};
 
@@ -596,8 +618,8 @@ class ShaderEffects {
 			if (value === "shaderTime") return this.shaderTime;
 			if (value === "shaderSeed") return this.shaderSeed;
 			if (value === "loadingProgress") return this.loadingProgress;
-			if (value === "width") return this.mainCanvas.width;
-			if (value === "height") return this.mainCanvas.height;
+			if (value === "width") return this.getPhysicalResolution()[0];
+			if (value === "height") return this.getPhysicalResolution()[1];
 
 			// Try to evaluate as a simple variable reference
 			try {

@@ -133,15 +133,15 @@ async function setup() {
 
 	// Create main canvas for the artwork (will also handle debug overlays)
 	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
+	mainCanvas.pixelDensity(pixel_density);
 
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
 	if (shadersEnabled()) {
 		try {
 			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
-			// Initialize shader effects system
-			shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
-			// Set up shader canvas pixel density
 			shaderCanvas.pixelDensity(pixel_density);
+			// Initialize shader effects system
+			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
 			console.log("Shader effects initialized successfully");
 		} catch (error) {
 			console.warn("Failed to initialize shader effects:", error);
@@ -157,9 +157,6 @@ async function setup() {
 		createCanvas(DIM / ARTWORK_RATIO, DIM);
 		pixelDensity(pixel_density);
 	}
-
-	// Set up the main canvas rendering properties
-	mainCanvas.pixelDensity(pixel_density);
 
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
@@ -464,6 +461,9 @@ window.applyGenerativeSettings = async function applyGenerativeSettings(settings
 			pixelDensity(pixel_density);
 			mainCanvas?.pixelDensity(pixel_density);
 			if (shaderCanvas?.pixelDensity) shaderCanvas.pixelDensity(pixel_density);
+			if (typeof shaderEffects?.setPixelDensity === "function") {
+				shaderEffects.setPixelDensity(pixel_density);
+			}
 		} catch {
 			// ignore
 		}
