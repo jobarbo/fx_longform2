@@ -103,7 +103,7 @@ class ShaderEffects {
 				symmetryMode: 3.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				center: [0.5, 1.0], // symmetry center in normalized coords
+				center: [0.5, 0.0], // symmetry center in normalized coords
 				translationSpeed: 0.005, // Speed of horizontal/vertical movement
 				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
@@ -359,7 +359,7 @@ class ShaderEffects {
 			},
 			grain: {
 				enabled: true,
-				amount: 0.1,
+				amount: 0.051,
 				timeMultiplier: 0.0,
 				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
 				thresholdMinX: 0.0, // left [0..1]

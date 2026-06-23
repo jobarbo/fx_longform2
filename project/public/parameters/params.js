@@ -14,7 +14,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 	// ---- Available options (drives the UI dropdowns) ----
 	options: {
 		populations: [100000, 300000, 500000, 1000000, 1500000, 2500000, 3500000],
-		particleSizes: [0.25, 0.35, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0],
+		particleSizes: [0.25, 0.35, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
 		horizontalSpeeds: ["veryFast", "fast", "standard", "slow", "snail"],
 		verticalSpeeds: ["veryFast", "fast", "standard", "slow", "snail"],
 		innerFlowLevels: ["low", "standard", "medium", "high"],
