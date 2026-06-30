@@ -198,12 +198,12 @@ class ShaderEffects {
 
 			pixelGrid: {
 				enabled: true,
-				gridSize: [4.0, 1224.0],
-				cellRatio: 1.0,
+				gridSize: [240.0, 24.0],
+				cellRatio: 0.0,
 				gridMode: 0.0,
 				diffuse: 1.0,
 				gapSize: 0.0,
-				gapBrightness: 1.07,
+				gapBrightness: 1.0,
 				uniforms: {
 					uResolution: "[width, height]",
 					uGridSize: "gridSize",
@@ -265,7 +265,7 @@ class ShaderEffects {
 			},
 
 			zoom: {
-				enabled: true,
+				enabled: false,
 				zoomAmount: 0.0, // Static zoom level (1.0 = no zoom, 2.0 = 2x in, 0.5 = 2x out)
 				zoomSpeed: 0.8, // Animation speed
 				zoomOutAmount: 2.25, // Min zoom when animating
@@ -288,7 +288,7 @@ class ShaderEffects {
 			},
 			chromatic: {
 				enabled: true,
-				amount: 0.00515,
+				amount: 0.0015,
 				timeMultiplier: 2.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -335,7 +335,7 @@ class ShaderEffects {
 				},
 			},
 			blur: {
-				enabled: true,
+				enabled: false,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
 				blurAmount: 43.0, // Blur radius/intensity in pixels
 				blurQuality: 120.0, // Sampling quality (1-8, higher = better but slower)
@@ -360,7 +360,7 @@ class ShaderEffects {
 			},
 
 			crtWarp: {
-				enabled: true,
+				enabled: false,
 				warpAmount: 0.25,
 				aspectCorrect: 0.0,
 				borderColor: 2.0,
