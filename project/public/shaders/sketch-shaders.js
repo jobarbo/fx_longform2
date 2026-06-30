@@ -20,9 +20,12 @@
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
-		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
+		this.continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
 		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
-		this.shaderFrameRate = 60; // Frame rate for shader animation
+		this.shaderFrameRate = 60; // Target shader animation rate (see advanceShaderClock)
+		this.shaderApplyInterval = 1; // Run full pipeline every N p5 frames during sketch (1 = every frame)
+		this.shaderFrameCounter = 0;
+		this.lastShaderUpdateTime = 0;
 
 		// Animation state
 		this.shaderTime = 0;
@@ -201,7 +204,7 @@ class ShaderEffects {
 				gridSize: [240.0, 24.0],
 				cellRatio: 0.0,
 				gridMode: 0.0,
-				diffuse: 1.0,
+				diffuse: 0.0,
 				gapSize: 0.0,
 				gapBrightness: 1.0,
 				uniforms: {
@@ -265,7 +268,7 @@ class ShaderEffects {
 			},
 
 			zoom: {
-				enabled: false,
+				enabled: true,
 				zoomAmount: 0.0, // Static zoom level (1.0 = no zoom, 2.0 = 2x in, 0.5 = 2x out)
 				zoomSpeed: 0.8, // Animation speed
 				zoomOutAmount: 2.25, // Min zoom when animating
@@ -545,6 +548,56 @@ class ShaderEffects {
 		this.shaderFrameRate = Math.max(1, Math.min(120, fps));
 		console.log(`Shader frame rate set to ${this.shaderFrameRate}fps`);
 		return this;
+	}
+
+	/**
+	 * How often to run the full shader pipeline during sketching (1 = every frame).
+	 * Skipped frames keep the last shader output on screen; p5 still draws every frame.
+	 * @param {number} interval - Integer >= 1
+	 */
+	setShaderApplyInterval(interval) {
+		this.shaderApplyInterval = Math.max(1, Math.floor(interval));
+		this.shaderFrameCounter = 0;
+		console.log(`Shader apply interval set to every ${this.shaderApplyInterval} frame(s)`);
+		return this;
+	}
+
+	getShaderApplyInterval() {
+		return this.shaderApplyInterval;
+	}
+
+	/**
+	 * Advance shader time from the real clock (replaces fixed 0.01 per frame).
+	 * Calibrated so 60fps ≈ +0.01 per frame, same as before.
+	 */
+	advanceShaderClock() {
+		const now = performance.now();
+		if (!this.lastShaderUpdateTime) {
+			this.lastShaderUpdateTime = now;
+			return 0;
+		}
+
+		const dt = Math.min((now - this.lastShaderUpdateTime) / 1000, 0.1);
+		this.lastShaderUpdateTime = now;
+
+		// Legacy: updateTime(0.01) at 60fps → 0.6 units/sec
+		const delta = dt * (this.shaderFrameRate / 100);
+		if (delta > 0) {
+			this.shaderTime += delta;
+			this.updateTranslationPhases(delta);
+			this.updateRotationPhases(delta);
+		}
+
+		return delta;
+	}
+
+	/**
+	 * Whether to run the expensive multi-pass pipeline this frame.
+	 */
+	shouldRunFullShaderApply() {
+		if (this.shaderApplyInterval <= 1) return true;
+		this.shaderFrameCounter++;
+		return this.shaderFrameCounter % this.shaderApplyInterval === 0;
 	}
 
 	/**
@@ -999,6 +1052,7 @@ class ShaderEffects {
 	renderFrame(isSketchComplete, continueCallback) {
 		// Update FPS counter
 		this.updateFPS();
+		this.advanceShaderClock();
 
 		if (isSketchComplete) {
 			// Always apply shaders at least once when sketch is complete
@@ -1008,7 +1062,6 @@ class ShaderEffects {
 
 			if (this.shouldContinueAfterCompletion()) {
 				// Keep shaders running even after particles are complete
-				this.updateTime(0.01);
 				this.apply();
 
 				// Draw FPS counter
@@ -1023,12 +1076,12 @@ class ShaderEffects {
 			}
 		}
 
-		// Update shader time during sketching
-		this.updateTime(0.01);
-
 		// Only apply shaders during sketching if enabled
 		if (this.shouldApplyDuringSketch()) {
-			this.apply();
+			if (this.shouldRunFullShaderApply()) {
+				this.apply();
+			}
+			// Skipped frames: leave the last shader output on the WEBGL canvas
 		} else {
 			// If not applying shaders during sketching, use copy shader to display base sketch
 			this.applyCopy();

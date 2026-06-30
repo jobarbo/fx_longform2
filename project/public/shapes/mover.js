@@ -19,6 +19,7 @@ class Mover {
 		const reverseSquareY = this.y - Math.sin(this.angle) * maxTravel;
 		const complementaryHue = (210 + 180) % 360;
 
+		canvas.noStroke();
 		canvas.push();
 		canvas.rectMode(CENTER);
 		canvas.fill(40, 100, 90);

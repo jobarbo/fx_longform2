@@ -9,6 +9,9 @@ const CANVAS_CONFIG = {
 	WRAP_PADDING_FACTOR: 0.05,
 	SCALE_FACTOR_X: 1.0,
 	SCALE_FACTOR_Y: 1.0,
+	FORCE_SIZE: false,
+	FIXED_WIDTH: 240,
+	FIXED_HEIGHT: 24,
 };
 
 const DEBUG_CONFIG = {
@@ -184,36 +187,48 @@ function setup() {
 	swatchesLoaded = true;
 
 	// Calculate optimal pixel density before creating canvases
-	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_MOBILE : DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_DESKTOP;
+	pixel_density = CANVAS_CONFIG.FORCE_SIZE ? 1 : typeof isSafariMobile === "function" && isSafariMobile() ? DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_MOBILE : DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_DESKTOP;
 
-	// Canvas setup - match viewport aspect ratio
-	ARTWORK_RATIO = CANVAS_CONFIG.ARTWORK_RATIO;
+	// Canvas setup
+	let canvasW, canvasH;
+	if (CANVAS_CONFIG.FORCE_SIZE) {
+		canvasW = CANVAS_CONFIG.FIXED_WIDTH;
+		canvasH = CANVAS_CONFIG.FIXED_HEIGHT;
+	} else {
+		ARTWORK_RATIO = CANVAS_CONFIG.ARTWORK_RATIO;
+		const viewportDim = min(windowWidth, windowHeight);
+		canvasW = viewportDim / ARTWORK_RATIO;
+		canvasH = viewportDim;
+	}
+	ARTWORK_RATIO = canvasW / canvasH;
 	BASE_HEIGHT = CANVAS_CONFIG.BASE_WIDTH * ARTWORK_RATIO;
 	DEFAULT_SIZE = min(CANVAS_CONFIG.BASE_WIDTH, BASE_HEIGHT);
-	DIM = min(windowWidth, windowHeight);
+	DIM = min(canvasW, canvasH);
 	MULTIPLIER = DIM / DEFAULT_SIZE;
 	console.log(MULTIPLIER);
 
 	// Create main canvas for the artwork
-	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
+	mainCanvas = createGraphics(canvasW, canvasH);
 	mainCanvas.pixelDensity(pixel_density);
 
 	// Try to create shader canvas for the WEBGL renderer
 	if (typeof shaderEffects !== "undefined") {
 		try {
-			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
+			shaderCanvas = createCanvas(canvasW, canvasH, WEBGL);
 			shaderCanvas.pixelDensity(pixel_density);
 			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
+			// Full pipeline every N frames; p5 draws every frame. interval=1 for max quality.
+			// shaderEffects.setShaderApplyInterval(1);
 			console.log("Shader effects initialized successfully");
 		} catch (error) {
 			console.warn("Failed to initialize shader effects:", error);
 			console.log("Falling back to sketch without shaders");
 			shaderCanvas = null;
-			createCanvas(DIM / ARTWORK_RATIO, DIM);
+			createCanvas(canvasW, canvasH);
 			pixelDensity(pixel_density);
 		}
 	} else {
-		createCanvas(DIM / ARTWORK_RATIO, DIM);
+		createCanvas(canvasW, canvasH);
 		pixelDensity(pixel_density);
 	}
 
@@ -254,8 +269,7 @@ function setup() {
 
 	console.log(DEBUG_CONFIG.HELP_TEXT);
 	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
-		console.log(`Shader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
-		console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
+		console.log(`Shader pipeline: every ${shaderEffects.getShaderApplyInterval()} frame(s) during sketch (setShaderApplyInterval to tune)`);
 	} else {
 		console.log("Running without shader effects");
 	}
