@@ -1,5 +1,19 @@
+// sketch.js — generative artwork entry point
+//
+// SECTIONS (search by number or name)
+//   1. Configuration      — tunable constants and runtime config
+//   2. State              — module-level variables
+//   3. Color utilities    — palette conversion helpers
+//   4. Canvas & layout    — sizing, pixel density, canvas creation
+//   5. Particles          — mover initialization
+//   6. Audio & MIDI       — reactive shader uniforms and knob smoothing
+//   7. UI controls        — FPS toggle and mobile controls
+//   8. Rendering          — per-frame artwork and display output
+//   9. p5 lifecycle       — preload, setup, draw, keyPressed
+//
+
 // ============================================================================
-// CONSTANTS
+// 1. CONFIGURATION
 // ============================================================================
 
 const CANVAS_CONFIG = {
@@ -20,12 +34,7 @@ const DEBUG_CONFIG = {
 	HELP_TEXT: "Controls: Press 'F' to toggle FPS counter",
 };
 
-// ============================================================================
-// CONFIGURATION
-// ============================================================================
-
 const config = {
-	// Animation & Rendering
 	animation: {
 		maxFrames: null,
 		useFrameMode: true,
@@ -33,46 +42,31 @@ const config = {
 };
 
 // ============================================================================
-// STATE
+// 2. STATE
 // ============================================================================
 
-// Lifecycle & Animation
+// Lifecycle
 let features = "";
-let elapsedTime = 0;
 let executionTimer = new ExecutionTimer();
 let sketchFrame = 0;
 let hasDisplayedFirstFrame = false;
 
-// Particle system
+// Particles
 let movers = [];
 let baseHSLPalette = [];
-let currentPaletteName = "";
-let selectedPalette = null;
 
-// Palette & Swatch
-let swatchPalette = null;
-let swatchesLoaded = false;
-
-// Canvas & Rendering
+// Canvas
 let mainCanvas = null;
 let shaderCanvas = null;
-
-// Display dimensions
-let ARTWORK_RATIO = 1.6;
-let BASE_HEIGHT = 0;
-let DEFAULT_SIZE = 0;
-let W = window.innerWidth;
-let H = window.innerHeight;
-let DIM = 0;
-let MULTIPLIER = 1;
 let pixel_density = 1;
 
-// Media
-let img = null;
-let mask = null;
+// Layout (derived from canvas dimensions at setup)
+let ARTWORK_RATIO = 1.6;
+let DIM = 0;
+let MULTIPLIER = 1;
 
 // ============================================================================
-// UTILITIES
+// 3. COLOR UTILITIES
 // ============================================================================
 
 function hexToHsl(hex) {
@@ -105,107 +99,77 @@ function hexToHsl(hex) {
 }
 
 // ============================================================================
-// CORE FUNCTIONS
+// 4. CANVAS & LAYOUT
 // ============================================================================
 
-function preload() {
-	// Initialize shader effects (will load all shaders) - optional
-	if (typeof shaderEffects !== "undefined") {
-		shaderEffects.preload(this);
+function getPixelDensity() {
+	return typeof isSafariMobile === "function" && isSafariMobile() ? DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_MOBILE : DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_DESKTOP;
+}
+
+function getCanvasDimensions() {
+	if (CANVAS_CONFIG.FORCE_SIZE) {
+		return {
+			width: CANVAS_CONFIG.FIXED_WIDTH,
+			height: CANVAS_CONFIG.FIXED_HEIGHT,
+		};
+	}
+
+	const ratio = CANVAS_CONFIG.ARTWORK_RATIO;
+	const viewportDim = min(windowWidth, windowHeight);
+	return {
+		width: viewportDim / ratio,
+		height: viewportDim,
+	};
+}
+
+function updateLayoutMetrics(canvasW, canvasH) {
+	ARTWORK_RATIO = canvasW / canvasH;
+	const baseHeight = CANVAS_CONFIG.BASE_WIDTH * ARTWORK_RATIO;
+	const defaultSize = min(CANVAS_CONFIG.BASE_WIDTH, baseHeight);
+	DIM = min(canvasW, canvasH);
+	MULTIPLIER = DIM / defaultSize;
+	console.log(MULTIPLIER);
+}
+
+function createArtworkCanvas(canvasW, canvasH) {
+	mainCanvas = createGraphics(canvasW, canvasH);
+	mainCanvas.pixelDensity(pixel_density);
+}
+
+function initDisplayCanvas(canvasW, canvasH) {
+	if (typeof shaderEffects === "undefined") {
+		createCanvas(canvasW, canvasH);
+		pixelDensity(pixel_density);
+		return null;
+	}
+
+	try {
+		const displayCanvas = createCanvas(canvasW, canvasH, WEBGL);
+		displayCanvas.pixelDensity(pixel_density);
+		shaderEffects.setup(width, height, mainCanvas, displayCanvas, pixel_density);
+		console.log("Shader effects initialized successfully");
+		return displayCanvas;
+	} catch (error) {
+		console.warn("Failed to initialize shader effects:", error);
+		console.log("Falling back to sketch without shaders");
+		createCanvas(canvasW, canvasH);
+		pixelDensity(pixel_density);
+		return null;
 	}
 }
 
-function setup() {
-	console.log(features);
-	features = $fx.getFeatures();
-	executionTimer.start();
-
-	// Reset the random seed to ensure consistency
-	$fx.rand.reset();
-
-	// Using direct hex palette
-	swatchesLoaded = true;
-
-	// Calculate optimal pixel density before creating canvases
-	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_MOBILE : DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_DESKTOP;
-
-	// Canvas setup
-	let canvasW, canvasH;
-	if (CANVAS_CONFIG.FORCE_SIZE) {
-		canvasW = CANVAS_CONFIG.FIXED_WIDTH;
-		canvasH = CANVAS_CONFIG.FIXED_HEIGHT;
-	} else {
-		ARTWORK_RATIO = CANVAS_CONFIG.ARTWORK_RATIO;
-		const viewportDim = min(windowWidth, windowHeight);
-		canvasW = viewportDim / ARTWORK_RATIO;
-		canvasH = viewportDim;
-	}
-	ARTWORK_RATIO = canvasW / canvasH;
-	BASE_HEIGHT = CANVAS_CONFIG.BASE_WIDTH * ARTWORK_RATIO;
-	DEFAULT_SIZE = min(CANVAS_CONFIG.BASE_WIDTH, BASE_HEIGHT);
-	DIM = min(canvasW, canvasH);
-	MULTIPLIER = DIM / DEFAULT_SIZE;
-	console.log(MULTIPLIER);
-
-	// Create main canvas for the artwork
-	mainCanvas = createGraphics(canvasW, canvasH);
-	mainCanvas.pixelDensity(pixel_density);
-
-	// Try to create shader canvas for the WEBGL renderer
-	if (typeof shaderEffects !== "undefined") {
-		try {
-			shaderCanvas = createCanvas(canvasW, canvasH, WEBGL);
-			shaderCanvas.pixelDensity(pixel_density);
-			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
-			// Full pipeline every N frames; p5 draws every frame. interval=1 for max quality.
-			// shaderEffects.setShaderApplyInterval(1);
-			console.log("Shader effects initialized successfully");
-		} catch (error) {
-			console.warn("Failed to initialize shader effects:", error);
-			console.log("Falling back to sketch without shaders");
-			shaderCanvas = null;
-			createCanvas(canvasW, canvasH);
-			pixelDensity(pixel_density);
-		}
-	} else {
-		createCanvas(canvasW, canvasH);
-		pixelDensity(pixel_density);
-	}
-
-	// Set up the main canvas rendering properties
+function configureArtworkCanvas() {
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 	colorMode(HSB, 360, 100, 100, 100);
 	mainCanvas.drawingContext.imageSmoothingEnabled = false;
 	mainCanvas.drawingContext.globalCompositeOperation = "source-over";
 
-	// Initialize random seeds from fxrand for deterministic behavior
-	randomSeed(fxrand() * 10000);
-	noiseSeed(fxrand() * 10000);
-
-	// Apply scale transformation
 	mainCanvas.translate(width / 2, height / 2);
 	mainCanvas.scale(CANVAS_CONFIG.SCALE_FACTOR_X, CANVAS_CONFIG.SCALE_FACTOR_Y);
 	mainCanvas.translate(-width / 2, -height / 2);
+}
 
-	initializeParticles();
-
-	// --- Audio-reactive uniforms (uncomment to activate) ---
-	audioKnob
-		.setSource("microphone") // or 'chime'
-		.map("energy", "zoom", "zoomOutAmount", 1.2, 5.4, 0, 1, 2, 0.85)
-		//.map("energy", "pixelSort", "threshold", 0, 1, 0, 1, 10, 0.75)
-		.map("energy", "pixelSort", "sortAmount", 0, 120, 0, 1, 1, 0.75) /* s */
-		.map("energy", "pixelSort", "threshold", 0, 1, 0, 1, 1, 0.75); /* s */
-	// --- MIDI knob smoothing ---
-	const initAngle = shaderEffects.effectsConfig.symmetry.rotationStartingAngle;
-	addKnobSmooth(32, "symmetry", "rotationStartingAngle", initAngle, 0.08);
-
-	if (typeof createDownloadButton === "function") {
-		createDownloadButton();
-	}
-
-	setupMobileControls();
-
+function logStartupInfo() {
 	console.log(DEBUG_CONFIG.HELP_TEXT);
 	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
 		console.log(`Shader pipeline: every ${shaderEffects.getShaderApplyInterval()} frame(s) during sketch (setShaderApplyInterval to tune)`);
@@ -213,6 +177,49 @@ function setup() {
 		console.log("Running without shader effects");
 	}
 }
+
+// ============================================================================
+// 5. PARTICLES
+// ============================================================================
+
+function initializeParticles() {
+	movers = [];
+
+	const hexPalette = getPalette("hex_palette");
+	baseHSLPalette = hexPalette.map(hexToHsl);
+
+	const cx = mainCanvas.width / 2;
+	const cy = mainCanvas.height / 2;
+	const rectSize = min(mainCanvas.width, mainCanvas.height) * 0.425;
+
+	movers.push(new Mover(cx, cy, rectSize, baseHSLPalette));
+}
+
+// ============================================================================
+// 6. AUDIO & MIDI
+// ============================================================================
+
+function setupAudioReactive() {
+	if (typeof audioKnob === "undefined") return;
+
+	audioKnob
+		.setSource("microphone") // or 'chime'
+		.map("energy", "zoom", "zoomOutAmount", 1.2, 5.4, 0, 1, 2, 0.85)
+		//.map("energy", "pixelSort", "threshold", 0, 1, 0, 1, 10, 0.75)
+		.map("energy", "pixelSort", "sortAmount", 0, 120, 0, 1, 1, 0.75) /* s */
+		.map("energy", "pixelSort", "threshold", 0, 1, 0, 1, 1, 0.75); /* s */
+}
+
+function setupMidiKnobs() {
+	if (typeof shaderEffects === "undefined") return;
+
+	const initAngle = shaderEffects.effectsConfig.symmetry.rotationStartingAngle;
+	addKnobSmooth(32, "symmetry", "rotationStartingAngle", initAngle, 0.08);
+}
+
+// ============================================================================
+// 7. UI CONTROLS
+// ============================================================================
 
 function syncFpsToggleButton() {
 	const toggleFpsButton = document.getElementById("toggle-fps");
@@ -235,81 +242,118 @@ function setupMobileControls() {
 	syncFpsToggleButton();
 }
 
+function toggleFpsCounter() {
+	if (typeof shaderEffects === "undefined") return;
+	shaderEffects.toggleFPS();
+	syncFpsToggleButton();
+}
+
+// ============================================================================
+// 8. RENDERING
+// ============================================================================
+
+function updateParticles(maxFrames) {
+	if (maxFrames != null && sketchFrame >= maxFrames) return;
+
+	for (let i = 0; i < movers.length; i++) {
+		movers[i].show(mainCanvas);
+		movers[i].move(sketchFrame, maxFrames);
+	}
+	sketchFrame++;
+}
+
+function onAnimationComplete(maxFrames) {
+	if (maxFrames == null || sketchFrame < maxFrames) return;
+
+	executionTimer.stop().logElapsedTime("Sketch completed in");
+	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
+		shaderEffects.setParticleAnimationComplete(true);
+	}
+	$fx.preview();
+	document.complete = true;
+	if (typeof createDownloadButton === "function") {
+		createDownloadButton();
+	}
+}
+
+function renderOutput(isSketchComplete) {
+	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
+		const shouldContinue = shaderEffects.renderFrame(isSketchComplete, null);
+		if (!shouldContinue) noLoop();
+		return;
+	}
+
+	clear();
+	image(mainCanvas, 0, 0);
+
+	if (typeof shaderEffects !== "undefined") {
+		shaderEffects.updateFPS();
+		shaderEffects.drawFPS();
+	}
+
+	if (isSketchComplete) noLoop();
+}
+
+function notifyFirstFrameReady() {
+	if (hasDisplayedFirstFrame) return;
+	hasDisplayedFirstFrame = true;
+	window.liveReloadTransition?.onSketchReady?.();
+}
+
+// ============================================================================
+// 9. P5 LIFECYCLE
+// ============================================================================
+
+function preload() {
+	if (typeof shaderEffects !== "undefined") {
+		shaderEffects.preload(this);
+	}
+}
+
+function setup() {
+	features = $fx.getFeatures();
+	executionTimer.start();
+	$fx.rand.reset();
+
+	pixel_density = getPixelDensity();
+	const {width: canvasW, height: canvasH} = getCanvasDimensions();
+	updateLayoutMetrics(canvasW, canvasH);
+
+	createArtworkCanvas(canvasW, canvasH);
+	shaderCanvas = initDisplayCanvas(canvasW, canvasH);
+	configureArtworkCanvas();
+
+	randomSeed(fxrand() * 10000);
+	noiseSeed(fxrand() * 10000);
+
+	initializeParticles();
+	setupAudioReactive();
+	setupMidiKnobs();
+
+	if (typeof createDownloadButton === "function") {
+		createDownloadButton();
+	}
+	setupMobileControls();
+	logStartupInfo();
+}
+
 function draw() {
 	mainCanvas.background(190, 100, 0, 100);
 	if (typeof audioKnob !== "undefined") audioKnob.update();
 	updateKnobSmoothing();
 
 	const maxFrames = config.animation.maxFrames;
-
-	if (maxFrames == null || sketchFrame < maxFrames) {
-		for (let i = 0; i < movers.length; i++) {
-			movers[i].show(mainCanvas);
-			movers[i].move(sketchFrame, maxFrames);
-		}
-		sketchFrame++;
-		if (maxFrames != null && sketchFrame >= maxFrames) {
-			executionTimer.stop().logElapsedTime("Sketch completed in");
-			if (typeof shaderEffects !== "undefined" && shaderCanvas) {
-				shaderEffects.setParticleAnimationComplete(true);
-			}
-			$fx.preview();
-			document.complete = true;
-			if (typeof createDownloadButton === "function") {
-				createDownloadButton();
-			}
-		}
-	}
+	updateParticles(maxFrames);
+	onAnimationComplete(maxFrames);
 
 	const isSketchComplete = maxFrames != null && sketchFrame >= maxFrames;
-
-	if (typeof shaderEffects !== "undefined" && shaderCanvas) {
-		const shouldContinue = shaderEffects.renderFrame(isSketchComplete, null);
-		if (!shouldContinue) {
-			noLoop();
-		}
-	} else {
-		clear();
-		image(mainCanvas, 0, 0);
-
-		if (typeof shaderEffects !== "undefined") {
-			shaderEffects.updateFPS();
-			shaderEffects.drawFPS();
-		}
-
-		if (isSketchComplete) {
-			noLoop();
-		}
-	}
-
-	// Fade the previous live-reload frame once the new sketch is visibly rendering.
-	if (!hasDisplayedFirstFrame) {
-		hasDisplayedFirstFrame = true;
-		window.liveReloadTransition?.onSketchReady?.();
-	}
-}
-
-function initializeParticles() {
-	movers = [];
-
-	// Build HSL palette directly from hex array
-	const hexPalette = getPalette("hex_palette");
-	baseHSLPalette = hexPalette.map(hexToHsl);
-
-	// Single rect in center
-	const cx = mainCanvas.width / 2;
-	const cy = mainCanvas.height / 2;
-	const rectSize = min(mainCanvas.width, mainCanvas.height) * 0.425;
-
-	movers.push(new Mover(cx, cy, rectSize, baseHSLPalette));
+	renderOutput(isSketchComplete);
+	notifyFirstFrameReady();
 }
 
 function keyPressed() {
 	if (key === "F" || key === "f") {
-		if (typeof shaderEffects !== "undefined") {
-			shaderEffects.toggleFPS();
-			syncFpsToggleButton();
-		}
+		toggleFpsCounter();
 	}
 
 	if (key === "G" || key === "g") {
@@ -322,7 +366,6 @@ function keyPressed() {
 	}
 
 	if (key === "C" || key === "c") {
-		const controls = document.getElementById("controls");
-		controls.classList.toggle("hide");
+		document.getElementById("controls")?.classList.toggle("hide");
 	}
 }

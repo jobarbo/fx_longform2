@@ -15,27 +15,27 @@ class Mover {
 		const trackHeight = this.size * 4;
 		const squareSize = this.size / 2;
 		const maxTravel = trackHeight / 2 - squareSize / 2;
-		const squareY = this.y + Math.sin(this.angle) * maxTravel;
-		const reverseSquareY = this.y - Math.sin(this.angle) * maxTravel;
+		const squareX = this.x + Math.sin(this.angle) * maxTravel;
+		const reverseSquareX = this.x - Math.sin(this.angle) * maxTravel;
 		const complementaryHue = (210 + 180) % 360;
 
 		canvas.noStroke();
 		canvas.push();
 		canvas.rectMode(CENTER);
 		canvas.fill(40, 100, 90);
-		canvas.rect(this.x, this.y, this.size, trackHeight);
+		canvas.rect(this.x, this.y, trackHeight, this.size);
 		canvas.pop();
 
 		canvas.push();
 		canvas.rectMode(CENTER);
 		canvas.fill(210, 100, 50, 100);
-		canvas.rect(this.x, squareY, squareSize, squareSize);
+		canvas.rect(squareX, this.y, squareSize, squareSize);
 		canvas.pop();
 
 		canvas.push();
 		canvas.rectMode(CENTER);
 		canvas.fill(complementaryHue, 100, 50, 100);
-		canvas.rect(this.x, reverseSquareY, squareSize, squareSize);
+		canvas.rect(reverseSquareX, this.y, squareSize, squareSize);
 		canvas.pop();
 	}
 
