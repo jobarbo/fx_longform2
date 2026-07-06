@@ -9,15 +9,15 @@ const CANVAS_CONFIG = {
 	WRAP_PADDING_FACTOR: 0.05,
 	SCALE_FACTOR_X: 1.0,
 	SCALE_FACTOR_Y: 1.0,
-	FORCE_SIZE: false,
+	FORCE_SIZE: true,
 	FIXED_WIDTH: 240,
 	FIXED_HEIGHT: 24,
 };
 
 const DEBUG_CONFIG = {
-	DEFAULT_PIXEL_DENSITY_DESKTOP: 2,
+	DEFAULT_PIXEL_DENSITY_DESKTOP: 5,
 	DEFAULT_PIXEL_DENSITY_MOBILE: 1,
-	HELP_TEXT: "Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)",
+	HELP_TEXT: "Controls: Press 'F' to toggle FPS counter",
 };
 
 // ============================================================================
@@ -29,11 +29,6 @@ const config = {
 	animation: {
 		maxFrames: null,
 		useFrameMode: true,
-	},
-
-	// UI & Debug
-	ui: {
-		showDebugBounds: false,
 	},
 };
 
@@ -109,61 +104,6 @@ function hexToHsl(hex) {
 	return {h: h * 360, s: s * 100, l: l * 100};
 }
 
-function updateDebugOverlay() {
-	const debugOverlay = document.getElementById("debug-bounds");
-	const basePadding = document.getElementById("debug-base-padding");
-	const moverBounds = document.getElementById("debug-mover-bounds");
-
-	if (!config.ui.showDebugBounds) {
-		debugOverlay.classList.remove("visible");
-		return;
-	}
-
-	debugOverlay.classList.add("visible");
-
-	const canvas = document.querySelector("canvas");
-	if (!canvas) return;
-
-	const canvasRect = canvas.getBoundingClientRect();
-	const canvasWidth = canvasRect.width;
-	const canvasHeight = canvasRect.height;
-
-	// Position the debug overlay to match the canvas
-	debugOverlay.style.left = canvasRect.left + "px";
-	debugOverlay.style.top = canvasRect.top + "px";
-	debugOverlay.style.width = canvasWidth + "px";
-	debugOverlay.style.height = canvasHeight + "px";
-
-	// Base artwork padding
-	const padding = CANVAS_CONFIG.ARTWORK_PADDING;
-	const basePaddingLeft = padding * canvasWidth;
-	const basePaddingTop = padding * canvasHeight;
-	const basePaddingWidth = (1 - 2 * padding) * canvasWidth;
-	const basePaddingHeight = (1 - 2 * padding) * canvasHeight;
-
-	basePadding.style.left = basePaddingLeft + "px";
-	basePadding.style.top = basePaddingTop + "px";
-	basePadding.style.width = basePaddingWidth + "px";
-	basePadding.style.height = basePaddingHeight + "px";
-
-	// Mover bounds (if movers exist)
-	if (movers.length > 0) {
-		const m = movers[0];
-		const wrapPaddingX = (min(DIM, DIM * ARTWORK_RATIO) * CANVAS_CONFIG.WRAP_PADDING_FACTOR) / DIM;
-		const wrapPaddingY = ((min(DIM, DIM * ARTWORK_RATIO) * CANVAS_CONFIG.WRAP_PADDING_FACTOR) / (DIM * ARTWORK_RATIO)) * ARTWORK_RATIO;
-
-		const moverLeft = (m.xMin - wrapPaddingX) * canvasWidth;
-		const moverTop = (m.yMin - wrapPaddingY) * canvasHeight;
-		const moverWidth = (m.xMax + wrapPaddingX - (m.xMin - wrapPaddingX)) * canvasWidth;
-		const moverHeight = (m.yMax + wrapPaddingY - (m.yMin - wrapPaddingY)) * canvasHeight;
-
-		moverBounds.style.left = moverLeft + "px";
-		moverBounds.style.top = moverTop + "px";
-		moverBounds.style.width = moverWidth + "px";
-		moverBounds.style.height = moverHeight + "px";
-	}
-}
-
 // ============================================================================
 // CORE FUNCTIONS
 // ============================================================================
@@ -187,7 +127,7 @@ function setup() {
 	swatchesLoaded = true;
 
 	// Calculate optimal pixel density before creating canvases
-	pixel_density = CANVAS_CONFIG.FORCE_SIZE ? 1 : typeof isSafariMobile === "function" && isSafariMobile() ? DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_MOBILE : DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_DESKTOP;
+	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_MOBILE : DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_DESKTOP;
 
 	// Canvas setup
 	let canvasW, canvasH;
@@ -264,7 +204,6 @@ function setup() {
 		createDownloadButton();
 	}
 
-	updateDebugOverlay();
 	setupMobileControls();
 
 	console.log(DEBUG_CONFIG.HELP_TEXT);
@@ -275,32 +214,25 @@ function setup() {
 	}
 }
 
+function syncFpsToggleButton() {
+	const toggleFpsButton = document.getElementById("toggle-fps");
+	if (!toggleFpsButton || typeof shaderEffects === "undefined") return;
+
+	toggleFpsButton.classList.toggle("active", shaderEffects.showFPS);
+	toggleFpsButton.textContent = shaderEffects.showFPS ? "FPS: ON" : "FPS: OFF";
+}
+
 function setupMobileControls() {
 	const toggleFpsButton = document.getElementById("toggle-fps");
-	if (toggleFpsButton) {
-		toggleFpsButton.addEventListener("click", function () {
-			if (typeof shaderEffects !== "undefined") {
-				shaderEffects.toggleFPS();
-				if (shaderEffects.showFPS) {
-					toggleFpsButton.classList.add("active");
-					toggleFpsButton.textContent = "FPS: ON";
-				} else {
-					toggleFpsButton.classList.remove("active");
-					toggleFpsButton.textContent = "FPS: OFF";
-				}
-				console.log("FPS counter toggled: ", shaderEffects.showFPS);
-			}
-		});
+	if (!toggleFpsButton) return;
 
-		if (typeof shaderEffects !== "undefined") {
-			if (shaderEffects.showFPS) {
-				toggleFpsButton.classList.add("active");
-				toggleFpsButton.textContent = "FPS: ON";
-			} else {
-				toggleFpsButton.textContent = "FPS: OFF";
-			}
-		}
-	}
+	toggleFpsButton.addEventListener("click", () => {
+		if (typeof shaderEffects === "undefined") return;
+		shaderEffects.toggleFPS();
+		syncFpsToggleButton();
+	});
+
+	syncFpsToggleButton();
 }
 
 function draw() {
@@ -373,16 +305,10 @@ function initializeParticles() {
 }
 
 function keyPressed() {
-	if (key === "D" || key === "d") {
-		config.ui.showDebugBounds = !config.ui.showDebugBounds;
-		console.log("Debug bounds toggled: ", config.ui.showDebugBounds);
-		updateDebugOverlay();
-	}
-
 	if (key === "F" || key === "f") {
 		if (typeof shaderEffects !== "undefined") {
 			shaderEffects.toggleFPS();
-			console.log("FPS counter toggled: ", shaderEffects.showFPS);
+			syncFpsToggleButton();
 		}
 	}
 

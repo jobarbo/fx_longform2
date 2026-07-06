@@ -107,13 +107,13 @@ class ShaderEffects {
 			},
 
 			symmetry: {
-				enabled: true,
-				symmetryMode: 3.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				enabled: false,
+				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationSpeed: 0.005, // Speed of horizontal/vertical movement
+				center: [0.0, 0.5], // symmetry center in normalized coords
+				translationSpeed: 0.5, // Speed of horizontal/vertical movement
 				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: -0.5, // Accumulated phase for X translation (prevents jumps)
@@ -149,7 +149,7 @@ class ShaderEffects {
 				},
 			},
 			symmetry2: {
-				enabled: true,
+				enabled: false,
 				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
@@ -191,7 +191,7 @@ class ShaderEffects {
 				},
 			},
 			wave: {
-				enabled: true,
+				enabled: false,
 				timeMultiplier: 1.1,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
@@ -200,7 +200,7 @@ class ShaderEffects {
 			},
 
 			pixelGrid: {
-				enabled: true,
+				enabled: false,
 				gridSize: [240.0, 24.0],
 				cellRatio: 0.0,
 				gridMode: 0.0,
@@ -218,7 +218,7 @@ class ShaderEffects {
 				},
 			},
 			pixelSort: {
-				enabled: true,
+				enabled: false,
 				angle: 0.0, // 0x = vertical, Math.PI/2 = horizontal
 				threshold: 0.3,
 				sortAmount: 2.8,
@@ -411,12 +411,10 @@ class ShaderEffects {
 		this.lastEnabledEffects = null;
 
 		// FPS tracking
-		// Disable FPS counter on Safari mobile to prevent crashes
 		this.showFPS = typeof isSafariMobile === "function" && isSafariMobile() ? false : true;
-		this.fpsHistory = [];
-		this.fpsHistorySize = 60; // Average over 60 frames
 		this.lastFrameTime = performance.now();
-		this.currentFPS = 60;
+		this.currentFPS = 0;
+		this.fpsElement = null;
 	}
 
 	/**
@@ -946,86 +944,30 @@ class ShaderEffects {
 	 * Update FPS counter
 	 */
 	updateFPS() {
-		// Skip FPS tracking if disabled
 		if (!this.showFPS) return;
 
 		const now = performance.now();
 		const delta = now - this.lastFrameTime;
 		this.lastFrameTime = now;
-
-		// Calculate instantaneous FPS
-		const instantFPS = 1000 / delta;
-
-		// Add to history
-		this.fpsHistory.push(instantFPS);
-		if (this.fpsHistory.length > this.fpsHistorySize) {
-			this.fpsHistory.shift();
-		}
-
-		// Calculate average FPS
-		const sum = this.fpsHistory.reduce((a, b) => a + b, 0);
-		this.currentFPS = Math.round(sum / this.fpsHistory.length);
+		this.currentFPS = Math.round(1000 / delta);
 	}
 
-	/**
-	 * Draw FPS counter on screen (using DOM overlay for better visibility)
-	 */
 	drawFPS() {
 		try {
-			// Create or update FPS overlay element
-			let fpsElement = document.getElementById("shader-fps-overlay");
-			if (!fpsElement) {
-				fpsElement = document.createElement("div");
-				fpsElement.id = "shader-fps-overlay";
-				document.body.appendChild(fpsElement);
+			if (!this.fpsElement) {
+				this.fpsElement = document.getElementById("shader-fps-overlay");
+				if (!this.fpsElement) {
+					this.fpsElement = document.createElement("div");
+					this.fpsElement.id = "shader-fps-overlay";
+					document.body.appendChild(this.fpsElement);
+				}
 			}
 
-			// Hide if FPS is disabled
-			if (!this.showFPS) {
-				fpsElement.style.display = "none";
-				return;
-			}
+			this.fpsElement.classList.toggle("is-hidden", !this.showFPS);
+			if (!this.showFPS) return;
 
-			fpsElement.style.display = "block";
-
-			// Get canvas position
-			const canvas = document.querySelector("canvas");
-			if (!canvas) return;
-
-			const canvasRect = canvas.getBoundingClientRect();
-
-			// Update position to match canvas
-			fpsElement.style.position = "fixed";
-			fpsElement.style.left = canvasRect.left + 10 + "px";
-			fpsElement.style.top = canvasRect.top + 10 + "px";
-			fpsElement.style.zIndex = "10000";
-
-			// Color based on performance
-			let textColor;
-			if (this.currentFPS >= 55) {
-				textColor = "#64ff64"; // Green
-			} else if (this.currentFPS >= 30) {
-				textColor = "#ffc864"; // Orange
-			} else {
-				textColor = "#ff6464"; // Red
-			}
-
-			// Update content
-			fpsElement.innerHTML = `
-				<div style="
-					background: rgba(0, 0, 0, 0.7);
-					padding: 8px 12px;
-					border-radius: 4px;
-					font-family: 'Courier New', monospace;
-					font-size: 16px;
-					color: ${textColor};
-					font-weight: bold;
-				">
-					FPS: ${this.currentFPS}
-				</div>
-			`;
+			this.fpsElement.textContent = `${this.currentFPS} fps`;
 		} catch (error) {
-			// Silently fail if DOM operations crash (common on Safari mobile)
 			console.warn("FPS counter failed:", error);
 		}
 	}
