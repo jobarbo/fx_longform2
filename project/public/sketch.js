@@ -24,8 +24,8 @@ const CANVAS_CONFIG = {
 	SCALE_FACTOR_X: 1.0,
 	SCALE_FACTOR_Y: 1.0,
 	FORCE_SIZE: true,
-	FIXED_WIDTH: 240,
-	FIXED_HEIGHT: 24,
+	FIXED_WIDTH: 680,
+	FIXED_HEIGHT: 68,
 };
 
 const DEBUG_CONFIG = {
@@ -253,6 +253,11 @@ function toggleFpsCounter() {
 	syncFpsToggleButton();
 }
 
+function toggleLoopCountdown() {
+	if (typeof shaderEffects === "undefined") return;
+	shaderEffects.toggleLoopCountdown();
+}
+
 // ============================================================================
 // 8. RENDERING
 // ============================================================================
@@ -359,6 +364,10 @@ function draw() {
 function keyPressed() {
 	if (key === "F" || key === "f") {
 		toggleFpsCounter();
+	}
+
+	if (key === "L" || key === "l") {
+		toggleLoopCountdown();
 	}
 
 	if (key === "G" || key === "g") {

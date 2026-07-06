@@ -77,6 +77,23 @@ class ShaderEffects {
 			height: 1,
 		};
 
+		// Master loop — wall-clock cycle with optional pause before restart
+		this.loopConfig = {
+			enabled: true,
+			mode: "yoyo", // "yoyo" = smooth ping-pong | "reset" = hard restart
+			// Easing per yoyo half: linear | sine | easeIn | easeOut | easeInOut | bounce
+			easing: "easeInOut",
+			durationSeconds: 5,
+			pauseSeconds: 0,
+			showCountdown: true,
+			warnAtSeconds: 3,
+		};
+		this.loopStartTime = 0;
+		this.loopPaused = false;
+		this.loopPauseStartTime = 0;
+		this.loopShaderTimeMax = 0;
+		this.loopOverlayElement = null;
+
 		// Effects configuration - customize these for your sketch
 		this.effectsConfig = {
 			deform: {
@@ -492,6 +509,13 @@ class ShaderEffects {
 		// Make it globally accessible (for backward compatibility)
 		window.shaderPipeline = this.shaderPipeline;
 
+		if (this.loopConfig.enabled) {
+			this.loopStartTime = performance.now();
+			this.loopPaused = false;
+			this.snapshotInitialPhases();
+			this.updateLoopShaderTimeMax();
+		}
+
 		return this;
 	}
 
@@ -513,6 +537,197 @@ class ShaderEffects {
 
 	getRenderRatio() {
 		return {...this.renderRatio};
+	}
+
+	/**
+	 * Configure master shader loop (wall-clock duration + optional pause).
+	 * @param {object} options
+	 */
+	setLoopConfig(options = {}) {
+		const prev = this.loopConfig;
+		this.loopConfig = {
+			enabled: options.enabled !== undefined ? Boolean(options.enabled) : prev.enabled,
+			mode: options.mode ?? prev.mode ?? "yoyo",
+			easing: options.easing ?? prev.easing ?? "easeInOut",
+			durationSeconds: Math.max(options.durationSeconds ?? prev.durationSeconds, 0.1),
+			pauseSeconds: Math.max(options.pauseSeconds ?? prev.pauseSeconds, 0),
+			showCountdown: options.showCountdown !== undefined ? Boolean(options.showCountdown) : prev.showCountdown,
+			warnAtSeconds: Math.max(options.warnAtSeconds ?? prev.warnAtSeconds, 0),
+		};
+		if (this.loopConfig.enabled) {
+			this.loopStartTime = performance.now();
+			this.loopPaused = false;
+			this.snapshotInitialPhases();
+			this.updateLoopShaderTimeMax();
+		}
+		return this;
+	}
+
+	getLoopConfig() {
+		return {...this.loopConfig};
+	}
+
+	updateLoopShaderTimeMax() {
+		this.loopShaderTimeMax = this.loopConfig.durationSeconds * (this.shaderFrameRate / 100);
+	}
+
+	/**
+	 * Apply loop easing to normalized time t ∈ [0, 1].
+	 * Matches zoom shader easing modes where applicable.
+	 * @param {number} t
+	 * @returns {number}
+	 */
+	applyLoopEasing(t) {
+		const x = Math.max(0, Math.min(1, t));
+		const mode = this.loopConfig.easing ?? "linear";
+
+		switch (mode) {
+			case "sine":
+				return 0.5 - 0.5 * Math.cos(x * Math.PI);
+			case "easeIn":
+				return x * x * x;
+			case "easeOut": {
+				const inv = 1 - x;
+				return 1 - inv * inv * inv;
+			}
+			case "easeInOut":
+				return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+			case "bounce": {
+				const b = 1 - x;
+				if (b < 1 / 2.75) return 1 - 7.5625 * b * b;
+				if (b < 2 / 2.75) {
+					const bb = b - 1.5 / 2.75;
+					return 1 - (7.5625 * bb * bb + 0.75);
+				}
+				if (b < 2.5 / 2.75) {
+					const bb = b - 2.25 / 2.75;
+					return 1 - (7.5625 * bb * bb + 0.9375);
+				}
+				const bb = b - 2.625 / 2.75;
+				return 1 - (7.5625 * bb * bb + 0.984375);
+			}
+			case "linear":
+			default:
+				return x;
+		}
+	}
+
+	/**
+	 * Triangle-wave loop position (0→1→0 for yoyo, 0→1 for reset).
+	 * Yoyo applies configured easing per half (smooth at turnaround when easing has zero slope at 0/1).
+	 * @param {number} elapsed - Seconds since loop start (pause-adjusted)
+	 */
+	getLoopProgress(elapsed) {
+		const dur = this.loopConfig.durationSeconds;
+		if (this.loopConfig.mode === "yoyo") {
+			const cyclePos = elapsed % (dur * 2);
+			if (cyclePos < dur) {
+				const t = cyclePos / dur;
+				const progress = this.applyLoopEasing(t);
+				return {progress, halfRemaining: dur - cyclePos};
+			}
+			const t = (cyclePos - dur) / dur;
+			const progress = 1 - this.applyLoopEasing(t);
+			return {progress, halfRemaining: dur * 2 - cyclePos};
+		}
+		const progress = Math.min(elapsed / dur, 1);
+		return {progress, halfRemaining: Math.max(dur - elapsed, 0)};
+	}
+
+	/**
+	 * Restore symmetry effect phases to their configured initial values.
+	 */
+	restoreInitialPhases() {
+		for (const effectName of ["symmetry", "symmetry2"]) {
+			const effect = this.effectsConfig[effectName];
+			if (!effect) continue;
+			if (effect._initialTranslationPhaseX !== undefined) {
+				effect.translationPhaseX = effect._initialTranslationPhaseX;
+				effect.translationPhaseY = effect._initialTranslationPhaseY;
+				effect.rotationPhase = effect._initialRotationPhase;
+			}
+		}
+	}
+
+	snapshotInitialPhases() {
+		for (const effectName of ["symmetry", "symmetry2"]) {
+			const effect = this.effectsConfig[effectName];
+			if (!effect) continue;
+			effect._initialTranslationPhaseX = effect.translationPhaseX ?? 0;
+			effect._initialTranslationPhaseY = effect.translationPhaseY ?? 0;
+			effect._initialRotationPhase = effect.rotationPhase ?? 0;
+		}
+	}
+
+	/**
+	 * Reset all time-driven shader state at loop boundary.
+	 */
+	resetLoopState() {
+		this.shaderTime = 0;
+		this.restoreInitialPhases();
+
+		this.translationPhase = {
+			symmetry: {x: 0, y: 0},
+			symmetry2: {x: 0, y: 0},
+		};
+		this.lastTranslationSpeed = {
+			symmetry: null,
+			symmetry2: null,
+		};
+		this.rotationPhase = {
+			symmetry: 0,
+			symmetry2: 0,
+		};
+		this.lastRotationSpeed = {
+			symmetry: null,
+			symmetry2: null,
+		};
+		this.lastRotationOscillationSpeed = {
+			symmetry: null,
+			symmetry2: null,
+		};
+		this.currentRotationAngle = {
+			symmetry: 0,
+			symmetry2: 0,
+		};
+
+		this.loopStartTime = performance.now();
+		this.loopPaused = false;
+	}
+
+	/**
+	 * Elapsed loop seconds, excluding active pause time.
+	 */
+	getLoopElapsedSeconds(now = performance.now()) {
+		let elapsed = (now - this.loopStartTime) / 1000;
+		if (this.loopPaused) {
+			elapsed -= (now - this.loopPauseStartTime) / 1000;
+		}
+		return Math.max(elapsed, 0);
+	}
+
+	/**
+	 * Seconds remaining in the current loop cycle or inter-loop pause.
+	 * @returns {{ remaining: number, paused: boolean } | null}
+	 */
+	getLoopCountdown() {
+		if (!this.loopConfig.enabled || !this.loopStartTime) return null;
+
+		const now = performance.now();
+		if (this.loopPaused) {
+			const pauseElapsed = (now - this.loopPauseStartTime) / 1000;
+			return {
+				remaining: Math.max(this.loopConfig.pauseSeconds - pauseElapsed, 0),
+				paused: true,
+			};
+		}
+
+		const elapsed = this.getLoopElapsedSeconds(now);
+		const {halfRemaining} = this.getLoopProgress(elapsed);
+		return {
+			remaining: halfRemaining,
+			paused: false,
+		};
 	}
 
 	/**
@@ -602,13 +817,85 @@ class ShaderEffects {
 		const now = performance.now();
 		if (!this.lastShaderUpdateTime) {
 			this.lastShaderUpdateTime = now;
+			if (this.loopConfig.enabled && !this.loopStartTime) {
+				this.loopStartTime = now;
+				this.snapshotInitialPhases();
+				this.updateLoopShaderTimeMax();
+			}
 			return 0;
 		}
 
 		const dt = Math.min((now - this.lastShaderUpdateTime) / 1000, 0.1);
 		this.lastShaderUpdateTime = now;
 
-		// Legacy: updateTime(0.01) at 60fps → 0.6 units/sec
+		if (this.loopConfig.enabled) {
+			if (!this.loopStartTime) {
+				this.loopStartTime = now;
+				this.snapshotInitialPhases();
+				this.updateLoopShaderTimeMax();
+			}
+
+			if (this.loopPaused) {
+				const pauseElapsed = (now - this.loopPauseStartTime) / 1000;
+				if (pauseElapsed >= this.loopConfig.pauseSeconds) {
+					this.loopStartTime += now - this.loopPauseStartTime;
+					this.loopPaused = false;
+					if (this.loopConfig.mode === "reset") {
+						this.resetLoopState();
+					}
+				}
+				return 0;
+			}
+
+			const elapsed = this.getLoopElapsedSeconds(now);
+			const dur = this.loopConfig.durationSeconds;
+
+			if (this.loopConfig.mode === "reset") {
+				if (elapsed >= dur) {
+					if (this.loopConfig.pauseSeconds > 0) {
+						this.loopPaused = true;
+						this.loopPauseStartTime = now;
+						return 0;
+					}
+					this.resetLoopState();
+				}
+
+				const delta = dt * (this.shaderFrameRate / 100);
+				if (delta > 0) {
+					this.shaderTime += delta;
+					this.updateTranslationPhases(delta);
+					this.updateRotationPhases(delta);
+				}
+				return delta;
+			}
+
+			// Yoyo: map wall-clock to triangle wave — shader time runs forward then backward
+			const prevElapsed = Math.max(elapsed - dt, 0);
+			const {progress} = this.getLoopProgress(elapsed);
+			const prevProgress = this.getLoopProgress(prevElapsed).progress;
+			const targetShaderTime = progress * this.loopShaderTimeMax;
+			const prevShaderTime = prevProgress * this.loopShaderTimeMax;
+			const deltaShaderTime = targetShaderTime - prevShaderTime;
+
+			if (this.loopConfig.pauseSeconds > 0) {
+				const fullCycle = dur * 2;
+				const prevCyclePos = prevElapsed % fullCycle;
+				const cyclePos = elapsed % fullCycle;
+				if (prevCyclePos > cyclePos) {
+					this.loopPaused = true;
+					this.loopPauseStartTime = now;
+					return 0;
+				}
+			}
+
+			this.shaderTime = targetShaderTime;
+			if (deltaShaderTime !== 0) {
+				this.updateTranslationPhases(deltaShaderTime);
+				this.updateRotationPhases(deltaShaderTime);
+			}
+			return deltaShaderTime;
+		}
+
 		const delta = dt * (this.shaderFrameRate / 100);
 		if (delta > 0) {
 			this.shaderTime += delta;
@@ -1015,6 +1302,43 @@ class ShaderEffects {
 		return this;
 	}
 
+	drawLoopCountdown() {
+		try {
+			const show = this.loopConfig.enabled && this.loopConfig.showCountdown;
+			if (!this.loopOverlayElement) {
+				this.loopOverlayElement = document.getElementById("shader-loop-overlay");
+				if (!this.loopOverlayElement) {
+					this.loopOverlayElement = document.createElement("div");
+					this.loopOverlayElement.id = "shader-loop-overlay";
+					document.body.appendChild(this.loopOverlayElement);
+				}
+			}
+
+			this.loopOverlayElement.classList.toggle("is-hidden", !show);
+			if (!show) return;
+
+			const countdown = this.getLoopCountdown();
+			if (!countdown) return;
+
+			const seconds = countdown.remaining.toFixed(1);
+			this.loopOverlayElement.textContent = countdown.paused ? `loop pause ${seconds}s` : `loop ${seconds}s`;
+
+			const warn = !countdown.paused && countdown.remaining <= this.loopConfig.warnAtSeconds;
+			this.loopOverlayElement.classList.toggle("is-warning", warn);
+		} catch (error) {
+			console.warn("Loop countdown failed:", error);
+		}
+	}
+
+	toggleLoopCountdown(show = null) {
+		if (show === null) {
+			this.loopConfig.showCountdown = !this.loopConfig.showCountdown;
+		} else {
+			this.loopConfig.showCountdown = Boolean(show);
+		}
+		return this;
+	}
+
 	/**
 	 * Render frame - handles shader logic for each animation frame
 	 * @param {boolean} isSketchComplete - Whether the sketch animation is complete
@@ -1038,6 +1362,7 @@ class ShaderEffects {
 
 				// Draw FPS counter
 				this.drawFPS();
+				this.drawLoopCountdown();
 
 				// Continue using requestAnimationFrame
 				return true;
@@ -1061,6 +1386,7 @@ class ShaderEffects {
 
 		// Draw FPS counter
 		this.drawFPS();
+		this.drawLoopCountdown();
 
 		return true; // Continue animation
 	}

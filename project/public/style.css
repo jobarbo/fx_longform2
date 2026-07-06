@@ -88,6 +88,28 @@ canvas.p5Canvas {
 	display: none;
 }
 
+#shader-loop-overlay {
+	position: fixed;
+	top: 28px;
+	left: 10px;
+	z-index: 10000;
+	padding: 4px 8px;
+	background: rgba(0, 0, 0, 0.6);
+	color: #fff;
+	font:
+		12px/1.2 "Courier New",
+		monospace;
+	pointer-events: none;
+}
+
+#shader-loop-overlay.is-hidden {
+	display: none;
+}
+
+#shader-loop-overlay.is-warning {
+	color: #ffc864;
+}
+
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
 	.control-button {
