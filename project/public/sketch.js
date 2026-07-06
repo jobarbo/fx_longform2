@@ -29,7 +29,7 @@ const CANVAS_CONFIG = {
 };
 
 const DEBUG_CONFIG = {
-	DEFAULT_PIXEL_DENSITY_DESKTOP: 5,
+	DEFAULT_PIXEL_DENSITY_DESKTOP: 15,
 	DEFAULT_PIXEL_DENSITY_MOBILE: 1,
 	HELP_TEXT: "Controls: Press 'F' to toggle FPS counter",
 };
@@ -146,6 +146,11 @@ function initDisplayCanvas(canvasW, canvasH) {
 	try {
 		const displayCanvas = createCanvas(canvasW, canvasH, WEBGL);
 		displayCanvas.pixelDensity(pixel_density);
+		// Render ratio is configured in shaderManager (constructor or setRenderRatio).
+		// To override from the sketch, set CANVAS_CONFIG.SHADER_RENDER before setup runs.
+		if (CANVAS_CONFIG.SHADER_RENDER) {
+			shaderManager.setRenderRatio(CANVAS_CONFIG.SHADER_RENDER);
+		}
 		shaderEffects.setup(width, height, mainCanvas, displayCanvas, pixel_density);
 		console.log("Shader effects initialized successfully");
 		return displayCanvas;

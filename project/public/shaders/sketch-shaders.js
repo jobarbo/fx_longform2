@@ -70,6 +70,13 @@ class ShaderEffects {
 		this.shaderPipeline = null;
 		this.p5Instance = null;
 
+		// Output framing — passed to shaderManager.setRenderRatio() in setup()
+		this.renderRatio = {
+			fitCanvas: false,
+			width: 1,
+			height: 1,
+		};
+
 		// Effects configuration - customize these for your sketch
 		this.effectsConfig = {
 			deform: {
@@ -108,8 +115,7 @@ class ShaderEffects {
 
 			symmetry: {
 				enabled: true,
-				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
-
+				symmetryMode: 3.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
@@ -125,7 +131,7 @@ class ShaderEffects {
 				rotationNoiseScale: 0.1, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.2, // Time multiplier for animation
+				timeMultiplier: 0.5, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
@@ -149,7 +155,7 @@ class ShaderEffects {
 				},
 			},
 			symmetry2: {
-				enabled: false,
+				enabled: true,
 				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
@@ -166,7 +172,7 @@ class ShaderEffects {
 				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.01, // Time multiplier for animation
+				timeMultiplier: 0.1, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
@@ -200,7 +206,7 @@ class ShaderEffects {
 			},
 
 			pixelGrid: {
-				enabled: false,
+				enabled: true,
 				gridSize: [240.0, 24.0],
 				cellRatio: 0.0,
 				gridMode: 0.0,
@@ -268,7 +274,7 @@ class ShaderEffects {
 			},
 
 			zoom: {
-				enabled: true,
+				enabled: false,
 				zoomAmount: 0.0, // Static zoom level (1.0 = no zoom, 2.0 = 2x in, 0.5 = 2x out)
 				zoomSpeed: 0.8, // Animation speed
 				zoomOutAmount: 2.25, // Min zoom when animating
@@ -290,7 +296,7 @@ class ShaderEffects {
 				},
 			},
 			chromatic: {
-				enabled: true,
+				enabled: false,
 				amount: 0.0015,
 				timeMultiplier: 2.0,
 				uniforms: {
@@ -467,6 +473,10 @@ class ShaderEffects {
 		this.shaderCanvas = shaderCanvas;
 		this.pixelDensity = pixelDensity ?? mainCanvas?.pixelDensity?.() ?? 1;
 
+		if (this.shaderManager) {
+			this.shaderManager.setRenderRatio(this.renderRatio);
+		}
+
 		// Initialize shader seed with fxhash if available
 		if (typeof fxrand === "function") {
 			this.shaderSeed = fxrand() * 10000;
@@ -483,6 +493,26 @@ class ShaderEffects {
 		window.shaderPipeline = this.shaderPipeline;
 
 		return this;
+	}
+
+	/**
+	 * Update output framing (delegates to shaderManager).
+	 * @param {object} options - { fitCanvas, width, height }
+	 */
+	setRenderRatio(options = {}) {
+		this.renderRatio = {
+			fitCanvas: options.fitCanvas !== undefined ? Boolean(options.fitCanvas) : this.renderRatio.fitCanvas,
+			width: options.width ?? this.renderRatio.width,
+			height: options.height ?? this.renderRatio.height,
+		};
+		if (this.shaderManager) {
+			this.shaderManager.setRenderRatio(this.renderRatio);
+		}
+		return this;
+	}
+
+	getRenderRatio() {
+		return {...this.renderRatio};
 	}
 
 	/**

@@ -12,8 +12,8 @@ class Mover {
 	show(canvas) {
 		const {h, s, l} = this.currentColor;
 		canvas.colorMode(HSL);
-		const trackHeight = this.size * 4;
-		const squareSize = this.size / 2;
+		const trackHeight = this.size * 19;
+		const squareSize = this.size / 1;
 		const maxTravel = trackHeight / 2 - squareSize / 2;
 		const squareX = this.x + Math.sin(this.angle) * maxTravel;
 		const reverseSquareX = this.x - Math.sin(this.angle) * maxTravel;
