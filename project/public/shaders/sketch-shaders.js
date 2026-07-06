@@ -214,14 +214,15 @@ class ShaderEffects {
 				},
 			},
 			wave: {
-				enabled: false,
+				enabled: true,
 				timeMultiplier: 1.1,
+				center: [0.5, 0.5], // wave origin in normalized UV (0–1, p5 coords: y=0 top)
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uResolution: "[width, height]",
+					uCenter: "center",
 				},
 			},
-
 			pixelGrid: {
 				enabled: true,
 				gridSize: [240.0, 24.0],
@@ -240,6 +241,7 @@ class ShaderEffects {
 					uGapBrightness: "gapBrightness",
 				},
 			},
+
 			pixelSort: {
 				enabled: false,
 				angle: 0.0, // 0x = vertical, Math.PI/2 = horizontal
