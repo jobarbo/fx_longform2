@@ -40,6 +40,15 @@ class ShaderEffects {
 		this.shaderPipeline = null;
 		this.p5Instance = null;
 
+		// Output framing — passed to shaderManager.setRenderRatio() in setup().
+		// fitCanvas: true = full texture mapped to canvas (no crop).
+		// Custom ratios use object-fit: cover on the final pass only.
+		this.renderRatio = {
+			fitCanvas: true,
+			width: 1,
+			height: 1,
+		};
+
 		// Effects configuration - customize these for your sketch
 		this.effectsConfig = {
 			deform: {
@@ -194,7 +203,7 @@ class ShaderEffects {
 				},
 			},
 			zoom: {
-				enabled: true,
+				enabled: false,
 				zoomAmount: 1.0, // Static zoom level (1.0 = no zoom, 2.0 = 2x in, 0.5 = 2x out)
 				zoomSpeed: 0.8, // Animation speed
 				zoomOutAmount: 2.25, // Min zoom when animating
@@ -445,6 +454,10 @@ class ShaderEffects {
 		this.shaderCanvas = shaderCanvas;
 		this.pixelDensity = pixelDensity;
 
+		if (this.shaderManager) {
+			this.shaderManager.setRenderRatio(this.renderRatio);
+		}
+
 		// FPS overlay default (can be controlled by sketch-level constant SHOW_FPS_UI)
 		const isSafariMobileCheck = typeof isSafariMobile === "function" && isSafariMobile();
 		const isInIframeCheck = typeof isInIframe === "function" && isInIframe();
@@ -467,6 +480,26 @@ class ShaderEffects {
 		window.shaderPipeline = this.shaderPipeline;
 
 		return this;
+	}
+
+	/**
+	 * Update output framing (delegates to shaderManager).
+	 * @param {object} options - { fitCanvas, width, height }
+	 */
+	setRenderRatio(options = {}) {
+		this.renderRatio = {
+			fitCanvas: options.fitCanvas !== undefined ? Boolean(options.fitCanvas) : this.renderRatio.fitCanvas,
+			width: options.width ?? this.renderRatio.width,
+			height: options.height ?? this.renderRatio.height,
+		};
+		if (this.shaderManager) {
+			this.shaderManager.setRenderRatio(this.renderRatio);
+		}
+		return this;
+	}
+
+	getRenderRatio() {
+		return {...this.renderRatio};
 	}
 
 	/**

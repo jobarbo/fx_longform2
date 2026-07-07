@@ -31,10 +31,19 @@ let debugBounds = false;
 // ============================================================================
 
 // Base artwork dimensions (width: 1000, height: 1000 * 1.25)
-const ARTWORK_RATIO = 1.21;
+const ARTWORK_RATIO = 1.0;
 const BASE_WIDTH = 1000;
 const BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 const DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
+
+// Shader output framing (final pass only, object-fit: cover).
+// fitCanvas: true = no crop; set false + width/height for a custom ratio
+// (e.g. { fitCanvas: false, width: 3, height: 1 } for an LED-strip display).
+const SHADER_RENDER_RATIO = {
+	fitCanvas: true,
+	width: 1,
+	height: 1,
+};
 
 // Calculated dimensions (set in setup())
 let DIM; // Canvas dimension (min of window width/height)
@@ -140,6 +149,8 @@ async function setup() {
 		try {
 			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
 			shaderCanvas.pixelDensity(pixel_density);
+			// Configure output framing before setup so it reaches the shaderManager
+			shaderEffects.setRenderRatio(SHADER_RENDER_RATIO);
 			// Initialize shader effects system
 			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
 			console.log("Shader effects initialized successfully");
