@@ -30,20 +30,54 @@ let debugBounds = false;
 // ARTWORK DIMENSIONS & SCALING
 // ============================================================================
 
-// Base artwork dimensions (width: 1000, height: 1000 * 1.25)
-const ARTWORK_RATIO = 1.0;
-const BASE_WIDTH = 1000;
-const BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
-const DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
+// Artwork layout — orientation + ratio without blowing up pixel count.
+// ratio = long edge : short edge (e.g. 3 → 3:1 strip). Canvas area stays ~viewportMin².
+const ARTWORK_LAYOUT = {
+	orientation: "horizontal", // "horizontal" | "vertical"
+	ratio: 10, // long : short — horizontal 3 = 3:1 wide, vertical 3 = 1:3 tall
+	baseSize: 400, // reference size for particle scaling (≈ viewport min at 1:1)
+};
+
+/** @returns {number} width / height */
+function getArtworkAspectRatio(layout = ARTWORK_LAYOUT) {
+	const r = Math.max(Number(layout.ratio) || 1, 0.01);
+	return layout.orientation === "vertical" ? 1 / r : r;
+}
+
+/**
+ * Canvas size with ~constant pixel area regardless of aspect ratio.
+ * @param {number} viewportMin - min(windowWidth, windowHeight)
+ * @param {object} layout
+ */
+function computeArtworkLayout(viewportMin, layout = ARTWORK_LAYOUT) {
+	const aspect = getArtworkAspectRatio(layout);
+	const height = viewportMin / Math.sqrt(aspect);
+	const width = viewportMin * Math.sqrt(aspect);
+	return {
+		width,
+		height,
+		aspect,
+		multiplier: viewportMin / layout.baseSize,
+	};
+}
+
+// Calculated at setup (for mover bounds / debugging)
+let ARTWORK_ASPECT = 1;
+let ARTWORK_CANVAS_WIDTH = 0;
+let ARTWORK_CANVAS_HEIGHT = 0;
 
 // Shader output framing (final pass only, object-fit: cover).
-// fitCanvas: true = no crop; set false + width/height for a custom ratio
-// (e.g. { fitCanvas: false, width: 3, height: 1 } for an LED-strip display).
+// fitCanvas: true = no crop; set false + width/height for a custom ratio.
+// Tip: match ARTWORK_LAYOUT — e.g. horizontal ratio 3 → { fitCanvas: false, width: 3, height: 1 }
 const SHADER_RENDER_RATIO = {
-	fitCanvas: true,
-	width: 1,
+	fitCanvas: false,
+	width: 2,
 	height: 1,
 };
+
+// Master shader animation speed — scales all time-driven effects uniformly.
+// 1.0 = default, 0.5 = half speed, 2.0 = double speed
+const SHADER_ANIMATION_SPEED = 12.0;
 
 // Calculated dimensions (set in setup())
 let DIM; // Canvas dimension (min of window width/height)
@@ -134,23 +168,27 @@ async function setup() {
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
 	pixel_density = CURRENT_PARAMS.printDPI ?? (typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 1);
 
-	// canvas setup
-	// Take the smaller screen dimension to ensure it fits
+	// canvas setup — constant-area sizing from orientation + ratio
 	DIM = min(windowWidth, windowHeight);
-	MULTIPLIER = DIM / DEFAULT_SIZE;
-	console.log(MULTIPLIER);
+	const artworkLayout = computeArtworkLayout(DIM, ARTWORK_LAYOUT);
+	ARTWORK_ASPECT = artworkLayout.aspect;
+	ARTWORK_CANVAS_WIDTH = artworkLayout.width;
+	ARTWORK_CANVAS_HEIGHT = artworkLayout.height;
+	MULTIPLIER = artworkLayout.multiplier;
+	console.log(MULTIPLIER, `canvas ${artworkLayout.width}×${artworkLayout.height} (${ARTWORK_LAYOUT.orientation} ${ARTWORK_LAYOUT.ratio}:1)`);
 
 	// Create main canvas for the artwork (will also handle debug overlays)
-	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
+	mainCanvas = createGraphics(artworkLayout.width, artworkLayout.height);
 	mainCanvas.pixelDensity(pixel_density);
 
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
 	if (shadersEnabled()) {
 		try {
-			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
+			shaderCanvas = createCanvas(artworkLayout.width, artworkLayout.height, WEBGL);
 			shaderCanvas.pixelDensity(pixel_density);
 			// Configure output framing before setup so it reaches the shaderManager
 			shaderEffects.setRenderRatio(SHADER_RENDER_RATIO);
+			shaderEffects.setAnimationSpeed(SHADER_ANIMATION_SPEED);
 			// Initialize shader effects system
 			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
 			console.log("Shader effects initialized successfully");
@@ -159,13 +197,13 @@ async function setup() {
 			console.log("Falling back to sketch without shaders");
 			// Fallback: create regular canvas without shaders
 			shaderCanvas = null;
-			createCanvas(DIM / ARTWORK_RATIO, DIM);
+			createCanvas(artworkLayout.width, artworkLayout.height);
 			pixelDensity(pixel_density);
 			// Shaders are unavailable; continue without them
 		}
 	} else {
 		// No shaders - create regular canvas for display
-		createCanvas(DIM / ARTWORK_RATIO, DIM);
+		createCanvas(artworkLayout.width, artworkLayout.height);
 		pixelDensity(pixel_density);
 	}
 

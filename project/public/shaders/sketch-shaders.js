@@ -16,17 +16,20 @@
  * 2. In setup(): shaderEffects.setup(width, height, mainCanvas, shaderCanvas)
  * 3. To apply shaders: shaderEffects.apply()
  * 4. To update time: shaderEffects.updateTime()
+ * 5. Master speed: set SHADER_ANIMATION_SPEED in sketch.js (or shaderEffects.setAnimationSpeed())
  */
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
 		this.continueShadersAfterCompletion = true; // Set to false to stop shaders when sketch is done
 		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
-		this.shaderFrameRate = 60; // Frame rate for shader animation
+		this.shaderFrameRate = 60; // Base clock rate (see advanceShaderClock)
+		this.animationSpeed = 1.0; // Master speed multiplier — override via setAnimationSpeed() or SHADER_ANIMATION_SPEED in sketch.js
 
 		// Animation state
 		this.shaderTime = 0;
 		this.shaderSeed = 0;
+		this.lastShaderUpdateTime = 0;
 		this.particleAnimationComplete = false;
 		this.loadingProgress = 0.0; // Loading progress from 0.0 (0%) to 1.0 (100%)
 
@@ -84,16 +87,15 @@ class ShaderEffects {
 					uResolution: "[width, height]",
 				},
 			},
-
 			pixelSort: {
 				enabled: false,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
-				threshold: 0.3,
-				sortAmount: 2.8,
+				threshold: 0.2,
+				sortAmount: 1.8,
 				sampleCount: 1.0, // Number of samples (8-64, higher = better quality but slower)
-				invert: 1.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
+				invert: 0.0, // 0.0 = sort bright pixels, 1.0 = sort dark pixels
 				sortMode: 1.0, // 1.0 = sine wave, 2.0 = noise, 3.0 = FBM, 4.0 = vector field
-				timeMultiplier: 0.3,
+				timeMultiplier: 0.03,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 999.0",
@@ -106,26 +108,25 @@ class ShaderEffects {
 					uResolution: "[width, height]",
 				},
 			},
-
 			symmetry: {
 				enabled: true,
-				symmetryMode: 3.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 0.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				center: [0.5, 0.0], // symmetry center in normalized coords
-				translationSpeed: 0.005, // Speed of horizontal/vertical movement
+				center: [0.5, 0.5], // symmetry center in normalized coords
+				translationSpeed: 0.01, // Speed of horizontal/vertical movement
 				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: -0.5, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
-				rotationSpeed: 0.81, // Speed of rotation
+				rotationSpeed: 0.01, // Speed of rotation
 				rotationOscillationSpeed: 0.5, // Speed of oscillation (controls how fast it alternates between positive/negative)
 				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
 				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.1, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.2, // Time multiplier for animation
+				timeMultiplier: 0.4, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
@@ -151,23 +152,67 @@ class ShaderEffects {
 
 			symmetry2: {
 				enabled: true,
-				symmetryMode: 5.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationSpeed: 1.5, // Speed of horizontal/vertical movement
+				translationSpeed: 0.01, // Speed of horizontal/vertical movement
 				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: -0.5, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
-				rotationSpeed: 0.0, // Speed of rotation
+				rotationSpeed: 0.01, // Speed of rotation
 				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
 				rotationStartingAngle: 0.1, // Starting angle for rotation (in radians, added to rotation)
 				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
 				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.01, // Time multiplier for animation
+				timeMultiplier: 0.1, // Time multiplier for animation
+				uniforms: {
+					uResolution: "[width, height]",
+					uSeed: "shaderSeed + 1234.0",
+					uCenter: "center",
+					uSymmetryMode: "symmetryMode",
+					uAmount: "amount",
+					uDebug: "debug",
+					uCenter: "center",
+					uTime: "shaderTime * timeMultiplier",
+					uTranslationSpeed: "translationSpeed",
+					uTranslationMode: "translationMode",
+					uTranslationNoiseScale: "translationNoiseScale",
+					uTranslationPhaseX: "translationPhaseX",
+					uTranslationPhaseY: "translationPhaseY",
+					uRotationSpeed: "rotationSpeed",
+					uRotationOscillationSpeed: "rotationOscillationSpeed",
+					uRotationStartingAngle: "rotationStartingAngle",
+					uRotationMode: "rotationMode",
+					uRotationNoiseScale: "rotationNoiseScale",
+					uRotationPhase: "rotationPhase",
+					uRotationAmplitude: "rotationAmplitude",
+				},
+			},
+
+			symmetry3: {
+				enabled: true,
+				symmetryMode: 4.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				amount: 1.0, // Blend strength [0..1]
+				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
+				center: [0.5, 0.5], // symmetry center in normalized coords
+				translationSpeed: 0.01, // Speed of horizontal/vertical movement
+
+				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
+				translationPhaseX: 0.5, // Accumulated phase for X translation (prevents jumps)
+				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
+				rotationSpeed: 0.16, // Speed of rotation
+				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
+				rotationStartingAngle: 0.1, // Starting angle for rotation (in radians, added to rotation)
+				rotationMode: 2.0, // 0=cosine oscillation, 1=noise, 2=FBM
+				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
+				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
+				rotationAmplitude: 1.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
+				timeMultiplier: 0.1, // Time multiplier for animation
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
@@ -225,8 +270,8 @@ class ShaderEffects {
 				},
 			},
 			pixelGrid: {
-				enabled: false,
-				gridSize: [1233.0, 1233.0],
+				enabled: true,
+				gridSize: [24.0, 24.0],
 				cellRatio: 0.0,
 				gridMode: 0.0,
 				diffuse: 1.5,
@@ -367,7 +412,7 @@ class ShaderEffects {
 				},
 			},
 			grain: {
-				enabled: true,
+				enabled: false,
 				amount: 0.051,
 				timeMultiplier: 0.0,
 				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
@@ -388,6 +433,16 @@ class ShaderEffects {
 				},
 			},
 		};
+
+		// Symmetry phase tracking (prevents jumps when speed changes)
+		this.lastTranslationSpeed = {};
+		this.lastRotationSpeed = {};
+		this.lastRotationOscillationSpeed = {};
+		for (const name of Object.keys(this.effectsConfig).filter((n) => n.startsWith("symmetry"))) {
+			this.lastTranslationSpeed[name] = null;
+			this.lastRotationSpeed[name] = null;
+			this.lastRotationOscillationSpeed[name] = null;
+		}
 
 		// Cache for last enabled effects (to detect changes)
 		this.lastEnabledEffects = null;
@@ -428,6 +483,7 @@ class ShaderEffects {
 		shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
 		shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert");
 		shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert");
+		shaderManager.loadShader("symmetry3", "symmetry/fragment.frag", "symmetry/vertex.vert");
 		shaderManager.loadShader("loaderGlitch", "loader-glitch/fragment.frag", "loader-glitch/vertex.vert");
 		shaderManager.loadShader("zoom", "zoom/fragment.frag", "zoom/vertex.vert");
 		shaderManager.loadShader("pixelGrid", "pixel-grid/fragment.frag", "pixel-grid/vertex.vert");
@@ -453,6 +509,7 @@ class ShaderEffects {
 		this.mainCanvas = mainCanvas;
 		this.shaderCanvas = shaderCanvas;
 		this.pixelDensity = pixelDensity;
+		this.lastShaderUpdateTime = 0;
 
 		if (this.shaderManager) {
 			this.shaderManager.setRenderRatio(this.renderRatio);
@@ -574,6 +631,19 @@ class ShaderEffects {
 	}
 
 	/**
+	 * Set master shader animation speed (scales all time-driven effects uniformly).
+	 * @param {number} speed - Multiplier (1.0 = default, 0.5 = half, 2.0 = double)
+	 */
+	setAnimationSpeed(speed) {
+		this.animationSpeed = Math.max(0, speed ?? 1);
+		return this;
+	}
+
+	getAnimationSpeed() {
+		return this.animationSpeed;
+	}
+
+	/**
 	 * Set shader frame rate
 	 * @param {number} fps - Frame rate (1-120)
 	 */
@@ -584,11 +654,134 @@ class ShaderEffects {
 	}
 
 	/**
+	 * Names of symmetry effect passes in the pipeline.
+	 * @returns {string[]}
+	 */
+	getSymmetryEffectNames() {
+		return Object.keys(this.effectsConfig).filter((name) => name.startsWith("symmetry"));
+	}
+
+	/**
+	 * Update translation phases to prevent position jumps when speed changes.
+	 * @param {number} delta - Time delta
+	 */
+	updateTranslationPhases(delta) {
+		for (const effectName of this.getSymmetryEffectNames()) {
+			const effect = this.effectsConfig[effectName];
+			if (!effect || !effect.enabled) continue;
+
+			const currentSpeed = effect.translationSpeed || 0;
+			const lastSpeed = this.lastTranslationSpeed[effectName];
+			const transMode = Math.floor(effect.translationMode || 0);
+
+			if (effect.translationPhaseX === undefined) effect.translationPhaseX = 0;
+			if (effect.translationPhaseY === undefined) effect.translationPhaseY = 0;
+
+			if (lastSpeed !== null && lastSpeed !== currentSpeed && currentSpeed !== 0) {
+				const currentTime = this.shaderTime * (effect.timeMultiplier || 0.1);
+
+				if (transMode === 0) {
+					effect.translationPhaseX = currentTime * lastSpeed;
+					effect.translationPhaseY = currentTime * lastSpeed * 0.7;
+				}
+			}
+
+			const timeMultiplier = effect.timeMultiplier || 0.1;
+			const effectiveDelta = delta * timeMultiplier;
+
+			if (transMode === 0) {
+				effect.translationPhaseX += effectiveDelta * currentSpeed;
+				effect.translationPhaseY += effectiveDelta * currentSpeed * 0.7;
+			} else {
+				effect.translationPhaseX += effectiveDelta * currentSpeed;
+				effect.translationPhaseY += effectiveDelta * currentSpeed;
+			}
+
+			this.lastTranslationSpeed[effectName] = currentSpeed;
+		}
+	}
+
+	/**
+	 * Update rotation phases to prevent angle jumps when speed changes.
+	 * @param {number} delta - Time delta
+	 */
+	updateRotationPhases(delta) {
+		for (const effectName of this.getSymmetryEffectNames()) {
+			const effect = this.effectsConfig[effectName];
+			if (!effect || !effect.enabled) continue;
+
+			const currentSpeed = effect.rotationSpeed || 0;
+			const currentOscillationSpeed = effect.rotationOscillationSpeed || 0;
+			const lastSpeed = this.lastRotationSpeed[effectName];
+			const lastOscillationSpeed = this.lastRotationOscillationSpeed[effectName];
+			const rotMode = Math.floor(effect.rotationMode || 0);
+
+			if (effect.rotationPhase === undefined) effect.rotationPhase = 0;
+
+			if (lastSpeed !== null && lastSpeed !== currentSpeed && currentSpeed !== 0) {
+				const currentTime = this.shaderTime * (effect.timeMultiplier || 0.1);
+
+				if (rotMode === 0) {
+					const oldOscillation = -Math.cos(currentTime * (lastOscillationSpeed || 0));
+					effect.rotationPhase = oldOscillation * lastSpeed;
+				} else if (rotMode === 1 || rotMode === 2) {
+					if (effect.rotationAmplitude === undefined) {
+						effect.rotationAmplitude = lastSpeed || currentSpeed;
+					}
+				}
+			}
+
+			const timeMultiplier = effect.timeMultiplier || 0.1;
+			const effectiveDelta = delta * timeMultiplier;
+			const currentTime = this.shaderTime * timeMultiplier;
+
+			if (rotMode === 0) {
+				const oscillation = -Math.cos(currentTime * currentOscillationSpeed);
+				const angleDerivative = oscillation * currentSpeed;
+				effect.rotationPhase += effectiveDelta * angleDerivative;
+			} else {
+				effect.rotationPhase += effectiveDelta * currentSpeed;
+
+				if (effect.rotationAmplitude === undefined) {
+					effect.rotationAmplitude = currentSpeed;
+				}
+			}
+
+			this.lastRotationSpeed[effectName] = currentSpeed;
+			this.lastRotationOscillationSpeed[effectName] = currentOscillationSpeed;
+		}
+	}
+
+	/**
+	 * Advance shader clock from wall-clock elapsed time (consistent before/after sketch completion).
+	 * @returns {number} Delta applied to shaderTime
+	 */
+	advanceShaderClock() {
+		const now = performance.now();
+		if (!this.lastShaderUpdateTime) {
+			this.lastShaderUpdateTime = now;
+			return 0;
+		}
+
+		const dt = Math.min((now - this.lastShaderUpdateTime) / 1000, 0.1);
+		this.lastShaderUpdateTime = now;
+		const delta = dt * (this.shaderFrameRate / 100) * this.animationSpeed;
+
+		if (delta > 0) {
+			this.updateTime(delta);
+		}
+
+		return delta;
+	}
+
+	/**
 	 * Update shader time - call this in your animation loop
 	 * @param {number} delta - Time delta (default: 0.01)
 	 */
 	updateTime(delta = 0.01) {
 		this.shaderTime += delta;
+		this.updateTranslationPhases(delta);
+		this.updateRotationPhases(delta);
 		return this;
 	}
 
@@ -929,7 +1122,7 @@ class ShaderEffects {
 
 			if (this.shouldContinueAfterCompletion()) {
 				// Keep shaders running even after particles are complete
-				this.updateTime(0.01);
+				this.advanceShaderClock();
 				this.apply();
 
 				// Draw FPS counter
@@ -945,7 +1138,7 @@ class ShaderEffects {
 		}
 
 		// Update shader time during sketching
-		this.updateTime(0.01);
+		this.advanceShaderClock();
 
 		// Only apply shaders during sketching if enabled
 		if (this.shouldApplyDuringSketch()) {
