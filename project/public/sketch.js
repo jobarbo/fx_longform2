@@ -25,13 +25,30 @@ const CANVAS_CONFIG = {
 	SCALE_FACTOR_Y: 1.0,
 	FORCE_SIZE: true,
 	FIXED_WIDTH: 680,
-	FIXED_HEIGHT: 68,
+	FIXED_HEIGHT: 680,
+	SHADER_RENDER: {
+		fitCanvas: false,
+		width: 1,
+		height: 1,
+	},
+	SHADER_ANIMATION_SPEED: 1.0,
+	ARTWORK_LAYOUT: {
+		orientation: "horizontal",
+		ratio: 1,
+		baseSize: 200,
+	},
 };
 
 const DEBUG_CONFIG = {
-	DEFAULT_PIXEL_DENSITY_DESKTOP: 15,
+	DEFAULT_PIXEL_DENSITY_DESKTOP: 2,
 	DEFAULT_PIXEL_DENSITY_MOBILE: 1,
-	HELP_TEXT: "Controls: Press 'F' to toggle FPS counter",
+	HELP_TEXT: "Controls: F=FPS, L=loop countdown, M=MIDI OSC overlay",
+};
+
+const MIDI_CLOCK_CONFIG = {
+	ENABLED: true,
+	WS_URL: "ws://localhost:3302",
+	SHOW_OVERLAY: true,
 };
 
 const config = {
@@ -106,12 +123,40 @@ function getPixelDensity() {
 	return typeof isSafariMobile === "function" && isSafariMobile() ? DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_MOBILE : DEBUG_CONFIG.DEFAULT_PIXEL_DENSITY_DESKTOP;
 }
 
+/** @returns {number} width / height */
+function getArtworkAspectRatio(layout = CANVAS_CONFIG.ARTWORK_LAYOUT) {
+	const r = Math.max(Number(layout.ratio) || 1, 0.01);
+	return layout.orientation === "vertical" ? 1 / r : r;
+}
+
+/**
+ * Canvas size with ~constant pixel area regardless of aspect ratio.
+ * @param {number} viewportMin - min(windowWidth, windowHeight)
+ * @param {object} layout
+ */
+function computeArtworkLayout(viewportMin, layout = CANVAS_CONFIG.ARTWORK_LAYOUT) {
+	const aspect = getArtworkAspectRatio(layout);
+	const height = viewportMin / Math.sqrt(aspect);
+	const width = viewportMin * Math.sqrt(aspect);
+	return {
+		width,
+		height,
+		aspect,
+		multiplier: viewportMin / layout.baseSize,
+	};
+}
+
 function getCanvasDimensions() {
 	if (CANVAS_CONFIG.FORCE_SIZE) {
 		return {
 			width: CANVAS_CONFIG.FIXED_WIDTH,
 			height: CANVAS_CONFIG.FIXED_HEIGHT,
 		};
+	}
+
+	if (CANVAS_CONFIG.ARTWORK_LAYOUT) {
+		const viewportMin = min(windowWidth, windowHeight);
+		return computeArtworkLayout(viewportMin, CANVAS_CONFIG.ARTWORK_LAYOUT);
 	}
 
 	const ratio = CANVAS_CONFIG.ARTWORK_RATIO;
@@ -124,10 +169,16 @@ function getCanvasDimensions() {
 
 function updateLayoutMetrics(canvasW, canvasH) {
 	ARTWORK_RATIO = canvasW / canvasH;
-	const baseHeight = CANVAS_CONFIG.BASE_WIDTH * ARTWORK_RATIO;
-	const defaultSize = min(CANVAS_CONFIG.BASE_WIDTH, baseHeight);
 	DIM = min(canvasW, canvasH);
-	MULTIPLIER = DIM / defaultSize;
+
+	if (!CANVAS_CONFIG.FORCE_SIZE && CANVAS_CONFIG.ARTWORK_LAYOUT) {
+		const layout = computeArtworkLayout(DIM, CANVAS_CONFIG.ARTWORK_LAYOUT);
+		MULTIPLIER = layout.multiplier;
+	} else {
+		const baseHeight = CANVAS_CONFIG.BASE_WIDTH * ARTWORK_RATIO;
+		const defaultSize = min(CANVAS_CONFIG.BASE_WIDTH, baseHeight);
+		MULTIPLIER = DIM / defaultSize;
+	}
 	console.log(MULTIPLIER);
 }
 
@@ -146,10 +197,11 @@ function initDisplayCanvas(canvasW, canvasH) {
 	try {
 		const displayCanvas = createCanvas(canvasW, canvasH, WEBGL);
 		displayCanvas.pixelDensity(pixel_density);
-		// Render ratio is configured in shaderManager (constructor or setRenderRatio).
-		// To override from the sketch, set CANVAS_CONFIG.SHADER_RENDER before setup runs.
 		if (CANVAS_CONFIG.SHADER_RENDER) {
-			shaderManager.setRenderRatio(CANVAS_CONFIG.SHADER_RENDER);
+			shaderEffects.setRenderRatio(CANVAS_CONFIG.SHADER_RENDER);
+		}
+		if (CANVAS_CONFIG.SHADER_ANIMATION_SPEED != null) {
+			shaderEffects.setAnimationSpeed(CANVAS_CONFIG.SHADER_ANIMATION_SPEED);
 		}
 		shaderEffects.setup(width, height, mainCanvas, displayCanvas, pixel_density);
 		console.log("Shader effects initialized successfully");
@@ -258,6 +310,12 @@ function toggleLoopCountdown() {
 	shaderEffects.toggleLoopCountdown();
 }
 
+function setupMidiClockOsc() {
+	if (!MIDI_CLOCK_CONFIG.ENABLED || typeof midiClockOsc === "undefined") return;
+	midiClockOsc.connect(MIDI_CLOCK_CONFIG.WS_URL);
+	midiClockOsc.setOverlayVisible(MIDI_CLOCK_CONFIG.SHOW_OVERLAY);
+}
+
 // ============================================================================
 // 8. RENDERING
 // ============================================================================
@@ -344,6 +402,7 @@ function setup() {
 		createDownloadButton();
 	}
 	setupMobileControls();
+	setupMidiClockOsc();
 	logStartupInfo();
 }
 
@@ -351,6 +410,7 @@ function draw() {
 	mainCanvas.background(190, 100, 0, 100);
 	if (typeof audioKnob !== "undefined") audioKnob.update();
 	updateKnobSmoothing();
+	if (typeof midiClockOsc !== "undefined") midiClockOsc.update();
 
 	const maxFrames = config.animation.maxFrames;
 	updateParticles(maxFrames);
@@ -368,6 +428,10 @@ function keyPressed() {
 
 	if (key === "L" || key === "l") {
 		toggleLoopCountdown();
+	}
+
+	if (key === "M" || key === "m") {
+		if (typeof midiClockOsc !== "undefined") midiClockOsc.toggleOverlay();
 	}
 
 	if (key === "G" || key === "g") {

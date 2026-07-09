@@ -12,18 +12,23 @@ class Mover {
 	show(canvas) {
 		const {h, s, l} = this.currentColor;
 		canvas.colorMode(HSL);
-		const trackHeight = this.size * 19;
+
+		const trackHeight = this.size * 2;
 		const squareSize = this.size / 1;
 		const maxTravel = trackHeight / 2 - squareSize / 2;
 		const squareX = this.x + Math.sin(this.angle) * maxTravel;
 		const reverseSquareX = this.x - Math.sin(this.angle) * maxTravel;
 		const complementaryHue = (210 + 180) % 360;
 
+		const pulse = 1 + Math.sin(this.angle * 22) * 1.35;
+
 		canvas.noStroke();
 		canvas.push();
 		canvas.rectMode(CENTER);
-		canvas.fill(40, 100, 90);
-		canvas.rect(this.x, this.y, trackHeight, this.size);
+		canvas.translate(this.x, this.y);
+		canvas.rotate(this.angle);
+		canvas.fill(40, 100, 80);
+		canvas.rect(0, 0, trackHeight * pulse, this.size);
 		canvas.pop();
 
 		canvas.push();
@@ -40,7 +45,7 @@ class Mover {
 	}
 
 	move(frameCount) {
-		this.angle += 0.018;
+		this.angle += 0.0018;
 		this.colorIndex = Math.floor(frameCount * 0.05) % this.palette.length;
 		this.currentColor = this.palette[this.colorIndex];
 	}

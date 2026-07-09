@@ -110,6 +110,38 @@ canvas.p5Canvas {
 	color: #ffc864;
 }
 
+#midi-clock-overlay {
+	position: fixed;
+	bottom: 10px;
+	left: 10px;
+	z-index: 10000;
+	padding: 6px 10px;
+	background: rgba(0, 0, 0, 0.65);
+	color: #fff;
+	font:
+		11px/1.35 "Courier New",
+		monospace;
+	pointer-events: none;
+	white-space: pre;
+	max-width: min(90vw, 320px);
+}
+
+#midi-clock-overlay.is-hidden {
+	display: none;
+}
+
+#midi-clock-overlay.is-warning {
+	color: #ffc864;
+}
+
+#midi-clock-overlay.is-disconnected {
+	color: #ff8a6a;
+}
+
+#midi-clock-overlay.is-stopped {
+	color: #aaa;
+}
+
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
 	.control-button {

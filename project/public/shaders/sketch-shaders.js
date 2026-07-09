@@ -16,13 +16,15 @@
  * 2. In setup(): shaderEffects.setup(width, height, mainCanvas, shaderCanvas)
  * 3. To apply shaders: shaderEffects.apply()
  * 4. To update time: shaderEffects.updateTime()
+ * 5. Master speed: set CANVAS_CONFIG.SHADER_ANIMATION_SPEED in sketch.js (or shaderEffects.setAnimationSpeed())
  */
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
 		this.continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
-		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
+		this.applyShadersDuringSketch = false; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Target shader animation rate (see advanceShaderClock)
+		this.animationSpeed = 1.0; // Master speed multiplier — override via setAnimationSpeed()
 		this.shaderApplyInterval = 1; // Run full pipeline every N p5 frames during sketch (1 = every frame)
 		this.shaderFrameCounter = 0;
 		this.lastShaderUpdateTime = 0;
@@ -224,8 +226,8 @@ class ShaderEffects {
 				},
 			},
 			pixelGrid: {
-				enabled: true,
-				gridSize: [240.0, 24.0],
+				enabled: false,
+				gridSize: [24.0, 240.0],
 				cellRatio: 0.0,
 				gridMode: 0.0,
 				diffuse: 0.0,
@@ -542,6 +544,20 @@ class ShaderEffects {
 	}
 
 	/**
+	 * Set master shader animation speed (scales all time-driven effects uniformly).
+	 * @param {number} speed - Multiplier (1.0 = default, 0.5 = half, 2.0 = double)
+	 */
+	setAnimationSpeed(speed) {
+		this.animationSpeed = Math.max(0, speed ?? 1);
+		this.updateLoopShaderTimeMax();
+		return this;
+	}
+
+	getAnimationSpeed() {
+		return this.animationSpeed;
+	}
+
+	/**
 	 * Configure master shader loop (wall-clock duration + optional pause).
 	 * @param {object} options
 	 */
@@ -570,7 +586,7 @@ class ShaderEffects {
 	}
 
 	updateLoopShaderTimeMax() {
-		this.loopShaderTimeMax = this.loopConfig.durationSeconds * (this.shaderFrameRate / 100);
+		this.loopShaderTimeMax = this.loopConfig.durationSeconds * (this.shaderFrameRate / 100) * this.animationSpeed;
 	}
 
 	/**
@@ -640,7 +656,7 @@ class ShaderEffects {
 	 * Restore symmetry effect phases to their configured initial values.
 	 */
 	restoreInitialPhases() {
-		for (const effectName of ["symmetry", "symmetry2"]) {
+		for (const effectName of this.getSymmetryEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect) continue;
 			if (effect._initialTranslationPhaseX !== undefined) {
@@ -652,7 +668,7 @@ class ShaderEffects {
 	}
 
 	snapshotInitialPhases() {
-		for (const effectName of ["symmetry", "symmetry2"]) {
+		for (const effectName of this.getSymmetryEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect) continue;
 			effect._initialTranslationPhaseX = effect.translationPhaseX ?? 0;
@@ -668,30 +684,20 @@ class ShaderEffects {
 		this.shaderTime = 0;
 		this.restoreInitialPhases();
 
-		this.translationPhase = {
-			symmetry: {x: 0, y: 0},
-			symmetry2: {x: 0, y: 0},
-		};
-		this.lastTranslationSpeed = {
-			symmetry: null,
-			symmetry2: null,
-		};
-		this.rotationPhase = {
-			symmetry: 0,
-			symmetry2: 0,
-		};
-		this.lastRotationSpeed = {
-			symmetry: null,
-			symmetry2: null,
-		};
-		this.lastRotationOscillationSpeed = {
-			symmetry: null,
-			symmetry2: null,
-		};
-		this.currentRotationAngle = {
-			symmetry: 0,
-			symmetry2: 0,
-		};
+		this.translationPhase = {};
+		this.lastTranslationSpeed = {};
+		this.rotationPhase = {};
+		this.lastRotationSpeed = {};
+		this.lastRotationOscillationSpeed = {};
+		this.currentRotationAngle = {};
+		for (const effectName of this.getSymmetryEffectNames()) {
+			this.translationPhase[effectName] = {x: 0, y: 0};
+			this.lastTranslationSpeed[effectName] = null;
+			this.rotationPhase[effectName] = 0;
+			this.lastRotationSpeed[effectName] = null;
+			this.lastRotationOscillationSpeed[effectName] = null;
+			this.currentRotationAngle[effectName] = 0;
+		}
 
 		this.loopStartTime = performance.now();
 		this.loopPaused = false;
@@ -812,6 +818,14 @@ class ShaderEffects {
 	}
 
 	/**
+	 * Names of symmetry effect passes in the pipeline.
+	 * @returns {string[]}
+	 */
+	getSymmetryEffectNames() {
+		return Object.keys(this.effectsConfig).filter((name) => name.startsWith("symmetry"));
+	}
+
+	/**
 	 * Advance shader time from the real clock (replaces fixed 0.01 per frame).
 	 * Calibrated so 60fps ≈ +0.01 per frame, same as before.
 	 */
@@ -862,7 +876,7 @@ class ShaderEffects {
 					this.resetLoopState();
 				}
 
-				const delta = dt * (this.shaderFrameRate / 100);
+				const delta = dt * (this.shaderFrameRate / 100) * this.animationSpeed;
 				if (delta > 0) {
 					this.shaderTime += delta;
 					this.updateTranslationPhases(delta);
@@ -898,7 +912,7 @@ class ShaderEffects {
 			return deltaShaderTime;
 		}
 
-		const delta = dt * (this.shaderFrameRate / 100);
+		const delta = dt * (this.shaderFrameRate / 100) * this.animationSpeed;
 		if (delta > 0) {
 			this.shaderTime += delta;
 			this.updateTranslationPhases(delta);
@@ -933,9 +947,7 @@ class ShaderEffects {
 	 * @param {number} delta - Time delta
 	 */
 	updateTranslationPhases(delta) {
-		// Update phase for symmetry effects
-		const effects = ["symmetry", "symmetry2"];
-		for (const effectName of effects) {
+		for (const effectName of this.getSymmetryEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect || !effect.enabled) continue;
 
@@ -985,9 +997,7 @@ class ShaderEffects {
 	 * @param {number} delta - Time delta
 	 */
 	updateRotationPhases(delta) {
-		// Update phase for symmetry effects
-		const effects = ["symmetry", "symmetry2"];
-		for (const effectName of effects) {
+		for (const effectName of this.getSymmetryEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect || !effect.enabled) continue;
 
