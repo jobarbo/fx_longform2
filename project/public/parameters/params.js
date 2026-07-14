@@ -29,7 +29,8 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		swirlIndex: ["none", "low", "medium", "high", "veryHigh", "extreme"],
 		zigzag: ["hairline", "fine", "normal", "large", "XL"],
 		noiseScale2: ["low", "medium", "high", "intense", "extreme"],
-		palettes: [], // filled once swatches are loaded
+		palettes: [], // filled once palettes are loaded
+		paletteModes: ["oklch", "oklab", "lch", "lab", "hsl", "rgb", "lrgb"], // chroma.scale interpolation modes
 	},
 
 	// ---- Lookup maps (single source of truth for every enum → value) ----

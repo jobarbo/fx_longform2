@@ -373,6 +373,134 @@ hr {
 	transition: 0.2s ease-in-out;
 }
 
+/* ---- Palette gradient preview (in the custom palette generator) ---- */
+.palette-preview {
+	height: clamp(10px, 0.9vw, 16px);
+	border-radius: 8px;
+	margin: 0 0 clamp(4px, 0.3vw, 8px);
+	border: 2px solid rgba(0, 0, 0, 0.85);
+	background: rgba(255, 255, 255, 0.15);
+}
+
+/* ---- Custom palette creator (visually separated from the other controls) ---- */
+.palette-creator {
+	grid-column: 1 / -1;
+	display: flex;
+	flex-direction: column;
+	gap: clamp(8px, 0.5vw, 12px);
+	margin-top: clamp(12px, 0.9vw, 20px);
+	padding: clamp(10px, 0.8vw, 16px);
+	border: none;
+	border-top: 2px dashed rgba(255, 255, 255, 0.3);
+	background: rgba(255, 255, 255, 0.06);
+	border-radius: 10px;
+	font-family: helvetica, arial, sans-serif;
+}
+
+.palette-creator legend {
+	padding: 0 0.4em 0 0;
+	font-size: clamp(9px, 0.72vw, 20px);
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: var(--color-text);
+	opacity: 0.75;
+}
+
+.palette-creator input[type="text"],
+.palette-creator textarea {
+	width: 100%;
+	padding: clamp(6px, 0.33vw, 10px) clamp(8px, 0.44vw, 10px);
+	border-radius: 10px;
+	border: 2px solid rgba(0, 0, 0, 0.85);
+	background: rgba(255, 255, 255, 0.8);
+	font-family: helvetica, arial, sans-serif;
+	font-weight: 600;
+	font-size: clamp(8px, 0.66vw, 20px);
+}
+
+.palette-creator textarea {
+	resize: vertical;
+	font-family: monospace;
+	font-size: clamp(8px, 0.6vw, 16px);
+	min-height: 3.4em;
+}
+
+.palette-creator .palette-config-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: clamp(6px, 0.4vw, 10px);
+	align-items: center;
+}
+
+.palette-creator select {
+	padding: clamp(6px, 0.33vw, 10px) clamp(8px, 0.44vw, 10px);
+	border-radius: 10px;
+	border: 2px solid rgba(0, 0, 0, 0.85);
+	background: rgba(255, 255, 255, 0.8);
+	font-family: helvetica, arial, sans-serif;
+	font-weight: 600;
+	font-size: clamp(8px, 0.66vw, 20px);
+}
+
+.palette-creator input[type="number"] {
+	width: clamp(56px, 4.5vw, 80px);
+	padding: clamp(6px, 0.33vw, 10px) clamp(8px, 0.44vw, 10px);
+	border-radius: 10px;
+	border: 2px solid rgba(0, 0, 0, 0.85);
+	background: rgba(255, 255, 255, 0.8);
+	font-family: helvetica, arial, sans-serif;
+	font-weight: 600;
+	font-size: clamp(8px, 0.66vw, 20px);
+}
+
+.palette-creator .palette-discrete-label {
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+	font-size: clamp(8px, 0.6vw, 18px);
+	color: var(--color-text);
+	opacity: 0.85;
+}
+
+.palette-creator .palette-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: clamp(6px, 0.4vw, 10px);
+}
+
+.palette-creator .palette-actions .button {
+	width: auto;
+	padding: 0.5em 1em;
+	font-size: clamp(8px, 0.72vw, 18px);
+}
+
+.palette-creator .palette-actions .btn-save {
+	border-color: #3fa564;
+}
+.palette-creator .palette-actions .btn-save::after {
+	background-color: #3fa564;
+}
+
+.palette-creator .palette-actions .btn-delete {
+	border-color: #d15b5b;
+}
+.palette-creator .palette-actions .btn-delete::after {
+	background-color: #d15b5b;
+}
+
+.palette-creator .palette-status {
+	font-size: clamp(8px, 0.6vw, 16px);
+	min-height: 1.2em;
+	color: var(--color-text);
+	opacity: 0.85;
+}
+
+.palette-creator .palette-status.is-error {
+	color: #ff9b9b;
+	opacity: 1;
+}
+
 @media (max-width: 1024px) {
 	.container {
 		width: 100vw;
