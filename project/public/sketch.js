@@ -31,7 +31,7 @@ const CANVAS_CONFIG = {
 const DEBUG_CONFIG = {
 	DEFAULT_PIXEL_DENSITY_DESKTOP: 15,
 	DEFAULT_PIXEL_DENSITY_MOBILE: 1,
-	HELP_TEXT: "Controls: Press 'F' to toggle FPS counter",
+	HELP_TEXT: "Controls: D debug panel · L loop · C controls · G symmetry debug",
 };
 
 const config = {
@@ -213,6 +213,13 @@ function setupAudioReactive() {
 		//.map("energy", "pixelSort", "threshold", 0, 1, 0, 1, 10, 0.75)
 		.map("energy", "pixelSort", "sortAmount", 0, 120, 0, 1, 1, 0.75) /* s */
 		.map("energy", "pixelSort", "threshold", 0, 1, 0, 1, 1, 0.75); /* s */
+
+	if (typeof debugPanel !== "undefined") {
+		debugPanel.init({
+			audio: typeof audioAnalyzer !== "undefined" ? audioAnalyzer : null,
+			shaders: typeof shaderEffects !== "undefined" ? shaderEffects : null,
+		});
+	}
 }
 
 function setupMidiKnobs() {
@@ -226,36 +233,12 @@ function setupMidiKnobs() {
 // 7. UI CONTROLS
 // ============================================================================
 
-function syncFpsToggleButton() {
-	const toggleFpsButton = document.getElementById("toggle-fps");
-	if (!toggleFpsButton || typeof shaderEffects === "undefined") return;
-
-	toggleFpsButton.classList.toggle("active", shaderEffects.showFPS);
-	toggleFpsButton.textContent = shaderEffects.showFPS ? "FPS: ON" : "FPS: OFF";
-}
-
-function setupMobileControls() {
-	const toggleFpsButton = document.getElementById("toggle-fps");
-	if (!toggleFpsButton) return;
-
-	toggleFpsButton.addEventListener("click", () => {
-		if (typeof shaderEffects === "undefined") return;
-		shaderEffects.toggleFPS();
-		syncFpsToggleButton();
-	});
-
-	syncFpsToggleButton();
-}
-
-function toggleFpsCounter() {
-	if (typeof shaderEffects === "undefined") return;
-	shaderEffects.toggleFPS();
-	syncFpsToggleButton();
-}
-
 function toggleLoopCountdown() {
 	if (typeof shaderEffects === "undefined") return;
 	shaderEffects.toggleLoopCountdown();
+	if (typeof debugPanel !== "undefined" && shaderEffects.loopConfig?.showCountdown) {
+		debugPanel.show();
+	}
 }
 
 // ============================================================================
@@ -343,13 +326,13 @@ async function setup() {
 	if (typeof createDownloadButton === "function") {
 		createDownloadButton();
 	}
-	setupMobileControls();
 	logStartupInfo();
 }
 
 function draw() {
 	mainCanvas.background(190, 100, 0, 100);
 	if (typeof audioKnob !== "undefined") audioKnob.update();
+	if (typeof debugPanel !== "undefined") debugPanel.update();
 	updateKnobSmoothing();
 
 	const maxFrames = config.animation.maxFrames;
@@ -362,8 +345,8 @@ function draw() {
 }
 
 function keyPressed() {
-	if (key === "F" || key === "f") {
-		toggleFpsCounter();
+	if (key === "D" || key === "d") {
+		if (typeof debugPanel !== "undefined") debugPanel.toggle();
 	}
 
 	if (key === "L" || key === "l") {

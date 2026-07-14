@@ -1266,19 +1266,28 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Update FPS counter
+	 * Update FPS counter (always samples; display is owned by debugPanel when present)
 	 */
 	updateFPS() {
-		if (!this.showFPS) return;
-
 		const now = performance.now();
 		const delta = now - this.lastFrameTime;
 		this.lastFrameTime = now;
-		this.currentFPS = Math.round(1000 / delta);
+		if (delta > 0) {
+			this.currentFPS = Math.round(1000 / delta);
+		}
 	}
 
 	drawFPS() {
 		try {
+			// Unified debug panel owns FPS display when present
+			if (typeof debugPanel !== "undefined") {
+				if (this.fpsElement) {
+					this.fpsElement.classList.add("is-hidden");
+					this.fpsElement.style.display = "none";
+				}
+				return;
+			}
+
 			if (!this.fpsElement) {
 				this.fpsElement = document.getElementById("shader-fps-overlay");
 				if (!this.fpsElement) {
@@ -1312,6 +1321,15 @@ class ShaderEffects {
 
 	drawLoopCountdown() {
 		try {
+			// Unified debug panel owns loop countdown when present
+			if (typeof debugPanel !== "undefined") {
+				if (this.loopOverlayElement) {
+					this.loopOverlayElement.classList.add("is-hidden");
+					this.loopOverlayElement.style.display = "none";
+				}
+				return;
+			}
+
 			const show = this.loopConfig.enabled && this.loopConfig.showCountdown;
 			if (!this.loopOverlayElement) {
 				this.loopOverlayElement = document.getElementById("shader-loop-overlay");
