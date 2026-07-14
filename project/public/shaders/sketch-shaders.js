@@ -432,6 +432,20 @@ class ShaderEffects {
 			},
 		};
 
+		// Default templates for create-from-dropdown (survive delete of last instance)
+		this.effectTemplates = {};
+		for (const [name, cfg] of Object.entries(this.effectsConfig)) {
+			const root = String(name).replace(/\d+$/, "") || name;
+			if (this.effectTemplates[root]) continue;
+			const template = JSON.parse(JSON.stringify(cfg));
+			template.enabled = false;
+			template.pass = cfg.pass || root;
+			delete template._initialTranslationPhaseX;
+			delete template._initialTranslationPhaseY;
+			delete template._initialRotationPhase;
+			this.effectTemplates[root] = template;
+		}
+
 		// Cache for last enabled effects (to detect changes)
 		this.lastEnabledEffects = null;
 
@@ -643,10 +657,29 @@ class ShaderEffects {
 	}
 
 	/**
+	 * Effects that drive translation/rotation phase accumulation (symmetry overdubs included).
+	 */
+	getPhaseTrackedEffectNames() {
+		return Object.keys(this.effectsConfig).filter((name) => {
+			const effect = this.effectsConfig[name];
+			return effect && (effect.translationSpeed !== undefined || effect.rotationSpeed !== undefined);
+		});
+	}
+
+	_ensurePhaseTracking(effectName) {
+		if (!this.translationPhase[effectName]) this.translationPhase[effectName] = {x: 0, y: 0};
+		if (this.lastTranslationSpeed[effectName] === undefined) this.lastTranslationSpeed[effectName] = null;
+		if (this.rotationPhase[effectName] === undefined) this.rotationPhase[effectName] = 0;
+		if (this.lastRotationSpeed[effectName] === undefined) this.lastRotationSpeed[effectName] = null;
+		if (this.lastRotationOscillationSpeed[effectName] === undefined) this.lastRotationOscillationSpeed[effectName] = null;
+		if (this.currentRotationAngle[effectName] === undefined) this.currentRotationAngle[effectName] = 0;
+	}
+
+	/**
 	 * Restore symmetry effect phases to their configured initial values.
 	 */
 	restoreInitialPhases() {
-		for (const effectName of ["symmetry", "symmetry2"]) {
+		for (const effectName of this.getPhaseTrackedEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect) continue;
 			if (effect._initialTranslationPhaseX !== undefined) {
@@ -658,7 +691,7 @@ class ShaderEffects {
 	}
 
 	snapshotInitialPhases() {
-		for (const effectName of ["symmetry", "symmetry2"]) {
+		for (const effectName of this.getPhaseTrackedEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect) continue;
 			effect._initialTranslationPhaseX = effect.translationPhaseX ?? 0;
@@ -674,30 +707,15 @@ class ShaderEffects {
 		this.shaderTime = 0;
 		this.restoreInitialPhases();
 
-		this.translationPhase = {
-			symmetry: {x: 0, y: 0},
-			symmetry2: {x: 0, y: 0},
-		};
-		this.lastTranslationSpeed = {
-			symmetry: null,
-			symmetry2: null,
-		};
-		this.rotationPhase = {
-			symmetry: 0,
-			symmetry2: 0,
-		};
-		this.lastRotationSpeed = {
-			symmetry: null,
-			symmetry2: null,
-		};
-		this.lastRotationOscillationSpeed = {
-			symmetry: null,
-			symmetry2: null,
-		};
-		this.currentRotationAngle = {
-			symmetry: 0,
-			symmetry2: 0,
-		};
+		this.translationPhase = {};
+		this.lastTranslationSpeed = {};
+		this.rotationPhase = {};
+		this.lastRotationSpeed = {};
+		this.lastRotationOscillationSpeed = {};
+		this.currentRotationAngle = {};
+		for (const name of this.getPhaseTrackedEffectNames()) {
+			this._ensurePhaseTracking(name);
+		}
 
 		this.loopStartTime = performance.now();
 		this.loopPaused = false;
@@ -804,6 +822,132 @@ class ShaderEffects {
 		this.lastEnabledEffects = null; // force pass list rebuild on next apply()
 		this.reinitializePipeline();
 		return this;
+	}
+
+	/**
+	 * Next free name: prefers root ("wave") if free, else wave2 / wave3…
+	 */
+	_nextCloneName(sourceName) {
+		const root = String(sourceName).replace(/\d+$/, "") || sourceName;
+		if (!this.effectsConfig[root]) return root;
+		let n = 2;
+		while (this.effectsConfig[root + n]) n++;
+		return root + n;
+	}
+
+	/**
+	 * Template names available for createEffect (from initial effectsConfig).
+	 * @returns {string[]}
+	 */
+	getEffectTemplateNames() {
+		return Object.keys(this.effectTemplates || {}).sort();
+	}
+
+	/**
+	 * Create a new stack instance from a template (e.g. "symmetry", "wave").
+	 * @param {string} templateName
+	 * @param {object} [options]
+	 * @param {boolean} [options.enabled=true]
+	 * @returns {string|null} new effect name
+	 */
+	createEffect(templateName, options = {}) {
+		const root = String(templateName).replace(/\d+$/, "") || templateName;
+		const template = this.effectTemplates?.[root];
+		if (!template) {
+			console.warn(`[ShaderEffects] createEffect: unknown template "${templateName}"`);
+			return null;
+		}
+
+		const newName = this._nextCloneName(root);
+		const created = JSON.parse(JSON.stringify(template));
+		created.enabled = options.enabled !== undefined ? Boolean(options.enabled) : true;
+		created.pass = template.pass || root;
+
+		this.effectsConfig[newName] = created;
+		this._ensurePhaseTracking(newName);
+		if (created.translationPhaseX !== undefined || created.rotationPhase !== undefined) {
+			created._initialTranslationPhaseX = created.translationPhaseX ?? 0;
+			created._initialTranslationPhaseY = created.translationPhaseY ?? 0;
+			created._initialRotationPhase = created.rotationPhase ?? 0;
+		}
+
+		this.lastEnabledEffects = null;
+		this.reinitializePipeline();
+		console.log(`[ShaderEffects] created "${newName}" from template "${root}" (pass: ${created.pass})`);
+		return newName;
+	}
+
+	/**
+	 * Remove an effect from the stack.
+	 * @param {string} effectName
+	 */
+	removeEffect(effectName) {
+		if (!this.effectsConfig[effectName]) {
+			console.warn(`[ShaderEffects] removeEffect: "${effectName}" not found`);
+			return this;
+		}
+
+		delete this.effectsConfig[effectName];
+
+		delete this.translationPhase?.[effectName];
+		delete this.lastTranslationSpeed?.[effectName];
+		delete this.rotationPhase?.[effectName];
+		delete this.lastRotationSpeed?.[effectName];
+		delete this.lastRotationOscillationSpeed?.[effectName];
+		delete this.currentRotationAngle?.[effectName];
+
+		this.lastEnabledEffects = null;
+		this.reinitializePipeline();
+		console.log(`[ShaderEffects] removed "${effectName}"`);
+		return this;
+	}
+
+	/**
+	 * Deep-clone an effect as a new stack instance (visual overdub).
+	 * Shares the same GL program via `pass` (defaults to the source effect's program).
+	 * @param {string} sourceName
+	 * @param {object} [options]
+	 * @param {boolean} [options.enabled=true]
+	 * @param {boolean} [options.insertAfter=true] - place clone right after the source in the stack
+	 * @returns {string|null} new effect name
+	 */
+	cloneEffect(sourceName, options = {}) {
+		const source = this.effectsConfig[sourceName];
+		if (!source) {
+			console.warn(`[ShaderEffects] cloneEffect: "${sourceName}" not found`);
+			return null;
+		}
+
+		const newName = this._nextCloneName(sourceName);
+		const cloned = JSON.parse(JSON.stringify(source));
+		cloned.enabled = options.enabled !== undefined ? Boolean(options.enabled) : true;
+		// GL program key — reuse source program (symmetry2 → same as symmetry, or its own loaded name)
+		cloned.pass = source.pass || String(sourceName).replace(/\d+$/, "") || sourceName;
+
+		const insertAfter = options.insertAfter !== false;
+		if (insertAfter) {
+			const next = {};
+			for (const name of Object.keys(this.effectsConfig)) {
+				next[name] = this.effectsConfig[name];
+				if (name === sourceName) next[newName] = cloned;
+			}
+			if (!next[newName]) next[newName] = cloned;
+			this.effectsConfig = next;
+		} else {
+			this.effectsConfig[newName] = cloned;
+		}
+
+		this._ensurePhaseTracking(newName);
+		if (cloned.translationPhaseX !== undefined || cloned.rotationPhase !== undefined) {
+			cloned._initialTranslationPhaseX = cloned.translationPhaseX ?? 0;
+			cloned._initialTranslationPhaseY = cloned.translationPhaseY ?? 0;
+			cloned._initialRotationPhase = cloned.rotationPhase ?? 0;
+		}
+
+		this.lastEnabledEffects = null;
+		this.reinitializePipeline();
+		console.log(`[ShaderEffects] cloned "${sourceName}" → "${newName}" (pass: ${cloned.pass})`);
+		return newName;
 	}
 
 	/**
@@ -967,11 +1111,10 @@ class ShaderEffects {
 	 * @param {number} delta - Time delta
 	 */
 	updateTranslationPhases(delta) {
-		// Update phase for symmetry effects
-		const effects = ["symmetry", "symmetry2"];
-		for (const effectName of effects) {
+		for (const effectName of this.getPhaseTrackedEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect || !effect.enabled) continue;
+			this._ensurePhaseTracking(effectName);
 
 			const currentSpeed = effect.translationSpeed || 0;
 			const lastSpeed = this.lastTranslationSpeed[effectName];
@@ -1019,11 +1162,10 @@ class ShaderEffects {
 	 * @param {number} delta - Time delta
 	 */
 	updateRotationPhases(delta) {
-		// Update phase for symmetry effects
-		const effects = ["symmetry", "symmetry2"];
-		for (const effectName of effects) {
+		for (const effectName of this.getPhaseTrackedEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect || !effect.enabled) continue;
+			this._ensurePhaseTracking(effectName);
 
 			const currentSpeed = effect.rotationSpeed || 0;
 			const currentOscillationSpeed = effect.rotationOscillationSpeed || 0;
@@ -1181,7 +1323,8 @@ class ShaderEffects {
 			for (const effectName in this.effectsConfig) {
 				const effect = this.effectsConfig[effectName];
 				if (effect.enabled) {
-					this.shaderPipeline.addPass(effectName, () => {
+					const passName = effect.pass || effectName;
+					this.shaderPipeline.addPass(passName, () => {
 						const uniforms = {};
 						for (const uniformName in effect.uniforms) {
 							const value = effect.uniforms[uniformName];

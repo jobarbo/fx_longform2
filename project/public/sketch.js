@@ -350,6 +350,11 @@ function draw() {
 }
 
 function keyPressed() {
+	const tag = document.activeElement?.tagName;
+	if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || document.activeElement?.isContentEditable) {
+		return;
+	}
+
 	if (key === "D" || key === "d") {
 		if (typeof debugPanel !== "undefined") debugPanel.toggle();
 	}
