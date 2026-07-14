@@ -12,8 +12,8 @@
  * - Reusable across projects with minimal setup
  *
  * Usage:
- * 1. In preload(): shaderEffects.preload(this)
- * 2. In setup(): shaderEffects.setup(width, height, mainCanvas, shaderCanvas)
+ * 1. In async setup(): await shaderEffects.preload(window)
+ * 2. Then: shaderEffects.setup(width, height, mainCanvas, shaderCanvas)
  * 3. To apply shaders: shaderEffects.apply()
  * 4. To update time: shaderEffects.updateTime()
  */
@@ -443,11 +443,11 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Preload shaders - call this in p5 preload()
-	 * Customize the shaders you load for your sketch
-	 * @param {p5} p5Instance - The p5 instance
+	 * Load shaders — call from async setup() (p5.js 2.x no longer runs preload()).
+	 * Customize the shaders you load for your sketch.
+	 * @param {p5} p5Instance - The p5 instance (window in global mode)
 	 */
-	preload(p5Instance) {
+	async preload(p5Instance) {
 		this.p5Instance = p5Instance;
 
 		// Initialize the global shader manager instance
@@ -457,23 +457,25 @@ class ShaderEffects {
 		shaderManager.setDefaultVertex("chromatic-aberration/vertex.vert");
 
 		// Load shaders - customize this list for your sketch
-		shaderManager.loadShader("copy", "copy/fragment.frag", "copy/vertex.vert");
-		shaderManager.loadShader("deform", "deform/fragment.frag", "deform/vertex.vert");
-		shaderManager.loadShader("glitchDisplacement", "glitch-displacement/fragment.frag", "glitch-displacement/vertex.vert");
-		shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag", "chromatic-aberration/vertex.vert");
-		shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert");
-		shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
-		shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert");
-		shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
-		shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert");
-		shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert");
-		shaderManager.loadShader("pixelGrid", "pixel-grid/fragment.frag", "pixel-grid/vertex.vert");
-		shaderManager.loadShader("blur", "blur/fragment.frag", "blur/vertex.vert");
-		shaderManager.loadShader("zoom", "zoom/fragment.frag", "zoom/vertex.vert");
-		shaderManager.loadShader("crtWarp", "crt-warp/fragment.frag", "crt-warp/vertex.vert");
-		shaderManager.loadShader("wave", "wave/fragment.frag", "wave/vertex.frag");
-		shaderManager.loadShader("colorQuantize", "color-quantize/fragment.frag", "color-quantize/vertex.vert");
-		shaderManager.loadShader("dither", "dither/fragment.frag", "dither/vertex.vert");
+		await Promise.all([
+			shaderManager.loadShader("copy", "copy/fragment.frag", "copy/vertex.vert"),
+			shaderManager.loadShader("deform", "deform/fragment.frag", "deform/vertex.vert"),
+			shaderManager.loadShader("glitchDisplacement", "glitch-displacement/fragment.frag", "glitch-displacement/vertex.vert"),
+			shaderManager.loadShader("chromatic", "chromatic-aberration/fragment.frag", "chromatic-aberration/vertex.vert"),
+			shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert"),
+			shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert"),
+			shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert"),
+			shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert"),
+			shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert"),
+			shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert"),
+			shaderManager.loadShader("pixelGrid", "pixel-grid/fragment.frag", "pixel-grid/vertex.vert"),
+			shaderManager.loadShader("blur", "blur/fragment.frag", "blur/vertex.vert"),
+			shaderManager.loadShader("zoom", "zoom/fragment.frag", "zoom/vertex.vert"),
+			shaderManager.loadShader("crtWarp", "crt-warp/fragment.frag", "crt-warp/vertex.vert"),
+			shaderManager.loadShader("wave", "wave/fragment.frag", "wave/vertex.frag"),
+			shaderManager.loadShader("colorQuantize", "color-quantize/fragment.frag", "color-quantize/vertex.vert"),
+			shaderManager.loadShader("dither", "dither/fragment.frag", "dither/vertex.vert"),
+		]);
 
 		this.shaderManager = shaderManager;
 
@@ -488,6 +490,10 @@ class ShaderEffects {
 	 * @param {p5.Graphics} shaderCanvas - WEBGL canvas for shader effects
 	 */
 	setup(width, height, mainCanvas, shaderCanvas, pixelDensity = 1) {
+		if (!this.shaderManager || !this.p5Instance) {
+			throw new Error("shaderEffects.preload() must be awaited before setup()");
+		}
+
 		this.mainCanvas = mainCanvas;
 		this.shaderCanvas = shaderCanvas;
 		this.pixelDensity = pixelDensity ?? mainCanvas?.pixelDensity?.() ?? 1;

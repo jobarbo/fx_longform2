@@ -314,16 +314,16 @@ function notifyFirstFrameReady() {
 // 9. P5 LIFECYCLE
 // ============================================================================
 
-function preload() {
-	if (typeof shaderEffects !== "undefined") {
-		shaderEffects.preload(this);
-	}
-}
-
-function setup() {
+// p5.js 2.x removed preload() — load assets with async/await in setup instead.
+async function setup() {
 	features = $fx.getFeatures();
 	executionTimer.start();
 	$fx.rand.reset();
+
+	// Global mode exposes p5 APIs on window; pass that as the instance for shaders.
+	if (typeof shaderEffects !== "undefined") {
+		await shaderEffects.preload(window);
+	}
 
 	pixel_density = getPixelDensity();
 	const {width: canvasW, height: canvasH} = getCanvasDimensions();
