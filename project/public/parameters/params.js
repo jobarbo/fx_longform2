@@ -82,13 +82,15 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		noiseScale2: "low",
 	},
 
-	// ---- UI metadata (drives dynamic control generation) ----
+	// ---- UI metadata (drives ParamsPanel control generation) ----
+	// kind / format are optional declarative hints for the reusable panel module
 	ui: [
 		{
 			key: "paletteName",
 			id: "param-palette",
 			label: "Palette",
 			optionsKey: "palettes", // populated via swatches:ready
+			kind: "palette",
 		},
 		{
 			key: "exposure",
@@ -101,6 +103,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			id: "param-population",
 			label: "Particle population",
 			optionsKey: "populations",
+			format: "compactNumber",
 		},
 		{
 			key: "particleSize",
@@ -113,12 +116,14 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			id: "param-horizontal-speed",
 			label: "Horizontal speed",
 			optionsKey: "horizontalSpeeds",
+			format: "camelToWords",
 		},
 		{
 			key: "verticalSpeed",
 			id: "param-vertical-speed",
 			label: "Vertical speed",
 			optionsKey: "verticalSpeeds",
+			format: "camelToWords",
 		},
 		{
 			key: "horizontalZigzag",
@@ -193,6 +198,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			id: "param-presentation",
 			label: "Presentation mode",
 			optionsKey: "presentations",
+			kind: "presentation",
 		},
 	],
 
