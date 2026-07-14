@@ -31,7 +31,7 @@ const CANVAS_CONFIG = {
 const DEBUG_CONFIG = {
 	DEFAULT_PIXEL_DENSITY_DESKTOP: 15,
 	DEFAULT_PIXEL_DENSITY_MOBILE: 1,
-	HELP_TEXT: "Controls: D debug panel · L loop · C controls · G symmetry debug",
+	HELP_TEXT: "Controls: D debug · E shaders · L loop · C controls · G symmetry debug",
 };
 
 const config = {
@@ -220,6 +220,10 @@ function setupAudioReactive() {
 			shaders: typeof shaderEffects !== "undefined" ? shaderEffects : null,
 		});
 	}
+
+	if (typeof shaderEffectsPanel !== "undefined" && typeof shaderEffects !== "undefined") {
+		shaderEffectsPanel.init(shaderEffects);
+	}
 }
 
 function setupMidiKnobs() {
@@ -333,6 +337,7 @@ function draw() {
 	mainCanvas.background(190, 100, 0, 100);
 	if (typeof audioKnob !== "undefined") audioKnob.update();
 	if (typeof debugPanel !== "undefined") debugPanel.update();
+	if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.update();
 	updateKnobSmoothing();
 
 	const maxFrames = config.animation.maxFrames;
@@ -347,6 +352,10 @@ function draw() {
 function keyPressed() {
 	if (key === "D" || key === "d") {
 		if (typeof debugPanel !== "undefined") debugPanel.toggle();
+	}
+
+	if (key === "E" || key === "e") {
+		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.toggle();
 	}
 
 	if (key === "L" || key === "l") {

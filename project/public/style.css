@@ -364,3 +364,151 @@ canvas.p5Canvas {
 #download-button {
 	display: none;
 }
+
+/* Shader effects panel — drawers to toggle / edit ShaderEffects live */
+.shader-effects-panel {
+	position: fixed;
+	top: 12px;
+	right: 12px;
+	z-index: 9995;
+	width: min(320px, calc(100vw - 24px));
+	max-height: calc(100vh - 24px);
+	display: flex;
+	flex-direction: column;
+	padding: 10px 10px 12px;
+	box-sizing: border-box;
+	background: rgba(8, 10, 14, 0.9);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 6px;
+	color: #eee;
+	font:
+		11px/1.35 "Courier New",
+		ui-monospace,
+		monospace;
+	pointer-events: auto;
+	backdrop-filter: blur(6px);
+	overflow: hidden;
+}
+
+.shader-effects-panel.is-hidden {
+	display: none;
+}
+
+.shader-effects-panel__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	margin-bottom: 8px;
+	padding-bottom: 6px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	flex-shrink: 0;
+}
+
+.shader-effects-panel__title {
+	font-size: 12px;
+	font-weight: bold;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.shader-effects-panel__hint {
+	opacity: 0.45;
+	font-size: 10px;
+}
+
+.shader-effects-panel__list {
+	overflow: auto;
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding-right: 2px;
+}
+
+.shader-effects-panel__drawer {
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.03);
+}
+
+.shader-effects-panel__drawer.is-enabled {
+	border-color: rgba(93, 255, 122, 0.35);
+}
+
+.shader-effects-panel__summary {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 7px 8px;
+	cursor: pointer;
+	list-style: none;
+	user-select: none;
+}
+
+.shader-effects-panel__summary::-webkit-details-marker {
+	display: none;
+}
+
+.shader-effects-panel__summary::after {
+	content: "▸";
+	margin-left: auto;
+	opacity: 0.45;
+	font-size: 10px;
+	transition: transform 0.15s ease;
+}
+
+.shader-effects-panel__drawer[open] > .shader-effects-panel__summary::after {
+	transform: rotate(90deg);
+}
+
+.shader-effects-panel__enable {
+	width: 14px;
+	height: 14px;
+	accent-color: #5dff7a;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.shader-effects-panel__name {
+	font-weight: bold;
+	letter-spacing: 0.02em;
+}
+
+.shader-effects-panel__body {
+	padding: 4px 8px 10px;
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.shader-effects-panel__empty {
+	opacity: 0.45;
+	padding: 4px 0;
+}
+
+.shader-effects-panel__control {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.shader-effects-panel__control-meta {
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+	opacity: 0.85;
+}
+
+.shader-effects-panel__control-value {
+	font-variant-numeric: tabular-nums;
+	opacity: 0.9;
+}
+
+.shader-effects-panel__control input[type="range"] {
+	width: 100%;
+	margin: 0;
+	accent-color: #6ec8ff;
+	cursor: pointer;
+}
