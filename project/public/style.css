@@ -43,15 +43,6 @@ body {
 	transition: opacity 700ms ease;
 }
 
-.reload-transition__image {
-	display: block;
-	/* Match canvas.p5Canvas sizing so the snapshot overlays the canvas exactly */
-	width: 100vw;
-	height: 100vh;
-	object-fit: contain;
-	image-rendering: auto;
-}
-
 canvas.p5Canvas {
 	display: block;
 	padding-left: 0;
@@ -68,6 +59,23 @@ canvas.p5Canvas {
 	width: 100vw !important;
 	height: 100vh !important;
 	object-fit: contain;
+	/* Default: sharp pixels when the buffer is smaller than the screen */
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+}
+
+canvas.p5Canvas.is-smooth {
+	image-rendering: auto;
+}
+
+.reload-transition__image {
+	display: block;
+	/* Match canvas.p5Canvas sizing so the snapshot overlays the canvas exactly */
+	width: 100vw;
+	height: 100vh;
+	object-fit: contain;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
 }
 
 /* Standalone FPS/loop overlays — hidden when unified #debug-panel is used */
@@ -118,7 +126,8 @@ canvas.p5Canvas {
 		11px/1.35 "Courier New",
 		ui-monospace,
 		monospace;
-	pointer-events: none;
+	/* Must receive clicks (loop toggle, etc.) — panel is display:none when hidden */
+	pointer-events: auto;
 	backdrop-filter: blur(6px);
 }
 
@@ -166,6 +175,27 @@ canvas.p5Canvas {
 .debug-panel__label {
 	opacity: 0.65;
 	min-width: 52px;
+}
+
+.debug-panel__loop-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.debug-panel__loop-toggle input {
+	width: 13px;
+	height: 13px;
+	margin: 0;
+	accent-color: #5dff7a;
+	cursor: pointer;
+}
+
+.debug-panel__loop-toggle .debug-panel__label {
+	opacity: 0.85;
+	min-width: 0;
 }
 
 .debug-panel__value {
@@ -416,6 +446,83 @@ canvas.p5Canvas {
 	font-size: 10px;
 }
 
+.shader-effects-panel__output {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-bottom: 8px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	flex-shrink: 0;
+}
+
+.shader-effects-panel__output-title {
+	font-size: 10px;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	opacity: 0.55;
+}
+
+.shader-effects-panel__output-row {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.shader-effects-panel__output-label {
+	min-width: 36px;
+	opacity: 0.65;
+}
+
+.shader-effects-panel__output-sep {
+	opacity: 0.4;
+	flex-shrink: 0;
+}
+
+.shader-effects-panel__output .shader-effects-panel__number {
+	width: 56px;
+	flex: 1;
+}
+
+.shader-effects-panel__preset {
+	max-width: 72px;
+	padding: 2px 3px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.35);
+	color: #eee;
+	font:
+		10px/1.2 "Courier New",
+		ui-monospace,
+		monospace;
+	cursor: pointer;
+}
+
+.shader-effects-panel__apply {
+	width: 26px;
+	height: 22px;
+	padding: 0;
+	border: 1px solid rgba(255, 255, 255, 0.22);
+	border-radius: 3px;
+	background: rgba(110, 200, 255, 0.15);
+	color: #cfefff;
+	font:
+		12px/1 "Courier New",
+		monospace;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.shader-effects-panel__apply:hover {
+	background: rgba(110, 200, 255, 0.3);
+}
+
+.shader-effects-panel__output .shader-effects-panel__number:disabled,
+.shader-effects-panel__preset:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
 .shader-effects-panel__handle {
 	cursor: grab;
 	opacity: 0.55;
@@ -622,6 +729,26 @@ canvas.p5Canvas {
 	display: flex;
 	flex-direction: column;
 	gap: 3px;
+}
+
+.shader-effects-panel__control--bool {
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	padding: 2px 0;
+}
+
+.shader-effects-panel__bool {
+	width: 14px;
+	height: 14px;
+	accent-color: #6ec8ff;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.shader-effects-panel__bool-label {
+	opacity: 0.9;
 }
 
 .shader-effects-panel__control-meta {

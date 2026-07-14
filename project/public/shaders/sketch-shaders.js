@@ -76,6 +76,8 @@ class ShaderEffects {
 			width: 1,
 			height: 1,
 		};
+		// When true: NEAREST texture sampling + CSS pixelated upscale (no blur between colors)
+		this.crispPixels = true;
 
 		// Master loop — wall-clock cycle with optional pause before restart
 		this.loopConfig = {
@@ -136,14 +138,17 @@ class ShaderEffects {
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationSpeed: 0.5, // Speed of horizontal/vertical movement
-				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationEnabled: 1.0, // Master toggle for translation
+				translationSpeedX: 0.5, // Horizontal translation speed (0 = none)
+				translationSpeedY: 0.5, // Vertical translation speed (0 = none)
+				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field, 4=continuous scroll
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
-				translationPhaseX: -0.5, // Accumulated phase for X translation (prevents jumps)
-				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
+				translationPhaseX: -0.5, // Accumulated phase for X (internal — not shown in panel)
+				translationPhaseY: 0.5, // Accumulated phase for Y (internal — not shown in panel)
+				rotationEnabled: 1.0, // Master toggle for animated rotation
 				rotationSpeed: 0.81, // Speed of rotation
 				rotationOscillationSpeed: 0.5, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
+				rotationStartingAngle: 0.0, // Static rotation amount in degrees [0..360] (applied even when animation is off)
 				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.1, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
@@ -157,14 +162,17 @@ class ShaderEffects {
 					uDebug: "debug",
 					uCenter: "center",
 					uTime: "shaderTime * timeMultiplier",
-					uTranslationSpeed: "translationSpeed",
+					uTranslationEnabled: "translationEnabled",
+					uTranslationSpeedX: "translationSpeedX",
+					uTranslationSpeedY: "translationSpeedY",
 					uTranslationMode: "translationMode",
 					uTranslationNoiseScale: "translationNoiseScale",
 					uTranslationPhaseX: "translationPhaseX",
 					uTranslationPhaseY: "translationPhaseY",
+					uRotationEnabled: "rotationEnabled",
 					uRotationSpeed: "rotationSpeed",
 					uRotationOscillationSpeed: "rotationOscillationSpeed",
-					uRotationStartingAngle: "rotationStartingAngle",
+					uRotationStartingAngle: "rotationStartingAngle * 0.017453292519943295", // deg → rad
 					uRotationMode: "rotationMode",
 					uRotationNoiseScale: "rotationNoiseScale",
 					uRotationPhase: "rotationPhase",
@@ -177,14 +185,17 @@ class ShaderEffects {
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationSpeed: 1.5, // Speed of horizontal/vertical movement
-				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationEnabled: 1.0, // Master toggle for translation
+				translationSpeedX: 1.5, // Horizontal translation speed (0 = none)
+				translationSpeedY: 1.5, // Vertical translation speed (0 = none)
+				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field, 4=continuous scroll
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
-				translationPhaseX: -0.5, // Accumulated phase for X translation (prevents jumps)
-				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
+				translationPhaseX: -0.5, // Accumulated phase for X (internal — not shown in panel)
+				translationPhaseY: 0.5, // Accumulated phase for Y (internal — not shown in panel)
+				rotationEnabled: 1.0, // Master toggle for animated rotation
 				rotationSpeed: 0.0, // Speed of rotation
 				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
+				rotationStartingAngle: 0.0, // Static rotation amount in degrees [0..360] (applied even when animation is off)
 				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
@@ -197,16 +208,18 @@ class ShaderEffects {
 					uSymmetryMode: "symmetryMode",
 					uAmount: "amount",
 					uDebug: "debug",
-					uCenter: "center",
 					uTime: "shaderTime * timeMultiplier",
-					uTranslationSpeed: "translationSpeed",
+					uTranslationEnabled: "translationEnabled",
+					uTranslationSpeedX: "translationSpeedX",
+					uTranslationSpeedY: "translationSpeedY",
 					uTranslationMode: "translationMode",
 					uTranslationNoiseScale: "translationNoiseScale",
 					uTranslationPhaseX: "translationPhaseX",
 					uTranslationPhaseY: "translationPhaseY",
+					uRotationEnabled: "rotationEnabled",
 					uRotationSpeed: "rotationSpeed",
 					uRotationOscillationSpeed: "rotationOscillationSpeed",
-					uRotationStartingAngle: "rotationStartingAngle",
+					uRotationStartingAngle: "rotationStartingAngle * 0.017453292519943295", // deg → rad
 					uRotationMode: "rotationMode",
 					uRotationNoiseScale: "rotationNoiseScale",
 					uRotationPhase: "rotationPhase",
@@ -217,10 +230,28 @@ class ShaderEffects {
 				enabled: true,
 				timeMultiplier: 1.1,
 				center: [0.5, 0.5], // wave origin in normalized UV (0–1, p5 coords: y=0 top)
+				amount: 1.0, // Overall mix [0..1]
+				spiralAmount: 1.0, // Spiral displacement strength
+				spiralFrequency: 12.0, // Ring density
+				spiralSpeed: 1.0, // Spiral animation rate
+				falloff: 1.414, // Radial falloff (√2 = full diagonal)
+				pulseAmount: 0.0, // Extra pulse modulation (0 = legacy look)
+				pulseSpeed: 1.7, // Pulse oscillation rate
+				waveAmount: 0.0, // Cartesian ripple (0 ≈ legacy nearly-off)
+				waveFrequency: 1.0, // Ripple spatial frequency
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uResolution: "[width, height]",
 					uCenter: "center",
+					uAmount: "amount",
+					uSpiralAmount: "spiralAmount",
+					uSpiralFrequency: "spiralFrequency",
+					uSpiralSpeed: "spiralSpeed",
+					uFalloff: "falloff",
+					uPulseAmount: "pulseAmount",
+					uPulseSpeed: "pulseSpeed",
+					uWaveAmount: "waveAmount",
+					uWaveFrequency: "waveFrequency",
 				},
 			},
 			pixelGrid: {
@@ -265,8 +296,8 @@ class ShaderEffects {
 			},
 			colorQuantize: {
 				enabled: false,
-				levels: 1.0,
-				mix: 0.0,
+				levels: 2.0, // shader: max(levels, 2) … 256
+				mix: 0.0, // 0 = original, 1 = full quantize
 				uniforms: {
 					uLevels: "levels",
 					uMix: "mix",
@@ -275,8 +306,8 @@ class ShaderEffects {
 			dither: {
 				enabled: false,
 				ditherMode: 0.0, // 0=bayer4, 1=bayer8, 2=hash, 3=line, 4=clustered
-				levels: 1.0,
-				mix: 3.0,
+				levels: 2.0, // shader: max(levels, 2)
+				mix: 1.0, // shader clamps 0–1
 				strength: 1.0,
 				scale: 0.1,
 				colorMode: 0.0, // 0=luma quantize, 1=per-channel quantize
@@ -300,6 +331,7 @@ class ShaderEffects {
 				zoomInAmount: 4.5, // Max zoom when animating
 				animateZoom: 1.0, // 0.0 = static, 1.0 = animate between out/in
 				easingMode: 4.0, // 0=sine, 1=linear, 2=ease-in, 3=ease-out, 4=ease-in-out, 5=bounce
+				outOfBoundsMode: 2.0, // 0=black, 1=clamp, 2=mirror, 3=transparent
 				center: [0.5, 0.5], // Zoom center point (normalized 0-1)
 				timeMultiplier: 0.0,
 				uniforms: {
@@ -311,7 +343,7 @@ class ShaderEffects {
 					uAnimateZoom: "animateZoom",
 					uCenter: "center",
 					uEasingMode: "easingMode",
-					uCenter: "center",
+					uOutOfBoundsMode: "outOfBoundsMode",
 				},
 			},
 			chromatic: {
@@ -514,6 +546,7 @@ class ShaderEffects {
 
 		if (this.shaderManager) {
 			this.shaderManager.setRenderRatio(this.renderRatio);
+			this.setCrispPixels(this.crispPixels);
 		}
 
 		// Initialize shader seed with fxhash if available
@@ -548,8 +581,8 @@ class ShaderEffects {
 	setRenderRatio(options = {}) {
 		this.renderRatio = {
 			fitCanvas: options.fitCanvas !== undefined ? Boolean(options.fitCanvas) : this.renderRatio.fitCanvas,
-			width: options.width ?? this.renderRatio.width,
-			height: options.height ?? this.renderRatio.height,
+			width: Math.max(options.width ?? this.renderRatio.width, 0.0001),
+			height: Math.max(options.height ?? this.renderRatio.height, 0.0001),
 		};
 		if (this.shaderManager) {
 			this.shaderManager.setRenderRatio(this.renderRatio);
@@ -559,6 +592,80 @@ class ShaderEffects {
 
 	getRenderRatio() {
 		return {...this.renderRatio};
+	}
+
+	/**
+	 * Resize artwork + display canvases and rebuild the shader pipeline.
+	 * @param {number} width
+	 * @param {number} height
+	 */
+	resize(width, height) {
+		const w = Math.max(16, Math.min(4096, Math.round(Number(width) || 16)));
+		const h = Math.max(16, Math.min(4096, Math.round(Number(height) || 16)));
+
+		const cur = this.getCanvasSize();
+		if (Math.round(cur.width) === w && Math.round(cur.height) === h) {
+			return this;
+		}
+
+		const p5 = this.p5Instance || (typeof window !== "undefined" ? window : null);
+
+		// Artwork offscreen buffer
+		if (this.mainCanvas) {
+			if (typeof this.mainCanvas.resizeCanvas === "function") {
+				this.mainCanvas.resizeCanvas(w, h);
+			} else if (typeof this.mainCanvas.resize === "function") {
+				this.mainCanvas.resize(w, h);
+			}
+		}
+
+		// Main WEBGL display canvas (global-mode p5 exposes resizeCanvas on window)
+		if (typeof resizeCanvas === "function") {
+			resizeCanvas(w, h);
+		} else if (p5 && typeof p5.resizeCanvas === "function") {
+			p5.resizeCanvas(w, h);
+		}
+
+		this.shaderCanvas = p5 || this.shaderCanvas;
+		this.lastEnabledEffects = null;
+		this.reinitializePipeline();
+
+		if (typeof updateLayoutMetrics === "function") {
+			updateLayoutMetrics(w, h);
+		}
+
+		console.log(`[ShaderEffects] resized to ${w}×${h} (main=${this.mainCanvas?.width}×${this.mainCanvas?.height})`);
+		return this;
+	}
+
+	getCanvasSize() {
+		const w = this.mainCanvas?.width ?? this.p5Instance?.width ?? 0;
+		const h = this.mainCanvas?.height ?? this.p5Instance?.height ?? 0;
+		return {width: w, height: h};
+	}
+
+	/**
+	 * Sharp pixel look when the buffer is upscaled (CSS + WebGL NEAREST sampling).
+	 * @param {boolean} enabled
+	 */
+	setCrispPixels(enabled) {
+		this.crispPixels = Boolean(enabled);
+		if (this.shaderManager) {
+			this.shaderManager.crispPixels = this.crispPixels;
+		}
+		if (typeof document !== "undefined") {
+			document.querySelectorAll("canvas.p5Canvas").forEach((el) => {
+				el.classList.toggle("is-smooth", !this.crispPixels);
+			});
+		}
+		if (this.mainCanvas?.drawingContext) {
+			this.mainCanvas.drawingContext.imageSmoothingEnabled = !this.crispPixels;
+		}
+		return this;
+	}
+
+	getCrispPixels() {
+		return !!this.crispPixels;
 	}
 
 	/**
@@ -662,7 +769,13 @@ class ShaderEffects {
 	getPhaseTrackedEffectNames() {
 		return Object.keys(this.effectsConfig).filter((name) => {
 			const effect = this.effectsConfig[name];
-			return effect && (effect.translationSpeed !== undefined || effect.rotationSpeed !== undefined);
+			return (
+				effect &&
+				(effect.translationSpeedX !== undefined ||
+					effect.translationSpeedY !== undefined ||
+					effect.translationSpeed !== undefined ||
+					effect.rotationSpeed !== undefined)
+			);
 		});
 	}
 
@@ -1114,46 +1227,24 @@ class ShaderEffects {
 		for (const effectName of this.getPhaseTrackedEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect || !effect.enabled) continue;
+			if (effect.translationEnabled !== undefined && effect.translationEnabled < 0.5) continue;
 			this._ensurePhaseTracking(effectName);
 
-			const currentSpeed = effect.translationSpeed || 0;
-			const lastSpeed = this.lastTranslationSpeed[effectName];
-			const transMode = Math.floor(effect.translationMode || 0);
+			// Prefer per-axis speeds; fall back to legacy translationSpeed
+			const legacy = effect.translationSpeed ?? 0;
+			const speedX = effect.translationSpeedX !== undefined ? effect.translationSpeedX : legacy;
+			const speedY = effect.translationSpeedY !== undefined ? effect.translationSpeedY : legacy;
 
-			// Initialize phase if not set
 			if (effect.translationPhaseX === undefined) effect.translationPhaseX = 0;
 			if (effect.translationPhaseY === undefined) effect.translationPhaseY = 0;
 
-			// If speed changed, maintain current position by adjusting phase
-			if (lastSpeed !== null && lastSpeed !== currentSpeed && currentSpeed !== 0) {
-				const currentTime = this.shaderTime * (effect.timeMultiplier || 0.1);
-
-				if (transMode === 0) {
-					// Sine mode: maintain phase continuity
-					const oldPhaseX = currentTime * lastSpeed;
-					const oldPhaseY = currentTime * lastSpeed * 0.7;
-					// Set phase to maintain the same position
-					effect.translationPhaseX = oldPhaseX;
-					effect.translationPhaseY = oldPhaseY;
-				}
-				// For noise/FBM/vector field modes, phase is already accumulated, so we keep it
-			}
-
-			// Update phase based on current speed
 			const timeMultiplier = effect.timeMultiplier || 0.1;
 			const effectiveDelta = delta * timeMultiplier;
 
-			if (transMode === 0) {
-				// Sine mode: accumulate phase
-				effect.translationPhaseX += effectiveDelta * currentSpeed;
-				effect.translationPhaseY += effectiveDelta * currentSpeed * 0.7;
-			} else {
-				// Noise/FBM/vector field: accumulate based on speed
-				effect.translationPhaseX += effectiveDelta * currentSpeed;
-				effect.translationPhaseY += effectiveDelta * currentSpeed;
-			}
+			effect.translationPhaseX += effectiveDelta * speedX;
+			effect.translationPhaseY += effectiveDelta * speedY;
 
-			this.lastTranslationSpeed[effectName] = currentSpeed;
+			this.lastTranslationSpeed[effectName] = {x: speedX, y: speedY};
 		}
 	}
 
@@ -1165,6 +1256,7 @@ class ShaderEffects {
 		for (const effectName of this.getPhaseTrackedEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect || !effect.enabled) continue;
+			if (effect.rotationEnabled !== undefined && effect.rotationEnabled < 0.5) continue;
 			this._ensurePhaseTracking(effectName);
 
 			const currentSpeed = effect.rotationSpeed || 0;
