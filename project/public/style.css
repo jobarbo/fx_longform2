@@ -416,6 +416,37 @@ canvas.p5Canvas {
 	font-size: 10px;
 }
 
+.shader-effects-panel__handle {
+	cursor: grab;
+	opacity: 0.55;
+	font-size: 12px;
+	line-height: 1;
+	padding: 0 2px;
+	user-select: none;
+	flex-shrink: 0;
+}
+
+.shader-effects-panel__handle:hover {
+	opacity: 0.95;
+}
+
+.shader-effects-panel__handle:active,
+.shader-effects-panel__drawer.is-dragging .shader-effects-panel__handle {
+	cursor: grabbing;
+}
+
+.shader-effects-panel__drawer.is-dragging {
+	opacity: 0.45;
+}
+
+.shader-effects-panel__drawer.is-drop-before {
+	box-shadow: inset 0 2px 0 #6ec8ff;
+}
+
+.shader-effects-panel__drawer.is-drop-after {
+	box-shadow: inset 0 -2px 0 #6ec8ff;
+}
+
 .shader-effects-panel__list {
 	overflow: auto;
 	flex: 1;

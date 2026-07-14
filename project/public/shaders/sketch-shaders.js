@@ -779,6 +779,34 @@ class ShaderEffects {
 	}
 
 	/**
+	 * Reorder effects in the render stack (Object key order = pass order).
+	 * @param {string[]} orderedNames - Effect names top→bottom = first→last pass
+	 */
+	reorderEffects(orderedNames) {
+		if (!Array.isArray(orderedNames) || !orderedNames.length) return this;
+
+		const prev = this.effectsConfig;
+		const next = {};
+		const seen = new Set();
+
+		for (const name of orderedNames) {
+			if (prev[name] !== undefined && !seen.has(name)) {
+				next[name] = prev[name];
+				seen.add(name);
+			}
+		}
+		// Keep any effects omitted from the list at the end
+		for (const name of Object.keys(prev)) {
+			if (!seen.has(name)) next[name] = prev[name];
+		}
+
+		this.effectsConfig = next;
+		this.lastEnabledEffects = null; // force pass list rebuild on next apply()
+		this.reinitializePipeline();
+		return this;
+	}
+
+	/**
 	 * Reinitialize shader pipeline when effects change
 	 */
 	reinitializePipeline() {
