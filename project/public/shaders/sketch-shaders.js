@@ -22,7 +22,7 @@ class ShaderEffects {
 	constructor() {
 		// Shader animation control
 		this.continueShadersAfterCompletion = false; // Set to false to stop shaders when sketch is done
-		this.applyShadersDuringSketch = false; // Set to true to apply shaders while sketching
+		this.applyShadersDuringSketch = true; // Set to true to apply shaders while sketching
 		this.shaderFrameRate = 60; // Target shader animation rate (see advanceShaderClock)
 		this.animationSpeed = 1.0; // Master speed multiplier — override via setAnimationSpeed()
 		this.shaderApplyInterval = 1; // Run full pipeline every N p5 frames during sketch (1 = every frame)
@@ -216,7 +216,7 @@ class ShaderEffects {
 				},
 			},
 			wave: {
-				enabled: true,
+				enabled: false,
 				timeMultiplier: 1.1,
 				center: [0.5, 0.5], // wave origin in normalized UV (0–1, p5 coords: y=0 top)
 				uniforms: {
@@ -226,8 +226,8 @@ class ShaderEffects {
 				},
 			},
 			pixelGrid: {
-				enabled: false,
-				gridSize: [24.0, 240.0],
+				enabled: true,
+				gridSize: [24.0, 3.0],
 				cellRatio: 0.0,
 				gridMode: 0.0,
 				diffuse: 0.0,

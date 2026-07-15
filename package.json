@@ -11,7 +11,8 @@
 		"start": "node ./lib/scripts/start.js",
 		"start:project": "webpack serve --config ./lib/config/webpack.config.dev.js",
 		"build": "webpack --config ./lib/config/webpack.config.prod.js",
-		"osc:bridge": "node ./lib/scripts/osc-bridge.js"
+		"osc:bridge": "node ./lib/scripts/osc-bridge.js",
+		"osc:test": "node ./lib/scripts/osc-test.js"
 	},
 	"author": "fxhash",
 	"license": "MIT",

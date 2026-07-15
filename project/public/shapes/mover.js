@@ -27,13 +27,13 @@ class Mover {
 		canvas.rectMode(CENTER);
 		canvas.translate(this.x, this.y);
 		canvas.rotate(this.angle);
-		canvas.fill(40, 100, 80);
+		canvas.fill(175, 100, 40);
 		canvas.rect(0, 0, trackHeight * pulse, this.size);
 		canvas.pop();
 
 		canvas.push();
 		canvas.rectMode(CENTER);
-		canvas.fill(210, 100, 50, 100);
+		canvas.fill(365, 100, 50, 100);
 		canvas.rect(squareX, this.y, squareSize, squareSize);
 		canvas.pop();
 
