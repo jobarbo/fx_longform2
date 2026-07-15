@@ -52,6 +52,10 @@ class ShaderEffects {
 			height: 1,
 		};
 
+		// NEAREST sampling + CSS pixelated when true (togglable in shader panel).
+		// Default false to preserve this project's smooth (LINEAR) rendering.
+		this.crispPixels = false;
+
 		// Effects configuration - customize these for your sketch
 		this.effectsConfig = {
 			deform: {
@@ -114,14 +118,17 @@ class ShaderEffects {
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationSpeed: 0.01, // Speed of horizontal/vertical movement
-				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationEnabled: 1.0, // Master toggle for translation animation
+				translationSpeedX: 0.01, // Horizontal translation speed (0 = none)
+				translationSpeedY: 0.01, // Vertical translation speed (0 = none)
+				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field, 4=continuous scroll
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: -0.5, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
+				rotationEnabled: 1.0, // Master toggle for animated rotation
 				rotationSpeed: 0.01, // Speed of rotation
 				rotationOscillationSpeed: 0.5, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 0.0, // Starting angle for rotation (in radians, added to rotation)
+				rotationStartingAngle: 0.0, // Static rotation in degrees [0..360] (applied even when animation is off)
 				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.1, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
@@ -135,14 +142,17 @@ class ShaderEffects {
 					uDebug: "debug",
 					uCenter: "center",
 					uTime: "shaderTime * timeMultiplier",
-					uTranslationSpeed: "translationSpeed",
+					uTranslationEnabled: "translationEnabled",
+					uTranslationSpeedX: "translationSpeedX",
+					uTranslationSpeedY: "translationSpeedY",
 					uTranslationMode: "translationMode",
 					uTranslationNoiseScale: "translationNoiseScale",
 					uTranslationPhaseX: "translationPhaseX",
 					uTranslationPhaseY: "translationPhaseY",
+					uRotationEnabled: "rotationEnabled",
 					uRotationSpeed: "rotationSpeed",
 					uRotationOscillationSpeed: "rotationOscillationSpeed",
-					uRotationStartingAngle: "rotationStartingAngle",
+					uRotationStartingAngle: "rotationStartingAngle * 0.017453292519943295", // deg → rad
 					uRotationMode: "rotationMode",
 					uRotationNoiseScale: "rotationNoiseScale",
 					uRotationPhase: "rotationPhase",
@@ -156,14 +166,17 @@ class ShaderEffects {
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationSpeed: 0.01, // Speed of horizontal/vertical movement
-				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationEnabled: 1.0, // Master toggle for translation animation
+				translationSpeedX: 0.01, // Horizontal translation speed (0 = none)
+				translationSpeedY: 0.01, // Vertical translation speed (0 = none)
+				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field, 4=continuous scroll
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: -0.5, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
+				rotationEnabled: 1.0, // Master toggle for animated rotation
 				rotationSpeed: 0.01, // Speed of rotation
 				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 0.1, // Starting angle for rotation (in radians, added to rotation)
+				rotationStartingAngle: 5.7, // Static rotation in degrees [0..360] (applied even when animation is off)
 				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
@@ -172,20 +185,22 @@ class ShaderEffects {
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
-					uCenter: "center",
 					uSymmetryMode: "symmetryMode",
 					uAmount: "amount",
 					uDebug: "debug",
 					uCenter: "center",
 					uTime: "shaderTime * timeMultiplier",
-					uTranslationSpeed: "translationSpeed",
+					uTranslationEnabled: "translationEnabled",
+					uTranslationSpeedX: "translationSpeedX",
+					uTranslationSpeedY: "translationSpeedY",
 					uTranslationMode: "translationMode",
 					uTranslationNoiseScale: "translationNoiseScale",
 					uTranslationPhaseX: "translationPhaseX",
 					uTranslationPhaseY: "translationPhaseY",
+					uRotationEnabled: "rotationEnabled",
 					uRotationSpeed: "rotationSpeed",
 					uRotationOscillationSpeed: "rotationOscillationSpeed",
-					uRotationStartingAngle: "rotationStartingAngle",
+					uRotationStartingAngle: "rotationStartingAngle * 0.017453292519943295", // deg → rad
 					uRotationMode: "rotationMode",
 					uRotationNoiseScale: "rotationNoiseScale",
 					uRotationPhase: "rotationPhase",
@@ -199,15 +214,17 @@ class ShaderEffects {
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationSpeed: 0.01, // Speed of horizontal/vertical movement
-
-				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field
+				translationEnabled: 1.0, // Master toggle for translation animation
+				translationSpeedX: 0.01, // Horizontal translation speed (0 = none)
+				translationSpeedY: 0.01, // Vertical translation speed (0 = none)
+				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field, 4=continuous scroll
 				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
 				translationPhaseX: 0.5, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
+				rotationEnabled: 1.0, // Master toggle for animated rotation
 				rotationSpeed: 0.16, // Speed of rotation
 				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 0.1, // Starting angle for rotation (in radians, added to rotation)
+				rotationStartingAngle: 5.7, // Static rotation in degrees [0..360] (applied even when animation is off)
 				rotationMode: 2.0, // 0=cosine oscillation, 1=noise, 2=FBM
 				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
 				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
@@ -216,20 +233,22 @@ class ShaderEffects {
 				uniforms: {
 					uResolution: "[width, height]",
 					uSeed: "shaderSeed + 1234.0",
-					uCenter: "center",
 					uSymmetryMode: "symmetryMode",
 					uAmount: "amount",
 					uDebug: "debug",
 					uCenter: "center",
 					uTime: "shaderTime * timeMultiplier",
-					uTranslationSpeed: "translationSpeed",
+					uTranslationEnabled: "translationEnabled",
+					uTranslationSpeedX: "translationSpeedX",
+					uTranslationSpeedY: "translationSpeedY",
 					uTranslationMode: "translationMode",
 					uTranslationNoiseScale: "translationNoiseScale",
 					uTranslationPhaseX: "translationPhaseX",
 					uTranslationPhaseY: "translationPhaseY",
+					uRotationEnabled: "rotationEnabled",
 					uRotationSpeed: "rotationSpeed",
 					uRotationOscillationSpeed: "rotationOscillationSpeed",
-					uRotationStartingAngle: "rotationStartingAngle",
+					uRotationStartingAngle: "rotationStartingAngle * 0.017453292519943295", // deg → rad
 					uRotationMode: "rotationMode",
 					uRotationNoiseScale: "rotationNoiseScale",
 					uRotationPhase: "rotationPhase",
@@ -270,7 +289,7 @@ class ShaderEffects {
 				},
 			},
 			pixelGrid: {
-				enabled: true,
+				enabled: false,
 				gridSize: [24.0, 24.0],
 				cellRatio: 0.0,
 				gridMode: 0.0,
@@ -434,6 +453,18 @@ class ShaderEffects {
 			},
 		};
 
+		// Default templates for create-from-dropdown in the shader panel
+		// (survive delete of the last instance of an effect)
+		this.effectTemplates = {};
+		for (const [name, cfg] of Object.entries(this.effectsConfig)) {
+			const root = String(name).replace(/\d+$/, "") || name;
+			if (this.effectTemplates[root]) continue;
+			const template = JSON.parse(JSON.stringify(cfg));
+			template.enabled = false;
+			template.pass = cfg.pass || root;
+			this.effectTemplates[root] = template;
+		}
+
 		// Symmetry phase tracking (prevents jumps when speed changes)
 		this.lastTranslationSpeed = {};
 		this.lastRotationSpeed = {};
@@ -515,6 +546,7 @@ class ShaderEffects {
 
 		if (this.shaderManager) {
 			this.shaderManager.setRenderRatio(this.renderRatio);
+			this.setCrispPixels(this.crispPixels);
 		}
 
 		// FPS overlay default (can be controlled by sketch-level constant SHOW_FPS_UI)
@@ -602,6 +634,223 @@ class ShaderEffects {
 	}
 
 	/**
+	 * Sharp pixel look when the buffer is upscaled (CSS + WebGL NEAREST sampling).
+	 * @param {boolean} enabled
+	 */
+	setCrispPixels(enabled) {
+		this.crispPixels = Boolean(enabled);
+		if (this.shaderManager) {
+			this.shaderManager.crispPixels = this.crispPixels;
+		}
+		if (typeof document !== "undefined") {
+			document.querySelectorAll("canvas.p5Canvas").forEach((el) => {
+				el.classList.toggle("is-smooth", !this.crispPixels);
+			});
+		}
+		return this;
+	}
+
+	getCrispPixels() {
+		return !!this.crispPixels;
+	}
+
+	/**
+	 * Resize artwork + display canvases and rebuild the shader pipeline
+	 * (used by the shader panel's size controls).
+	 * @param {number} width
+	 * @param {number} height
+	 */
+	resize(width, height) {
+		const w = Math.max(16, Math.min(8192, Math.round(Number(width) || 16)));
+		const h = Math.max(16, Math.min(8192, Math.round(Number(height) || 16)));
+
+		const cur = this.getCanvasSize();
+		if (Math.round(cur.width) === w && Math.round(cur.height) === h) {
+			return this;
+		}
+
+		const p5 = this.p5Instance || (typeof window !== "undefined" ? window : null);
+
+		// Artwork offscreen buffer
+		if (this.mainCanvas) {
+			if (typeof this.mainCanvas.resizeCanvas === "function") {
+				this.mainCanvas.resizeCanvas(w, h);
+			} else if (typeof this.mainCanvas.resize === "function") {
+				this.mainCanvas.resize(w, h);
+			}
+		}
+
+		// Main WEBGL display canvas (global-mode p5 exposes resizeCanvas on window)
+		if (typeof resizeCanvas === "function") {
+			resizeCanvas(w, h);
+		} else if (p5 && typeof p5.resizeCanvas === "function") {
+			p5.resizeCanvas(w, h);
+		}
+
+		this.lastEnabledEffects = null;
+		this.reinitializePipeline();
+
+		console.log(`[ShaderEffects] resized to ${w}×${h} (main=${this.mainCanvas?.width}×${this.mainCanvas?.height})`);
+		return this;
+	}
+
+	getCanvasSize() {
+		const w = this.mainCanvas?.width ?? (typeof width !== "undefined" ? width : 0);
+		const h = this.mainCanvas?.height ?? (typeof height !== "undefined" ? height : 0);
+		return {width: w, height: h};
+	}
+
+	/**
+	 * Reorder effects in the render stack (Object key order = pass order).
+	 * @param {string[]} orderedNames - Effect names top→bottom = first→last pass
+	 */
+	reorderEffects(orderedNames) {
+		if (!Array.isArray(orderedNames) || !orderedNames.length) return this;
+
+		const prev = this.effectsConfig;
+		const next = {};
+		const seen = new Set();
+
+		for (const name of orderedNames) {
+			if (prev[name] !== undefined && !seen.has(name)) {
+				next[name] = prev[name];
+				seen.add(name);
+			}
+		}
+		// Keep any effects omitted from the list at the end
+		for (const name of Object.keys(prev)) {
+			if (!seen.has(name)) next[name] = prev[name];
+		}
+
+		this.effectsConfig = next;
+		this.lastEnabledEffects = null; // force pass list rebuild on next apply()
+		this.reinitializePipeline();
+		return this;
+	}
+
+	/**
+	 * Next free name: prefers root ("wave") if free, else wave2 / wave3…
+	 */
+	_nextCloneName(sourceName) {
+		const root = String(sourceName).replace(/\d+$/, "") || sourceName;
+		if (!this.effectsConfig[root]) return root;
+		let n = 2;
+		while (this.effectsConfig[root + n]) n++;
+		return root + n;
+	}
+
+	/**
+	 * Register phase-tracking slots for a (new) symmetry-style effect.
+	 */
+	_ensurePhaseTracking(effectName) {
+		if (!String(effectName).startsWith("symmetry")) return;
+		if (!(effectName in this.lastTranslationSpeed)) this.lastTranslationSpeed[effectName] = null;
+		if (!(effectName in this.lastRotationSpeed)) this.lastRotationSpeed[effectName] = null;
+		if (!(effectName in this.lastRotationOscillationSpeed)) this.lastRotationOscillationSpeed[effectName] = null;
+	}
+
+	/**
+	 * Template names available for createEffect (from initial effectsConfig).
+	 * @returns {string[]}
+	 */
+	getEffectTemplateNames() {
+		return Object.keys(this.effectTemplates || {}).sort();
+	}
+
+	/**
+	 * Create a new stack instance from a template (e.g. "symmetry", "grain").
+	 * @param {string} templateName
+	 * @param {object} [options]
+	 * @param {boolean} [options.enabled=true]
+	 * @returns {string|null} new effect name
+	 */
+	createEffect(templateName, options = {}) {
+		const root = String(templateName).replace(/\d+$/, "") || templateName;
+		const template = this.effectTemplates?.[root];
+		if (!template) {
+			console.warn(`[ShaderEffects] createEffect: unknown template "${templateName}"`);
+			return null;
+		}
+
+		const newName = this._nextCloneName(root);
+		const created = JSON.parse(JSON.stringify(template));
+		created.enabled = options.enabled !== undefined ? Boolean(options.enabled) : true;
+		created.pass = template.pass || root;
+
+		this.effectsConfig[newName] = created;
+		this._ensurePhaseTracking(newName);
+
+		this.lastEnabledEffects = null;
+		this.reinitializePipeline();
+		console.log(`[ShaderEffects] created "${newName}" from template "${root}" (pass: ${created.pass})`);
+		return newName;
+	}
+
+	/**
+	 * Remove an effect from the stack.
+	 * @param {string} effectName
+	 */
+	removeEffect(effectName) {
+		if (!this.effectsConfig[effectName]) {
+			console.warn(`[ShaderEffects] removeEffect: "${effectName}" not found`);
+			return this;
+		}
+
+		delete this.effectsConfig[effectName];
+		delete this.lastTranslationSpeed?.[effectName];
+		delete this.lastRotationSpeed?.[effectName];
+		delete this.lastRotationOscillationSpeed?.[effectName];
+
+		this.lastEnabledEffects = null;
+		this.reinitializePipeline();
+		console.log(`[ShaderEffects] removed "${effectName}"`);
+		return this;
+	}
+
+	/**
+	 * Deep-clone an effect as a new stack instance (visual overdub).
+	 * Shares the same GL program via `pass` (defaults to the source effect's program).
+	 * @param {string} sourceName
+	 * @param {object} [options]
+	 * @param {boolean} [options.enabled=true]
+	 * @param {boolean} [options.insertAfter=true] - place clone right after the source in the stack
+	 * @returns {string|null} new effect name
+	 */
+	cloneEffect(sourceName, options = {}) {
+		const source = this.effectsConfig[sourceName];
+		if (!source) {
+			console.warn(`[ShaderEffects] cloneEffect: "${sourceName}" not found`);
+			return null;
+		}
+
+		const newName = this._nextCloneName(sourceName);
+		const cloned = JSON.parse(JSON.stringify(source));
+		cloned.enabled = options.enabled !== undefined ? Boolean(options.enabled) : true;
+		// GL program key — reuse the source program (symmetry4 → same as symmetry, etc.)
+		cloned.pass = source.pass || String(sourceName).replace(/\d+$/, "") || sourceName;
+
+		const insertAfter = options.insertAfter !== false;
+		if (insertAfter) {
+			const next = {};
+			for (const name of Object.keys(this.effectsConfig)) {
+				next[name] = this.effectsConfig[name];
+				if (name === sourceName) next[newName] = cloned;
+			}
+			if (!next[newName]) next[newName] = cloned;
+			this.effectsConfig = next;
+		} else {
+			this.effectsConfig[newName] = cloned;
+		}
+
+		this._ensurePhaseTracking(newName);
+
+		this.lastEnabledEffects = null;
+		this.reinitializePipeline();
+		console.log(`[ShaderEffects] cloned "${sourceName}" → "${newName}" (pass: ${cloned.pass})`);
+		return newName;
+	}
+
+	/**
 	 * Physical canvas resolution in pixels (logical size × pixel density).
 	 */
 	getPhysicalResolution() {
@@ -671,35 +920,24 @@ class ShaderEffects {
 		for (const effectName of this.getSymmetryEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect || !effect.enabled) continue;
+			if (effect.translationEnabled !== undefined && effect.translationEnabled < 0.5) continue;
+			this._ensurePhaseTracking(effectName);
 
-			const currentSpeed = effect.translationSpeed || 0;
-			const lastSpeed = this.lastTranslationSpeed[effectName];
-			const transMode = Math.floor(effect.translationMode || 0);
+			// Prefer per-axis speeds; fall back to legacy translationSpeed
+			const legacy = effect.translationSpeed ?? 0;
+			const speedX = effect.translationSpeedX !== undefined ? effect.translationSpeedX : legacy;
+			const speedY = effect.translationSpeedY !== undefined ? effect.translationSpeedY : legacy;
 
 			if (effect.translationPhaseX === undefined) effect.translationPhaseX = 0;
 			if (effect.translationPhaseY === undefined) effect.translationPhaseY = 0;
 
-			if (lastSpeed !== null && lastSpeed !== currentSpeed && currentSpeed !== 0) {
-				const currentTime = this.shaderTime * (effect.timeMultiplier || 0.1);
-
-				if (transMode === 0) {
-					effect.translationPhaseX = currentTime * lastSpeed;
-					effect.translationPhaseY = currentTime * lastSpeed * 0.7;
-				}
-			}
-
 			const timeMultiplier = effect.timeMultiplier || 0.1;
 			const effectiveDelta = delta * timeMultiplier;
 
-			if (transMode === 0) {
-				effect.translationPhaseX += effectiveDelta * currentSpeed;
-				effect.translationPhaseY += effectiveDelta * currentSpeed * 0.7;
-			} else {
-				effect.translationPhaseX += effectiveDelta * currentSpeed;
-				effect.translationPhaseY += effectiveDelta * currentSpeed;
-			}
+			effect.translationPhaseX += effectiveDelta * speedX;
+			effect.translationPhaseY += effectiveDelta * speedY;
 
-			this.lastTranslationSpeed[effectName] = currentSpeed;
+			this.lastTranslationSpeed[effectName] = {x: speedX, y: speedY};
 		}
 	}
 
@@ -711,6 +949,8 @@ class ShaderEffects {
 		for (const effectName of this.getSymmetryEffectNames()) {
 			const effect = this.effectsConfig[effectName];
 			if (!effect || !effect.enabled) continue;
+			if (effect.rotationEnabled !== undefined && effect.rotationEnabled < 0.5) continue;
+			this._ensurePhaseTracking(effectName);
 
 			const currentSpeed = effect.rotationSpeed || 0;
 			const currentOscillationSpeed = effect.rotationOscillationSpeed || 0;
@@ -883,10 +1123,12 @@ class ShaderEffects {
 			this.shaderPipeline.clearPasses();
 
 			// Iterate through effectsConfig to build passes
+			// (effect.pass lets clones like "chromatic2" reuse the "chromatic" GL program)
 			for (const effectName in this.effectsConfig) {
 				const effect = this.effectsConfig[effectName];
 				if (effect.enabled) {
-					this.shaderPipeline.addPass(effectName, () => {
+					const passName = effect.pass || effectName;
+					this.shaderPipeline.addPass(passName, () => {
 						const uniforms = {};
 						for (const uniformName in effect.uniforms) {
 							const value = effect.uniforms[uniformName];
@@ -1002,9 +1244,8 @@ class ShaderEffects {
 	 * Update FPS counter
 	 */
 	updateFPS() {
-		// Skip FPS tracking if disabled
-		if (!this.showFPS) return;
-
+		// Always track FPS (the debug panel reads currentFPS even when the
+		// standalone overlay is hidden); drawFPS() gates the overlay itself.
 		const now = performance.now();
 		const delta = now - this.lastFrameTime;
 		this.lastFrameTime = now;

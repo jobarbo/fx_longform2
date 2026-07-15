@@ -9,6 +9,10 @@ const ENABLE_SHADERS = true;
 const SHOW_FPS_UI = false; // FPS overlay + FPS toggle button
 const SHOW_DOWNLOAD_UI = false; // Download button (mounted in panel)
 
+// Dev panels — debug/audio panel (key D) + shader effects panel (key E)
+const ENABLE_DEV_PANELS = true;
+const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first user gesture)
+
 // Padding constants - centralized for consistency
 const BASE_PADDING = 0.155; // Base padding for artwork bounds (used in INIT)
 const WRAP_PADDING_FACTOR = 0.04; // Wrap padding factor for particle movement bounds (used in Mover class)
@@ -33,9 +37,9 @@ let debugBounds = false;
 // Artwork layout — orientation + ratio without blowing up pixel count.
 // ratio = long edge : short edge (e.g. 3 → 3:1 strip). Canvas area stays ~viewportMin².
 const ARTWORK_LAYOUT = {
-	orientation: "horizontal", // "horizontal" | "vertical"
-	ratio: 10, // long : short — horizontal 3 = 3:1 wide, vertical 3 = 1:3 tall
-	baseSize: 400, // reference size for particle scaling (≈ viewport min at 1:1)
+	orientation: "vertical", // "horizontal" | "vertical"
+	ratio: 1.21, // long : short — horizontal 3 = 3:1 wide, vertical 3 = 1:3 tall
+	baseSize: 1000, // reference size for particle scaling (≈ viewport min at 1:1)
 };
 
 // Calculated at setup (for mover bounds / debugging)
@@ -48,7 +52,7 @@ let ARTWORK_CANVAS_HEIGHT = 0;
 // Tip: match ARTWORK_LAYOUT — e.g. horizontal ratio 3 → { fitCanvas: false, width: 3, height: 1 }
 const SHADER_RENDER_RATIO = {
 	fitCanvas: false,
-	width: 2,
+	width: 1,
 	height: 1,
 };
 
@@ -114,6 +118,49 @@ function sketchShadersEnabled() {
 
 function refreshDebugOverlay() {
 	updateDebugOverlay({debugBounds, padding: BASE_PADDING, movers});
+}
+
+// ============================================================================
+// DEV PANELS (debug/audio panel + shader effects panel)
+// ============================================================================
+
+let panelLoopId = null;
+
+function setupDevPanels() {
+	if (!ENABLE_DEV_PANELS) return;
+
+	// Audio analysis feeding the debug panel (and optional shader mappings)
+	if (typeof audioKnob !== "undefined") {
+		audioKnob.setSource(AUDIO_SOURCE);
+		// Optional audio-reactive shader mappings, e.g.:
+		// audioKnob.map("energy", "chromatic", "amount", 0, 0.01);
+	}
+
+	if (typeof debugPanel !== "undefined") {
+		debugPanel.init({
+			audio: typeof audioAnalyzer !== "undefined" ? audioAnalyzer : null,
+			shaders: sketchShadersEnabled() && shaderCanvas ? shaderEffects : null,
+		});
+	}
+
+	if (typeof shaderEffectsPanel !== "undefined" && sketchShadersEnabled() && shaderCanvas) {
+		shaderEffectsPanel.init(shaderEffects);
+	}
+
+	startPanelLoop();
+}
+
+// Panels run on their own rAF loop so they stay live independently of the
+// artwork draw loop (which restarts on Apply and can stop on completion).
+function startPanelLoop() {
+	if (panelLoopId !== null) return;
+	const tick = () => {
+		if (typeof audioKnob !== "undefined") audioKnob.update();
+		if (typeof debugPanel !== "undefined") debugPanel.update();
+		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.update();
+		panelLoopId = requestAnimationFrame(tick);
+	};
+	panelLoopId = requestAnimationFrame(tick);
 }
 
 async function setup() {
@@ -190,6 +237,10 @@ async function setup() {
 		createCanvas(artworkLayout.width, artworkLayout.height);
 		pixelDensity(pixel_density);
 	}
+
+	// Sync canvas smoothing class with crisp-pixels state (CSS defaults to pixelated
+	// when the class is missing; shader setup normally applies it, this covers fallbacks)
+	shaderEffects.setCrispPixels(shaderEffects.getCrispPixels());
 
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
@@ -270,8 +321,11 @@ async function setup() {
 		checkShaders: sketchShadersEnabled,
 	});
 
+	// Dev panels: D = debug/audio panel, E = shader effects panel
+	setupDevPanels();
+
 	// Log available controls and performance settings
-	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
+	console.log("Controls: D debug/audio panel · E shader panel · B debug bounds · G symmetry debug · C controls");
 	if (sketchShadersEnabled() && shaderCanvas) {
 		console.log(`Shader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
 		console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
@@ -516,7 +570,21 @@ window.applyGenerativeSettings = async function applyGenerativeSettings(settings
 // ============================================================================
 
 function keyPressed() {
+	// Don't hijack keys while typing in panel/params inputs
+	const tag = document.activeElement?.tagName;
+	if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || document.activeElement?.isContentEditable) {
+		return;
+	}
+
 	if (key === "D" || key === "d") {
+		if (typeof debugPanel !== "undefined") debugPanel.toggle();
+	}
+
+	if (key === "E" || key === "e") {
+		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.toggle();
+	}
+
+	if (key === "B" || key === "b") {
 		debugBounds = !debugBounds;
 		console.log("Debug bounds toggled: ", debugBounds);
 		refreshDebugOverlay();
