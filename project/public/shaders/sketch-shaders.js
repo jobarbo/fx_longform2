@@ -92,7 +92,7 @@ class ShaderEffects {
 				},
 			},
 			pixelSort: {
-				enabled: false,
+				enabled: true,
 				angle: 0.0, // 0 = vertical, Math.PI/2 = horizontal
 				threshold: 0.2,
 				sortAmount: 1.8,
