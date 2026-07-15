@@ -38,7 +38,7 @@ let debugBounds = false;
 // ratio = long edge : short edge (e.g. 3 → 3:1 strip). Canvas area stays ~viewportMin².
 const ARTWORK_LAYOUT = {
 	orientation: "vertical", // "horizontal" | "vertical"
-	ratio: 1.21, // long : short — horizontal 3 = 3:1 wide, vertical 3 = 1:3 tall
+	ratio: 1.0, // long : short — horizontal 3 = 3:1 wide, vertical 3 = 1:3 tall
 	baseSize: 1000, // reference size for particle scaling (≈ viewport min at 1:1)
 };
 
