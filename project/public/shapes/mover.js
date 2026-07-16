@@ -89,7 +89,7 @@ class Mover {
 		// Pre-calculate padding values - use global constant if available
 		const wrapPaddingFactor = typeof WRAP_PADDING_FACTOR !== "undefined" ? WRAP_PADDING_FACTOR : 0.1;
 		this.wrapPaddingX = (min(width, height) * wrapPaddingFactor) / width;
-		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
+		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_ASPECT;
 		this.reentryOffsetX = (min(width, height) * 0.001) / width;
 		this.reentryOffsetY = (min(width, height) * 0.001) / height;
 		this.wrapPaddingMultiplier = 0.8; //! or 0.5

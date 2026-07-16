@@ -9,10 +9,13 @@ const ENABLE_SHADERS = true;
 const SHOW_FPS_UI = false; // FPS overlay + FPS toggle button
 const SHOW_DOWNLOAD_UI = false; // Download button (mounted in panel)
 
+// Dev panels — debug/audio panel (key D) + shader effects panel (key E)
+const ENABLE_DEV_PANELS = true;
+const AUDIO_SOURCE = null; // "microphone" | "chime" | null (null = audio off)
+
 // Padding constants - centralized for consistency
 const BASE_PADDING = 0.2; // Base padding for artwork bounds (used in INIT)
 const WRAP_PADDING_FACTOR = 0.04; // Wrap padding factor for particle movement bounds (used in Mover class)
-
 // Animation configuration
 let maxFrames = 30;
 let particleNum = 500000;
@@ -31,11 +34,31 @@ let debugBounds = false;
 // ARTWORK DIMENSIONS & SCALING
 // ============================================================================
 
-// Base artwork dimensions (width: 1000, height: 1000 * 1.25)
-const ARTWORK_RATIO = 1.21;
-const BASE_WIDTH = 1000;
-const BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
-const DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
+// Artwork layout — orientation + ratio without blowing up pixel count.
+// ratio = long edge : short edge (e.g. 3 → 3:1 strip). Canvas area stays ~viewportMin².
+const ARTWORK_LAYOUT = {
+	orientation: "vertical", // "horizontal" | "vertical"
+	ratio: 1.21, // long : short — horizontal 3 = 3:1 wide, vertical 3 = 1:3 tall
+	baseSize: 1000, // reference size for particle scaling (≈ viewport min at 1:1)
+};
+
+// Calculated at setup (for mover bounds / debugging)
+let ARTWORK_ASPECT = 1;
+let ARTWORK_CANVAS_WIDTH = 0;
+let ARTWORK_CANVAS_HEIGHT = 0;
+
+// Shader output framing (final pass only, object-fit: cover).
+// fitCanvas: true = no crop; set false + width/height for a custom ratio.
+// Tip: match ARTWORK_LAYOUT — e.g. horizontal ratio 3 → { fitCanvas: false, width: 3, height: 1 }
+const SHADER_RENDER_RATIO = {
+	fitCanvas: true,
+	width: 1,
+	height: 1,
+};
+
+// Master shader animation speed — scales all time-driven effects uniformly.
+// 1.0 = default, 0.5 = half speed, 2.0 = double speed
+const SHADER_ANIMATION_SPEED = 12.0;
 
 // Calculated dimensions (set in setup())
 let DIM; // Canvas dimension (min of window width/height)
@@ -61,14 +84,14 @@ let startTime;
 let elapsedTime = 0;
 let executionTimer = new ExecutionTimer();
 let generator; // Animation generator instance
-let animationFrameId = null; // requestAnimationFrame handle for customDraw loop
+let drawLoop = null; // createSketchDrawLoop instance
 
 // ============================================================================
 // PALETTE SYSTEM
 // ============================================================================
 
-let swatchPalette;
-let swatchesLoaded = false;
+let paletteManager;
+let palettesLoaded = false;
 let selectedPalette; // Will store the randomly selected palette
 let baseHSLPalette; // Keep for backward compatibility
 let currentPaletteName = ""; // Store the name of the current palette for debug
@@ -89,14 +112,55 @@ let isBordered = true;
 const FRAME_SCALE_FACTOR_X = 1.47;
 const FRAME_SCALE_FACTOR_Y = 1.47;
 
-function preload() {
-	// Initialize shader effects (will load all shaders) - optional
-	if (shadersEnabled()) {
-		shaderEffects.preload(this);
+function sketchShadersEnabled() {
+	return shadersEnabled(ENABLE_SHADERS);
+}
+
+function refreshDebugOverlay() {
+	updateDebugOverlay({debugBounds, padding: BASE_PADDING, movers});
+}
+
+// ============================================================================
+// DEV PANELS (debug/audio panel + shader effects panel)
+// ============================================================================
+
+let panelLoopId = null;
+
+function setupDevPanels() {
+	if (!ENABLE_DEV_PANELS) return;
+
+	// Audio analysis feeding the debug panel (and optional shader mappings)
+	if (AUDIO_SOURCE && typeof audioKnob !== "undefined") {
+		audioKnob.setSource(AUDIO_SOURCE);
+		// Optional audio-reactive shader mappings, e.g.:
+		// audioKnob.map("energy", "chromatic", "amount", 0, 0.01);
 	}
 
-	// Initialize swatch palette system
-	swatchPalette = new SwatchPalette();
+	if (typeof debugPanel !== "undefined") {
+		debugPanel.init({
+			audio: typeof audioAnalyzer !== "undefined" ? audioAnalyzer : null,
+			shaders: sketchShadersEnabled() && shaderCanvas ? shaderEffects : null,
+		});
+	}
+
+	if (typeof shaderEffectsPanel !== "undefined" && sketchShadersEnabled() && shaderCanvas) {
+		shaderEffectsPanel.init(shaderEffects);
+	}
+
+	startPanelLoop();
+}
+
+// Panels run on their own rAF loop so they stay live independently of the
+// artwork draw loop (which restarts on Apply and can stop on completion).
+function startPanelLoop() {
+	if (panelLoopId !== null) return;
+	const tick = () => {
+		if (typeof audioKnob !== "undefined") audioKnob.update();
+		if (typeof debugPanel !== "undefined") debugPanel.update();
+		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.update();
+		panelLoopId = requestAnimationFrame(tick);
+	};
+	panelLoopId = requestAnimationFrame(tick);
 }
 
 async function setup() {
@@ -107,23 +171,27 @@ async function setup() {
 
 	// Reset the random seed to ensure consistency
 	$fx.rand.reset();
-	// Composition seeds — safe to sample before/after shader setup now that the
-	// shader library uses fxhashSeed() instead of fxrand().
-	let mainRandomSeed = fxrand() * 10000;
-	let mainNoiseSeed = fxrand() * 10000;
-	rseed = fxrand() * 10000;
-	nseed = fxrand() * 10000;
-	// Load swatch palettes - REQUIRED for this project (no hardcoded fallback)
+
+	// p5.js 2.0 removed preload() — load assets here with async/await
+	if (sketchShadersEnabled()) {
+		await shaderEffects.preload(window);
+	}
+
+	// Build hex-array palettes - REQUIRED for this project (no hardcoded fallback)
 	try {
-		await swatchPalette.loadFromManifest("swatches/manifest.json");
-		swatchesLoaded = true;
-		if (!swatchPalette.isReady()) {
-			throw new Error("Swatch palette loaded but not ready");
+		const {manager, ready} = initChromaPalettes({
+			defaults: window.PROJECT_PALETTES?.defaults,
+			palettes: window.PROJECT_PALETTES?.palettes ?? {},
+		});
+		paletteManager = manager;
+		palettesLoaded = ready;
+		if (!ready) {
+			throw new Error("No palettes defined in palettes/palettes.js");
 		}
 	} catch (error) {
-		console.error("Failed to load swatch palettes:", error);
-		swatchesLoaded = false;
-		throw error; // Stop execution if swatch palettes can't be loaded
+		console.error("Failed to build palettes:", error);
+		palettesLoaded = false;
+		throw error; // Stop execution if palettes can't be built
 	}
 
 	// Calculate optimal pixel density before creating canvases
@@ -131,41 +199,48 @@ async function setup() {
 	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
 	pixel_density = CURRENT_PARAMS.printDPI ?? (typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 1);
 
-	// canvas setup
-	// Take the smaller screen dimension to ensure it fits
+	// canvas setup — constant-area sizing from orientation + ratio
 	DIM = min(windowWidth, windowHeight);
-	MULTIPLIER = DIM / DEFAULT_SIZE;
-	console.log(MULTIPLIER);
+	const artworkLayout = computeArtworkLayout(DIM, ARTWORK_LAYOUT);
+	ARTWORK_ASPECT = artworkLayout.aspect;
+	ARTWORK_CANVAS_WIDTH = artworkLayout.width;
+	ARTWORK_CANVAS_HEIGHT = artworkLayout.height;
+	MULTIPLIER = artworkLayout.multiplier;
+	console.log(MULTIPLIER, `canvas ${artworkLayout.width}×${artworkLayout.height} (${ARTWORK_LAYOUT.orientation} ${ARTWORK_LAYOUT.ratio}:1)`);
 
 	// Create main canvas for the artwork (will also handle debug overlays)
-	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
+	mainCanvas = createGraphics(artworkLayout.width, artworkLayout.height);
+	mainCanvas.pixelDensity(pixel_density);
 
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
-	if (shadersEnabled()) {
+	if (sketchShadersEnabled()) {
 		try {
-			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
-			// Initialize shader effects system (seeds via fxhashSeed — does not touch fxrand)
-			shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
-			// Set up shader canvas pixel density
+			shaderCanvas = createCanvas(artworkLayout.width, artworkLayout.height, WEBGL);
 			shaderCanvas.pixelDensity(pixel_density);
+			// Configure output framing before setup so it reaches the shaderManager
+			shaderEffects.setRenderRatio(SHADER_RENDER_RATIO);
+			shaderEffects.setAnimationSpeed(SHADER_ANIMATION_SPEED);
+			// Initialize shader effects system
+			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
 			console.log("Shader effects initialized successfully");
 		} catch (error) {
 			console.warn("Failed to initialize shader effects:", error);
 			console.log("Falling back to sketch without shaders");
 			// Fallback: create regular canvas without shaders
 			shaderCanvas = null;
-			createCanvas(DIM / ARTWORK_RATIO, DIM);
+			createCanvas(artworkLayout.width, artworkLayout.height);
 			pixelDensity(pixel_density);
 			// Shaders are unavailable; continue without them
 		}
 	} else {
 		// No shaders - create regular canvas for display
-		createCanvas(DIM / ARTWORK_RATIO, DIM);
+		createCanvas(artworkLayout.width, artworkLayout.height);
 		pixelDensity(pixel_density);
 	}
 
-	// Set up the main canvas rendering properties
-	mainCanvas.pixelDensity(pixel_density);
+	// Sync canvas smoothing class with crisp-pixels state (CSS defaults to pixelated
+	// when the class is missing; shader setup normally applies it, this covers fallbacks)
+	shaderEffects.setCrispPixels(shaderEffects.getCrispPixels());
 
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
@@ -174,6 +249,12 @@ async function setup() {
 	// Enable color preservation settings for mainCanvas
 	mainCanvas.drawingContext.imageSmoothingEnabled = false;
 	mainCanvas.drawingContext.globalCompositeOperation = "source-over";
+
+	// Initialize random seeds from fxrand for deterministic behavior
+	let mainRandomSeed = fxrand() * 10000;
+	let mainNoiseSeed = fxrand() * 10000;
+	rseed = fxrand() * 10000;
+	nseed = fxrand() * 10000;
 
 	// Lock seeds on first run so Apply doesn't change the underlying randomness
 	if (window.PARAMS_UI && !window.PARAMS_UI.lockedSeeds) {
@@ -197,14 +278,16 @@ async function setup() {
 
 	INIT(rseed, nseed);
 
-	// Inform UI about available swatches + selected palette (after INIT chooses it)
+	// Inform UI about available palettes + selected palette (after INIT chooses it)
 	try {
-		const swatchNames = swatchPalette.getSwatchNames();
-		const sortedSwatchNames = [...swatchNames].sort();
 		window.dispatchEvent(
 			new CustomEvent("swatches:ready", {
 				detail: {
-					names: sortedSwatchNames,
+					names: [...paletteManager.getFileNames()].sort(),
+					localNames: paletteManager
+						.getPaletteNames()
+						.filter((name) => paletteManager.getConfig(name).source === "local")
+						.sort(),
 					selected: currentPaletteName,
 				},
 			}),
@@ -213,25 +296,37 @@ async function setup() {
 		// ignore (UI will fall back gracefully)
 	}
 
-	// Calculate the center offset based on scale
+	drawLoop = createSketchDrawLoop({
+		getGenerator: () => generator,
+		isShadersEnabled: sketchShadersEnabled,
+		getShaderCanvas: () => shaderCanvas,
+		getMainCanvas: () => mainCanvas,
+	});
 
-	startAnimation();
+	startSketchAnimation();
 
 	if (CURRENT_PARAMS.showExternalFrame !== false) {
 		renderOutsideFrame();
 	}
 	// Start the custom draw loop
-	customDraw();
+	drawLoop.start();
 
 	// Initialize debug overlay after setup is complete
-	updateDebugOverlay();
+	refreshDebugOverlay();
 
 	// Setup UI controls (if present)
-	setupControls();
+	setupControls({
+		showFps: SHOW_FPS_UI,
+		showDownload: SHOW_DOWNLOAD_UI,
+		checkShaders: sketchShadersEnabled,
+	});
+
+	// Dev panels: D = debug/audio panel, E = shader effects panel
+	setupDevPanels();
 
 	// Log available controls and performance settings
-	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
-	if (shadersEnabled() && shaderCanvas) {
+	console.log("Controls: D debug/audio panel · E shader panel · B debug bounds · G symmetry debug · C controls");
+	if (sketchShadersEnabled() && shaderCanvas) {
 		console.log(`Shader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
 		console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
 	} else {
@@ -250,28 +345,10 @@ function canvasSetup() {
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
 }
 
-function flushGraphicsStyleCache(g) {
-	// Some drawing code (e.g. `Mover.show`) writes directly to `g.drawingContext`,
-	// which can desync p5's internal style cache from the canvas context.
-	// Bust the cache by forcing a different fill once so the next `g.fill(...)`
-	// definitely re-applies `drawingContext.fillStyle`.
-	if (!g?.fill || !g?.colorMode) return;
-	try {
-		g.push();
-		g.colorMode(RGB, 255, 255, 255, 255);
-		g.fill(255, 0, 255, 255); // unlikely to match any intended fill
-		g.noStroke();
-		// No need to draw; we just want p5 to update its internal fill state.
-		g.pop();
-	} catch {
-		// ignore
-	}
-}
-
 function renderOutsideFrame() {
 	mainCanvas.colorMode(HSL, 360, 100, 100, 100);
 	let firstParticleColor = baseHSLPalette[baseHSLPalette.length - 1];
-	let lastParticleColor = baseHSLPalette[2];
+	let lastParticleColor = baseHSLPalette[Math.min(2, baseHSLPalette.length - 1)];
 	let s_hue = lastParticleColor.h;
 	let s_sat = lastParticleColor.s;
 	let s_bri = lastParticleColor.l;
@@ -305,7 +382,7 @@ function renderOutsideFrame() {
 	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW, baseRectH);
 }
 
-function startAnimation() {
+function startSketchAnimation() {
 	// Notify UI that a render is starting (panel spinner, status text, etc.)
 	try {
 		window.dispatchEvent(new CustomEvent("render:started"));
@@ -326,12 +403,11 @@ function startAnimation() {
 			}
 		},
 		moveItem: (mover, currentFrame) => {
-			// Simple movement - no complex color calculations needed
 			mover.move(currentFrame, maxFrames);
 		},
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
-			if (shadersEnabled() && shaderCanvas) {
+			if (sketchShadersEnabled() && shaderCanvas) {
 				shaderEffects.setParticleAnimationComplete(true);
 			}
 			$fx.preview();
@@ -358,45 +434,46 @@ function startAnimation() {
 function INIT(rseed, nseed) {
 	movers = [];
 
-	// Verify that swatch palettes are available (required for this project)
-	if (!swatchesLoaded || !swatchPalette.isReady()) {
-		throw new Error("CRITICAL: Swatch palettes are required but not available. Cannot proceed with palette selection.");
+	// Verify that palettes are available (required for this project)
+	if (!palettesLoaded || !paletteManager.isReady()) {
+		throw new Error("CRITICAL: Palettes are required but not available. Cannot proceed with palette selection.");
 	}
 
 	// Reset the random seed to ensure consistent state
 	$fx.rand.reset();
 
-	// Use ONLY swatch palettes - no hardcoded fallback
-	const swatchNames = swatchPalette.getSwatchNames();
+	// Deterministic pool = file palettes only (local/browser palettes excluded
+	// so the same hash renders identically everywhere)
+	const fileNames = paletteManager.getFileNames();
 
-	if (swatchNames.length === 0) {
-		throw new Error("No swatch palettes available for selection");
+	if (fileNames.length === 0) {
+		throw new Error("No palettes available for selection");
 	}
 
-	// Sort swatch names alphabetically to ensure consistent order
+	// Sort palette names alphabetically to ensure consistent order
 	// across different environments regardless of loading timing
-	const sortedSwatchNames = [...swatchNames].sort();
+	const sortedFileNames = [...fileNames].sort();
 
-	// Allow UI to force palette selection by name (stable), otherwise default to deterministic selection
+	// Allow UI to force palette selection by name (stable, may be a local palette),
+	// otherwise default to deterministic selection
 	const forcedPaletteName = CURRENT_PARAMS.paletteName;
-	if (forcedPaletteName && sortedSwatchNames.includes(forcedPaletteName)) {
+	if (forcedPaletteName && paletteManager.getPaletteNames().includes(forcedPaletteName)) {
 		currentPaletteName = forcedPaletteName;
-		selectedPalette = sortedSwatchNames.indexOf(forcedPaletteName);
+		selectedPalette = sortedFileNames.indexOf(forcedPaletteName);
 	} else {
-		// Store the fxrand value we'll use for selection to ensure consistency
 		const paletteSelectionRand = fxrand();
-		selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
-		currentPaletteName = sortedSwatchNames[selectedPalette];
+		selectedPalette = Math.floor(paletteSelectionRand * sortedFileNames.length);
+		currentPaletteName = sortedFileNames[selectedPalette];
 		if (window.PARAMS_UI?.current) {
 			window.PARAMS_UI.current.paletteName = currentPaletteName;
 			if (typeof window.resolveParams === "function") window.resolveParams();
 		}
 	}
 
-	baseHSLPalette = swatchPalette.getPalette(currentPaletteName);
+	baseHSLPalette = paletteManager.getPalette(currentPaletteName);
 
 	if (!baseHSLPalette || baseHSLPalette.length === 0) {
-		throw new Error(`Selected swatch palette '${currentPaletteName}' is empty or invalid`);
+		throw new Error(`Selected palette '${currentPaletteName}' is empty or invalid`);
 	}
 
 	// Scale noise values based on MULTIPLIER
@@ -411,32 +488,23 @@ function INIT(rseed, nseed) {
 	let amplitude1 = 1 * MULTIPLIER;
 	let amplitude2 = 1 * MULTIPLIER;
 
-	// Simple 10% padding calculation with artwork ratio - use constant
 	xMin = BASE_PADDING;
 	xMax = 1 - BASE_PADDING;
 	yMin = BASE_PADDING;
 	yMax = 1 - BASE_PADDING;
 
-	// Scale number of particles based on canvas size
 	let baseParticleCount = particleNum;
 	let scaledParticleCount = baseParticleCount;
 
-	// Spawn in artwork buffer space (not display-canvas space) so WEBGL vs 2D
-	// createCanvas paths cannot shift particle layout.
-	const artW = mainCanvas.width;
-	const artH = mainCanvas.height;
 	for (let i = 0; i < scaledParticleCount; i++) {
-		let x = random(xMin, xMax) * artW;
-		let y = random(yMin, yMax) * artH;
+		let x = random(xMin, xMax) * width;
+		let y = random(yMin, yMax) * height;
 
-		// Use the swatch palette directly - no variations needed
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette));
 	}
 
 	let bgCol = color(random(0, 35), 5, 100);
 	mainCanvas.background(bgCol);
-
-	//initGrid(50);
 }
 
 // ============================================================================
@@ -446,178 +514,91 @@ function INIT(rseed, nseed) {
 window.applyGenerativeSettings = async function applyGenerativeSettings(settings) {
 	if (!settings) return;
 
-	// Lock seeds if not already locked
 	const locked = window.PARAMS_UI?.lockedSeeds;
 	if (!locked) return;
 
-	// Merge incoming settings into current, then resolve to numeric values
 	if (window.PARAMS_UI?.current) {
 		window.PARAMS_UI.current = {...window.PARAMS_UI.current, ...settings};
 	}
 	if (typeof window.resolveParams === "function") window.resolveParams();
 
-	// Update runtime parameters from resolved values
 	maxFrames = CURRENT_PARAMS.exposure ?? maxFrames;
 	particleNum = CURRENT_PARAMS.population ?? particleNum;
 	cycle = computeCycle(maxFrames, particleNum);
 
-	// Print DPI -> pixel density
 	if (typeof CURRENT_PARAMS.printDPI === "number") {
 		pixel_density = CURRENT_PARAMS.printDPI;
 		try {
 			pixelDensity(pixel_density);
 			mainCanvas?.pixelDensity(pixel_density);
 			if (shaderCanvas?.pixelDensity) shaderCanvas.pixelDensity(pixel_density);
+			if (typeof shaderEffects?.setPixelDensity === "function") {
+				shaderEffects.setPixelDensity(pixel_density);
+			}
 		} catch {
 			// ignore
 		}
 	}
 
-	// Reset seeds (deterministic re-init)
 	randomSeed(locked.mainRandomSeed);
 	noiseSeed(locked.mainNoiseSeed);
 	rseed = locked.rseed;
 	nseed = locked.nseed;
 
-	// Stop any in-flight animation loop before starting a new one
-	if (animationFrameId !== null) {
-		try {
-			cancelAnimationFrame(animationFrameId);
-		} catch {
-			// ignore
-		}
-		animationFrameId = null;
-	}
+	drawLoop?.stop();
 
-	// Allow reruns after the sketch has completed
 	document.complete = false;
-	if (shadersEnabled() && shaderCanvas) {
+	if (sketchShadersEnabled() && shaderCanvas) {
 		shaderEffects.setParticleAnimationComplete(false);
 	}
-	// Clear and re-init movers and generator
 	mainCanvas?.clear();
 	canvasSetup();
 	flushGraphicsStyleCache(mainCanvas);
 
-	// Rebuild movers with current palette/params
 	INIT(rseed, nseed);
 
-	// Re-apply the frame layer *after* INIT sets background and palette
 	if (CURRENT_PARAMS.showExternalFrame !== false) {
 		renderOutsideFrame();
 	}
 
-	startAnimation();
-	// Restart the render loop (it stops once generator completes)
-	customDraw();
+	startSketchAnimation();
+	drawLoop?.start();
 };
 
-//! CUSTOM UTILITIES FUNCTIONS ==========================================
+// ============================================================================
+// KEY CONTROLS (artwork-local shortcuts)
+// ============================================================================
 
-// Helper function to check if shaders are enabled and available
-function shadersEnabled() {
-	return ENABLE_SHADERS && typeof shaderEffects !== "undefined";
-}
-
-// Custom draw loop - advances sketch animation and applies shader effects
-function customDraw() {
-	if (!generator) return;
-
-	const result = generator.next();
-
-	// Render shader effects for this frame (if shaders are enabled)
-	if (shadersEnabled() && shaderCanvas) {
-		const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
-
-		// Continue animation if not complete
-		if (shouldContinue) {
-			animationFrameId = requestAnimationFrame(customDraw);
-		}
-	} else {
-		// No shaders - just copy mainCanvas to main display canvas
-		clear();
-		image(mainCanvas, 0, 0);
-
-		// If FPS overlay is available, update/draw it even without shaders
-		if (shadersEnabled()) {
-			shaderEffects.updateFPS();
-			shaderEffects.drawFPS();
-		}
-
-		// Continue animation if not complete
-		if (!result.done) {
-			animationFrameId = requestAnimationFrame(customDraw);
-		}
-	}
-}
-
-function setFpsButtonState(toggleFpsButton) {
-	if (!toggleFpsButton || !SHOW_FPS_UI || !shadersEnabled()) return;
-	if (shaderEffects.showFPS) {
-		toggleFpsButton.classList.add("active");
-		toggleFpsButton.textContent = "FPS: ON";
-	} else {
-		toggleFpsButton.classList.remove("active");
-		toggleFpsButton.textContent = "FPS: OFF";
-	}
-}
-
-function toggleFps(from = "unknown") {
-	if (!SHOW_FPS_UI) return;
-	if (!shadersEnabled()) return;
-	// Don't allow FPS toggle if in iframe
-	if (typeof isInIframe === "function" && isInIframe()) return;
-
-	shaderEffects.toggleFPS();
-	setFpsButtonState(document.getElementById("toggle-fps"));
-	console.log(`FPS counter toggled (${from}): `, shaderEffects.showFPS);
-}
-
-// Setup UI controls (optional; markup may not exist)
-function setupControls() {
-	const controlsContainer = document.getElementById("controls");
-	if (!controlsContainer) return;
-
-	// Hide entire controls container if in iframe
-	if (typeof isInIframe === "function" && isInIframe()) {
-		controlsContainer.style.display = "none";
-		return;
-	}
-
-	// If UI is fully disabled, hide controls container early
-	if (!SHOW_FPS_UI && !SHOW_DOWNLOAD_UI) {
-		controlsContainer.style.display = "none";
-		return;
-	}
-
-	const toggleFpsButton = document.getElementById("toggle-fps");
-	if (!toggleFpsButton) return;
-	if (!SHOW_FPS_UI) {
-		toggleFpsButton.style.display = "none";
-		return;
-	}
-
-	toggleFpsButton.addEventListener("click", function () {
-		toggleFps("button");
-	});
-
-	// Set initial button state
-	setFpsButtonState(toggleFpsButton);
-}
-// Key controls for debugging and performance monitoring
 function keyPressed() {
+	// Don't hijack keys while typing in panel/params inputs
+	const tag = document.activeElement?.tagName;
+	if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || document.activeElement?.isContentEditable) {
+		return;
+	}
+
 	if (key === "D" || key === "d") {
+		if (typeof debugPanel !== "undefined") debugPanel.toggle();
+	}
+
+	if (key === "E" || key === "e") {
+		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.toggle();
+	}
+
+	if (key === "B" || key === "b") {
 		debugBounds = !debugBounds;
 		console.log("Debug bounds toggled: ", debugBounds);
-		updateDebugOverlay();
+		refreshDebugOverlay();
 	}
 
 	if (key === "F" || key === "f") {
-		toggleFps("keyboard");
+		toggleFps("keyboard", {
+			showFpsUi: SHOW_FPS_UI,
+			checkShaders: sketchShadersEnabled,
+		});
 	}
 
 	if (key === "G" || key === "g") {
-		if (shadersEnabled()) {
+		if (sketchShadersEnabled()) {
 			const currentDebug = shaderEffects.effectsConfig.symmetry.debug;
 			const newDebug = currentDebug > 0.5 ? 0.0 : 1.0;
 			shaderEffects.updateEffectParam("symmetry", "debug", newDebug);
@@ -626,63 +607,7 @@ function keyPressed() {
 	}
 
 	if (key === "C" || key === "c") {
-		//toggle controls
 		const controls = document.getElementById("controls");
 		controls.classList.toggle("hide");
-	}
-}
-
-// CSS overlay debug bounds functions
-function updateDebugOverlay() {
-	const debugOverlay = document.getElementById("debug-bounds");
-	const basePadding = document.getElementById("debug-base-padding");
-	const moverBounds = document.getElementById("debug-mover-bounds");
-
-	if (!debugBounds) {
-		debugOverlay.classList.remove("visible");
-		return;
-	}
-
-	debugOverlay.classList.add("visible");
-
-	// Get canvas position and dimensions
-	const canvas = document.querySelector("canvas");
-	if (!canvas) return;
-
-	const canvasRect = canvas.getBoundingClientRect();
-	const canvasWidth = canvasRect.width;
-	const canvasHeight = canvasRect.height;
-
-	// Position the debug overlay to match the canvas
-	debugOverlay.style.left = canvasRect.left + "px";
-	debugOverlay.style.top = canvasRect.top + "px";
-	debugOverlay.style.width = canvasWidth + "px";
-	debugOverlay.style.height = canvasHeight + "px";
-
-	// Base artwork padding - use the actual constant value
-	const basePaddingLeft = BASE_PADDING * canvasWidth;
-	const basePaddingTop = BASE_PADDING * canvasHeight;
-	const basePaddingWidth = (1 - 2 * BASE_PADDING) * canvasWidth;
-	const basePaddingHeight = (1 - 2 * BASE_PADDING) * canvasHeight;
-
-	basePadding.style.left = basePaddingLeft + "px";
-	basePadding.style.top = basePaddingTop + "px";
-	basePadding.style.width = basePaddingWidth + "px";
-	basePadding.style.height = basePaddingHeight + "px";
-
-	// Mover bounds (if movers exist) - read actual values from mover instance
-	if (movers.length > 0) {
-		const m = movers[0];
-		// Use the actual wrapPadding values from the mover instance
-		// Convert from normalized coordinates (0-1) to pixel coordinates
-		const moverLeft = m.minBoundX;
-		const moverTop = m.minBoundY;
-		const moverWidth = m.maxBoundX - m.minBoundX;
-		const moverHeight = m.maxBoundY - m.minBoundY;
-
-		moverBounds.style.left = moverLeft + "px";
-		moverBounds.style.top = moverTop + "px";
-		moverBounds.style.width = moverWidth + "px";
-		moverBounds.style.height = moverHeight + "px";
 	}
 }
