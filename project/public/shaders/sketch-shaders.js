@@ -13,7 +13,7 @@
  *
  * Usage:
  * 1. In preload(): shaderEffects.preload(this)
- * 2. In setup(): shaderEffects.setup(width, height, mainCanvas, shaderCanvas)
+ * 2. In setup(): shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixelDensity)
  * 3. To apply shaders: shaderEffects.apply()
  * 4. To update time: shaderEffects.updateTime()
  */
@@ -38,6 +38,7 @@ class ShaderEffects {
 		this.shaderManager = null;
 		this.shaderPipeline = null;
 		this.p5Instance = null;
+		this.pixelDensity = 1;
 
 		// Effects configuration - customize these for your sketch
 		this.effectsConfig = {
@@ -77,7 +78,7 @@ class ShaderEffects {
 
 			grain: {
 				enabled: true,
-				amount: 0.1,
+				amount: 0.025,
 				timeMultiplier: 0.0,
 				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
 				thresholdMinX: 0.0, // left [0..1]
@@ -418,10 +419,12 @@ class ShaderEffects {
 	 * @param {number} height - Canvas height
 	 * @param {p5.Graphics} mainCanvas - Main graphics buffer for artwork
 	 * @param {p5.Graphics} shaderCanvas - WEBGL canvas for shader effects
+	 * @param {number} [pixelDensity=1] - Pixel density for shader ping-pong buffers
 	 */
-	setup(width, height, mainCanvas, shaderCanvas) {
+	setup(width, height, mainCanvas, shaderCanvas, pixelDensity = 1) {
 		this.mainCanvas = mainCanvas;
 		this.shaderCanvas = shaderCanvas;
+		this.pixelDensity = pixelDensity;
 
 		// FPS overlay default (can be controlled by sketch-level constant SHOW_FPS_UI)
 		const isSafariMobileCheck = typeof isSafariMobile === "function" && isSafariMobile();
@@ -429,8 +432,14 @@ class ShaderEffects {
 		const allowFpsUi = typeof SHOW_FPS_UI === "undefined" ? true : !!SHOW_FPS_UI;
 		this.showFPS = allowFpsUi && !isSafariMobileCheck && !isInIframeCheck;
 
-		// Initialize shader seed with fxhash if available
-		if (typeof fxrand === "function") {
+		// Derive from fxhash so toggling shaders never shifts the fxrand stream used for artwork
+		if (typeof fxhash === "string" && fxhash.length > 0) {
+			let h = 0;
+			for (let i = 0; i < fxhash.length; i++) {
+				h = (Math.imul(31, h) + fxhash.charCodeAt(i)) | 0;
+			}
+			this.shaderSeed = ((Math.abs(h) % 1000000) / 1000000) * 10000;
+		} else if (typeof fxrand === "function") {
 			this.shaderSeed = fxrand() * 10000;
 		} else {
 			this.shaderSeed = Math.random() * 10000;
@@ -439,7 +448,7 @@ class ShaderEffects {
 		// Initialize shader pipeline with enabled effects
 		const enabledEffects = Object.keys(this.effectsConfig).filter((name) => this.effectsConfig[name].enabled);
 
-		this.shaderPipeline = new ShaderPipeline(this.shaderManager, this.p5Instance).init(width, height, enabledEffects);
+		this.shaderPipeline = new ShaderPipeline(this.shaderManager, this.p5Instance).init(width, height, enabledEffects, pixelDensity);
 
 		// Make it globally accessible (for backward compatibility)
 		window.shaderPipeline = this.shaderPipeline;
@@ -493,7 +502,7 @@ class ShaderEffects {
 	reinitializePipeline() {
 		if (this.shaderPipeline && this.shaderManager) {
 			const enabledEffects = Object.keys(this.effectsConfig).filter((name) => this.effectsConfig[name].enabled);
-			this.shaderPipeline.init(this.mainCanvas.width, this.mainCanvas.height, enabledEffects);
+			this.shaderPipeline.init(this.mainCanvas.width, this.mainCanvas.height, enabledEffects, this.pixelDensity);
 		}
 		return this;
 	}
@@ -647,7 +656,7 @@ class ShaderEffects {
 			this.p5Instance.clear();
 		}
 
-		this.shaderManager.apply("copy", {uTexture: this.mainCanvas}, this.p5Instance).drawFullscreenQuad(this.p5Instance);
+		this.shaderManager.blit(this.mainCanvas, this.p5Instance, false);
 
 		return this;
 	}

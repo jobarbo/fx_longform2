@@ -105,6 +105,12 @@ async function setup() {
 	// Reset the random seed to ensure consistency
 	$fx.rand.reset();
 
+	// Capture artwork seeds immediately — before shader setup or other code consumes fxrand
+	let mainRandomSeed = fxrand() * 10000;
+	let mainNoiseSeed = fxrand() * 10000;
+	rseed = fxrand() * 10000;
+	nseed = fxrand() * 10000;
+
 	// Load swatch palettes - REQUIRED for this project (no hardcoded fallback)
 	try {
 		await swatchPalette.loadFromManifest("swatches/manifest.json");
@@ -131,15 +137,16 @@ async function setup() {
 
 	// Create main canvas for the artwork (will also handle debug overlays)
 	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
+	mainCanvas.pixelDensity(pixel_density);
 
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
 	if (shadersEnabled()) {
 		try {
 			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
-			// Initialize shader effects system
-			shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
-			// Set up shader canvas pixel density
 			shaderCanvas.pixelDensity(pixel_density);
+			// Initialize shader effects system (pixel density must be set on canvases first)
+			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
+			shaderManager.setRenderRatio({fitCanvas: false, width: 1, height: ARTWORK_RATIO});
 			console.log("Shader effects initialized successfully");
 		} catch (error) {
 			console.warn("Failed to initialize shader effects:", error);
@@ -157,8 +164,6 @@ async function setup() {
 	}
 
 	// Set up the main canvas rendering properties
-	mainCanvas.pixelDensity(pixel_density);
-
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 	colorMode(HSB, 360, 100, 100, 100);
@@ -166,12 +171,6 @@ async function setup() {
 	// Enable color preservation settings for mainCanvas
 	mainCanvas.drawingContext.imageSmoothingEnabled = false;
 	mainCanvas.drawingContext.globalCompositeOperation = "source-over";
-
-	// Initialize random seeds from fxrand for deterministic behavior
-	let mainRandomSeed = fxrand() * 10000;
-	let mainNoiseSeed = fxrand() * 10000;
-	rseed = fxrand() * 10000;
-	nseed = fxrand() * 10000;
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
