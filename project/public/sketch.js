@@ -107,7 +107,12 @@ async function setup() {
 
 	// Reset the random seed to ensure consistency
 	$fx.rand.reset();
-
+	// Composition seeds — safe to sample before/after shader setup now that the
+	// shader library uses fxhashSeed() instead of fxrand().
+	let mainRandomSeed = fxrand() * 10000;
+	let mainNoiseSeed = fxrand() * 10000;
+	rseed = fxrand() * 10000;
+	nseed = fxrand() * 10000;
 	// Load swatch palettes - REQUIRED for this project (no hardcoded fallback)
 	try {
 		await swatchPalette.loadFromManifest("swatches/manifest.json");
@@ -139,7 +144,7 @@ async function setup() {
 	if (shadersEnabled()) {
 		try {
 			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
-			// Initialize shader effects system
+			// Initialize shader effects system (seeds via fxhashSeed — does not touch fxrand)
 			shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
 			// Set up shader canvas pixel density
 			shaderCanvas.pixelDensity(pixel_density);
@@ -169,12 +174,6 @@ async function setup() {
 	// Enable color preservation settings for mainCanvas
 	mainCanvas.drawingContext.imageSmoothingEnabled = false;
 	mainCanvas.drawingContext.globalCompositeOperation = "source-over";
-
-	// Initialize random seeds from fxrand for deterministic behavior
-	let mainRandomSeed = fxrand() * 10000;
-	let mainNoiseSeed = fxrand() * 10000;
-	rseed = fxrand() * 10000;
-	nseed = fxrand() * 10000;
 
 	// Lock seeds on first run so Apply doesn't change the underlying randomness
 	if (window.PARAMS_UI && !window.PARAMS_UI.lockedSeeds) {
@@ -422,9 +421,13 @@ function INIT(rseed, nseed) {
 	let baseParticleCount = particleNum;
 	let scaledParticleCount = baseParticleCount;
 
+	// Spawn in artwork buffer space (not display-canvas space) so WEBGL vs 2D
+	// createCanvas paths cannot shift particle layout.
+	const artW = mainCanvas.width;
+	const artH = mainCanvas.height;
 	for (let i = 0; i < scaledParticleCount; i++) {
-		let x = random(xMin, xMax) * width;
-		let y = random(yMin, yMax) * height;
+		let x = random(xMin, xMax) * artW;
+		let y = random(yMin, yMax) * artH;
 
 		// Use the swatch palette directly - no variations needed
 		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette));

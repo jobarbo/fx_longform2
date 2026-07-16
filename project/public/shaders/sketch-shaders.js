@@ -418,8 +418,10 @@ class ShaderEffects {
 	 * @param {number} height - Canvas height
 	 * @param {p5.Graphics} mainCanvas - Main graphics buffer for artwork
 	 * @param {p5.Graphics} shaderCanvas - WEBGL canvas for shader effects
+	 * @param {number} [shaderSeed] - Optional override; otherwise derived via fxhashSeed()
+	 *   (never call fxrand here — it shifts composition when shaders are toggled)
 	 */
-	setup(width, height, mainCanvas, shaderCanvas) {
+	setup(width, height, mainCanvas, shaderCanvas, shaderSeed) {
 		this.mainCanvas = mainCanvas;
 		this.shaderCanvas = shaderCanvas;
 
@@ -429,9 +431,11 @@ class ShaderEffects {
 		const allowFpsUi = typeof SHOW_FPS_UI === "undefined" ? true : !!SHOW_FPS_UI;
 		this.showFPS = allowFpsUi && !isSafariMobileCheck && !isInIframeCheck;
 
-		// Initialize shader seed with fxhash if available
-		if (typeof fxrand === "function") {
-			this.shaderSeed = fxrand() * 10000;
+		// Seed from fxhash without consuming $fx.rand() (see utils.fxhashSeed)
+		if (typeof shaderSeed === "number" && Number.isFinite(shaderSeed)) {
+			this.shaderSeed = shaderSeed;
+		} else if (typeof fxhashSeed === "function") {
+			this.shaderSeed = fxhashSeed("shaderEffects") * 10000;
 		} else {
 			this.shaderSeed = Math.random() * 10000;
 		}
