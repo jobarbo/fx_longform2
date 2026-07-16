@@ -472,6 +472,11 @@ function INIT(rseed, nseed) {
 
 	baseHSLPalette = paletteManager.getPalette(currentPaletteName);
 
+	// Copy before reversing — getPalette may return the manager's cached array
+	if (CURRENT_PARAMS.paletteDirection === "reversed" && Array.isArray(baseHSLPalette)) {
+		baseHSLPalette = [...baseHSLPalette].reverse();
+	}
+
 	if (!baseHSLPalette || baseHSLPalette.length === 0) {
 		throw new Error(`Selected palette '${currentPaletteName}' is empty or invalid`);
 	}

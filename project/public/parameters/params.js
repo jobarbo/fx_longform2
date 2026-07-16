@@ -30,6 +30,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		zigzag: ["hairline", "fine", "normal", "large", "XL"],
 		noiseScale2: ["low", "medium", "high", "intense", "extreme"],
 		palettes: [], // filled once palettes are loaded
+		paletteDirections: ["default", "reversed"],
 		paletteModes: ["oklch", "oklab", "lch", "lab", "hsl", "rgb", "lrgb"], // chroma.scale interpolation modes
 	},
 
@@ -72,6 +73,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		verticalPatternIntensity: "normal",
 		octaveLevel: 1,
 		paletteName: "",
+		paletteDirection: "default",
 		printDPI: 2,
 		exposure: 25,
 		presentation: "off",
@@ -91,6 +93,13 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			label: "Palette",
 			optionsKey: "palettes", // populated via swatches:ready
 			kind: "palette",
+		},
+		{
+			key: "paletteDirection",
+			id: "param-palette-direction",
+			label: "Palette direction",
+			optionsKey: "paletteDirections",
+			section: "palette", // rendered inside the palette fieldset at the bottom of the panel
 		},
 		{
 			key: "exposure",
@@ -224,6 +233,7 @@ window.resolveParams = function resolveParams() {
 		horizontalPatternIntensity: maps.patternIntensity[current.horizontalPatternIntensity] ?? maps.patternIntensity.normal,
 		verticalPatternIntensity: maps.patternIntensity[current.verticalPatternIntensity] ?? maps.patternIntensity.normal,
 		paletteName: current.paletteName,
+		paletteDirection: current.paletteDirection ?? "default",
 		printDPI: current.printDPI,
 		exposure: current.exposure,
 		presentation: current.presentation,
