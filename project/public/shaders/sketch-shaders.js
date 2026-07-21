@@ -369,6 +369,14 @@ class ShaderEffects {
 			this.effectTemplates[root] = template;
 		}
 
+		// Snapshot for panel Reset / persist restore (constructor defaults only)
+		this.defaultEffectsConfig = JSON.parse(JSON.stringify(this.effectsConfig));
+		this.defaultOutput = {
+			renderRatio: {...this.renderRatio},
+			crispPixels: this.crispPixels,
+			animationSpeed: this.animationSpeed,
+		};
+
 		// Symmetry phase tracking (prevents jumps when speed changes)
 		this.lastTranslationSpeed = {};
 		this.lastRotationSpeed = {};
@@ -594,6 +602,10 @@ class ShaderEffects {
 		this.lastEnabledEffects = null;
 		this.reinitializePipeline();
 
+		if (typeof fitDisplayToViewport === "function") {
+			fitDisplayToViewport();
+		}
+
 		console.log(`[ShaderEffects] resized to ${w}×${h} (main=${this.mainCanvas?.width}×${this.mainCanvas?.height})`);
 		return this;
 	}
@@ -796,6 +808,176 @@ class ShaderEffects {
 
 	getAnimationSpeed() {
 		return this.animationSpeed;
+	}
+
+	/**
+	 * Strip runtime / non-editable fields from an effect for panel persistence.
+	 * @param {object} effect
+	 * @returns {object}
+	 */
+	_stripEffectForPanel(effect) {
+		const skip = new Set(["uniforms", "translationPhaseX", "translationPhaseY", "rotationPhase"]);
+		const out = {};
+		for (const [k, v] of Object.entries(effect || {})) {
+			if (skip.has(k) || k.startsWith("_")) continue;
+			out[k] = typeof v === "object" && v !== null ? JSON.parse(JSON.stringify(v)) : v;
+		}
+		return out;
+	}
+
+	/**
+	 * Serializable snapshot of panel-editable shader state (effects + output).
+	 * @returns {{version: number, order: string[], effects: object, output: object}}
+	 */
+	exportPanelConfig() {
+		const order = Object.keys(this.effectsConfig);
+		const effects = {};
+		for (const name of order) {
+			effects[name] = this._stripEffectForPanel(this.effectsConfig[name]);
+		}
+		return {
+			version: 1,
+			order,
+			effects,
+			output: {
+				renderRatio: this.getRenderRatio(),
+				crispPixels: this.getCrispPixels(),
+				animationSpeed: this.getAnimationSpeed(),
+			},
+		};
+	}
+
+	/**
+	 * Restore panel config from a snapshot (localStorage / Reset).
+	 * Rebuilds uniforms from effectTemplates by root name.
+	 * @param {object} data
+	 * @returns {boolean} true if applied
+	 */
+	importPanelConfig(data) {
+		if (!data || data.version !== 1 || !data.effects || typeof data.effects !== "object") {
+			return false;
+		}
+
+		const savedEffects = data.effects;
+		const order = Array.isArray(data.order) ? data.order.filter((n) => savedEffects[n]) : [];
+		for (const name of Object.keys(savedEffects)) {
+			if (!order.includes(name)) order.push(name);
+		}
+
+		const next = {};
+		for (const name of order) {
+			const saved = savedEffects[name];
+			if (!saved || typeof saved !== "object") continue;
+
+			const root = String(name).replace(/\d+$/, "") || name;
+			const template = this.effectTemplates[root];
+			if (!template) {
+				console.warn(`[ShaderEffects] importPanelConfig: unknown template "${root}" for "${name}" — skipped`);
+				continue;
+			}
+
+			const merged = JSON.parse(JSON.stringify(template));
+			for (const [k, v] of Object.entries(saved)) {
+				if (k === "uniforms" || k.startsWith("_")) continue;
+				if (k === "translationPhaseX" || k === "translationPhaseY" || k === "rotationPhase") continue;
+				merged[k] = typeof v === "object" && v !== null ? JSON.parse(JSON.stringify(v)) : v;
+			}
+			if ("translationPhaseX" in merged) merged.translationPhaseX = 0;
+			if ("translationPhaseY" in merged) merged.translationPhaseY = 0;
+			if ("rotationPhase" in merged) merged.rotationPhase = 0;
+			merged.uniforms = template.uniforms ? JSON.parse(JSON.stringify(template.uniforms)) : {};
+			merged.pass = saved.pass || template.pass || root;
+			next[name] = merged;
+		}
+
+		if (Object.keys(next).length === 0) return false;
+
+		this.effectsConfig = next;
+		this.lastTranslationSpeed = {};
+		this.lastRotationSpeed = {};
+		this.lastRotationOscillationSpeed = {};
+		for (const name of Object.keys(this.effectsConfig)) {
+			if (name.startsWith("symmetry")) this._ensurePhaseTracking(name);
+		}
+
+		if (data.output && typeof data.output === "object") {
+			if (data.output.renderRatio) this.setRenderRatio(data.output.renderRatio);
+			if (typeof data.output.crispPixels === "boolean") this.setCrispPixels(data.output.crispPixels);
+			if (typeof data.output.animationSpeed === "number") this.setAnimationSpeed(data.output.animationSpeed);
+		}
+
+		this.lastEnabledEffects = null;
+		if (this.shaderPipeline) this.reinitializePipeline();
+		return true;
+	}
+
+	/**
+	 * Restore constructor defaults (effects + output framing/speed).
+	 * @returns {this}
+	 */
+	resetToDefaultPanelConfig() {
+		this.effectsConfig = JSON.parse(JSON.stringify(this.defaultEffectsConfig));
+		this.lastTranslationSpeed = {};
+		this.lastRotationSpeed = {};
+		this.lastRotationOscillationSpeed = {};
+		for (const name of Object.keys(this.effectsConfig)) {
+			if (name.startsWith("symmetry")) this._ensurePhaseTracking(name);
+		}
+		const out = this.defaultOutput || {};
+		if (out.renderRatio) this.setRenderRatio(out.renderRatio);
+		if (typeof out.crispPixels === "boolean") this.setCrispPixels(out.crispPixels);
+		if (typeof out.animationSpeed === "number") this.setAnimationSpeed(out.animationSpeed);
+		this.lastEnabledEffects = null;
+		if (this.shaderPipeline) this.reinitializePipeline();
+		return this;
+	}
+
+	/** localStorage key for panel persistence (dev convenience). */
+	static get PANEL_STORAGE_KEY() {
+		return "fx_longform2:shaderPanel";
+	}
+
+	/**
+	 * Load persisted panel config from localStorage into this instance.
+	 * @returns {boolean} true if a snapshot was applied
+	 */
+	loadPersistedPanelConfig() {
+		try {
+			const raw = localStorage.getItem(ShaderEffects.PANEL_STORAGE_KEY);
+			if (!raw) return false;
+			const data = JSON.parse(raw);
+			return this.importPanelConfig(data);
+		} catch (error) {
+			console.warn("[ShaderEffects] loadPersistedPanelConfig failed:", error);
+			return false;
+		}
+	}
+
+	/**
+	 * Write current panel config to localStorage.
+	 * @returns {boolean}
+	 */
+	savePersistedPanelConfig() {
+		try {
+			const snapshot = this.exportPanelConfig();
+			localStorage.setItem(ShaderEffects.PANEL_STORAGE_KEY, JSON.stringify(snapshot));
+			return true;
+		} catch (error) {
+			console.warn("[ShaderEffects] savePersistedPanelConfig failed:", error);
+			return false;
+		}
+	}
+
+	/**
+	 * Clear persisted panel config from localStorage.
+	 */
+	clearPersistedPanelConfig() {
+		try {
+			localStorage.removeItem(ShaderEffects.PANEL_STORAGE_KEY);
+		} catch {
+			// ignore
+		}
+		return this;
 	}
 
 	/**

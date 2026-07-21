@@ -11,6 +11,7 @@ const SHOW_DOWNLOAD_UI = false; // Download button (mounted in panel)
 
 // Dev panels — debug/audio panel (key D) + shader effects panel (key E)
 const ENABLE_DEV_PANELS = true;
+const PERSIST_SHADER_PANEL = true; // localStorage: keep panel edits across refresh
 const ENABLE_AUDIO = false; // false = no mic/chime input
 const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first user gesture)
 
@@ -18,7 +19,7 @@ const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first
 const CANVAS_CONFIG = {
 	BASE_WIDTH: 1000,
 	ARTWORK_RATIO: 1.4,
-	ARTWORK_PADDING: 0.1,
+	ARTWORK_PADDING: 0.05,
 	WRAP_PADDING_FACTOR: 0.04,
 	SCALE_FACTOR_X: 1.0,
 	SCALE_FACTOR_Y: 1.0,
@@ -93,6 +94,7 @@ function getCanvasDimensions() {
 
 function updateLayoutMetrics(canvasW, canvasH) {
 	ARTWORK_ASPECT = canvasW / canvasH;
+	console.log(ARTWORK_ASPECT);
 	ARTWORK_CANVAS_WIDTH = canvasW;
 	ARTWORK_CANVAS_HEIGHT = canvasH;
 	const baseHeight = CANVAS_CONFIG.BASE_WIDTH * ARTWORK_ASPECT;
@@ -245,9 +247,20 @@ async function setup() {
 		try {
 			shaderCanvas = createCanvas(canvasW, canvasH, WEBGL);
 			shaderCanvas.pixelDensity(pixel_density);
-			// Configure output framing before setup so it reaches the shaderManager
-			shaderEffects.setRenderRatio(CANVAS_CONFIG.SHADER_RENDER);
-			shaderEffects.setAnimationSpeed(CANVAS_CONFIG.SHADER_ANIMATION_SPEED);
+
+			// Restore panel edits from localStorage before setup (wins over CANVAS_CONFIG output)
+			let restoredPanel = false;
+			if (PERSIST_SHADER_PANEL && typeof shaderEffects.loadPersistedPanelConfig === "function") {
+				restoredPanel = shaderEffects.loadPersistedPanelConfig();
+				if (restoredPanel) {
+					console.log("[sketch] restored shader panel config from localStorage");
+				}
+			}
+			if (!restoredPanel) {
+				shaderEffects.setRenderRatio(CANVAS_CONFIG.SHADER_RENDER);
+				shaderEffects.setAnimationSpeed(CANVAS_CONFIG.SHADER_ANIMATION_SPEED);
+			}
+
 			// Initialize shader effects system
 			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
 			console.log("Shader effects initialized successfully");
@@ -264,6 +277,10 @@ async function setup() {
 		// No shaders - create regular canvas for display
 		createCanvas(canvasW, canvasH);
 		pixelDensity(pixel_density);
+	}
+
+	if (typeof fitDisplayToViewport === "function") {
+		fitDisplayToViewport();
 	}
 
 	// Sync canvas smoothing class with crisp-pixels state (CSS defaults to pixelated
