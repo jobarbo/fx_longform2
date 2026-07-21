@@ -16,10 +16,13 @@ const PERSIST_CONTROLS_PANEL = true; // localStorage: keep Controls panel edits 
 const ENABLE_AUDIO = false; // false = no mic/chime input
 const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first user gesture)
 
-// Canvas sizing — FORCE_SIZE true uses FIXED_WIDTH/HEIGHT; false uses viewport + ARTWORK_RATIO
+// Canvas sizing — FORCE_SIZE true uses FIXED_WIDTH/HEIGHT; false uses viewport + ARTWORK_RATIO + ORIENTATION
 const CANVAS_CONFIG = {
-	BASE_WIDTH: 1000,
-	ARTWORK_RATIO: 1.0,
+	BASE_WIDTH: 500,
+	// Long : short edge (e.g. 1.21). Combined with ORIENTATION → 1.21:1 or 1:1.21
+	ARTWORK_RATIO: 3.2,
+	ORIENTATION: "horizontal", // "horizontal" | "vertical"
+	// Fraction of the shorter canvas edge — equal absolute border on all sides
 	ARTWORK_PADDING: 0.0,
 	WRAP_PADDING_FACTOR: 0.0,
 	SCALE_FACTOR_X: 1.0,
@@ -31,8 +34,10 @@ const CANVAS_CONFIG = {
 	// (CURRENT_PARAMS.printDPI from the params UI overrides when set)
 	PIXEL_DENSITY: 1,
 	PIXEL_DENSITY_MOBILE: 1,
-	// Shader output framing (final pass only, object-fit: cover)
-	SHADER_RENDER: {fitCanvas: false, width: 1, height: 1},
+	// Shader output framing (final pass only).
+	// fitCanvas: true = no crop (full texture). false = object-fit cover with width:height.
+	// matchArtwork: true = derive width/height from ARTWORK_RATIO + ORIENTATION (or FIXED_*).
+	SHADER_RENDER: {fitCanvas: false, matchArtwork: true, width: 1, height: 1},
 	// Master shader animation speed — 1.0 = default, 0.5 = half, 2.0 = double
 	SHADER_ANIMATION_SPEED: 22.0,
 };
@@ -85,11 +90,71 @@ function getCanvasDimensions() {
 		};
 	}
 
-	const ratio = CANVAS_CONFIG.ARTWORK_RATIO;
 	const viewportDim = min(windowWidth, windowHeight);
+	const layout = {
+		orientation: CANVAS_CONFIG.ORIENTATION === "vertical" ? "vertical" : "horizontal",
+		ratio: Math.max(Number(CANVAS_CONFIG.ARTWORK_RATIO) || 1, 0.01),
+		baseSize: CANVAS_CONFIG.BASE_WIDTH,
+	};
+
+	if (typeof computeArtworkLayout === "function") {
+		const sized = computeArtworkLayout(viewportDim, layout);
+		return {width: sized.width, height: sized.height};
+	}
+
+	// Fallback if artworkLayout.js is missing: ratio = long:short
+	const r = layout.ratio;
+	if (layout.orientation === "vertical") {
+		return {width: viewportDim / r, height: viewportDim};
+	}
+	return {width: viewportDim, height: viewportDim / r};
+}
+
+/**
+ * Equal absolute padding on every side.
+ * ARTWORK_PADDING is a fraction of min(canvasW, canvasH); returns normalized {x, y}.
+ */
+function getArtworkPaddingNorm(canvasW = width, canvasH = height) {
+	const pad = Math.max(0, Math.min(0.49, Number(CANVAS_CONFIG.ARTWORK_PADDING) || 0));
+	const shortEdge = Math.min(canvasW, canvasH) || 1;
+	const padPx = pad * shortEdge;
 	return {
-		width: viewportDim / ratio,
-		height: viewportDim,
+		x: padPx / (canvasW || 1),
+		y: padPx / (canvasH || 1),
+	};
+}
+
+/**
+ * Resolve shader output framing from CANVAS_CONFIG.SHADER_RENDER.
+ * With matchArtwork, width/height follow ARTWORK_RATIO + ORIENTATION (or FIXED_*).
+ */
+function resolveShaderRender() {
+	const cfg = CANVAS_CONFIG.SHADER_RENDER || {};
+	const fitCanvas = Boolean(cfg.fitCanvas);
+
+	if (fitCanvas) {
+		return {fitCanvas: true, width: cfg.width ?? 1, height: cfg.height ?? 1};
+	}
+
+	if (cfg.matchArtwork !== false) {
+		if (CANVAS_CONFIG.FORCE_SIZE) {
+			return {
+				fitCanvas: false,
+				width: CANVAS_CONFIG.FIXED_WIDTH,
+				height: CANVAS_CONFIG.FIXED_HEIGHT,
+			};
+		}
+		const r = Math.max(Number(CANVAS_CONFIG.ARTWORK_RATIO) || 1, 0.01);
+		if (CANVAS_CONFIG.ORIENTATION === "vertical") {
+			return {fitCanvas: false, width: 1, height: r};
+		}
+		return {fitCanvas: false, width: r, height: 1};
+	}
+
+	return {
+		fitCanvas: false,
+		width: cfg.width ?? 1,
+		height: cfg.height ?? 1,
 	};
 }
 
@@ -151,7 +216,7 @@ function sketchShadersEnabled() {
 }
 
 function refreshDebugOverlay() {
-	updateDebugOverlay({debugBounds, padding: CANVAS_CONFIG.ARTWORK_PADDING, movers});
+	updateDebugOverlay({debugBounds, padding: getArtworkPaddingNorm(width, height), movers});
 }
 
 // ============================================================================
@@ -236,7 +301,8 @@ async function setup() {
 	updateLayoutMetrics(canvasW, canvasH);
 	console.log(
 		MULTIPLIER,
-		`canvas ${canvasW}×${canvasH}` + (CANVAS_CONFIG.FORCE_SIZE ? ` (forced ${CANVAS_CONFIG.FIXED_WIDTH}×${CANVAS_CONFIG.FIXED_HEIGHT})` : ` (ratio ${CANVAS_CONFIG.ARTWORK_RATIO})`),
+		`canvas ${canvasW}×${canvasH}` +
+			(CANVAS_CONFIG.FORCE_SIZE ? ` (forced ${CANVAS_CONFIG.FIXED_WIDTH}×${CANVAS_CONFIG.FIXED_HEIGHT})` : ` (${CANVAS_CONFIG.ORIENTATION} ${CANVAS_CONFIG.ARTWORK_RATIO}:1)`),
 	);
 
 	// Create main canvas for the artwork (will also handle debug overlays)
@@ -258,7 +324,7 @@ async function setup() {
 				}
 			}
 			if (!restoredPanel) {
-				shaderEffects.setRenderRatio(CANVAS_CONFIG.SHADER_RENDER);
+				shaderEffects.setRenderRatio(resolveShaderRender());
 				shaderEffects.setAnimationSpeed(CANVAS_CONFIG.SHADER_ANIMATION_SPEED);
 			}
 
@@ -405,8 +471,9 @@ function renderOutsideFrame() {
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.noFill();
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
-	const baseRectW = mainCanvas.width * (1 - CANVAS_CONFIG.ARTWORK_PADDING * 2);
-	const baseRectH = mainCanvas.height * (1 - CANVAS_CONFIG.ARTWORK_PADDING * 2);
+	const {x: padX, y: padY} = getArtworkPaddingNorm(mainCanvas.width, mainCanvas.height);
+	const baseRectW = mainCanvas.width * (1 - padX * 2);
+	const baseRectH = mainCanvas.height * (1 - padY * 2);
 	const rectShrink = baseRectW / 35;
 	for (let i = 0; i < 10000; i++) {
 		let randShrink = fxrand() * rectShrink;
@@ -534,10 +601,11 @@ function INIT(rseed, nseed) {
 	let amplitude1 = 1 * MULTIPLIER;
 	let amplitude2 = 1 * MULTIPLIER;
 
-	xMin = CANVAS_CONFIG.ARTWORK_PADDING;
-	xMax = 1 - CANVAS_CONFIG.ARTWORK_PADDING;
-	yMin = CANVAS_CONFIG.ARTWORK_PADDING;
-	yMax = 1 - CANVAS_CONFIG.ARTWORK_PADDING;
+	const {x: padX, y: padY} = getArtworkPaddingNorm(width, height);
+	xMin = padX;
+	xMax = 1 - padX;
+	yMin = padY;
+	yMax = 1 - padY;
 
 	let baseParticleCount = particleNum;
 	let scaledParticleCount = baseParticleCount;
