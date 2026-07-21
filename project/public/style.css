@@ -707,24 +707,25 @@ canvas.p5Canvas.is-smooth {
 	cursor: default;
 }
 
-.shader-effects-panel__reset {
-	height: 28px;
-	padding: 0 8px;
-	border: 1px solid rgba(255, 255, 255, 0.22);
-	border-radius: 4px;
-	background: rgba(255, 120, 80, 0.12);
-	color: #ffd0c0;
+.shader-effects-panel__clear {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	margin-left: auto;
 	font:
-		11px/1 "Courier New",
+		10px/1.2 "Courier New",
 		ui-monospace,
 		monospace;
+	color: rgba(255, 210, 190, 0.85);
 	cursor: pointer;
+	user-select: none;
 	flex-shrink: 0;
 }
 
-.shader-effects-panel__reset:hover {
-	background: rgba(255, 120, 80, 0.28);
-	border-color: rgba(255, 160, 120, 0.55);
+.shader-effects-panel__clear input {
+	margin: 0;
+	accent-color: #e8a070;
+	cursor: pointer;
 }
 
 .shader-effects-panel__body {

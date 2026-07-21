@@ -208,6 +208,24 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 	lockedSeeds: null,
 };
 
+// Factory defaults for Clear-saved restore
+window.PARAMS_UI.defaults = JSON.parse(JSON.stringify(window.PARAMS_UI.current));
+
+// Restore Controls panel early (before sketch setup / CURRENT_PARAMS resolve)
+(function restoreControlsPanelEarly() {
+	try {
+		if (typeof PERSIST_CONTROLS_PANEL !== "undefined" && !PERSIST_CONTROLS_PANEL) return;
+		const raw = localStorage.getItem("fx_longform2:controlsPanel");
+		if (!raw) return;
+		const data = JSON.parse(raw);
+		if (!data || data.version !== 1 || !data.current || typeof data.current !== "object") return;
+		window.PARAMS_UI.current = {...window.PARAMS_UI.current, ...data.current};
+		console.log("[params] restored controls from localStorage");
+	} catch (error) {
+		console.warn("[params] restore controls failed:", error);
+	}
+})();
+
 // Derives resolved numeric values from current selections.
 // Call this once after any change to PARAMS_UI.current.
 window.resolveParams = function resolveParams() {

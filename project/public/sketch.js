@@ -11,19 +11,20 @@ const SHOW_DOWNLOAD_UI = false; // Download button (mounted in panel)
 
 // Dev panels — debug/audio panel (key D) + shader effects panel (key E)
 const ENABLE_DEV_PANELS = true;
-const PERSIST_SHADER_PANEL = true; // localStorage: keep panel edits across refresh
+const PERSIST_SHADER_PANEL = true; // localStorage: keep shader panel edits across refresh
+const PERSIST_CONTROLS_PANEL = true; // localStorage: keep Controls panel edits across refresh
 const ENABLE_AUDIO = false; // false = no mic/chime input
 const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first user gesture)
 
 // Canvas sizing — FORCE_SIZE true uses FIXED_WIDTH/HEIGHT; false uses viewport + ARTWORK_RATIO
 const CANVAS_CONFIG = {
 	BASE_WIDTH: 1000,
-	ARTWORK_RATIO: 1.4,
-	ARTWORK_PADDING: 0.05,
-	WRAP_PADDING_FACTOR: 0.04,
+	ARTWORK_RATIO: 1.0,
+	ARTWORK_PADDING: 0.0,
+	WRAP_PADDING_FACTOR: 0.0,
 	SCALE_FACTOR_X: 1.0,
 	SCALE_FACTOR_Y: 1.0,
-	FORCE_SIZE: false,
+	FORCE_SIZE: true,
 	FIXED_WIDTH: 3840,
 	FIXED_HEIGHT: 1200,
 	// Shared by p5 mainCanvas, display/shader canvas, and shader pipeline
