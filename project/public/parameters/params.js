@@ -72,7 +72,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		verticalPatternIntensity: "normal",
 		octaveLevel: 1,
 		paletteName: "",
-		printDPI: 2,
+		printDPI: 1,
 		exposure: 25,
 		presentation: "off",
 		externalFrame: "off",

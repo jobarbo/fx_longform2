@@ -29,6 +29,6 @@ window.PROJECT_PALETTES = {
 		wildfire: {colors: ["#01001c", "#090334", "#1c0846", "#421060", "#701972", "#a21d5f", "#c21a41", "#d73629", "#ec6a26", "#f4a454", "#f4cd85", "#f4e1a1"]},
 
 		// obumbratta.com/colour arrays
-		"dawn-ember": {colors: ["#ffffe0", "#ffebb9", "#ffcfa2", "#ffb1ab", "#ff97ce", "#ff88ff", "#cf7af8", "#a06cea", "#725fd6", "#4351bc", "#02439e"]},
+		"dawn-ember": {colors: ["#ffffe0", "#ffdcae", "#ffaeae", "#ff8ae6", "#d37af0", "#9165d5", "#4d51b5", "#003c96", "#00297d", "#001766", "#000000"]},
 	},
 };

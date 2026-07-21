@@ -11,11 +11,33 @@ const SHOW_DOWNLOAD_UI = false; // Download button (mounted in panel)
 
 // Dev panels — debug/audio panel (key D) + shader effects panel (key E)
 const ENABLE_DEV_PANELS = true;
+const ENABLE_AUDIO = false; // false = no mic/chime input
 const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first user gesture)
 
-// Padding constants - centralized for consistency
-const BASE_PADDING = 0.155; // Base padding for artwork bounds (used in INIT)
-const WRAP_PADDING_FACTOR = 0.04; // Wrap padding factor for particle movement bounds (used in Mover class)
+// Canvas sizing — FORCE_SIZE true uses FIXED_WIDTH/HEIGHT; false uses viewport + ARTWORK_RATIO
+const CANVAS_CONFIG = {
+	BASE_WIDTH: 1000,
+	ARTWORK_RATIO: 1.4,
+	ARTWORK_PADDING: 0.1,
+	WRAP_PADDING_FACTOR: 0.04,
+	SCALE_FACTOR_X: 1.0,
+	SCALE_FACTOR_Y: 1.0,
+	FORCE_SIZE: false,
+	FIXED_WIDTH: 3840,
+	FIXED_HEIGHT: 1200,
+	// Shared by p5 mainCanvas, display/shader canvas, and shader pipeline
+	// (CURRENT_PARAMS.printDPI from the params UI overrides when set)
+	PIXEL_DENSITY: 1,
+	PIXEL_DENSITY_MOBILE: 1,
+	// Shader output framing (final pass only, object-fit: cover)
+	SHADER_RENDER: {fitCanvas: false, width: 1, height: 1},
+	// Master shader animation speed — 1.0 = default, 0.5 = half, 2.0 = double
+	SHADER_ANIMATION_SPEED: 22.0,
+};
+
+// Alias for Mover (reads WRAP_PADDING_FACTOR as a global)
+const WRAP_PADDING_FACTOR = CANVAS_CONFIG.WRAP_PADDING_FACTOR;
+
 // Animation configuration
 let maxFrames = 30;
 let particleNum = 500000;
@@ -34,37 +56,50 @@ let debugBounds = false;
 // ARTWORK DIMENSIONS & SCALING
 // ============================================================================
 
-// Artwork layout — orientation + ratio without blowing up pixel count.
-// ratio = long edge : short edge (e.g. 3 → 3:1 strip). Canvas area stays ~viewportMin².
-const ARTWORK_LAYOUT = {
-	orientation: "vertical", // "horizontal" | "vertical"
-	ratio: 1.0, // long : short — horizontal 3 = 3:1 wide, vertical 3 = 1:3 tall
-	baseSize: 1000, // reference size for particle scaling (≈ viewport min at 1:1)
-};
-
 // Calculated at setup (for mover bounds / debugging)
 let ARTWORK_ASPECT = 1;
 let ARTWORK_CANVAS_WIDTH = 0;
 let ARTWORK_CANVAS_HEIGHT = 0;
 
-// Shader output framing (final pass only, object-fit: cover).
-// fitCanvas: true = no crop; set false + width/height for a custom ratio.
-// Tip: match ARTWORK_LAYOUT — e.g. horizontal ratio 3 → { fitCanvas: false, width: 3, height: 1 }
-const SHADER_RENDER_RATIO = {
-	fitCanvas: false,
-	width: 1,
-	height: 1,
-};
-
-// Master shader animation speed — scales all time-driven effects uniformly.
-// 1.0 = default, 0.5 = half speed, 2.0 = double speed
-const SHADER_ANIMATION_SPEED = 12.0;
-
 // Calculated dimensions (set in setup())
-let DIM; // Canvas dimension (min of window width/height)
+let DIM; // Canvas dimension (min of canvas width/height)
 let MULTIPLIER; // Scaling factor based on screen size
 let W = window.innerWidth; // Window width
 let H = window.innerHeight; // Window height
+
+function getPixelDensity() {
+	if (typeof CURRENT_PARAMS?.printDPI === "number") {
+		return CURRENT_PARAMS.printDPI;
+	}
+	const isMobile = typeof isSafariMobile === "function" && isSafariMobile();
+	return isMobile ? CANVAS_CONFIG.PIXEL_DENSITY_MOBILE : CANVAS_CONFIG.PIXEL_DENSITY;
+}
+
+function getCanvasDimensions() {
+	if (CANVAS_CONFIG.FORCE_SIZE) {
+		return {
+			width: CANVAS_CONFIG.FIXED_WIDTH,
+			height: CANVAS_CONFIG.FIXED_HEIGHT,
+		};
+	}
+
+	const ratio = CANVAS_CONFIG.ARTWORK_RATIO;
+	const viewportDim = min(windowWidth, windowHeight);
+	return {
+		width: viewportDim / ratio,
+		height: viewportDim,
+	};
+}
+
+function updateLayoutMetrics(canvasW, canvasH) {
+	ARTWORK_ASPECT = canvasW / canvasH;
+	ARTWORK_CANVAS_WIDTH = canvasW;
+	ARTWORK_CANVAS_HEIGHT = canvasH;
+	const baseHeight = CANVAS_CONFIG.BASE_WIDTH * ARTWORK_ASPECT;
+	const defaultSize = min(CANVAS_CONFIG.BASE_WIDTH, baseHeight);
+	DIM = min(canvasW, canvasH);
+	MULTIPLIER = DIM / defaultSize;
+}
 
 // ============================================================================
 // CANVAS & RENDERING
@@ -108,16 +143,12 @@ let rseed, nseed; // Random and noise seeds
 let xMin, xMax, yMin, yMax;
 let isBordered = true;
 
-// Re-applied on UI Apply so the composition doesn't shift
-const FRAME_SCALE_FACTOR_X = 1.45;
-const FRAME_SCALE_FACTOR_Y = 1.45;
-
 function sketchShadersEnabled() {
 	return shadersEnabled(ENABLE_SHADERS);
 }
 
 function refreshDebugOverlay() {
-	updateDebugOverlay({debugBounds, padding: BASE_PADDING, movers});
+	updateDebugOverlay({debugBounds, padding: CANVAS_CONFIG.ARTWORK_PADDING, movers});
 }
 
 // ============================================================================
@@ -130,7 +161,7 @@ function setupDevPanels() {
 	if (!ENABLE_DEV_PANELS) return;
 
 	// Audio analysis feeding the debug panel (and optional shader mappings)
-	if (typeof audioKnob !== "undefined") {
+	if (ENABLE_AUDIO && typeof audioKnob !== "undefined") {
 		audioKnob.setSource(AUDIO_SOURCE);
 		// Optional audio-reactive shader mappings, e.g.:
 		// audioKnob.map("energy", "chromatic", "amount", 0, 0.01);
@@ -138,7 +169,7 @@ function setupDevPanels() {
 
 	if (typeof debugPanel !== "undefined") {
 		debugPanel.init({
-			audio: typeof audioAnalyzer !== "undefined" ? audioAnalyzer : null,
+			audio: ENABLE_AUDIO && typeof audioAnalyzer !== "undefined" ? audioAnalyzer : null,
 			shaders: sketchShadersEnabled() && shaderCanvas ? shaderEffects : null,
 		});
 	}
@@ -155,7 +186,7 @@ function setupDevPanels() {
 function startPanelLoop() {
 	if (panelLoopId !== null) return;
 	const tick = () => {
-		if (typeof audioKnob !== "undefined") audioKnob.update();
+		if (ENABLE_AUDIO && typeof audioKnob !== "undefined") audioKnob.update();
 		if (typeof debugPanel !== "undefined") debugPanel.update();
 		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.update();
 		panelLoopId = requestAnimationFrame(tick);
@@ -194,32 +225,29 @@ async function setup() {
 		throw error; // Stop execution if palettes can't be built
 	}
 
-	// Calculate optimal pixel density before creating canvases
-	// Set pixel density for all devices
-	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
-	pixel_density = CURRENT_PARAMS.printDPI ?? (typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 1);
+	// Shared density for p5 / shader canvas / pipeline (!>4–5 can leave dead space on PNG export)
+	pixel_density = getPixelDensity();
 
-	// canvas setup — constant-area sizing from orientation + ratio
-	DIM = min(windowWidth, windowHeight);
-	const artworkLayout = computeArtworkLayout(DIM, ARTWORK_LAYOUT);
-	ARTWORK_ASPECT = artworkLayout.aspect;
-	ARTWORK_CANVAS_WIDTH = artworkLayout.width;
-	ARTWORK_CANVAS_HEIGHT = artworkLayout.height;
-	MULTIPLIER = artworkLayout.multiplier;
-	console.log(MULTIPLIER, `canvas ${artworkLayout.width}×${artworkLayout.height} (${ARTWORK_LAYOUT.orientation} ${ARTWORK_LAYOUT.ratio}:1)`);
+	// canvas setup — FORCE_SIZE uses FIXED_WIDTH/HEIGHT; otherwise viewport + ARTWORK_RATIO
+	const {width: canvasW, height: canvasH} = getCanvasDimensions();
+	updateLayoutMetrics(canvasW, canvasH);
+	console.log(
+		MULTIPLIER,
+		`canvas ${canvasW}×${canvasH}` + (CANVAS_CONFIG.FORCE_SIZE ? ` (forced ${CANVAS_CONFIG.FIXED_WIDTH}×${CANVAS_CONFIG.FIXED_HEIGHT})` : ` (ratio ${CANVAS_CONFIG.ARTWORK_RATIO})`),
+	);
 
 	// Create main canvas for the artwork (will also handle debug overlays)
-	mainCanvas = createGraphics(artworkLayout.width, artworkLayout.height);
+	mainCanvas = createGraphics(canvasW, canvasH);
 	mainCanvas.pixelDensity(pixel_density);
 
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
 	if (sketchShadersEnabled()) {
 		try {
-			shaderCanvas = createCanvas(artworkLayout.width, artworkLayout.height, WEBGL);
+			shaderCanvas = createCanvas(canvasW, canvasH, WEBGL);
 			shaderCanvas.pixelDensity(pixel_density);
 			// Configure output framing before setup so it reaches the shaderManager
-			shaderEffects.setRenderRatio(SHADER_RENDER_RATIO);
-			shaderEffects.setAnimationSpeed(SHADER_ANIMATION_SPEED);
+			shaderEffects.setRenderRatio(CANVAS_CONFIG.SHADER_RENDER);
+			shaderEffects.setAnimationSpeed(CANVAS_CONFIG.SHADER_ANIMATION_SPEED);
 			// Initialize shader effects system
 			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
 			console.log("Shader effects initialized successfully");
@@ -228,13 +256,13 @@ async function setup() {
 			console.log("Falling back to sketch without shaders");
 			// Fallback: create regular canvas without shaders
 			shaderCanvas = null;
-			createCanvas(artworkLayout.width, artworkLayout.height);
+			createCanvas(canvasW, canvasH);
 			pixelDensity(pixel_density);
 			// Shaders are unavailable; continue without them
 		}
 	} else {
 		// No shaders - create regular canvas for display
-		createCanvas(artworkLayout.width, artworkLayout.height);
+		createCanvas(canvasW, canvasH);
 		pixelDensity(pixel_density);
 	}
 
@@ -341,7 +369,7 @@ function canvasSetup() {
 		// ignore
 	}
 	mainCanvas.translate(width / 2, height / 2);
-	mainCanvas.scale(FRAME_SCALE_FACTOR_X, FRAME_SCALE_FACTOR_Y);
+	mainCanvas.scale(CANVAS_CONFIG.SCALE_FACTOR_X, CANVAS_CONFIG.SCALE_FACTOR_Y);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
 }
 
@@ -359,8 +387,8 @@ function renderOutsideFrame() {
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.noFill();
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
-	const baseRectW = mainCanvas.width * (1 - BASE_PADDING * 2);
-	const baseRectH = mainCanvas.height * (1 - BASE_PADDING * 2);
+	const baseRectW = mainCanvas.width * (1 - CANVAS_CONFIG.ARTWORK_PADDING * 2);
+	const baseRectH = mainCanvas.height * (1 - CANVAS_CONFIG.ARTWORK_PADDING * 2);
 	const rectShrink = baseRectW / 35;
 	for (let i = 0; i < 10000; i++) {
 		let randShrink = fxrand() * rectShrink;
@@ -488,10 +516,10 @@ function INIT(rseed, nseed) {
 	let amplitude1 = 1 * MULTIPLIER;
 	let amplitude2 = 1 * MULTIPLIER;
 
-	xMin = BASE_PADDING;
-	xMax = 1 - BASE_PADDING;
-	yMin = BASE_PADDING;
-	yMax = 1 - BASE_PADDING;
+	xMin = CANVAS_CONFIG.ARTWORK_PADDING;
+	xMax = 1 - CANVAS_CONFIG.ARTWORK_PADDING;
+	yMin = CANVAS_CONFIG.ARTWORK_PADDING;
+	yMax = 1 - CANVAS_CONFIG.ARTWORK_PADDING;
 
 	let baseParticleCount = particleNum;
 	let scaledParticleCount = baseParticleCount;
