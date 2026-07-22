@@ -20,7 +20,7 @@ const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first
 const CANVAS_CONFIG = {
 	BASE_WIDTH: 1000,
 	// Long : short edge (e.g. 1.21). Combined with ORIENTATION → 1.21:1 or 1:1.21
-	ARTWORK_RATIO: 3.2,
+	ARTWORK_RATIO: 1.0,
 	ORIENTATION: "horizontal", // "horizontal" | "vertical"
 	// Fraction of the shorter canvas edge — equal absolute border on all sides
 	ARTWORK_PADDING: 0.0,
@@ -39,7 +39,7 @@ const CANVAS_CONFIG = {
 	// matchArtwork: true = derive width/height from ARTWORK_RATIO + ORIENTATION (or FIXED_*).
 	SHADER_RENDER: {fitCanvas: false, matchArtwork: true, width: 1, height: 1},
 	// Master shader animation speed — 1.0 = default, 0.5 = half, 2.0 = double
-	SHADER_ANIMATION_SPEED: 22.0,
+	SHADER_ANIMATION_SPEED: 2.0,
 };
 
 // Alias for Mover (reads WRAP_PADDING_FACTOR as a global)
