@@ -18,7 +18,7 @@ const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first
 
 // Canvas sizing — FORCE_SIZE true uses FIXED_WIDTH/HEIGHT; false uses viewport + ARTWORK_RATIO + ORIENTATION
 const CANVAS_CONFIG = {
-	BASE_WIDTH: 500,
+	BASE_WIDTH: 1000,
 	// Long : short edge (e.g. 1.21). Combined with ORIENTATION → 1.21:1 or 1:1.21
 	ARTWORK_RATIO: 3.2,
 	ORIENTATION: "horizontal", // "horizontal" | "vertical"
