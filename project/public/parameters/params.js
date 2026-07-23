@@ -63,7 +63,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 	// ---- Current selections (string keys or plain numbers) ----
 	current: {
 		population: 500000,
-		particleSize: 2.0,
+		particleSize: 0.75,
 		horizontalSpeed: "standard",
 		verticalSpeed: "standard",
 		innerFlowLevel: "standard",

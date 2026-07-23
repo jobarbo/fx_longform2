@@ -6,40 +6,31 @@
 const ENABLE_SHADERS = true;
 
 // UI toggles
-const SHOW_FPS_UI = false; // FPS overlay + FPS toggle button
-const SHOW_DOWNLOAD_UI = false; // Download button (mounted in panel)
-
-// Dev panels — debug/audio panel (key D) + shader effects panel (key E)
+const SHOW_FPS_UI = false;
+const SHOW_DOWNLOAD_UI = false;
 const ENABLE_DEV_PANELS = true;
-const PERSIST_SHADER_PANEL = true; // localStorage: keep shader panel edits across refresh
-const PERSIST_CONTROLS_PANEL = true; // localStorage: keep Controls panel edits across refresh
-const ENABLE_AUDIO = false; // false = no mic/chime input
+const PERSIST_SHADER_PANEL = true;
+const PERSIST_CONTROLS_PANEL = true;
+const ENABLE_AUDIO = false;
 const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first user gesture)
 
-// Canvas sizing — FORCE_SIZE true uses FIXED_WIDTH/HEIGHT; false uses viewport + ARTWORK_RATIO + ORIENTATION
+// Canvas sizing
 const CANVAS_CONFIG = {
 	BASE_WIDTH: 1000,
-	// Long : short edge (e.g. 1.21). Combined with ORIENTATION → 1.21:1 or 1:1.21
-	ARTWORK_RATIO: 1.0,
+	ARTWORK_RATIO: 3.2,
 	ORIENTATION: "horizontal", // "horizontal" | "vertical"
-	// Fraction of the shorter canvas edge — equal absolute border on all sides
-	ARTWORK_PADDING: 0.0,
-	WRAP_PADDING_FACTOR: 0.0,
+	EXTERNAL_FRAME_THICKNESS: 0.03,
+	ARTWORK_PADDING: 0.05,
+	WRAP_PADDING_FACTOR: 0.05,
 	SCALE_FACTOR_X: 1.0,
 	SCALE_FACTOR_Y: 1.0,
-	FORCE_SIZE: true,
+	FORCE_SIZE: false,
 	FIXED_WIDTH: 3840,
 	FIXED_HEIGHT: 1200,
-	// Shared by p5 mainCanvas, display/shader canvas, and shader pipeline
-	// (CURRENT_PARAMS.printDPI from the params UI overrides when set)
 	PIXEL_DENSITY: 1,
 	PIXEL_DENSITY_MOBILE: 1,
-	// Shader output framing (final pass only).
-	// fitCanvas: true = no crop (full texture). false = object-fit cover with width:height.
-	// matchArtwork: true = derive width/height from ARTWORK_RATIO + ORIENTATION (or FIXED_*).
 	SHADER_RENDER: {fitCanvas: false, matchArtwork: true, width: 1, height: 1},
-	// Master shader animation speed — 1.0 = default, 0.5 = half, 2.0 = double
-	SHADER_ANIMATION_SPEED: 2.0,
+	SHADER_ANIMATION_SPEED: 1.0,
 };
 
 // Alias for Mover (reads WRAP_PADDING_FACTOR as a global)
@@ -160,13 +151,11 @@ function resolveShaderRender() {
 
 function updateLayoutMetrics(canvasW, canvasH) {
 	ARTWORK_ASPECT = canvasW / canvasH;
-	console.log(ARTWORK_ASPECT);
 	ARTWORK_CANVAS_WIDTH = canvasW;
 	ARTWORK_CANVAS_HEIGHT = canvasH;
-	const baseHeight = CANVAS_CONFIG.BASE_WIDTH * ARTWORK_ASPECT;
-	const defaultSize = min(CANVAS_CONFIG.BASE_WIDTH, baseHeight);
+	// Scale from short edge so horizontal/vertical keep the same particle/noise density
 	DIM = min(canvasW, canvasH);
-	MULTIPLIER = DIM / defaultSize;
+	MULTIPLIER = DIM / CANVAS_CONFIG.BASE_WIDTH;
 }
 
 // ============================================================================
@@ -381,6 +370,11 @@ async function setup() {
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
 
+	// Deterministic shader seed without consuming fxrand (keeps gen identical with/without shaders)
+	if (sketchShadersEnabled() && shaderCanvas) {
+		shaderEffects.shaderSeed = rseed;
+	}
+
 	canvasSetup();
 
 	// Initialize from UI resolved values
@@ -466,7 +460,6 @@ function renderOutsideFrame() {
 	let s_bri = lastParticleColor.l;
 	let s_alpha = 1;
 	let compHue = lastParticleColor.h;
-	console.log(firstParticleColor);
 
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.noFill();
@@ -474,12 +467,16 @@ function renderOutsideFrame() {
 	const {x: padX, y: padY} = getArtworkPaddingNorm(mainCanvas.width, mainCanvas.height);
 	const baseRectW = mainCanvas.width * (1 - padX * 2);
 	const baseRectH = mainCanvas.height * (1 - padY * 2);
-	const rectShrink = baseRectW / 35;
+	const shortEdge = Math.min(mainCanvas.width, mainCanvas.height) || 1;
+	const frameThickness = Math.max(0, Number(CANVAS_CONFIG.EXTERNAL_FRAME_THICKNESS) || 0);
+	const rectShrink = shortEdge * frameThickness;
+	// Stroke weight scales with thickness; 0.03 ≈ old look (max stroke ~2)
+	const maxStroke = Math.max(0.1, frameThickness * (2 / 0.03));
 	for (let i = 0; i < 10000; i++) {
 		let randShrink = fxrand() * rectShrink;
 		let rectW = baseRectW + randShrink;
 		let rectH = baseRectH + randShrink;
-		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5, 2, 0.1, true));
+		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5 || 1, maxStroke, 0.1, true));
 		s_alpha = map(randShrink, rectShrink, rectShrink / 1.25, 100, 100, true);
 		s_sat = map(randShrink, rectShrink, 0, 30, 100, true);
 		s_bri = map(randShrink, rectShrink / 1.5, -rectShrink / 1.5, 20, 1, true);
@@ -658,6 +655,10 @@ window.applyGenerativeSettings = async function applyGenerativeSettings(settings
 	noiseSeed(locked.mainNoiseSeed);
 	rseed = locked.rseed;
 	nseed = locked.nseed;
+
+	if (sketchShadersEnabled() && shaderCanvas) {
+		shaderEffects.shaderSeed = rseed;
+	}
 
 	drawLoop?.stop();
 

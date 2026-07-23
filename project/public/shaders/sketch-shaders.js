@@ -467,12 +467,8 @@ class ShaderEffects {
 		const allowFpsUi = typeof SHOW_FPS_UI === "undefined" ? true : !!SHOW_FPS_UI;
 		this.showFPS = allowFpsUi && !isSafariMobileCheck && !isInIframeCheck;
 
-		// Initialize shader seed with fxhash if available
-		if (typeof fxrand === "function") {
-			this.shaderSeed = fxrand() * 10000;
-		} else {
-			this.shaderSeed = Math.random() * 10000;
-		}
+		// Do NOT call fxrand here — it would shift the generative stream vs ENABLE_SHADERS off.
+		// sketch.js assigns shaderSeed from rseed after composition seeds are drawn.
 
 		// Initialize shader pipeline with enabled effects
 		const enabledEffects = Object.keys(this.effectsConfig).filter((name) => this.effectsConfig[name].enabled);
@@ -1246,7 +1242,8 @@ class ShaderEffects {
 			this.p5Instance.clear();
 		}
 
-		this.shaderManager.apply("copy", {uTexture: this.mainCanvas}, this.p5Instance).drawFullscreenQuad(this.p5Instance);
+		// blit() applies the Graphics→WEBGL Y flip + optional render-ratio crop
+		this.shaderManager.blit(this.mainCanvas, this.p5Instance, true);
 
 		return this;
 	}
