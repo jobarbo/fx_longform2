@@ -16,14 +16,14 @@ const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first
 
 // Canvas sizing
 const CANVAS_CONFIG = {
-	BASE_WIDTH: 1000,
+	BASE_WIDTH: 500,
 	ARTWORK_RATIO: 3.2,
 	ORIENTATION: "horizontal", // "horizontal" | "vertical"
 	EXTERNAL_FRAME_THICKNESS: 0.03,
-	ARTWORK_PADDING: 0.05,
+	ARTWORK_PADDING: 0.0,
 	WRAP_PADDING_FACTOR: 0.05,
-	SCALE_FACTOR_X: 1.0,
-	SCALE_FACTOR_Y: 1.0,
+	SCALE_FACTOR_X: 1.1,
+	SCALE_FACTOR_Y: 1.1,
 	FORCE_SIZE: false,
 	FIXED_WIDTH: 3840,
 	FIXED_HEIGHT: 1200,
@@ -384,7 +384,8 @@ async function setup() {
 
 	INIT(rseed, nseed);
 
-	// Inform UI about available palettes + selected palette (after INIT chooses it)
+	// Inform UI about available palettes. Pass the preference ("" = random), not the
+	// resolved name, so the select stays on "(random)" across refresh.
 	try {
 		window.dispatchEvent(
 			new CustomEvent("swatches:ready", {
@@ -394,7 +395,8 @@ async function setup() {
 						.getPaletteNames()
 						.filter((name) => paletteManager.getConfig(name).source === "local")
 						.sort(),
-					selected: currentPaletteName,
+					selected: window.PARAMS_UI?.current?.paletteName ?? "",
+					resolved: currentPaletteName,
 				},
 			}),
 		);
@@ -565,7 +567,8 @@ function INIT(rseed, nseed) {
 	const sortedFileNames = [...fileNames].sort();
 
 	// Allow UI to force palette selection by name (stable, may be a local palette),
-	// otherwise default to deterministic selection
+	// otherwise default to deterministic selection. Keep "" as "(random)" preference —
+	// never write the resolved name back into PARAMS_UI or random won't persist.
 	const forcedPaletteName = CURRENT_PARAMS.paletteName;
 	if (forcedPaletteName && paletteManager.getPaletteNames().includes(forcedPaletteName)) {
 		currentPaletteName = forcedPaletteName;
@@ -574,10 +577,6 @@ function INIT(rseed, nseed) {
 		const paletteSelectionRand = fxrand();
 		selectedPalette = Math.floor(paletteSelectionRand * sortedFileNames.length);
 		currentPaletteName = sortedFileNames[selectedPalette];
-		if (window.PARAMS_UI?.current) {
-			window.PARAMS_UI.current.paletteName = currentPaletteName;
-			if (typeof window.resolveParams === "function") window.resolveParams();
-		}
 	}
 
 	baseHSLPalette = paletteManager.getPalette(currentPaletteName);

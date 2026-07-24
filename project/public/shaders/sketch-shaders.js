@@ -355,6 +355,34 @@ class ShaderEffects {
 					uThresholdSmooth: "thresholdSmooth",
 				},
 			},
+			wave: {
+				enabled: false,
+				timeMultiplier: 1.1,
+				center: [0.5, 0.5], // wave origin in normalized UV (0–1)
+				amount: 1.0, // Overall mix [0..1]
+				spiralAmount: 1.0, // Spiral displacement strength
+				spiralFrequency: 12.0, // Ring density
+				spiralSpeed: 1.0, // Spiral animation rate
+				falloff: 1.414, // Radial falloff (√2 = full diagonal)
+				pulseAmount: 0.0, // Extra pulse modulation (0 = legacy look)
+				pulseSpeed: 1.7, // Pulse oscillation rate
+				waveAmount: 0.0, // Cartesian ripple (0 ≈ legacy nearly-off)
+				waveFrequency: 1.0, // Ripple spatial frequency
+				uniforms: {
+					uTime: "shaderTime * timeMultiplier",
+					uResolution: "[width, height]",
+					uCenter: "center",
+					uAmount: "amount",
+					uSpiralAmount: "spiralAmount",
+					uSpiralFrequency: "spiralFrequency",
+					uSpiralSpeed: "spiralSpeed",
+					uFalloff: "falloff",
+					uPulseAmount: "pulseAmount",
+					uPulseSpeed: "pulseSpeed",
+					uWaveAmount: "waveAmount",
+					uWaveFrequency: "waveFrequency",
+				},
+			},
 		};
 
 		// Default templates for create-from-dropdown in the shader panel
@@ -436,6 +464,7 @@ class ShaderEffects {
 			shaderManager.loadShader("crtWarp", "crt-warp/fragment.frag", "crt-warp/vertex.vert"),
 			shaderManager.loadShader("blur", "blur/fragment.frag", "blur/vertex.vert"),
 			shaderManager.loadShader("glitchDisplacement", "glitch-displacement/fragment.frag", "glitch-displacement/vertex.vert"),
+			shaderManager.loadShader("wave", "wave/fragment.frag", "wave/vertex.frag"),
 		]);
 
 		this.shaderManager = shaderManager;
