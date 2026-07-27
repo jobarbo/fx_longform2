@@ -4,9 +4,11 @@
 
 // Shader effects toggle
 const ENABLE_SHADERS = true;
+const ENABLE_DEV_PANELS = true;
+const PERSIST_SHADER_PANEL = true;
 
 // Padding constants - centralized for consistency
-const BASE_PADDING = 0.02; // Base padding for artwork bounds (used in INIT)
+const BASE_PADDING = 0.1; // Base padding for artwork bounds (used in INIT)
 const WRAP_PADDING_FACTOR = 0.015; // Wrap padding factor for particle movement bounds (used in Mover class)
 
 // Animation configuration
@@ -22,7 +24,7 @@ let debugBounds = false;
 // ============================================================================
 
 // Base artwork dimensions (width: 1000, height: 1000 * 1.25)
-const ARTWORK_RATIO = 1.25;
+const ARTWORK_RATIO = 1.77;
 const BASE_WIDTH = 1000;
 const BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
 const DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
@@ -40,6 +42,7 @@ let H = window.innerHeight; // Window height
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects
 let pixel_density; // Calculated in setup() after windowWidth/Height are available
+let panelLoopId = null;
 
 // ============================================================================
 // ANIMATION STATE
@@ -120,14 +123,26 @@ async function setup() {
 	// Create main canvas for the artwork (will also handle debug overlays)
 	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
 
+	// Set up the main canvas rendering properties before shader setup
+	mainCanvas.pixelDensity(pixel_density);
+
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
 	if (shadersEnabled()) {
 		try {
 			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
-			// Initialize shader effects system
-			shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
-			// Set up shader canvas pixel density
 			shaderCanvas.pixelDensity(pixel_density);
+
+			// Restore panel edits from localStorage before setup
+			let restoredPanel = false;
+			if (PERSIST_SHADER_PANEL && typeof shaderEffects.loadPersistedPanelConfig === "function") {
+				restoredPanel = shaderEffects.loadPersistedPanelConfig();
+				if (restoredPanel) {
+					console.log("[sketch] restored shader panel config from localStorage");
+				}
+			}
+
+			// Initialize shader effects system
+			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
 			console.log("Shader effects initialized successfully");
 		} catch (error) {
 			console.warn("Failed to initialize shader effects:", error);
@@ -143,9 +158,6 @@ async function setup() {
 		createCanvas(DIM / ARTWORK_RATIO, DIM);
 		pixelDensity(pixel_density);
 	}
-
-	// Set up the main canvas rendering properties
-	mainCanvas.pixelDensity(pixel_density);
 
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
@@ -221,14 +233,37 @@ async function setup() {
 	// Setup mobile controls
 	setupMobileControls();
 
+	if (ENABLE_DEV_PANELS) {
+		setupDevPanels();
+	}
+
 	// Log available controls and performance settings
 	console.log("Controls: Press 'D' to toggle debug bounds (green=padding, red=movement)");
+	console.log("Controls: Press 'E' to toggle shader effects panel");
 	if (shadersEnabled() && shaderCanvas) {
 		console.log(`Shader performance: Frame rate limited to ${shaderEffects.getFrameRate()}fps to match p5.js draw speed`);
 		console.log(`Use shaderEffects.setFrameRate(fps) to adjust the frame rate to match your p5.js settings`);
 	} else {
 		console.log("Running without shader effects");
 	}
+}
+
+function setupDevPanels() {
+	if (typeof shaderEffectsPanel !== "undefined" && shadersEnabled() && shaderCanvas) {
+		shaderEffectsPanel.init(shaderEffects);
+	}
+	startPanelLoop();
+}
+
+// Panels run on their own rAF loop so they stay live independently of the
+// artwork draw loop (which can stop on completion).
+function startPanelLoop() {
+	if (panelLoopId !== null) return;
+	const tick = () => {
+		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.update();
+		panelLoopId = requestAnimationFrame(tick);
+	};
+	panelLoopId = requestAnimationFrame(tick);
 }
 
 function INIT(rseed, nseed) {
@@ -377,10 +412,20 @@ function setupMobileControls() {
 }
 // Key controls for debugging and performance monitoring
 function keyPressed() {
+	// Don't hijack keys while typing in panel inputs
+	const tag = document.activeElement?.tagName;
+	if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || document.activeElement?.isContentEditable) {
+		return;
+	}
+
 	if (key === "D" || key === "d") {
 		debugBounds = !debugBounds;
 		console.log("Debug bounds toggled: ", debugBounds);
 		updateDebugOverlay();
+	}
+
+	if (key === "E" || key === "e") {
+		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.toggle();
 	}
 
 	if (key === "F" || key === "f") {
@@ -395,7 +440,7 @@ function keyPressed() {
 	}
 
 	if (key === "G" || key === "g") {
-		if (shadersEnabled()) {
+		if (shadersEnabled() && shaderEffects.effectsConfig.symmetry) {
 			const currentDebug = shaderEffects.effectsConfig.symmetry.debug;
 			const newDebug = currentDebug > 0.5 ? 0.0 : 1.0;
 			shaderEffects.updateEffectParam("symmetry", "debug", newDebug);
