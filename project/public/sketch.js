@@ -16,8 +16,8 @@ const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first
 
 // Canvas sizing
 const CANVAS_CONFIG = {
-	BASE_WIDTH: 500,
-	ARTWORK_RATIO: 3.2,
+	BASE_WIDTH: 1000,
+	ARTWORK_RATIO: 1.0,
 	ORIENTATION: "horizontal", // "horizontal" | "vertical"
 	EXTERNAL_FRAME_THICKNESS: 0.03,
 	ARTWORK_PADDING: 0.0,

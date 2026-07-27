@@ -266,6 +266,7 @@ class ShaderEffects {
 					uCellSize: "cellSize",
 					uGapOpacity: "gapOpacity",
 					uRgbOpacity: "rgbOpacity",
+					uRgbGain: "rgbGain",
 					uDotRadius: "dotRadius",
 					uDotFalloff: "dotFalloff",
 					uFilterMode: "filterMode",
@@ -321,8 +322,9 @@ class ShaderEffects {
 			glitchDisplacement: {
 				enabled: false,
 				timeMultiplier: 21.0,
-				intensity: 6.6,
-				lineDensity: 12310.0,
+				// intensity / lineDensity are relative to REF=1000px (BASE_WIDTH)
+				intensity: 6.6, // horizontal shift in px @ 1000 wide
+				lineDensity: 1000.0, // bands across 1000px height (floors at 1px @ REF)
 				speed: 100.0,
 				threshold: 0.85,
 				uniforms: {
@@ -1190,7 +1192,16 @@ class ShaderEffects {
 
 			// Handle property references from the effect config
 			if (value in effect) {
-				return effect[value];
+				const resolved = effect[value];
+				if (resolved === undefined || resolved === null) {
+					if (value === "rgbGain") return [1.0, 1.0, 1.0];
+					if (value === "center" || value === "blurCenter") return [0.5, 0.5];
+					return 0;
+				}
+				if (Array.isArray(resolved) && resolved.length === 0 && value === "rgbGain") {
+					return [1.0, 1.0, 1.0];
+				}
+				return resolved;
 			}
 
 			// Handle global variable references
