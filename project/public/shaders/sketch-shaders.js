@@ -18,6 +18,10 @@
  * 4. To update time: shaderEffects.updateTime()
  * 5. Master speed: set SHADER_ANIMATION_SPEED in sketch.js (or shaderEffects.setAnimationSpeed())
  */
+
+// Matches sketch.js BASE_WIDTH / glitch-displacement REF — pixel params are authored at this short-edge size.
+const SHADER_SIZE_REF = 1000;
+
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
@@ -78,16 +82,16 @@ class ShaderEffects {
 			collage: {
 				enabled: false,
 				amount: 1.0,
-				tileSize: 255.0,
+				tileSize: 255.0, // px @ short-edge 1000 (× sizeScale)
 				tileSize2: 50.0,
 				tileSize3: 100.0,
 				sizeNoise: 23.0,
 				rotNoise: 24.0,
 				uniforms: {
 					uSeed: "shaderSeed + 2222.0",
-					uTileSize1: "tileSize",
-					uTileSize2: "tileSize2",
-					uTileSize3: "tileSize3",
+					uTileSize1: "tileSize * sizeScale",
+					uTileSize2: "tileSize2 * sizeScale",
+					uTileSize3: "tileSize3 * sizeScale",
 					uSizeNoise: "sizeNoise",
 					uRotNoise: "rotNoise",
 					uAmount: "amount",
@@ -135,8 +139,8 @@ class ShaderEffects {
 				thresholdHigh: 0.85,
 				invertGate: 0.0, // sort what falls OUTSIDE the band instead
 				invertOrder: 0.0, // descending sort
-				maxSpan: 24.0, // max span length in canvas pixels (scaled by renderDensity)
-				spanStep: 1.0, // sampling stride in canvas pixels — main perf lever
+				maxSpan: 24.0, // px @ short-edge 1000 (× sizeScale)
+				spanStep: 1.0, // sampling stride @ REF 1000 — main perf lever
 				spanJitter: 0.7, // irregularity of the block boundaries
 				edgeWobble: 0.35, // bends the block seams into curves
 				organicAmount: 0.6, // master de-regulariser: span, threshold, phase per line
@@ -170,8 +174,8 @@ class ShaderEffects {
 					uThresholdHigh: "thresholdHigh",
 					uInvertGate: "invertGate",
 					uInvertOrder: "invertOrder",
-					uMaxSpan: "maxSpan * renderDensity",
-					uSpanStep: "spanStep * renderDensity",
+					uMaxSpan: "maxSpan * sizeScale",
+					uSpanStep: "spanStep * sizeScale",
 					uSpanJitter: "spanJitter",
 					uEdgeWobble: "edgeWobble",
 					uOrganicAmount: "organicAmount",
@@ -246,6 +250,7 @@ class ShaderEffects {
 					uProgress: "loadingProgress", // Progress from 0.0 (0%) to 1.0 (100%)
 					uSeed: "shaderSeed + 8888.0",
 					uResolution: "[width, height]",
+					uRenderDensity: "sizeScale",
 				},
 			},
 			zoom: {
@@ -296,7 +301,7 @@ class ShaderEffects {
 				levels: 1.0,
 				mix: 1.0,
 				strength: 1.0,
-				scale: 1.0,
+				scale: 1.0, // pattern cell px @ short-edge 1000 (× sizeScale)
 				colorMode: 1.0, // 0=luma quantize, 1=per-channel quantize
 				uniforms: {
 					uResolution: "[width, height]",
@@ -304,7 +309,7 @@ class ShaderEffects {
 					uLevels: "levels",
 					uMix: "mix",
 					uStrength: "strength",
-					uScale: "scale",
+					uScale: "scale * sizeScale",
 					uColorMode: "colorMode",
 					uSeed: "shaderSeed + 4321.0",
 				},
@@ -332,7 +337,7 @@ class ShaderEffects {
 			crtDisplay: {
 				enabled: false,
 				brightness: 0.0,
-				cellSize: 2.0,
+				cellSize: 2.0, // px @ short-edge 1000 (× sizeScale)
 				gapOpacity: 0.0,
 				rgbOpacity: 0.0,
 				rgbGain: [1.0, 1.0, 1.0],
@@ -342,7 +347,7 @@ class ShaderEffects {
 				uniforms: {
 					uResolution: "[width, height]",
 					uBrightness: "brightness",
-					uCellSize: "cellSize",
+					uCellSize: "cellSize * sizeScale",
 					uGapOpacity: "gapOpacity",
 					uRgbOpacity: "rgbOpacity",
 					uRgbGain: "rgbGain",
@@ -354,7 +359,8 @@ class ShaderEffects {
 			blur: {
 				enabled: false,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
-				blurAmount: 43.0, // Blur radius/intensity in pixels
+				// Gaussian/directional: px @ short-edge 1000 (× sizeScale). Radial: UV units ×0.01 (no scale).
+				blurAmount: 43.0,
 				blurQuality: 120.0, // Sampling quality (1-8, higher = better but slower)
 				blurDirection: 0, // Angle in radians for directional mode
 				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
@@ -365,7 +371,8 @@ class ShaderEffects {
 				uniforms: {
 					uResolution: "[width, height]",
 					uBlurMode: "blurMode",
-					uBlurAmount: "blurAmount",
+					// Modes 0/2 are texel-sized; mode 1 is UV-based and already size-stable.
+					uBlurAmount: "(blurMode < 0.5 || blurMode > 1.5) ? (blurAmount * sizeScale) : blurAmount",
 					uBlurQuality: "blurQuality",
 					uBlurDirection: "blurDirection",
 					uBlurCenter: "blurCenter",
@@ -890,6 +897,32 @@ class ShaderEffects {
 	}
 
 	/**
+	 * Scale factors that map panel pixel params (authored @ SHADER_SIZE_REF short edge)
+	 * onto the current framebuffer.
+	 *
+	 * viewportScale ≈ sketch MULTIPLIER (min logical edge / 1000).
+	 * renderDensity = pixelDensity × panel densityScale.
+	 * sizeScale = viewportScale × renderDensity — use this for px → physical uniforms.
+	 *
+	 * @returns {{pixelDensity: number, densityScale: number, renderDensity: number, viewportScale: number, sizeScale: number}}
+	 */
+	getSizeScaleFactors() {
+		const pixelDensity = this.mainCanvas?.pixelDensity?.() ?? this.pixelDensity ?? 1;
+		const densityScale = this.shaderPipeline?.getDensityScale?.() ?? 1;
+		const renderDensity = pixelDensity * densityScale;
+		const logicalW = this.mainCanvas?.width ?? SHADER_SIZE_REF;
+		const logicalH = this.mainCanvas?.height ?? SHADER_SIZE_REF;
+		const viewportScale = Math.min(logicalW, logicalH) / SHADER_SIZE_REF;
+		return {
+			pixelDensity,
+			densityScale,
+			renderDensity,
+			viewportScale,
+			sizeScale: viewportScale * renderDensity,
+		};
+	}
+
+	/**
 	 * Update pixel density and rebuild intermediate shader buffers.
 	 * @param {number} density
 	 */
@@ -1279,8 +1312,7 @@ class ShaderEffects {
 			if (value.includes("+") || value.includes("-") || value.includes("*") || value.includes("/")) {
 				try {
 					const [physW, physH] = this.getPhysicalResolution();
-					const pixelDensity = this.mainCanvas?.pixelDensity?.() ?? this.pixelDensity ?? 1;
-					const densityScale = this.shaderPipeline?.getDensityScale?.() ?? 1;
+					const scales = this.getSizeScaleFactors();
 					// Create a safe evaluation context with available variables
 					const evalContext = {
 						shaderTime: this.shaderTime,
@@ -1288,11 +1320,11 @@ class ShaderEffects {
 						width: physW,
 						height: physH,
 						...effect, // Include effect properties
-						pixelDensity,
-						densityScale,
-						// Effective framebuffer density — scale canvas-unit pixel params by this
-						// so effects like asdfSort keep the same visual size across DPR / panel scale.
-						renderDensity: pixelDensity * densityScale,
+						pixelDensity: scales.pixelDensity,
+						densityScale: scales.densityScale,
+						renderDensity: scales.renderDensity,
+						viewportScale: scales.viewportScale,
+						sizeScale: scales.sizeScale,
 					};
 
 					// Replace variable names with their values
@@ -1330,6 +1362,16 @@ class ShaderEffects {
 			if (value === "loadingProgress") return this.loadingProgress;
 			if (value === "width") return this.getPhysicalResolution()[0];
 			if (value === "height") return this.getPhysicalResolution()[1];
+			if (
+				value === "renderDensity" ||
+				value === "pixelDensity" ||
+				value === "densityScale" ||
+				value === "viewportScale" ||
+				value === "sizeScale"
+			) {
+				const scales = this.getSizeScaleFactors();
+				return scales[value];
+			}
 
 			// Try to evaluate as a simple variable reference
 			try {
