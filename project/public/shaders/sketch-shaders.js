@@ -120,7 +120,14 @@ class ShaderEffects {
 			// library/shaders/asdf-sort/README.md for the algorithm and perf levers.
 			asdfSort: {
 				enabled: false,
-				angle: 0.0, // 0 = sort columns, Math.PI/2 = sort rows
+				// Tick any combination. One axis = uniform. Several = the image is split
+				// into patches, each sorting along one of the enabled axes.
+				axisVertical: 1.0,
+				axisHorizontal: 0.0,
+				axisDiagonal: 0.0,
+				axisAntiDiagonal: 0.0,
+				axisRegionScale: 4.0, // patch size when several axes are on
+				angle: 0.0, // extra rotation on top of the chosen axis
 				center: [0.5, 0.5], // pivot the sort axis turns around
 				sortKey: 0.0, // 0 luma, 1 hue, 2 saturation, 3 lightness, 4 R, 5 G, 6 B
 				gateKey: 0.0, // same enum — key used by the threshold test
@@ -131,9 +138,10 @@ class ShaderEffects {
 				maxSpan: 24.0, // max span length in pixels
 				spanStep: 1.0, // sampling stride in pixels — main perf lever
 				spanJitter: 0.7, // irregularity of the block boundaries
+				edgeWobble: 0.35, // bends the block seams into curves
 				organicAmount: 0.6, // master de-regulariser: span, threshold, phase per line
 				organicScale: 3.0,
-				organicSpeed: 0.3,
+				organicSpeed: 0.0, // > 0 makes the organic fields drift — an animation knob
 				animateThreshold: 0.0,
 				thresholdAnimMode: 0.0, // 0 sine, 1 noise, 2 FBM
 				thresholdAnimAmount: 0.15,
@@ -149,6 +157,11 @@ class ShaderEffects {
 				_phase: 0.0, // accumulated clock (see updatePhaseAccumulators)
 				uniforms: {
 					uTime: "_phase",
+					uAxisVertical: "axisVertical",
+					uAxisHorizontal: "axisHorizontal",
+					uAxisDiagonal: "axisDiagonal",
+					uAxisAntiDiagonal: "axisAntiDiagonal",
+					uAxisRegionScale: "axisRegionScale",
 					uAngle: "angle",
 					uCenter: "center",
 					uSortKey: "sortKey",
@@ -160,6 +173,7 @@ class ShaderEffects {
 					uMaxSpan: "maxSpan",
 					uSpanStep: "spanStep",
 					uSpanJitter: "spanJitter",
+					uEdgeWobble: "edgeWobble",
 					uOrganicAmount: "organicAmount",
 					uOrganicScale: "organicScale",
 					uOrganicSpeed: "organicSpeed",
