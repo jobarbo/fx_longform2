@@ -63,11 +63,15 @@ class ShaderEffects {
 				amount: 0.1,
 				timeMultiplier: 0.0,
 				octave: 4.0,
+				noiseScale: 15.0, // shader falls back to 15.0 when 0
+				emberMode: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed",
 					uAmount: "amount",
 					uOctave: "octave",
+					uNoiseScale: "noiseScale",
+					uEmberMode: "emberMode",
 				},
 			},
 
@@ -79,7 +83,6 @@ class ShaderEffects {
 				tileSize3: 100.0,
 				sizeNoise: 23.0,
 				rotNoise: 24.0,
-				timeMultiplier: 0.0,
 				uniforms: {
 					uSeed: "shaderSeed + 2222.0",
 					uTileSize1: "tileSize",
@@ -241,10 +244,12 @@ class ShaderEffects {
 				zoomInAmount: 4.5, // Max zoom when animating
 				animateZoom: 0.0, // 0.0 = static, 1.0 = animate between out/in
 				easingMode: 4.0, // 0=sine, 1=linear, 2=ease-in, 3=ease-out, 4=ease-in-out, 5=bounce
+				outOfBoundsMode: 0.0, // 0=black, 1=clamp edge, 2=mirror tile, 3=transparent
 				center: [0.5, 0.5], // Zoom center point (normalized 0-1)
 				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
+					uOutOfBoundsMode: "outOfBoundsMode",
 					uZoomSpeed: "zoomSpeed",
 					uZoomAmount: "zoomAmount",
 					uZoomOutAmount: "zoomOutAmount",
@@ -972,6 +977,10 @@ class ShaderEffects {
 			for (const [k, v] of Object.entries(saved)) {
 				if (k === "uniforms" || k.startsWith("_")) continue;
 				if (k === "translationPhaseX" || k === "translationPhaseY" || k === "rotationPhase") continue;
+				// Only restore params the current template still defines. Without this,
+				// a param removed from a shader stays alive forever in localStorage and
+				// comes back as a panel slider wired to nothing.
+				if (!(k in template)) continue;
 				merged[k] = typeof v === "object" && v !== null ? JSON.parse(JSON.stringify(v)) : v;
 			}
 			if ("translationPhaseX" in merged) merged.translationPhaseX = 0;
