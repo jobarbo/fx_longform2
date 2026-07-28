@@ -876,11 +876,17 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Physical canvas resolution in pixels (logical size × pixel density).
+	 * Physical resolution of the shader render target, in pixels.
+	 *
+	 * This is what `uResolution` reports, so it has to describe the target the shaders
+	 * actually write to — not the source artwork. When the panel renders the shader stage
+	 * at a fraction of the sketch density, every pixel-based effect (blur radius, sort
+	 * span, grain) has to follow, or it would silently change scale.
 	 */
 	getPhysicalResolution() {
 		const density = this.mainCanvas?.pixelDensity?.() ?? this.pixelDensity ?? 1;
-		return [this.mainCanvas.width * density, this.mainCanvas.height * density];
+		const scale = this.shaderPipeline?.getDensityScale?.() ?? 1;
+		return [this.mainCanvas.width * density * scale, this.mainCanvas.height * density * scale];
 	}
 
 	/**
