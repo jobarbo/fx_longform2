@@ -266,6 +266,13 @@ async function setup() {
 		createDownloadButton();
 	}
 
+	// Publish --art-w / --art-h so style.css can contain-fit the canvas to the viewport.
+	// Without this first call the vars only appear after a resize, and the canvas would
+	// fall back to a 1:1 ratio until then.
+	if (typeof fitDisplayToViewport === "function") {
+		fitDisplayToViewport();
+	}
+
 	// Start the custom draw loop
 	customDraw();
 

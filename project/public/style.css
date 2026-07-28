@@ -24,25 +24,17 @@ main {
 	align-items: center;
 	justify-content: center;
 	--bodymargin: 10px;
-	--min: min(100vw);
-	--hContent: var(--min);
-	--wContent: var(--min);
 }
+
 canvas.p5Canvas {
 	display: block;
-	padding-left: 0;
-	padding-right: 0;
-	padding-top: 0;
-	padding-bottom: 0;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 0;
-	margin-bottom: 0;
+	padding: 0;
+	margin: auto;
+	aspect-ratio: var(--art-w, 1) / var(--art-h, 1);
+	width: min(100vw, calc(100vh * var(--art-w, 1) / var(--art-h, 1))) !important;
 	height: auto !important;
-	max-width: var(--wContent);
-	max-height: var(--hContent);
+	max-width: 100vw;
 	max-height: 100vh;
-	width: auto !important;
 }
 
 /* Debug bounds overlay */
@@ -567,7 +559,6 @@ canvas.p5Canvas {
 	accent-color: #6ec8ff;
 	cursor: pointer;
 }
-
 
 /* Crisp-pixels toggle (shader panel "crisp pixels" checkbox).
    Default render is smooth — shaderEffects.setCrispPixels(false) adds .is-smooth. */
