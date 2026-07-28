@@ -10,7 +10,11 @@ class Mover {
 		this.initAlpha = 100; // Set opacity
 		this.a = this.initAlpha;
 		this.currentColor = this.palette[this.colorIndex];
-		this.s = random([0.75]) * MULTIPLIER;
+		// Scaled by pixel density so the particles keep the same visual weight — see
+		// particleDensityScale() in sketch.js for why the raw size does not.
+		const baseSize = typeof PARTICLE_SIZE !== "undefined" ? PARTICLE_SIZE : 0.75;
+		const densityScale = typeof particleDensityScale === "function" ? particleDensityScale() : 1;
+		this.s = random([baseSize]) * MULTIPLIER * densityScale;
 		this.scl1 = scl1;
 		this.scl2 = scl2;
 		this.scl3 = scl3;

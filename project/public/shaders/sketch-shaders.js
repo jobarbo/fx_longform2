@@ -54,7 +54,7 @@ class ShaderEffects {
 
 		// NEAREST sampling + CSS pixelated when true (togglable in shader panel).
 		// Default false to preserve this project's smooth (LINEAR) rendering.
-		this.crispPixels = false;
+		this.crispPixels = true;
 
 		// Effects configuration - customize these for your sketch
 		this.effectsConfig = {
