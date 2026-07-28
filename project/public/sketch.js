@@ -46,46 +46,10 @@ const WRAP_PADDING_FACTOR = CANVAS_CONFIG.WRAP_PADDING_FACTOR;
 const BASE_PADDING = CANVAS_CONFIG.ARTWORK_PADDING;
 
 // Particle size, in canvas units at PARTICLE_DPI_REFERENCE density
+// (curve + defaults in library/utils/utils.js → particleDensityScale)
 const PARTICLE_SIZE = 0.75;
-const PARTICLE_DPI_REFERENCE = 4; // the density PARTICLE_SIZE is expressed at — free to change
-const PARTICLE_DPI_COMPENSATION = 0.7; // 0 = no compensation (raw canvas units)
-const PARTICLE_DPI_CALIBRATED_AT = 2; // density the curve below was measured against — do not change
-
-/**
- * How much to grow a particle to keep its visual weight constant across pixel densities.
- *
- * A particle is a tiny fillRect, and the same canvas-unit size does NOT read the same at
- * every density. Below one device pixel the rect is inflated to the pixel floor and its
- * antialiased edges blend rather than overwrite, so the field builds up much faster;
- * above it the rects are crisp opaque blocks that simply cover each other. Measured on a
- * 20k-particle field, coverage runs 26.6% at density 1, 15.5% at 2 and 11.8% at 5 — for
- * geometrically identical particles.
- *
- * `1 + k * (1/2 - 1/density)` fits that curve with a single knob. k was calibrated by
- * measurement: at a reference of 4 it is flat within 0.6% across densities 2 to 8
- * (12.30% → 12.37%, against 15.49% → 11.36% uncompensated).
- *
- * Coverage saturates, so the best k drifts a little with the reference — it was 0.6 for a
- * reference of 2 (which sits at ~15% coverage) and 0.7 for 4 (~12%). Re-measure if you
- * move the reference far.
- *
- * The curve is then divided by its own value at the reference density, so the reference is
- * a pure renormalisation: moving it rescales every density by one constant and never
- * disturbs the ratios between them. Folding the reference into the curve instead — as
- * `1 + k * (1/ref - 1/density)` — would shift it additively and quietly break the
- * calibration (an 11% error at density 1 for a reference of 4).
- *
- * Density 1 is a different regime — the rect is below the pixel floor whatever size it is
- * asked for — and stays about a third heavier. It only applies to the Safari mobile
- * fallback; correcting it too would need a separate branch, not a different k.
- *
- * @param {number} [density] - Pixel density (defaults to the sketch's)
- * @returns {number} Multiplier to apply to PARTICLE_SIZE
- */
-function particleDensityScale(density = typeof pixel_density !== "undefined" ? pixel_density : PARTICLE_DPI_REFERENCE) {
-	const curve = (d) => 1 + PARTICLE_DPI_COMPENSATION * (1 / PARTICLE_DPI_CALIBRATED_AT - 1 / Math.max(d, 0.25));
-	return curve(density || PARTICLE_DPI_REFERENCE) / curve(PARTICLE_DPI_REFERENCE);
-}
+const PARTICLE_DPI_REFERENCE = 4; // density PARTICLE_SIZE is expressed at
+const PARTICLE_DPI_COMPENSATION = 0.7; // 0 = no compensation; omit either to use utils defaults
 
 // Animation configuration
 const maxFrames = 25;
