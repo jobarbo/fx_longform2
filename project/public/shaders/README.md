@@ -66,6 +66,22 @@ function draw() {
 }
 ```
 
+## Available Effects
+
+All effects registered in `effectsConfig` show up in the shader panel (add / clone / reorder).
+Two of them are easy to confuse:
+
+- **`pixelSort`** (`library/shaders/pixel-sort`) — a brightness-weighted directional
+  **smear**. It displaces pixels along a noisy direction; it does not sort anything. Cheap.
+- **`asdfSort`** (`library/shaders/asdf-sort`) — a **real** pixel sort after Kim Asendorf's
+  ASDF algorithm: spans passing a threshold test are actually permuted, ordered by luma /
+  hue / saturation / lightness / R / G / B. Animated via the threshold band (global pulse
+  or perpendicular sweep), the sort angle, and the span length. `organicAmount` is the
+  knob to reach for when the result looks too regular — it gives every line its own span
+  length, threshold and animation phase. See
+  [asdf-sort/README.md](../library/shaders/asdf-sort/README.md) for the algorithm and the
+  `maxSpan` / `spanStep` performance levers.
+
 ## Configuration
 
 ### Customizing Shaders
@@ -123,8 +139,18 @@ uniforms: {
     uSeed: "shaderSeed + 777.0",             // Adds offset to shaderSeed
     uAmount: "amount",                        // References effect.amount property
     uResolution: "[width, height]",           // Special array syntax
+    uTime: "_phase",                          // Accumulated clock, see below
 }
 ```
+
+### Jump-free animation clock (`_phase`)
+
+`uTime: "shaderTime * timeMultiplier"` jumps whenever the multiplier is dragged in the
+panel — the whole product changes at once. Declare a numeric `_phase: 0.0` on the effect
+instead and use `uTime: "_phase"`: `updatePhaseAccumulators()` integrates
+`_phase += delta * timeMultiplier` every frame, so changing the speed only changes the
+derivative and the image stays continuous. Underscore-prefixed params are hidden from the
+panel automatically. Used by `asdfSort`; available to any effect.
 
 ## API Reference
 

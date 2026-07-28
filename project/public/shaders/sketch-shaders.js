@@ -112,6 +112,70 @@ class ShaderEffects {
 					uResolution: "[width, height]",
 				},
 			},
+			// Real pixel sort (Kim Asendorf's ASDF algorithm) — actually permutes pixels,
+			// unlike pixelSort above which is a directional smear. See
+			// library/shaders/asdf-sort/README.md for the algorithm and perf levers.
+			asdfSort: {
+				enabled: false,
+				angle: 0.0, // 0 = sort columns, Math.PI/2 = sort rows
+				sortKey: 0.0, // 0 luma, 1 hue, 2 saturation, 3 lightness, 4 R, 5 G, 6 B
+				gateKey: 0.0, // same enum — key used by the threshold test
+				thresholdLow: 0.25,
+				thresholdHigh: 0.85,
+				invertGate: 0.0, // sort what falls OUTSIDE the band instead
+				invertOrder: 0.0, // descending sort
+				maxSpan: 24.0, // max span length in pixels
+				spanStep: 1.0, // sampling stride in pixels — main perf lever
+				spanJitter: 0.7, // irregularity of the block boundaries
+				organicAmount: 0.6, // master de-regulariser: span, threshold, phase per line
+				organicScale: 3.0,
+				organicSpeed: 0.3,
+				animateThreshold: 0.0,
+				thresholdAnimMode: 0.0, // 0 sine, 1 noise, 2 FBM
+				thresholdAnimAmount: 0.15,
+				sweepMode: 0.0, // 0 off, 1 sine, 2 scroll ramp, 3 noise, 4 FBM
+				sweepAmount: 0.5,
+				sweepScale: 1.5,
+				sweepSpeed: 0.5,
+				animateAngle: 0.0,
+				angleSpeed: 0.2,
+				animateSpan: 0.0,
+				spanAnimAmount: 0.4,
+				spanAnimSpeed: 0.5,
+				mix: 1.0,
+				timeMultiplier: 1.0,
+				_phase: 0.0, // accumulated clock (see updatePhaseAccumulators)
+				uniforms: {
+					uTime: "_phase",
+					uAngle: "angle",
+					uAnimateAngle: "animateAngle",
+					uAngleSpeed: "angleSpeed",
+					uSortKey: "sortKey",
+					uGateKey: "gateKey",
+					uThresholdLow: "thresholdLow",
+					uThresholdHigh: "thresholdHigh",
+					uInvertGate: "invertGate",
+					uInvertOrder: "invertOrder",
+					uMaxSpan: "maxSpan",
+					uSpanStep: "spanStep",
+					uSpanJitter: "spanJitter",
+					uOrganicAmount: "organicAmount",
+					uOrganicScale: "organicScale",
+					uOrganicSpeed: "organicSpeed",
+					uAnimateThreshold: "animateThreshold",
+					uThresholdAnimMode: "thresholdAnimMode",
+					uThresholdAnimAmount: "thresholdAnimAmount",
+					uSweepMode: "sweepMode",
+					uSweepAmount: "sweepAmount",
+					uSweepScale: "sweepScale",
+					uSweepSpeed: "sweepSpeed",
+					uAnimateSpan: "animateSpan",
+					uSpanAnimAmount: "spanAnimAmount",
+					uSpanAnimSpeed: "spanAnimSpeed",
+					uMix: "mix",
+					uResolution: "[width, height]",
+				},
+			},
 			symmetry: {
 				enabled: false,
 				symmetryMode: 0.0, // 0=H 2fold, 1=V 2fold, 2=2-line 4fold, 3=4-line 8fold, 4=8-line 16fold, 5=16-line 32fold, 6=radial
@@ -451,6 +515,7 @@ class ShaderEffects {
 		shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert");
 		shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert");
 		shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert");
+		shaderManager.loadShader("asdfSort", "asdf-sort/fragment.frag", "asdf-sort/vertex.vert");
 		shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert");
 		shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert");
 		shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert");
@@ -1135,8 +1200,29 @@ class ShaderEffects {
 	 */
 	updateTime(delta = 0.01) {
 		this.shaderTime += delta;
+		this.updatePhaseAccumulators(delta);
 		this.updateTranslationPhases(delta);
 		this.updateRotationPhases(delta);
+		return this;
+	}
+
+	/**
+	 * Generic jump-free clock for any effect declaring a numeric `_phase`.
+	 *
+	 * Effects using `uTime: "shaderTime * timeMultiplier"` jump when the multiplier is
+	 * dragged in the panel (the whole product changes at once). Integrating the speed
+	 * instead keeps the value continuous — only its derivative changes.
+	 * `_phase` is underscore-prefixed so the panel hides it automatically.
+	 *
+	 * @param {number} delta - Time delta from advanceShaderClock()
+	 */
+	updatePhaseAccumulators(delta) {
+		for (const name in this.effectsConfig) {
+			const effect = this.effectsConfig[name];
+			if (!effect.enabled || typeof effect._phase !== "number") continue;
+			const speed = typeof effect.timeMultiplier === "number" ? effect.timeMultiplier : 1;
+			effect._phase += delta * speed;
+		}
 		return this;
 	}
 
