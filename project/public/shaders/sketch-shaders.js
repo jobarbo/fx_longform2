@@ -135,8 +135,8 @@ class ShaderEffects {
 				thresholdHigh: 0.85,
 				invertGate: 0.0, // sort what falls OUTSIDE the band instead
 				invertOrder: 0.0, // descending sort
-				maxSpan: 24.0, // max span length in pixels
-				spanStep: 1.0, // sampling stride in pixels — main perf lever
+				maxSpan: 24.0, // max span length in canvas pixels (scaled by renderDensity)
+				spanStep: 1.0, // sampling stride in canvas pixels — main perf lever
 				spanJitter: 0.7, // irregularity of the block boundaries
 				edgeWobble: 0.35, // bends the block seams into curves
 				organicAmount: 0.6, // master de-regulariser: span, threshold, phase per line
@@ -170,8 +170,8 @@ class ShaderEffects {
 					uThresholdHigh: "thresholdHigh",
 					uInvertGate: "invertGate",
 					uInvertOrder: "invertOrder",
-					uMaxSpan: "maxSpan",
-					uSpanStep: "spanStep",
+					uMaxSpan: "maxSpan * renderDensity",
+					uSpanStep: "spanStep * renderDensity",
 					uSpanJitter: "spanJitter",
 					uEdgeWobble: "edgeWobble",
 					uOrganicAmount: "organicAmount",
@@ -1279,6 +1279,8 @@ class ShaderEffects {
 			if (value.includes("+") || value.includes("-") || value.includes("*") || value.includes("/")) {
 				try {
 					const [physW, physH] = this.getPhysicalResolution();
+					const pixelDensity = this.mainCanvas?.pixelDensity?.() ?? this.pixelDensity ?? 1;
+					const densityScale = this.shaderPipeline?.getDensityScale?.() ?? 1;
 					// Create a safe evaluation context with available variables
 					const evalContext = {
 						shaderTime: this.shaderTime,
@@ -1286,6 +1288,11 @@ class ShaderEffects {
 						width: physW,
 						height: physH,
 						...effect, // Include effect properties
+						pixelDensity,
+						densityScale,
+						// Effective framebuffer density — scale canvas-unit pixel params by this
+						// so effects like asdfSort keep the same visual size across DPR / panel scale.
+						renderDensity: pixelDensity * densityScale,
 					};
 
 					// Replace variable names with their values
