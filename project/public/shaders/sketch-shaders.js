@@ -121,6 +121,7 @@ class ShaderEffects {
 			asdfSort: {
 				enabled: false,
 				angle: 0.0, // 0 = sort columns, Math.PI/2 = sort rows
+				center: [0.5, 0.5], // pivot the sort axis turns around
 				sortKey: 0.0, // 0 luma, 1 hue, 2 saturation, 3 lightness, 4 R, 5 G, 6 B
 				gateKey: 0.0, // same enum — key used by the threshold test
 				thresholdLow: 0.25,
@@ -140,8 +141,6 @@ class ShaderEffects {
 				sweepAmount: 0.5,
 				sweepScale: 1.5,
 				sweepSpeed: 0.5,
-				animateAngle: 0.0,
-				angleSpeed: 0.2,
 				animateSpan: 0.0,
 				spanAnimAmount: 0.4,
 				spanAnimSpeed: 0.5,
@@ -151,8 +150,7 @@ class ShaderEffects {
 				uniforms: {
 					uTime: "_phase",
 					uAngle: "angle",
-					uAnimateAngle: "animateAngle",
-					uAngleSpeed: "angleSpeed",
+					uCenter: "center",
 					uSortKey: "sortKey",
 					uGateKey: "gateKey",
 					uThresholdLow: "thresholdLow",
