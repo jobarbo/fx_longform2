@@ -76,9 +76,11 @@ Two of them are easy to confuse:
 - **`asdfSort`** (`library/shaders/asdf-sort`) — a **real** pixel sort after Kim Asendorf's
   ASDF algorithm: spans passing a threshold test are actually permuted, ordered by luma /
   hue / saturation / lightness / R / G / B. Animated via the threshold band (global pulse
-  or perpendicular sweep), the sort angle, and the span length. `organicAmount` is the
-  knob to reach for when the result looks too regular — it gives every line its own span
-  length, threshold and animation phase. See
+  or 2D sweep), the sort axis and the span length. Axes combine: tick vertical, horizontal
+  and/or the two diagonals and the image splits into patches sorting along different axes.
+  `organicAmount` and `edgeWobble` are the knobs to reach for when the result looks too
+  regular — the first gives every line its own span length and threshold, the second bends
+  the block seams and the sweep front off the straight. See
   [asdf-sort/README.md](../library/shaders/asdf-sort/README.md) for the algorithm and the
   `maxSpan` / `spanStep` performance levers.
 
