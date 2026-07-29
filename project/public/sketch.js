@@ -4,12 +4,46 @@
 
 // Shader effects toggle
 const ENABLE_SHADERS = true;
-const ENABLE_DEV_PANELS = true;
-const PERSIST_SHADER_PANEL = true;
 
-// Padding constants - centralized for consistency
-const BASE_PADDING = 0.0; // Fraction of shorter canvas edge → equal absolute padding on all sides
-const WRAP_PADDING_FACTOR = 0.0; // Wrap padding factor for particle movement bounds (used in Mover class)
+// UI toggles
+const SHOW_FPS_UI = false; // FPS overlay + FPS toggle button
+const SHOW_DOWNLOAD_UI = false; // Download button (mounted in #controls)
+
+// Dev panels — shader effects panel (key E)
+const ENABLE_DEV_PANELS = true;
+const PERSIST_SHADER_PANEL = true; // localStorage: keep shader panel edits across refresh
+const PERSIST_CONTROLS_PANEL = true; // localStorage: keep Controls panel edits across refresh
+const ENABLE_AUDIO = false; // false = no mic/chime input
+const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first user gesture)
+
+// Canvas sizing — FORCE_SIZE true uses FIXED_WIDTH/HEIGHT; false uses viewport + ARTWORK_RATIO + ORIENTATION
+const CANVAS_CONFIG = {
+	BASE_WIDTH: 1000,
+	// Long : short edge (e.g. 1.77). Combined with ORIENTATION → 1.77:1 or 1:1.77
+	ARTWORK_RATIO: 1.77,
+	ORIENTATION: "horizontal", // "horizontal" | "vertical"
+	// Fraction of the shorter canvas edge — equal absolute border on all sides
+	ARTWORK_PADDING: 0.0,
+	WRAP_PADDING_FACTOR: 0.0,
+	SCALE_FACTOR_X: 1.0,
+	SCALE_FACTOR_Y: 1.0,
+	FORCE_SIZE: false,
+	FIXED_WIDTH: 3840,
+	FIXED_HEIGHT: 1200,
+	// Shared by p5 mainCanvas, display/shader canvas, and shader pipeline
+	PIXEL_DENSITY: 2,
+	PIXEL_DENSITY_MOBILE: 1,
+	// Shader output framing (final pass only).
+	// fitCanvas: true = no crop (full texture). false = object-fit cover with width:height.
+	// matchArtwork: true = derive width/height from ARTWORK_RATIO + ORIENTATION (or FIXED_*).
+	SHADER_RENDER: {fitCanvas: false, matchArtwork: true, width: 1, height: 1},
+	// Master shader animation speed — 1.0 = default, 0.5 = half, 2.0 = double
+	SHADER_ANIMATION_SPEED: 1.0,
+};
+
+// Aliases for Mover / legacy call sites
+const WRAP_PADDING_FACTOR = CANVAS_CONFIG.WRAP_PADDING_FACTOR;
+const BASE_PADDING = CANVAS_CONFIG.ARTWORK_PADDING;
 
 // Particle size, in canvas units at PARTICLE_DPI_REFERENCE density
 const PARTICLE_SIZE = 0.75;
@@ -65,17 +99,110 @@ let debugBounds = false;
 // ARTWORK DIMENSIONS & SCALING
 // ============================================================================
 
-// Base artwork dimensions (width: 1000, height: 1000 * 1.25)
-const ARTWORK_RATIO = 1.77;
-const BASE_WIDTH = 1000;
-const BASE_HEIGHT = BASE_WIDTH * ARTWORK_RATIO;
-const DEFAULT_SIZE = max(BASE_WIDTH, BASE_HEIGHT);
+// Calculated at setup (for mover bounds / debugging)
+let ARTWORK_ASPECT = 1;
+let ARTWORK_CANVAS_WIDTH = 0;
+let ARTWORK_CANVAS_HEIGHT = 0;
+// Legacy global used by Mover wrap padding (height/width after layout)
+let ARTWORK_RATIO = CANVAS_CONFIG.ARTWORK_RATIO;
 
 // Calculated dimensions (set in setup())
-let DIM; // Canvas dimension (min of window width/height)
+let DIM; // Canvas dimension (min of canvas width/height)
 let MULTIPLIER; // Scaling factor based on screen size
 let W = window.innerWidth; // Window width
 let H = window.innerHeight; // Window height
+
+function getPixelDensity() {
+	const isMobile = typeof isSafariMobile === "function" && isSafariMobile();
+	return isMobile ? CANVAS_CONFIG.PIXEL_DENSITY_MOBILE : CANVAS_CONFIG.PIXEL_DENSITY;
+}
+
+function getCanvasDimensions() {
+	if (CANVAS_CONFIG.FORCE_SIZE) {
+		return {
+			width: CANVAS_CONFIG.FIXED_WIDTH,
+			height: CANVAS_CONFIG.FIXED_HEIGHT,
+		};
+	}
+
+	const viewportDim = min(windowWidth, windowHeight);
+	const layout = {
+		orientation: CANVAS_CONFIG.ORIENTATION === "vertical" ? "vertical" : "horizontal",
+		ratio: Math.max(Number(CANVAS_CONFIG.ARTWORK_RATIO) || 1, 0.01),
+		baseSize: CANVAS_CONFIG.BASE_WIDTH,
+	};
+
+	if (typeof computeArtworkLayout === "function") {
+		const sized = computeArtworkLayout(viewportDim, layout);
+		return {width: sized.width, height: sized.height};
+	}
+
+	// Fallback if artworkLayout.js is missing: ratio = long:short
+	const r = layout.ratio;
+	if (layout.orientation === "vertical") {
+		return {width: viewportDim / r, height: viewportDim};
+	}
+	return {width: viewportDim, height: viewportDim / r};
+}
+
+/**
+ * Equal absolute padding on every side.
+ * ARTWORK_PADDING is a fraction of min(canvasW, canvasH); returns normalized {x, y}.
+ */
+function getArtworkPaddingNorm(canvasW = width, canvasH = height) {
+	const pad = Math.max(0, Math.min(0.49, Number(CANVAS_CONFIG.ARTWORK_PADDING) || 0));
+	const shortEdge = Math.min(canvasW, canvasH) || 1;
+	const padPx = pad * shortEdge;
+	return {
+		x: padPx / (canvasW || 1),
+		y: padPx / (canvasH || 1),
+	};
+}
+
+/**
+ * Resolve shader output framing from CANVAS_CONFIG.SHADER_RENDER.
+ * With matchArtwork, width/height follow ARTWORK_RATIO + ORIENTATION (or FIXED_*).
+ */
+function resolveShaderRender() {
+	const cfg = CANVAS_CONFIG.SHADER_RENDER || {};
+	const fitCanvas = Boolean(cfg.fitCanvas);
+
+	if (fitCanvas) {
+		return {fitCanvas: true, width: cfg.width ?? 1, height: cfg.height ?? 1};
+	}
+
+	if (cfg.matchArtwork !== false) {
+		if (CANVAS_CONFIG.FORCE_SIZE) {
+			return {
+				fitCanvas: false,
+				width: CANVAS_CONFIG.FIXED_WIDTH,
+				height: CANVAS_CONFIG.FIXED_HEIGHT,
+			};
+		}
+		const r = Math.max(Number(CANVAS_CONFIG.ARTWORK_RATIO) || 1, 0.01);
+		if (CANVAS_CONFIG.ORIENTATION === "vertical") {
+			return {fitCanvas: false, width: 1, height: r};
+		}
+		return {fitCanvas: false, width: r, height: 1};
+	}
+
+	return {
+		fitCanvas: false,
+		width: cfg.width ?? 1,
+		height: cfg.height ?? 1,
+	};
+}
+
+function updateLayoutMetrics(canvasW, canvasH) {
+	ARTWORK_ASPECT = canvasW / canvasH;
+	ARTWORK_RATIO = canvasH / canvasW; // Mover legacy Y correction
+	ARTWORK_CANVAS_WIDTH = canvasW;
+	ARTWORK_CANVAS_HEIGHT = canvasH;
+	const baseHeight = CANVAS_CONFIG.BASE_WIDTH * ARTWORK_ASPECT;
+	const defaultSize = min(CANVAS_CONFIG.BASE_WIDTH, baseHeight);
+	DIM = min(canvasW, canvasH);
+	MULTIPLIER = DIM / defaultSize;
+}
 
 // ============================================================================
 // CANVAS & RENDERING
@@ -151,36 +278,39 @@ async function setup() {
 		throw error; // Stop execution if swatch palettes can't be loaded
 	}
 
-	// Calculate optimal pixel density before creating canvases
-	// Set pixel density for all devices
-	//! when using shaders, higher than 4-5 causes dead space when exporting pngs
-	pixel_density = typeof isSafariMobile === "function" && isSafariMobile() ? 1 : 2;
+	// Shared density for p5 / shader canvas / pipeline (!>4–5 can leave dead space on PNG export)
+	pixel_density = getPixelDensity();
 
-	// canvas setup
-	// Take the smaller screen dimension to ensure it fits
-	DIM = min(windowWidth, windowHeight);
-	MULTIPLIER = DIM / DEFAULT_SIZE;
-	console.log(MULTIPLIER);
+	// canvas setup — FORCE_SIZE uses FIXED_WIDTH/HEIGHT; otherwise viewport + ARTWORK_RATIO
+	const {width: canvasW, height: canvasH} = getCanvasDimensions();
+	updateLayoutMetrics(canvasW, canvasH);
+	console.log(
+		MULTIPLIER,
+		`canvas ${Math.round(canvasW)}×${Math.round(canvasH)}` +
+			(CANVAS_CONFIG.FORCE_SIZE ? ` (forced ${CANVAS_CONFIG.FIXED_WIDTH}×${CANVAS_CONFIG.FIXED_HEIGHT})` : ` (${CANVAS_CONFIG.ORIENTATION} ${CANVAS_CONFIG.ARTWORK_RATIO}:1)`),
+	);
 
 	// Create main canvas for the artwork (will also handle debug overlays)
-	mainCanvas = createGraphics(DIM / ARTWORK_RATIO, DIM);
-
-	// Set up the main canvas rendering properties before shader setup
+	mainCanvas = createGraphics(canvasW, canvasH);
 	mainCanvas.pixelDensity(pixel_density);
 
 	// Try to create shader canvas for the WEBGL renderer (or regular canvas if no shaders)
 	if (shadersEnabled()) {
 		try {
-			shaderCanvas = createCanvas(DIM / ARTWORK_RATIO, DIM, WEBGL);
+			shaderCanvas = createCanvas(canvasW, canvasH, WEBGL);
 			shaderCanvas.pixelDensity(pixel_density);
 
-			// Restore panel edits from localStorage before setup
+			// Restore panel edits from localStorage before setup (wins over CANVAS_CONFIG output)
 			let restoredPanel = false;
 			if (PERSIST_SHADER_PANEL && typeof shaderEffects.loadPersistedPanelConfig === "function") {
 				restoredPanel = shaderEffects.loadPersistedPanelConfig();
 				if (restoredPanel) {
 					console.log("[sketch] restored shader panel config from localStorage");
 				}
+			}
+			if (!restoredPanel) {
+				shaderEffects.setRenderRatio(resolveShaderRender());
+				shaderEffects.setAnimationSpeed(CANVAS_CONFIG.SHADER_ANIMATION_SPEED);
 			}
 
 			// Initialize shader effects system
@@ -191,13 +321,13 @@ async function setup() {
 			console.log("Falling back to sketch without shaders");
 			// Fallback: create regular canvas without shaders
 			shaderCanvas = null;
-			createCanvas(DIM / ARTWORK_RATIO, DIM);
+			createCanvas(canvasW, canvasH);
 			pixelDensity(pixel_density);
 			// Shaders are unavailable; continue without them
 		}
 	} else {
 		// No shaders - create regular canvas for display
-		createCanvas(DIM / ARTWORK_RATIO, DIM);
+		createCanvas(canvasW, canvasH);
 		pixelDensity(pixel_density);
 	}
 
@@ -217,10 +347,8 @@ async function setup() {
 
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	let scaleFactorX = 1.0;
-	let scaleFactorY = 1.0;
 	mainCanvas.translate(width / 2, height / 2);
-	mainCanvas.scale(scaleFactorX, scaleFactorY);
+	mainCanvas.scale(CANVAS_CONFIG.SCALE_FACTOR_X, CANVAS_CONFIG.SCALE_FACTOR_Y);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
 
 	INIT(rseed, nseed);
@@ -252,7 +380,7 @@ async function setup() {
 			document.complete = true;
 
 			// Create download button after sketch is complete
-			if (typeof createDownloadButton === "function") {
+			if (typeof createDownloadButton === "function" && SHOW_DOWNLOAD_UI) {
 				createDownloadButton();
 			}
 		},
@@ -262,7 +390,7 @@ async function setup() {
 	generator = createAnimationGenerator(animConfig);
 
 	// Create download button immediately (will only show if not in iframe)
-	if (typeof createDownloadButton === "function") {
+	if (typeof createDownloadButton === "function" && SHOW_DOWNLOAD_UI) {
 		createDownloadButton();
 	}
 
@@ -273,14 +401,27 @@ async function setup() {
 		fitDisplayToViewport();
 	}
 
+	// Sync canvas smoothing class with crisp-pixels state
+	if (shadersEnabled() && typeof shaderEffects.setCrispPixels === "function") {
+		shaderEffects.setCrispPixels(shaderEffects.getCrispPixels());
+	}
+
 	// Start the custom draw loop
 	customDraw();
 
 	// Initialize debug overlay after setup is complete
 	updateDebugOverlay();
 
-	// Setup mobile controls
-	setupMobileControls();
+	// Setup UI controls (if present)
+	if (typeof setupControls === "function") {
+		setupControls({
+			showFps: SHOW_FPS_UI,
+			showDownload: SHOW_DOWNLOAD_UI,
+			checkShaders: shadersEnabled,
+		});
+	} else {
+		setupMobileControls();
+	}
 
 	if (ENABLE_DEV_PANELS) {
 		setupDevPanels();
@@ -362,11 +503,11 @@ function INIT(rseed, nseed) {
 	let amplitude2 = 1 * MULTIPLIER;
 
 	// Equal absolute padding on all sides (fraction of the shorter canvas edge)
-	const padPx = BASE_PADDING * min(width, height);
-	xMin = padPx / width;
-	xMax = 1 - padPx / width;
-	yMin = padPx / height;
-	yMax = 1 - padPx / height;
+	const {x: padX, y: padY} = getArtworkPaddingNorm(width, height);
+	xMin = padX;
+	xMax = 1 - padX;
+	yMin = padY;
+	yMax = 1 - padY;
 
 	// Scale number of particles based on canvas size
 	let baseParticleCount = particleNum;
@@ -479,7 +620,8 @@ function keyPressed() {
 	}
 
 	if (key === "F" || key === "f") {
-		// Don't allow FPS toggle if in iframe
+		// Don't allow FPS toggle if in iframe or UI disabled
+		if (!SHOW_FPS_UI) return;
 		if (typeof isInIframe === "function" && isInIframe()) {
 			return;
 		}
@@ -533,11 +675,11 @@ function updateDebugOverlay() {
 	debugOverlay.style.height = canvasHeight + "px";
 
 	// Equal absolute padding on all sides (fraction of the shorter canvas edge)
-	const padPx = BASE_PADDING * Math.min(canvasWidth, canvasHeight);
-	const basePaddingLeft = padPx;
-	const basePaddingTop = padPx;
-	const basePaddingWidth = canvasWidth - 2 * padPx;
-	const basePaddingHeight = canvasHeight - 2 * padPx;
+	const {x: padX, y: padY} = getArtworkPaddingNorm(canvasWidth, canvasHeight);
+	const basePaddingLeft = padX * canvasWidth;
+	const basePaddingTop = padY * canvasHeight;
+	const basePaddingWidth = canvasWidth * (1 - padX * 2);
+	const basePaddingHeight = canvasHeight * (1 - padY * 2);
 
 	basePadding.style.left = basePaddingLeft + "px";
 	basePadding.style.top = basePaddingTop + "px";
