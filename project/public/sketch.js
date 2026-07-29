@@ -8,7 +8,7 @@ const ENABLE_DEV_PANELS = true;
 const PERSIST_SHADER_PANEL = true;
 
 // Padding constants - centralized for consistency
-const BASE_PADDING = 0.05; // Fraction of shorter canvas edge → equal absolute padding on all sides
+const BASE_PADDING = 0.0; // Fraction of shorter canvas edge → equal absolute padding on all sides
 const WRAP_PADDING_FACTOR = 0.0; // Wrap padding factor for particle movement bounds (used in Mover class)
 
 // Particle size, in canvas units at PARTICLE_DPI_REFERENCE density
