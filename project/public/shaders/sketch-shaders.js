@@ -124,13 +124,13 @@ class ShaderEffects {
 			// library/shaders/asdf-sort/README.md for the algorithm and perf levers.
 			asdfSort: {
 				enabled: false,
-				// Tick any combination. One axis = uniform. Several = the image is split
-				// into patches, each sorting along one of the enabled axes.
+				// Tick any combination. One axis = uniform. Several = organic Voronoi
+				// patches, each sorting along one of the enabled axes.
 				axisVertical: 1.0,
 				axisHorizontal: 0.0,
 				axisDiagonal: 0.0,
 				axisAntiDiagonal: 0.0,
-				axisRegionScale: 4.0, // patch size when several axes are on
+				axisRegionScale: 4.0, // Voronoi feature density when several axes are on
 				angle: 0.0, // extra rotation on top of the chosen axis
 				center: [0.5, 0.5], // pivot the sort axis turns around
 				sortKey: 0.0, // 0 luma, 1 hue, 2 saturation, 3 lightness, 4 R, 5 G, 6 B
@@ -161,6 +161,7 @@ class ShaderEffects {
 				_phase: 0.0, // accumulated clock (see updatePhaseAccumulators)
 				uniforms: {
 					uTime: "_phase",
+					uSeed: "shaderSeed + 2468.0",
 					uAxisVertical: "axisVertical",
 					uAxisHorizontal: "axisHorizontal",
 					uAxisDiagonal: "axisDiagonal",
@@ -1526,7 +1527,31 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Update FPS counter
+	 * Stall until queued WebGL work finishes so FPS includes GPU cost.
+	 * Without this, high density looks lagged while the counter still reports
+	 * rAF cadence (often 60–120+) because draw calls return before the GPU is done.
+	 */
+	_syncGpuForFps() {
+		try {
+			const gl = this.p5Instance?.drawingContext;
+			if (gl && typeof gl.finish === "function") gl.finish();
+		} catch {
+			/* ignore — FPS stays best-effort */
+		}
+	}
+
+	/**
+	 * Record one completed frame for the FPS counter.
+	 * Call after apply()/applyCopy() so the sample covers real work.
+	 */
+	_markFrameForFps() {
+		// Sync only while the overlay is on — finish() is a real stall.
+		if (this.showFPS) this._syncGpuForFps();
+		this.updateFPS();
+	}
+
+	/**
+	 * Update FPS counter from wall-clock time since the previous completed frame.
 	 */
 	updateFPS() {
 		// Always track FPS (the debug panel reads currentFPS even when the
@@ -1535,16 +1560,16 @@ class ShaderEffects {
 		const delta = now - this.lastFrameTime;
 		this.lastFrameTime = now;
 
-		// Calculate instantaneous FPS
-		const instantFPS = 1000 / delta;
+		// Ignore sub-ms / non-finite samples (double-fire, first tick after a pause)
+		if (!(delta > 0.5) || !Number.isFinite(delta)) return;
 
-		// Add to history
+		const instantFPS = Math.min(1000 / delta, 240);
+
 		this.fpsHistory.push(instantFPS);
 		if (this.fpsHistory.length > this.fpsHistorySize) {
 			this.fpsHistory.shift();
 		}
 
-		// Calculate average FPS
 		const sum = this.fpsHistory.reduce((a, b) => a + b, 0);
 		this.currentFPS = Math.round(sum / this.fpsHistory.length);
 	}
@@ -1629,6 +1654,9 @@ class ShaderEffects {
 		} else {
 			this.showFPS = show;
 		}
+		// Reset the window so enabling the overlay doesn't inherit inflated samples
+		this.fpsHistory = [];
+		this.lastFrameTime = performance.now();
 		return this;
 	}
 
@@ -1639,9 +1667,6 @@ class ShaderEffects {
 	 * @returns {boolean} Whether to continue the animation loop
 	 */
 	renderFrame(isSketchComplete, continueCallback) {
-		// Update FPS counter
-		this.updateFPS();
-
 		if (isSketchComplete) {
 			// Always apply shaders at least once when sketch is complete
 			if (!this.shouldApplyDuringSketch()) {
@@ -1653,7 +1678,7 @@ class ShaderEffects {
 				this.advanceShaderClock();
 				this.apply();
 
-				// Draw FPS counter
+				this._markFrameForFps();
 				this.drawFPS();
 
 				// Continue using requestAnimationFrame
@@ -1676,7 +1701,7 @@ class ShaderEffects {
 			this.applyCopy();
 		}
 
-		// Draw FPS counter
+		this._markFrameForFps();
 		this.drawFPS();
 
 		return true; // Continue animation
