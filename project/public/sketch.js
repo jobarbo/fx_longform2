@@ -23,7 +23,7 @@ const CANVAS_CONFIG = {
 	ARTWORK_RATIO: 1.052631578947368,
 	ORIENTATION: "vertical", // "horizontal" | "vertical"
 	// Fraction of the shorter canvas edge — equal absolute border on all sides
-	ARTWORK_PADDING: 0.0,
+	ARTWORK_PADDING: 0.05,
 	WRAP_PADDING_FACTOR: 0.0,
 	SCALE_FACTOR_X: 1.0,
 	SCALE_FACTOR_Y: 1.0,
