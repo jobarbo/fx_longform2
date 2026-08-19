@@ -20,7 +20,7 @@ const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first
 const CANVAS_CONFIG = {
 	BASE_WIDTH: 1000,
 	// Long : short edge (e.g. 1.77). Combined with ORIENTATION → 1.77:1 or 1:1.77
-	ARTWORK_RATIO: 1.052631578947368,
+	ARTWORK_RATIO: 1.21,
 	ORIENTATION: "vertical", // "horizontal" | "vertical"
 	// Fraction of the shorter canvas edge — equal absolute border on all sides
 	ARTWORK_PADDING: 0.05,
