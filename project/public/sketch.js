@@ -11,6 +11,7 @@ const SHOW_DOWNLOAD_UI = false; // Download button (mounted in panel)
 
 // Dev panels — debug/audio panel (key D) + shader effects panel (key E)
 const ENABLE_DEV_PANELS = true;
+const PERSIST_SHADER_PANEL = true; // localStorage: keep shader panel edits across refresh
 const AUDIO_SOURCE = null; // "microphone" | "chime" | null (null = audio off)
 
 // Padding constants - centralized for consistency
@@ -217,9 +218,20 @@ async function setup() {
 		try {
 			shaderCanvas = createCanvas(artworkLayout.width, artworkLayout.height, WEBGL);
 			shaderCanvas.pixelDensity(pixel_density);
-			// Configure output framing before setup so it reaches the shaderManager
-			shaderEffects.setRenderRatio(SHADER_RENDER_RATIO);
-			shaderEffects.setAnimationSpeed(SHADER_ANIMATION_SPEED);
+
+			// Restore panel edits from localStorage before setup (wins over SHADER_RENDER_RATIO)
+			let restoredPanel = false;
+			if (PERSIST_SHADER_PANEL && typeof shaderEffects.loadPersistedPanelConfig === "function") {
+				restoredPanel = shaderEffects.loadPersistedPanelConfig();
+				if (restoredPanel) {
+					console.log("[sketch] restored shader panel config from localStorage");
+				}
+			}
+			if (!restoredPanel) {
+				shaderEffects.setRenderRatio(SHADER_RENDER_RATIO);
+				shaderEffects.setAnimationSpeed(SHADER_ANIMATION_SPEED);
+			}
+
 			// Initialize shader effects system
 			shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
 			console.log("Shader effects initialized successfully");
