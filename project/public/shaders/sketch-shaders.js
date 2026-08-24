@@ -426,6 +426,7 @@ class ShaderEffects {
 			grain: {
 				enabled: true,
 				amount: 0.051,
+				grainSize: 1.0, // 1 = original look; higher values make larger grain
 				timeMultiplier: 0.0,
 				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
 				thresholdMinX: 0.0, // left [0..1]
@@ -437,6 +438,7 @@ class ShaderEffects {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 345.0",
 					uAmount: "amount",
+					uGrainSize: "grainSize",
 					uThresholdMinX: "thresholdMinX",
 					uThresholdMaxX: "thresholdMaxX",
 					uThresholdMinY: "thresholdMinY",
