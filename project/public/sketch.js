@@ -3,7 +3,7 @@
 // ============================================================================
 
 // Shader effects toggle
-const ENABLE_SHADERS = true;
+const ENABLE_SHADERS = false;
 
 // UI toggles
 const SHOW_FPS_UI = false; // FPS overlay + FPS toggle button
