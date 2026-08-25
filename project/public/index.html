@@ -59,6 +59,11 @@
 				<button class="button btn-download" id="param-download" style="margin-top: 10px">
 					<span>Download</span>
 				</button>
+				<div class="params-io-row">
+					<button type="button" class="params-io" id="param-export-json" title="Export settings as JSON">↓ json</button>
+					<button type="button" class="params-io" id="param-import-json" title="Import settings from JSON">↑ json</button>
+					<input type="file" accept="application/json,.json" id="param-import-file" hidden />
+				</div>
 				<label class="persist-clear" title="Clear saved controls from localStorage and restore defaults">
 					<input type="checkbox" id="param-clear-storage" />
 					<span>Clear saved</span>
