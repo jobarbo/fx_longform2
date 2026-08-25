@@ -18,7 +18,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		horizontalSpeeds: ["veryFast", "fast", "standard", "slow", "snail"],
 		verticalSpeeds: ["veryFast", "fast", "standard", "slow", "snail"],
 		innerFlowLevels: ["low", "standard", "medium", "high"],
-		outerFlowLevels: ["standard", "medium", "high"],
+		outerFlowLevels: ["low", "standard", "medium", "high"],
 		horizontalPatternIntensities: ["low", "normal", "high", "intense", "extreme"],
 		verticalPatternIntensities: ["low", "normal", "high", "intense", "extreme"],
 		octaveLevels: [1, 2, 3, 4, 5],
