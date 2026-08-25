@@ -1,3 +1,11 @@
+// ============================================================================
+// CONFIGURATION
+// ============================================================================
+
+const ENABLE_SHADERS = true;
+const ENABLE_DEV_PANELS = true;
+const PERSIST_SHADER_PANEL = true; // localStorage: keep shader panel edits across refresh
+
 let features = "";
 
 let maxDPI = 3;
@@ -27,9 +35,15 @@ let pixel_density = 2;
 let mainCanvas; // Main graphics buffer for artwork
 let shaderCanvas; // WEBGL canvas for shader effects (if shaders enabled)
 let cycle = parseInt((maxFrames * numMovers) / 55); // Number of operations before updating display (lower = more updates = slower, higher = fewer updates = faster)
+let panelLoopId = null;
+
+function shadersEnabled() {
+	return ENABLE_SHADERS && typeof shaderEffects !== "undefined";
+}
+
 function preload() {
 	// Initialize shader effects (optional - will work without it)
-	if (typeof shaderEffects !== "undefined") {
+	if (shadersEnabled()) {
 		shaderEffects.preload(this);
 	}
 }
@@ -47,9 +61,15 @@ function setup() {
 	mainCanvas = createGraphics(BASE_WIDTH * MULTIPLIER, BASE_HEIGHT * MULTIPLIER);
 
 	// Create shader canvas (WEBGL) or regular canvas
-	if (typeof shaderEffects !== "undefined") {
+	if (shadersEnabled()) {
 		shaderCanvas = createCanvas(BASE_WIDTH * MULTIPLIER, BASE_HEIGHT * MULTIPLIER, WEBGL);
-		shaderEffects.setup(width, height, mainCanvas, shaderCanvas);
+
+		// Restore panel edits from localStorage before setup
+		if (PERSIST_SHADER_PANEL && typeof shaderEffects.loadPersistedPanelConfig === "function") {
+			shaderEffects.loadPersistedPanelConfig();
+		}
+
+		shaderEffects.setup(width, height, mainCanvas, shaderCanvas, pixel_density);
 		shaderCanvas.pixelDensity(pixel_density);
 	} else {
 		createCanvas(BASE_WIDTH * MULTIPLIER, BASE_HEIGHT * MULTIPLIER);
@@ -128,7 +148,7 @@ function setup() {
 		},
 		onComplete: () => {
 			executionTimer.stop().logElapsedTime("Sketch completed in");
-			if (typeof shaderEffects !== "undefined") {
+			if (shadersEnabled()) {
 				shaderEffects.setParticleAnimationComplete(true);
 			}
 			$fx.preview();
@@ -140,8 +160,30 @@ function setup() {
 	// Create and start the animation
 	generator = createAnimationGenerator(animConfig);
 
+	if (ENABLE_DEV_PANELS) {
+		setupDevPanels();
+	}
+
 	// Start the custom draw loop
 	customDraw();
+}
+
+function setupDevPanels() {
+	if (typeof shaderEffectsPanel !== "undefined" && shadersEnabled() && shaderCanvas) {
+		shaderEffectsPanel.init(shaderEffects);
+	}
+	startPanelLoop();
+}
+
+// Panels run on their own rAF loop so they stay live independently of the
+// artwork draw loop (which can stop on completion).
+function startPanelLoop() {
+	if (panelLoopId !== null) return;
+	const tick = () => {
+		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.update();
+		panelLoopId = requestAnimationFrame(tick);
+	};
+	panelLoopId = requestAnimationFrame(tick);
 }
 
 // Track sketch completion state
@@ -159,7 +201,7 @@ function customDraw() {
 	}
 
 	// Render shader effects for this frame (if shaders are enabled)
-	if (typeof shaderEffects !== "undefined") {
+	if (shadersEnabled()) {
 		const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
 
 		// Continue animation if not complete
@@ -175,5 +217,17 @@ function customDraw() {
 		if (!result.done) {
 			requestAnimationFrame(customDraw);
 		}
+	}
+}
+
+function keyPressed() {
+	// Don't hijack keys while typing in panel inputs
+	const tag = document.activeElement?.tagName;
+	if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || document.activeElement?.isContentEditable) {
+		return;
+	}
+
+	if (key === "E" || key === "e") {
+		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.toggle();
 	}
 }
