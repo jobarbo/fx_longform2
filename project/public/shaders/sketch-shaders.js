@@ -19,7 +19,7 @@
  * 5. Master speed: set SHADER_ANIMATION_SPEED in sketch.js (or shaderEffects.setAnimationSpeed())
  */
 
-// Panel pixel params (maxSpan, cellSize, …) are authored at this short-edge size.
+// Matches sketch.js BASE_WIDTH / glitch-displacement REF — pixel params are authored at this short-edge size.
 const SHADER_SIZE_REF = 1000;
 
 class ShaderEffects {
@@ -87,7 +87,6 @@ class ShaderEffects {
 				tileSize3: 100.0,
 				sizeNoise: 23.0,
 				rotNoise: 24.0,
-				timeMultiplier: 0.0,
 				uniforms: {
 					uSeed: "shaderSeed + 2222.0",
 					uTileSize1: "tileSize * sizeScale",
@@ -120,6 +119,9 @@ class ShaderEffects {
 					uResolution: "[width, height]",
 				},
 			},
+			// Real pixel sort (Kim Asendorf's ASDF algorithm) — actually permutes pixels,
+			// unlike pixelSort above which is a directional smear. See
+			// library/shaders/asdf-sort/README.md for the algorithm and perf levers.
 			asdfSort: {
 				enabled: false,
 				// Tick any combination. One axis = uniform. Several = organic Voronoi
@@ -196,7 +198,7 @@ class ShaderEffects {
 			},
 			symmetry: {
 				enabled: false,
-				symmetryMode: 0.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
+				symmetryMode: 0.0, // 0=H 2fold, 1=V 2fold, 2=2-line 4fold, 3=4-line 8fold, 4=8-line 16fold, 5=16-line 32fold, 6=radial
 				amount: 1.0, // Blend strength [0..1]
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
@@ -205,8 +207,8 @@ class ShaderEffects {
 				translationSpeedY: 0.01, // Vertical translation speed (0 = none)
 				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field, 4=continuous scroll
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
-				translationPhaseX: -0.5, // Accumulated phase for X translation (prevents jumps)
-				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
+				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
+				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
 				rotationEnabled: 1.0, // Master toggle for animated rotation
 				rotationSpeed: 0.01, // Speed of rotation
 				rotationOscillationSpeed: 0.5, // Speed of oscillation (controls how fast it alternates between positive/negative)
@@ -242,108 +244,11 @@ class ShaderEffects {
 				},
 			},
 
-			symmetry2: {
-				enabled: false,
-				symmetryMode: 1.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
-				amount: 1.0, // Blend strength [0..1]
-				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationEnabled: 1.0, // Master toggle for translation animation
-				translationSpeedX: 0.01, // Horizontal translation speed (0 = none)
-				translationSpeedY: 0.01, // Vertical translation speed (0 = none)
-				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field, 4=continuous scroll
-				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
-				translationPhaseX: -0.5, // Accumulated phase for X translation (prevents jumps)
-				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
-				rotationEnabled: 1.0, // Master toggle for animated rotation
-				rotationSpeed: 0.01, // Speed of rotation
-				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 5.7, // Static rotation in degrees [0..360] (applied even when animation is off)
-				rotationMode: 1.0, // 0=cosine oscillation, 1=noise, 2=FBM
-				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
-				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
-				rotationAmplitude: 50.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.1, // Time multiplier for animation
-				uniforms: {
-					uResolution: "[width, height]",
-					uSeed: "shaderSeed + 1234.0",
-					uSymmetryMode: "symmetryMode",
-					uAmount: "amount",
-					uDebug: "debug",
-					uCenter: "center",
-					uTime: "shaderTime * timeMultiplier",
-					uTranslationEnabled: "translationEnabled",
-					uTranslationSpeedX: "translationSpeedX",
-					uTranslationSpeedY: "translationSpeedY",
-					uTranslationMode: "translationMode",
-					uTranslationNoiseScale: "translationNoiseScale",
-					uTranslationPhaseX: "translationPhaseX",
-					uTranslationPhaseY: "translationPhaseY",
-					uRotationEnabled: "rotationEnabled",
-					uRotationSpeed: "rotationSpeed",
-					uRotationOscillationSpeed: "rotationOscillationSpeed",
-					uRotationStartingAngle: "rotationStartingAngle * 0.017453292519943295", // deg → rad
-					uRotationMode: "rotationMode",
-					uRotationNoiseScale: "rotationNoiseScale",
-					uRotationPhase: "rotationPhase",
-					uRotationAmplitude: "rotationAmplitude",
-				},
-			},
-
-			symmetry3: {
-				enabled: false,
-				symmetryMode: 4.0, // 0=horizontal, 1=vertical, 2=2-line, 3=4-line, 4=8-line, 5=16-line, 6=radial
-				amount: 1.0, // Blend strength [0..1]
-				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
-				center: [0.5, 0.5], // symmetry center in normalized coords
-				translationEnabled: 1.0, // Master toggle for translation animation
-				translationSpeedX: 0.01, // Horizontal translation speed (0 = none)
-				translationSpeedY: 0.01, // Vertical translation speed (0 = none)
-				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field, 4=continuous scroll
-				translationNoiseScale: 0.2, // Scale of noise variation (lower = smoother, higher = more frequent changes)
-				translationPhaseX: 0.5, // Accumulated phase for X translation (prevents jumps)
-				translationPhaseY: 0.5, // Accumulated phase for Y translation (prevents jumps)
-				rotationEnabled: 1.0, // Master toggle for animated rotation
-				rotationSpeed: 0.16, // Speed of rotation
-				rotationOscillationSpeed: 0.1, // Speed of oscillation (controls how fast it alternates between positive/negative)
-				rotationStartingAngle: 5.7, // Static rotation in degrees [0..360] (applied even when animation is off)
-				rotationMode: 2.0, // 0=cosine oscillation, 1=noise, 2=FBM
-				rotationNoiseScale: 0.01, // Scale of rotation noise (lower = smoother, higher = more frequent changes)
-				rotationPhase: 0.0, // Accumulated phase for rotation (prevents jumps)
-				rotationAmplitude: 1.0, // Fixed amplitude - speed controls phase accumulation rate, not amplitude
-				timeMultiplier: 0.1, // Time multiplier for animation
-				uniforms: {
-					uResolution: "[width, height]",
-					uSeed: "shaderSeed + 1234.0",
-					uSymmetryMode: "symmetryMode",
-					uAmount: "amount",
-					uDebug: "debug",
-					uCenter: "center",
-					uTime: "shaderTime * timeMultiplier",
-					uTranslationEnabled: "translationEnabled",
-					uTranslationSpeedX: "translationSpeedX",
-					uTranslationSpeedY: "translationSpeedY",
-					uTranslationMode: "translationMode",
-					uTranslationNoiseScale: "translationNoiseScale",
-					uTranslationPhaseX: "translationPhaseX",
-					uTranslationPhaseY: "translationPhaseY",
-					uRotationEnabled: "rotationEnabled",
-					uRotationSpeed: "rotationSpeed",
-					uRotationOscillationSpeed: "rotationOscillationSpeed",
-					uRotationStartingAngle: "rotationStartingAngle * 0.017453292519943295", // deg → rad
-					uRotationMode: "rotationMode",
-					uRotationNoiseScale: "rotationNoiseScale",
-					uRotationPhase: "rotationPhase",
-					uRotationAmplitude: "rotationAmplitude",
-				},
-			},
-
 			loaderGlitch: {
 				enabled: false, // Enable to show glitch loader animation
-				timeMultiplier: 0.3, // Speed of block movement
+				// progress driven by shaderEffects.setLoadingProgress() / loadingProgress
 				uniforms: {
 					uProgress: "loadingProgress", // Progress from 0.0 (0%) to 1.0 (100%)
-					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 8888.0",
 					uResolution: "[width, height]",
 					uRenderDensity: "sizeScale",
@@ -446,6 +351,7 @@ class ShaderEffects {
 					uCellSize: "cellSize * sizeScale",
 					uGapOpacity: "gapOpacity",
 					uRgbOpacity: "rgbOpacity",
+					uRgbGain: "rgbGain",
 					uDotRadius: "dotRadius",
 					uDotFalloff: "dotFalloff",
 					uFilterMode: "filterMode",
@@ -454,7 +360,8 @@ class ShaderEffects {
 			blur: {
 				enabled: false,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
-				blurAmount: 43.0, // Gaussian/directional: px @ short-edge 1000 (× sizeScale). Radial: UV units ×0.01 (no scale).
+				// Gaussian/directional: px @ short-edge 1000 (× sizeScale). Radial: UV units ×0.01 (no scale).
+				blurAmount: 43.0,
 				blurQuality: 120.0, // Sampling quality (1-8, higher = better but slower)
 				blurDirection: 0, // Angle in radians for directional mode
 				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
@@ -465,6 +372,7 @@ class ShaderEffects {
 				uniforms: {
 					uResolution: "[width, height]",
 					uBlurMode: "blurMode",
+					// Modes 0/2 are texel-sized; mode 1 is UV-based and already size-stable.
 					uBlurAmount: "(blurMode < 0.5 || blurMode > 1.5) ? (blurAmount * sizeScale) : blurAmount",
 					uBlurQuality: "blurQuality",
 					uBlurDirection: "blurDirection",
@@ -501,8 +409,9 @@ class ShaderEffects {
 			glitchDisplacement: {
 				enabled: false,
 				timeMultiplier: 21.0,
-				intensity: 6.6,
-				lineDensity: 12310.0,
+				// intensity / lineDensity are relative to REF=1000px (BASE_WIDTH)
+				intensity: 6.6, // horizontal shift in px @ 1000 wide
+				lineDensity: 1000.0, // bands across 1000px height (floors at 1px @ REF)
 				speed: 100.0,
 				threshold: 0.85,
 				uniforms: {
@@ -517,6 +426,7 @@ class ShaderEffects {
 			grain: {
 				enabled: true,
 				amount: 0.1,
+				grainSize: 1.0, // 1 = original look; higher values make larger grain
 				timeMultiplier: 0.0,
 				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
 				thresholdMinX: 0.0, // left [0..1]
@@ -528,6 +438,7 @@ class ShaderEffects {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 345.0",
 					uAmount: "amount",
+					uGrainSize: "grainSize",
 					uThresholdMinX: "thresholdMinX",
 					uThresholdMaxX: "thresholdMaxX",
 					uThresholdMinY: "thresholdMinY",
@@ -611,8 +522,8 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Load shaders — call from async setup() (p5.js 2.0 removed preload)
-	 * Customize the shaders you load for your sketch
+	 * Preload shaders — call this from async setup() (p5.js 2.0 has no preload()).
+	 * loadShader is async; sketch.js awaits this so pipelines never start empty.
 	 * @param {p5|Window} p5Instance - The p5 instance (or window in global mode)
 	 */
 	async preload(p5Instance) {
@@ -624,7 +535,6 @@ class ShaderEffects {
 		// Set default vertex shader
 		shaderManager.setDefaultVertex("chromatic-aberration/vertex.vert");
 
-		// Load shaders in parallel - customize this list for your sketch
 		await Promise.all([
 			shaderManager.loadShader("copy", "copy/fragment.frag", "copy/vertex.vert"),
 			shaderManager.loadShader("deform", "deform/fragment.frag", "deform/vertex.vert"),
@@ -659,7 +569,6 @@ class ShaderEffects {
 	 * @param {number} height - Canvas height
 	 * @param {p5.Graphics} mainCanvas - Main graphics buffer for artwork
 	 * @param {p5.Graphics} shaderCanvas - WEBGL canvas for shader effects
-	 * @param {number} [pixelDensity=1] - Pixel density for pipeline buffers
 	 */
 	setup(width, height, mainCanvas, shaderCanvas, pixelDensity = 1) {
 		this.mainCanvas = mainCanvas;
@@ -812,6 +721,10 @@ class ShaderEffects {
 
 		this.lastEnabledEffects = null;
 		this.reinitializePipeline();
+
+		if (typeof fitDisplayToViewport === "function") {
+			fitDisplayToViewport();
+		}
 
 		console.log(`[ShaderEffects] resized to ${w}×${h} (main=${this.mainCanvas?.width}×${this.mainCanvas?.height})`);
 		return this;
@@ -974,11 +887,17 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Physical canvas resolution in pixels (logical size × pixel density).
+	 * Physical resolution of the shader render target, in pixels.
+	 *
+	 * This is what `uResolution` reports, so it has to describe the target the shaders
+	 * actually write to — not the source artwork. When the panel renders the shader stage
+	 * at a fraction of the sketch density, every pixel-based effect (blur radius, sort
+	 * span, grain) has to follow, or it would silently change scale.
 	 */
 	getPhysicalResolution() {
 		const density = this.mainCanvas?.pixelDensity?.() ?? this.pixelDensity ?? 1;
-		return [this.mainCanvas.width * density, this.mainCanvas.height * density];
+		const scale = this.shaderPipeline?.getDensityScale?.() ?? 1;
+		return [this.mainCanvas.width * density * scale, this.mainCanvas.height * density * scale];
 	}
 
 	/**
@@ -1043,6 +962,11 @@ class ShaderEffects {
 		return this.animationSpeed;
 	}
 
+	/**
+	 * Strip runtime / non-editable fields from an effect for panel persistence.
+	 * @param {object} effect
+	 * @returns {object}
+	 */
 	_stripEffectForPanel(effect) {
 		const skip = new Set(["uniforms", "translationPhaseX", "translationPhaseY", "rotationPhase"]);
 		const out = {};
@@ -1076,7 +1000,7 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Restore panel config from a snapshot (file import / localStorage / Reset).
+	 * Restore panel config from a snapshot (localStorage / Reset).
 	 * Rebuilds uniforms from effectTemplates by root name.
 	 * @param {object} data
 	 * @returns {boolean} true if applied
@@ -1524,7 +1448,8 @@ class ShaderEffects {
 			this.p5Instance.clear();
 		}
 
-		this.shaderManager.apply("copy", {uTexture: this.mainCanvas}, this.p5Instance).drawFullscreenQuad(this.p5Instance);
+		// blit() applies the Graphics→WEBGL Y flip + optional render-ratio crop
+		this.shaderManager.blit(this.mainCanvas, this.p5Instance, true);
 
 		return this;
 	}
@@ -1605,7 +1530,31 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Update FPS counter
+	 * Stall until queued WebGL work finishes so FPS includes GPU cost.
+	 * Without this, high density looks lagged while the counter still reports
+	 * rAF cadence (often 60–120+) because draw calls return before the GPU is done.
+	 */
+	_syncGpuForFps() {
+		try {
+			const gl = this.p5Instance?.drawingContext;
+			if (gl && typeof gl.finish === "function") gl.finish();
+		} catch {
+			/* ignore — FPS stays best-effort */
+		}
+	}
+
+	/**
+	 * Record one completed frame for the FPS counter.
+	 * Call after apply()/applyCopy() so the sample covers real work.
+	 */
+	_markFrameForFps() {
+		// Sync only while the overlay is on — finish() is a real stall.
+		if (this.showFPS) this._syncGpuForFps();
+		this.updateFPS();
+	}
+
+	/**
+	 * Update FPS counter from wall-clock time since the previous completed frame.
 	 */
 	updateFPS() {
 		// Always track FPS (the debug panel reads currentFPS even when the
@@ -1614,16 +1563,16 @@ class ShaderEffects {
 		const delta = now - this.lastFrameTime;
 		this.lastFrameTime = now;
 
-		// Calculate instantaneous FPS
-		const instantFPS = 1000 / delta;
+		// Ignore sub-ms / non-finite samples (double-fire, first tick after a pause)
+		if (!(delta > 0.5) || !Number.isFinite(delta)) return;
 
-		// Add to history
+		const instantFPS = Math.min(1000 / delta, 240);
+
 		this.fpsHistory.push(instantFPS);
 		if (this.fpsHistory.length > this.fpsHistorySize) {
 			this.fpsHistory.shift();
 		}
 
-		// Calculate average FPS
 		const sum = this.fpsHistory.reduce((a, b) => a + b, 0);
 		this.currentFPS = Math.round(sum / this.fpsHistory.length);
 	}
@@ -1708,6 +1657,9 @@ class ShaderEffects {
 		} else {
 			this.showFPS = show;
 		}
+		// Reset the window so enabling the overlay doesn't inherit inflated samples
+		this.fpsHistory = [];
+		this.lastFrameTime = performance.now();
 		return this;
 	}
 
@@ -1718,9 +1670,6 @@ class ShaderEffects {
 	 * @returns {boolean} Whether to continue the animation loop
 	 */
 	renderFrame(isSketchComplete, continueCallback) {
-		// Update FPS counter
-		this.updateFPS();
-
 		if (isSketchComplete) {
 			// Always apply shaders at least once when sketch is complete
 			if (!this.shouldApplyDuringSketch()) {
@@ -1732,7 +1681,7 @@ class ShaderEffects {
 				this.advanceShaderClock();
 				this.apply();
 
-				// Draw FPS counter
+				this._markFrameForFps();
 				this.drawFPS();
 
 				// Continue using requestAnimationFrame
@@ -1755,7 +1704,7 @@ class ShaderEffects {
 			this.applyCopy();
 		}
 
-		// Draw FPS counter
+		this._markFrameForFps();
 		this.drawFPS();
 
 		return true; // Continue animation
