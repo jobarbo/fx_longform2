@@ -7,8 +7,11 @@
 		"lib": "lib"
 	},
 	"scripts": {
+		"bootstrap": "node ./lib/scripts/bootstrap-lib.js",
+		"prestart": "npm run bootstrap",
+		"prebuild": "npm run bootstrap",
 		"start": "node ./lib/scripts/start.js",
-		"start:project": "webpack serve --config ./lib/config/webpack.config.dev.js",
+		"start:project": "npm run bootstrap && webpack serve --config ./lib/config/webpack.config.dev.js",
 		"build": "webpack --config ./lib/config/webpack.config.prod.js"
 	},
 	"license": "MIT",

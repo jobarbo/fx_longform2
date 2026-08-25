@@ -2,3 +2,7 @@ node_modules/
 dist/
 dist-zipped/
 yarn.lock
+/lib/*
+!/lib/scripts/
+/lib/scripts/*
+!/lib/scripts/bootstrap-lib.js

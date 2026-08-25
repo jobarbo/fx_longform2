@@ -4,7 +4,7 @@ Local webpack + p5.js environment for generative artwork, with a live shader pan
 
 ## Prerequisites
 
-- Node.js >= 14
+- Node.js >= 16
 - npm >= 6.14.4
 
 ## Getting started
@@ -18,9 +18,18 @@ npm start
 
 ## Scripts
 
-- `npm start` — webpack-dev-server on port 3301 with live reload
+- `npm start` — bootstrap `lib/` then webpack-dev-server on port 3301
 - `npm run start:project` — same server via webpack CLI
 - `npm run build` — production build + zip under `dist-zipped/`
+- `npm run bootstrap` — recreate generated `lib/` files (also runs automatically before start/build)
+
+## Tooling (`lib/`)
+
+Only [`lib/scripts/bootstrap-lib.js`](lib/scripts/bootstrap-lib.js) is tracked. It writes the rest of `lib/` (webpack configs, `start.js`, etc.). Those generated files are gitignored so branch switches keep the same local tooling.
+
+- Edit infra inside the `FILES` map in `bootstrap-lib.js`, then run `npm run bootstrap` (or just `npm start`)
+- If generated files are missing: `npm run bootstrap`
+- Do not commit generated files under `lib/` (except `bootstrap-lib.js`)
 
 ## Development features
 
@@ -41,4 +50,5 @@ In the local server, saves write to `~/Downloads/<current-git-branch>/` (filesys
 - `project/public/sketch.js` — main sketch
 - `project/public/shaders/sketch-shaders.js` — shader effect stack + panel APIs
 - `project/public/library/` — shared utilities (git submodule)
-- `lib/config/` — webpack configs
+- `lib/scripts/bootstrap-lib.js` — tracked bootstrap (source of truth for tooling)
+- `lib/` — generated webpack / start files (gitignored except bootstrap)
