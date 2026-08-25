@@ -3,7 +3,7 @@
 const FELT_REFERENCE_PARTICLE_SIZE = CURRENT_PARAMS.particleSize ?? 0.75 * MULTIPLIER;
 
 const FELT_SKIPPER_KNOTS = [
-	[0, 0.2],
+	[0, 2.0],
 	[0.0005, 1.5],
 	[0.0015, 0.0],
 	[0.005, 1.15],
@@ -11,13 +11,13 @@ const FELT_SKIPPER_KNOTS = [
 ];
 const FELT_SIZE_KNOTS = [
 	[0, FELT_REFERENCE_PARTICLE_SIZE * 0.055],
-	[0.0005, FELT_REFERENCE_PARTICLE_SIZE * 0.25],
+	[0.0005, FELT_REFERENCE_PARTICLE_SIZE * 0.15],
 	[0.0015, FELT_REFERENCE_PARTICLE_SIZE * 0.4],
 	[0.005, FELT_REFERENCE_PARTICLE_SIZE * 0.3],
 	[0.015, FELT_REFERENCE_PARTICLE_SIZE * 0.2],
 	[0.025, FELT_REFERENCE_PARTICLE_SIZE * 0.1],
 	[0.05, FELT_REFERENCE_PARTICLE_SIZE * 0.15],
-	[0.075, FELT_REFERENCE_PARTICLE_SIZE * 0.3],
+	[0.075, FELT_REFERENCE_PARTICLE_SIZE * 0.05],
 	[0.1, FELT_REFERENCE_PARTICLE_SIZE * 0.1],
 	[0.15, FELT_REFERENCE_PARTICLE_SIZE * 0.15],
 	[0.2, FELT_REFERENCE_PARTICLE_SIZE * 0.2],
@@ -26,10 +26,20 @@ const FELT_SIZE_KNOTS = [
 	[0.5, FELT_REFERENCE_PARTICLE_SIZE],
 ];
 const FELT_JITTER_KNOTS = [
-	[0, 3.0],
+	[0, 1.0],
 	[0.0015, 0.5],
 	[0.005, 1.0],
 	[0.015, 0.0],
+];
+
+// Smooth field speed so a one-frame jitter teleport does not snap particle size.
+const FELT_SPEED_SMOOTH = 1.2;
+// Cap random jitter step (px) from smoothed speed — low-speed felt stays local.
+const FELT_JITTER_MAX_PX = [
+	[0, 1.5],
+	[0.01, 4],
+	[0.05, 14],
+	[0.15, 40],
 ];
 
 function feltParticleScale() {
@@ -104,6 +114,11 @@ class Mover {
 		const inputRot = (rseed * 0.000137 + nseed * 0.000024) % TAU;
 		this._rotSin = Math.sin(inputRot);
 		this._rotCos = Math.cos(inputRot);
+
+		// Smoothed field speeds — size/jitter read these, not one-frame spikes after teleport.
+		this._feltSpeed = 0;
+		this._feltSpeedX = 0;
+		this._feltSpeedY = 0;
 	}
 
 	show(canvas = null) {
@@ -150,16 +165,29 @@ class Mover {
 		const speedX = abs(p.x);
 		const speedY = abs(p.y);
 
-		// Multi-stage felt → soft → transition → flow (piecewise, not one linear map)
-		const feltScale = feltParticleScale();
-		this.xRandSkipperOffset = mapPiecewise(speedX, FELT_SKIPPER_KNOTS, feltScale);
-		this.yRandSkipperOffset = mapPiecewise(speedY, FELT_SKIPPER_KNOTS, feltScale);
-		this.s = mapPiecewise(speed, FELT_SIZE_KNOTS, feltScale) * MULTIPLIER;
+		// EMA — avoids feedback where low-speed jitter jumps into a high-speed zone → size snap.
+		const a = FELT_SPEED_SMOOTH;
+		this._feltSpeed += (speed - this._feltSpeed) * a;
+		this._feltSpeedX += (speedX - this._feltSpeedX) * a;
+		this._feltSpeedY += (speedY - this._feltSpeedY) * a;
 
-		const jitterStrength = mapPiecewise(speed, FELT_JITTER_KNOTS);
+		const feltScale = feltParticleScale();
+		this.xRandSkipperOffset = mapPiecewise(this._feltSpeedX, FELT_SKIPPER_KNOTS, feltScale);
+		this.yRandSkipperOffset = mapPiecewise(this._feltSpeedY, FELT_SKIPPER_KNOTS, feltScale);
+		this.s = mapPiecewise(this._feltSpeed, FELT_SIZE_KNOTS, feltScale) * MULTIPLIER;
+
+		const jitterStrength = mapPiecewise(this._feltSpeed, FELT_JITTER_KNOTS);
 		if (jitterStrength > 0) {
 			this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER * jitterStrength;
 			this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER * jitterStrength;
+
+			const maxJitterPx = mapPiecewise(this._feltSpeed, FELT_JITTER_MAX_PX);
+			const jMag = Math.hypot(this.xRandSkipper, this.yRandSkipper);
+			if (jMag > maxJitterPx && jMag > 0) {
+				const scale = maxJitterPx / jMag;
+				this.xRandSkipper *= scale;
+				this.yRandSkipper *= scale;
+			}
 		} else {
 			this.xRandSkipper = 0;
 			this.yRandSkipper = 0;
