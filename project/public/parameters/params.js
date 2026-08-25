@@ -199,7 +199,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		{
 			key: "externalFrame",
 			id: "param-external-frame",
-			label: "Internal frame",
+			label: "External frame",
 			optionsKey: "externalFrame",
 		},
 		{

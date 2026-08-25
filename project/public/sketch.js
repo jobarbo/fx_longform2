@@ -254,6 +254,12 @@ async function setup() {
 	// when the class is missing; shader setup normally applies it, this covers fallbacks)
 	shaderEffects.setCrispPixels(shaderEffects.getCrispPixels());
 
+	// Publish --art-w / --art-h so style.css can contain-fit the canvas to the viewport.
+	// Without this the vars never exist and the canvas falls back to a 1:1 ratio.
+	if (typeof fitDisplayToViewport === "function") {
+		fitDisplayToViewport();
+	}
+
 	// Set color modes and ensure proper color preservation
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 	colorMode(HSB, 360, 100, 100, 100);
