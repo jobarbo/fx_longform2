@@ -14,10 +14,13 @@
 		<script src="./parameters/params.js"></script>
 		<script src="./library/utils/paramsPanel.js"></script>
 		<script src="./library/utils/utils.js"></script>
+		<script src="./library/utils/knob.js"></script>
 		<script src="./library/utils/artworkLayout.js"></script>
 		<script src="./library/utils/audioAnalyzer.js"></script>
 		<script src="./library/utils/audioKnob.js"></script>
 		<script src="./library/utils/audioDebugDisplay.js"></script>
+
+		<!-- Shader system (optional - comment out to disable shaders) -->
 		<script src="./library/utils/shaderEffectsPanel.js"></script>
 		<script src="./library/utils/shaderManager.js"></script>
 		<script src="./library/utils/shaderPipeline.js"></script>
@@ -29,7 +32,9 @@
 		<!-- if you need to import js scripts do it here -->
 	</head>
 	<body>
-		<div class="info-toggle">Edit parameters</div>
+		<div class="params-toggles">
+			<div class="info-toggle">Edit parameters</div>
+		</div>
 		<div class="container" aria-label="Controls panel">
 			<div class="title-wrapper">
 				<h1 class="title">Controls</h1>

@@ -18,6 +18,10 @@
  * 4. To update time: shaderEffects.updateTime()
  * 5. Master speed: set SHADER_ANIMATION_SPEED in sketch.js (or shaderEffects.setAnimationSpeed())
  */
+
+// Matches sketch.js BASE_WIDTH / glitch-displacement REF — pixel params are authored at this short-edge size.
+const SHADER_SIZE_REF = 1000;
+
 class ShaderEffects {
 	constructor() {
 		// Shader animation control
@@ -63,28 +67,31 @@ class ShaderEffects {
 				amount: 0.1,
 				timeMultiplier: 0.0,
 				octave: 4.0,
+				noiseScale: 15.0, // shader falls back to 15.0 when 0
+				emberMode: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed",
 					uAmount: "amount",
 					uOctave: "octave",
+					uNoiseScale: "noiseScale",
+					uEmberMode: "emberMode",
 				},
 			},
 
 			collage: {
 				enabled: false,
 				amount: 1.0,
-				tileSize: 255.0,
+				tileSize: 255.0, // px @ short-edge 1000 (× sizeScale)
 				tileSize2: 50.0,
 				tileSize3: 100.0,
 				sizeNoise: 23.0,
 				rotNoise: 24.0,
-				timeMultiplier: 0.0,
 				uniforms: {
 					uSeed: "shaderSeed + 2222.0",
-					uTileSize1: "tileSize",
-					uTileSize2: "tileSize2",
-					uTileSize3: "tileSize3",
+					uTileSize1: "tileSize * sizeScale",
+					uTileSize2: "tileSize2 * sizeScale",
+					uTileSize3: "tileSize3 * sizeScale",
 					uSizeNoise: "sizeNoise",
 					uRotNoise: "rotNoise",
 					uAmount: "amount",
@@ -109,6 +116,83 @@ class ShaderEffects {
 					uSampleCount: "sampleCount",
 					uInvert: "invert",
 					uSortMode: "sortMode",
+					uResolution: "[width, height]",
+				},
+			},
+			// Real pixel sort (Kim Asendorf's ASDF algorithm) — actually permutes pixels,
+			// unlike pixelSort above which is a directional smear. See
+			// library/shaders/asdf-sort/README.md for the algorithm and perf levers.
+			asdfSort: {
+				enabled: false,
+				// Tick any combination. One axis = uniform. Several = organic Voronoi
+				// patches, each sorting along one of the enabled axes.
+				axisVertical: 1.0,
+				axisHorizontal: 0.0,
+				axisDiagonal: 0.0,
+				axisAntiDiagonal: 0.0,
+				axisRegionScale: 4.0, // Voronoi feature density when several axes are on
+				angle: 0.0, // extra rotation on top of the chosen axis
+				center: [0.5, 0.5], // pivot the sort axis turns around
+				sortKey: 0.0, // 0 luma, 1 hue, 2 saturation, 3 lightness, 4 R, 5 G, 6 B
+				gateKey: 0.0, // same enum — key used by the threshold test
+				thresholdLow: 0.25,
+				thresholdHigh: 0.85,
+				invertGate: 0.0, // sort what falls OUTSIDE the band instead
+				invertOrder: 0.0, // descending sort
+				maxSpan: 24.0, // px @ short-edge 1000 (× sizeScale)
+				spanStep: 1.0, // sampling stride @ REF 1000 — main perf lever
+				spanJitter: 0.7, // irregularity of the block boundaries
+				edgeWobble: 0.35, // bends the block seams into curves
+				organicAmount: 0.6, // master de-regulariser: span, threshold, phase per line
+				organicScale: 3.0,
+				organicSpeed: 0.0, // > 0 makes the organic fields drift — an animation knob
+				animateThreshold: 0.0,
+				thresholdAnimMode: 0.0, // 0 sine, 1 noise, 2 FBM
+				thresholdAnimAmount: 0.15,
+				sweepMode: 0.0, // 0 off, 1 sine, 2 scroll ramp, 3 noise, 4 FBM
+				sweepAmount: 0.5,
+				sweepScale: 1.5,
+				sweepSpeed: 0.5,
+				animateSpan: 0.0,
+				spanAnimAmount: 0.4,
+				spanAnimSpeed: 0.5,
+				mix: 1.0,
+				timeMultiplier: 1.0,
+				_phase: 0.0, // accumulated clock (see updatePhaseAccumulators)
+				uniforms: {
+					uTime: "_phase",
+					uSeed: "shaderSeed + 2468.0",
+					uAxisVertical: "axisVertical",
+					uAxisHorizontal: "axisHorizontal",
+					uAxisDiagonal: "axisDiagonal",
+					uAxisAntiDiagonal: "axisAntiDiagonal",
+					uAxisRegionScale: "axisRegionScale",
+					uAngle: "angle",
+					uCenter: "center",
+					uSortKey: "sortKey",
+					uGateKey: "gateKey",
+					uThresholdLow: "thresholdLow",
+					uThresholdHigh: "thresholdHigh",
+					uInvertGate: "invertGate",
+					uInvertOrder: "invertOrder",
+					uMaxSpan: "maxSpan * sizeScale",
+					uSpanStep: "spanStep * sizeScale",
+					uSpanJitter: "spanJitter",
+					uEdgeWobble: "edgeWobble",
+					uOrganicAmount: "organicAmount",
+					uOrganicScale: "organicScale",
+					uOrganicSpeed: "organicSpeed",
+					uAnimateThreshold: "animateThreshold",
+					uThresholdAnimMode: "thresholdAnimMode",
+					uThresholdAnimAmount: "thresholdAnimAmount",
+					uSweepMode: "sweepMode",
+					uSweepAmount: "sweepAmount",
+					uSweepScale: "sweepScale",
+					uSweepSpeed: "sweepSpeed",
+					uAnimateSpan: "animateSpan",
+					uSpanAnimAmount: "spanAnimAmount",
+					uSpanAnimSpeed: "spanAnimSpeed",
+					uMix: "mix",
 					uResolution: "[width, height]",
 				},
 			},
@@ -162,12 +246,12 @@ class ShaderEffects {
 
 			loaderGlitch: {
 				enabled: false, // Enable to show glitch loader animation
-				timeMultiplier: 0.3, // Speed of block movement
+				// progress driven by shaderEffects.setLoadingProgress() / loadingProgress
 				uniforms: {
 					uProgress: "loadingProgress", // Progress from 0.0 (0%) to 1.0 (100%)
-					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 8888.0",
 					uResolution: "[width, height]",
+					uRenderDensity: "sizeScale",
 				},
 			},
 			zoom: {
@@ -178,10 +262,12 @@ class ShaderEffects {
 				zoomInAmount: 4.5, // Max zoom when animating
 				animateZoom: 0.0, // 0.0 = static, 1.0 = animate between out/in
 				easingMode: 4.0, // 0=sine, 1=linear, 2=ease-in, 3=ease-out, 4=ease-in-out, 5=bounce
+				outOfBoundsMode: 0.0, // 0=black, 1=clamp edge, 2=mirror tile, 3=transparent
 				center: [0.5, 0.5], // Zoom center point (normalized 0-1)
 				timeMultiplier: 0.0,
 				uniforms: {
 					uTime: "shaderTime * timeMultiplier",
+					uOutOfBoundsMode: "outOfBoundsMode",
 					uZoomSpeed: "zoomSpeed",
 					uZoomAmount: "zoomAmount",
 					uZoomOutAmount: "zoomOutAmount",
@@ -189,7 +275,6 @@ class ShaderEffects {
 					uAnimateZoom: "animateZoom",
 					uCenter: "center",
 					uEasingMode: "easingMode",
-					uCenter: "center",
 				},
 			},
 			pixelGrid: {
@@ -217,7 +302,7 @@ class ShaderEffects {
 				levels: 1.0,
 				mix: 1.0,
 				strength: 1.0,
-				scale: 1.0,
+				scale: 1.0, // pattern cell px @ short-edge 1000 (× sizeScale)
 				colorMode: 1.0, // 0=luma quantize, 1=per-channel quantize
 				uniforms: {
 					uResolution: "[width, height]",
@@ -225,7 +310,7 @@ class ShaderEffects {
 					uLevels: "levels",
 					uMix: "mix",
 					uStrength: "strength",
-					uScale: "scale",
+					uScale: "scale * sizeScale",
 					uColorMode: "colorMode",
 					uSeed: "shaderSeed + 4321.0",
 				},
@@ -253,7 +338,7 @@ class ShaderEffects {
 			crtDisplay: {
 				enabled: false,
 				brightness: 0.0,
-				cellSize: 2.0,
+				cellSize: 2.0, // px @ short-edge 1000 (× sizeScale)
 				gapOpacity: 0.0,
 				rgbOpacity: 0.0,
 				rgbGain: [1.0, 1.0, 1.0],
@@ -263,7 +348,7 @@ class ShaderEffects {
 				uniforms: {
 					uResolution: "[width, height]",
 					uBrightness: "brightness",
-					uCellSize: "cellSize",
+					uCellSize: "cellSize * sizeScale",
 					uGapOpacity: "gapOpacity",
 					uRgbOpacity: "rgbOpacity",
 					uRgbGain: "rgbGain",
@@ -275,7 +360,8 @@ class ShaderEffects {
 			blur: {
 				enabled: false,
 				blurMode: 1.0, // 0=gaussian, 1=radial, 2=directional
-				blurAmount: 43.0, // Blur radius/intensity in pixels
+				// Gaussian/directional: px @ short-edge 1000 (× sizeScale). Radial: UV units ×0.01 (no scale).
+				blurAmount: 43.0,
 				blurQuality: 120.0, // Sampling quality (1-8, higher = better but slower)
 				blurDirection: 0, // Angle in radians for directional mode
 				blurCenter: [0.5, 0.5], // Center for radial mode (normalized 0-1)
@@ -286,7 +372,8 @@ class ShaderEffects {
 				uniforms: {
 					uResolution: "[width, height]",
 					uBlurMode: "blurMode",
-					uBlurAmount: "blurAmount",
+					// Modes 0/2 are texel-sized; mode 1 is UV-based and already size-stable.
+					uBlurAmount: "(blurMode < 0.5 || blurMode > 1.5) ? (blurAmount * sizeScale) : blurAmount",
 					uBlurQuality: "blurQuality",
 					uBlurDirection: "blurDirection",
 					uBlurCenter: "blurCenter",
@@ -339,6 +426,7 @@ class ShaderEffects {
 			grain: {
 				enabled: false,
 				amount: 0.051,
+				grainSize: 1.0, // 1 = original look; higher values make larger grain
 				timeMultiplier: 0.0,
 				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
 				thresholdMinX: 0.0, // left [0..1]
@@ -350,6 +438,7 @@ class ShaderEffects {
 					uTime: "shaderTime * timeMultiplier",
 					uSeed: "shaderSeed + 345.0",
 					uAmount: "amount",
+					uGrainSize: "grainSize",
 					uThresholdMinX: "thresholdMinX",
 					uThresholdMaxX: "thresholdMaxX",
 					uThresholdMinY: "thresholdMinY",
@@ -454,6 +543,7 @@ class ShaderEffects {
 			shaderManager.loadShader("grain", "grain/fragment.frag", "grain/vertex.vert"),
 			shaderManager.loadShader("collage", "collage-rotate/fragment.frag", "collage-rotate/vertex.vert"),
 			shaderManager.loadShader("pixelSort", "pixel-sort/fragment.frag", "pixel-sort/vertex.vert"),
+			shaderManager.loadShader("asdfSort", "asdf-sort/fragment.frag", "asdf-sort/vertex.vert"),
 			shaderManager.loadShader("crtDisplay", "pixel-checker/fragment.frag", "pixel-checker/vertex.vert"),
 			shaderManager.loadShader("symmetry", "symmetry/fragment.frag", "symmetry/vertex.vert"),
 			shaderManager.loadShader("symmetry2", "symmetry/fragment.frag", "symmetry/vertex.vert"),
@@ -794,11 +884,43 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Physical canvas resolution in pixels (logical size × pixel density).
+	 * Physical resolution of the shader render target, in pixels.
+	 *
+	 * This is what `uResolution` reports, so it has to describe the target the shaders
+	 * actually write to — not the source artwork. When the panel renders the shader stage
+	 * at a fraction of the sketch density, every pixel-based effect (blur radius, sort
+	 * span, grain) has to follow, or it would silently change scale.
 	 */
 	getPhysicalResolution() {
 		const density = this.mainCanvas?.pixelDensity?.() ?? this.pixelDensity ?? 1;
-		return [this.mainCanvas.width * density, this.mainCanvas.height * density];
+		const scale = this.shaderPipeline?.getDensityScale?.() ?? 1;
+		return [this.mainCanvas.width * density * scale, this.mainCanvas.height * density * scale];
+	}
+
+	/**
+	 * Scale factors that map panel pixel params (authored @ SHADER_SIZE_REF short edge)
+	 * onto the current framebuffer.
+	 *
+	 * viewportScale ≈ sketch MULTIPLIER (min logical edge / 1000).
+	 * renderDensity = pixelDensity × panel densityScale.
+	 * sizeScale = viewportScale × renderDensity — use this for px → physical uniforms.
+	 *
+	 * @returns {{pixelDensity: number, densityScale: number, renderDensity: number, viewportScale: number, sizeScale: number}}
+	 */
+	getSizeScaleFactors() {
+		const pixelDensity = this.mainCanvas?.pixelDensity?.() ?? this.pixelDensity ?? 1;
+		const densityScale = this.shaderPipeline?.getDensityScale?.() ?? 1;
+		const renderDensity = pixelDensity * densityScale;
+		const logicalW = this.mainCanvas?.width ?? SHADER_SIZE_REF;
+		const logicalH = this.mainCanvas?.height ?? SHADER_SIZE_REF;
+		const viewportScale = Math.min(logicalW, logicalH) / SHADER_SIZE_REF;
+		return {
+			pixelDensity,
+			densityScale,
+			renderDensity,
+			viewportScale,
+			sizeScale: viewportScale * renderDensity,
+		};
 	}
 
 	/**
@@ -907,6 +1029,10 @@ class ShaderEffects {
 			for (const [k, v] of Object.entries(saved)) {
 				if (k === "uniforms" || k.startsWith("_")) continue;
 				if (k === "translationPhaseX" || k === "translationPhaseY" || k === "rotationPhase") continue;
+				// Only restore params the current template still defines. Without this,
+				// a param removed from a shader stays alive forever in localStorage and
+				// comes back as a panel slider wired to nothing.
+				if (!(k in template)) continue;
 				merged[k] = typeof v === "object" && v !== null ? JSON.parse(JSON.stringify(v)) : v;
 			}
 			if ("translationPhaseX" in merged) merged.translationPhaseX = 0;
@@ -1135,8 +1261,29 @@ class ShaderEffects {
 	 */
 	updateTime(delta = 0.01) {
 		this.shaderTime += delta;
+		this.updatePhaseAccumulators(delta);
 		this.updateTranslationPhases(delta);
 		this.updateRotationPhases(delta);
+		return this;
+	}
+
+	/**
+	 * Generic jump-free clock for any effect declaring a numeric `_phase`.
+	 *
+	 * Effects using `uTime: "shaderTime * timeMultiplier"` jump when the multiplier is
+	 * dragged in the panel (the whole product changes at once). Integrating the speed
+	 * instead keeps the value continuous — only its derivative changes.
+	 * `_phase` is underscore-prefixed so the panel hides it automatically.
+	 *
+	 * @param {number} delta - Time delta from advanceShaderClock()
+	 */
+	updatePhaseAccumulators(delta) {
+		for (const name in this.effectsConfig) {
+			const effect = this.effectsConfig[name];
+			if (!effect.enabled || typeof effect._phase !== "number") continue;
+			const speed = typeof effect.timeMultiplier === "number" ? effect.timeMultiplier : 1;
+			effect._phase += delta * speed;
+		}
 		return this;
 	}
 
@@ -1166,6 +1313,7 @@ class ShaderEffects {
 			if (value.includes("+") || value.includes("-") || value.includes("*") || value.includes("/")) {
 				try {
 					const [physW, physH] = this.getPhysicalResolution();
+					const scales = this.getSizeScaleFactors();
 					// Create a safe evaluation context with available variables
 					const evalContext = {
 						shaderTime: this.shaderTime,
@@ -1173,6 +1321,11 @@ class ShaderEffects {
 						width: physW,
 						height: physH,
 						...effect, // Include effect properties
+						pixelDensity: scales.pixelDensity,
+						densityScale: scales.densityScale,
+						renderDensity: scales.renderDensity,
+						viewportScale: scales.viewportScale,
+						sizeScale: scales.sizeScale,
 					};
 
 					// Replace variable names with their values
@@ -1210,6 +1363,16 @@ class ShaderEffects {
 			if (value === "loadingProgress") return this.loadingProgress;
 			if (value === "width") return this.getPhysicalResolution()[0];
 			if (value === "height") return this.getPhysicalResolution()[1];
+			if (
+				value === "renderDensity" ||
+				value === "pixelDensity" ||
+				value === "densityScale" ||
+				value === "viewportScale" ||
+				value === "sizeScale"
+			) {
+				const scales = this.getSizeScaleFactors();
+				return scales[value];
+			}
 
 			// Try to evaluate as a simple variable reference
 			try {
@@ -1364,7 +1527,31 @@ class ShaderEffects {
 	}
 
 	/**
-	 * Update FPS counter
+	 * Stall until queued WebGL work finishes so FPS includes GPU cost.
+	 * Without this, high density looks lagged while the counter still reports
+	 * rAF cadence (often 60–120+) because draw calls return before the GPU is done.
+	 */
+	_syncGpuForFps() {
+		try {
+			const gl = this.p5Instance?.drawingContext;
+			if (gl && typeof gl.finish === "function") gl.finish();
+		} catch {
+			/* ignore — FPS stays best-effort */
+		}
+	}
+
+	/**
+	 * Record one completed frame for the FPS counter.
+	 * Call after apply()/applyCopy() so the sample covers real work.
+	 */
+	_markFrameForFps() {
+		// Sync only while the overlay is on — finish() is a real stall.
+		if (this.showFPS) this._syncGpuForFps();
+		this.updateFPS();
+	}
+
+	/**
+	 * Update FPS counter from wall-clock time since the previous completed frame.
 	 */
 	updateFPS() {
 		// Always track FPS (the debug panel reads currentFPS even when the
@@ -1373,16 +1560,16 @@ class ShaderEffects {
 		const delta = now - this.lastFrameTime;
 		this.lastFrameTime = now;
 
-		// Calculate instantaneous FPS
-		const instantFPS = 1000 / delta;
+		// Ignore sub-ms / non-finite samples (double-fire, first tick after a pause)
+		if (!(delta > 0.5) || !Number.isFinite(delta)) return;
 
-		// Add to history
+		const instantFPS = Math.min(1000 / delta, 240);
+
 		this.fpsHistory.push(instantFPS);
 		if (this.fpsHistory.length > this.fpsHistorySize) {
 			this.fpsHistory.shift();
 		}
 
-		// Calculate average FPS
 		const sum = this.fpsHistory.reduce((a, b) => a + b, 0);
 		this.currentFPS = Math.round(sum / this.fpsHistory.length);
 	}
@@ -1467,6 +1654,9 @@ class ShaderEffects {
 		} else {
 			this.showFPS = show;
 		}
+		// Reset the window so enabling the overlay doesn't inherit inflated samples
+		this.fpsHistory = [];
+		this.lastFrameTime = performance.now();
 		return this;
 	}
 
@@ -1477,9 +1667,6 @@ class ShaderEffects {
 	 * @returns {boolean} Whether to continue the animation loop
 	 */
 	renderFrame(isSketchComplete, continueCallback) {
-		// Update FPS counter
-		this.updateFPS();
-
 		if (isSketchComplete) {
 			// Always apply shaders at least once when sketch is complete
 			if (!this.shouldApplyDuringSketch()) {
@@ -1491,7 +1678,7 @@ class ShaderEffects {
 				this.advanceShaderClock();
 				this.apply();
 
-				// Draw FPS counter
+				this._markFrameForFps();
 				this.drawFPS();
 
 				// Continue using requestAnimationFrame
@@ -1514,7 +1701,7 @@ class ShaderEffects {
 			this.applyCopy();
 		}
 
-		// Draw FPS counter
+		this._markFrameForFps();
 		this.drawFPS();
 
 		return true; // Continue animation
