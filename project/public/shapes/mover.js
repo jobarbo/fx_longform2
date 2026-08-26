@@ -3,23 +3,25 @@
 const FELT_REFERENCE_PARTICLE_SIZE = CURRENT_PARAMS.particleSize ?? 0.75 * MULTIPLIER;
 
 const FELT_SKIPPER_KNOTS = [
-	[0, 2],
+	[0, 0.1],
 	[0.0005, 1.5],
 	[0.0015, 0.0],
 	[0.005, 1.15],
 	[0.015, 0.0],
 ];
 const FELT_SIZE_KNOTS = [
-	[0, FELT_REFERENCE_PARTICLE_SIZE * 0.055],
+	[0, FELT_REFERENCE_PARTICLE_SIZE * 0.12],
+	[0.00005, FELT_REFERENCE_PARTICLE_SIZE * 0.12],
+	[0.000055, FELT_REFERENCE_PARTICLE_SIZE * 0.4],
+	[0.00006, FELT_REFERENCE_PARTICLE_SIZE * 0.16],
 	[0.0005, FELT_REFERENCE_PARTICLE_SIZE * 0.15],
 	[0.0015, FELT_REFERENCE_PARTICLE_SIZE * 0.4],
 	[0.005, FELT_REFERENCE_PARTICLE_SIZE * 0.3],
-	[0.015, FELT_REFERENCE_PARTICLE_SIZE * 0.2],
-	[0.0169, FELT_REFERENCE_PARTICLE_SIZE * 0.3],
-	[0.0171, FELT_REFERENCE_PARTICLE_SIZE],
+	[0.015, FELT_REFERENCE_PARTICLE_SIZE * 0.4],
+	[0.0151, FELT_REFERENCE_PARTICLE_SIZE],
 ];
 const FELT_JITTER_KNOTS = [
-	[0, 1.0],
+	[0, 3.0],
 	[0.0015, 0.5],
 	[0.005, 1.0],
 	[0.015, 0.0],
@@ -147,7 +149,8 @@ class Mover {
 		const feltScale = feltParticleScale();
 		this.xRandSkipperOffset = mapPiecewise(speedX, FELT_SKIPPER_KNOTS, feltScale);
 		this.yRandSkipperOffset = mapPiecewise(speedY, FELT_SKIPPER_KNOTS, feltScale);
-		this.s = mapPiecewise(speed, FELT_SIZE_KNOTS, feltScale) * MULTIPLIER;
+		// ZZ line patterns stay at reference size; felt/slow paths keep the speed curve.
+		this.s = p._zzLine ? FELT_REFERENCE_PARTICLE_SIZE * feltScale * MULTIPLIER : mapPiecewise(speed, FELT_SIZE_KNOTS, feltScale) * MULTIPLIER;
 
 		const jitterStrength = mapPiecewise(speed, FELT_JITTER_KNOTS);
 		if (jitterStrength > 0) {
@@ -388,9 +391,12 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	const innerThreshold = CURRENT_PARAMS.innerFlowThreshold ?? 0;
 	const outerThreshold = CURRENT_PARAMS.outerFlowThreshold ?? 0;
 
-	// Apply transformation preserving sign but with variation for both directions
-	let zu = u < innerThreshold ? zzuNeg : zzuPos;
-	let zv = v < outerThreshold ? zzvNeg : zzvPos;
+	// Apply transformation preserving sign but with variation for both directions.
+	// Neg path = full-strength ZZ (visible line patterns); pos path = tiny felt step.
+	const zzLineU = u < innerThreshold;
+	const zzLineV = v < outerThreshold;
+	let zu = zzLineU ? zzuNeg : zzuPos;
+	let zv = zzLineV ? zzvNeg : zzvPos;
 
 	// Add final cross-coupling layer for more intricate movement
 	let finalU = zu * 0.85 + zv * 0.15;
@@ -404,5 +410,6 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let zv = ZZ(v, 2.1, 5.5, 0.01) * MULTIPLIER; */
 
 	let p = createVector(finalU, finalV);
+	p._zzLine = zzLineU || zzLineV;
 	return p;
 }
