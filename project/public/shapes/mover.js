@@ -3,7 +3,7 @@
 const FELT_REFERENCE_PARTICLE_SIZE = CURRENT_PARAMS.particleSize ?? 0.75 * MULTIPLIER;
 
 const FELT_SKIPPER_KNOTS = [
-	[0, 0.1],
+	[0, 1.5],
 	[0.0005, 1.5],
 	[0.0015, 0.0],
 	[0.005, 1.15],
@@ -21,7 +21,7 @@ const FELT_SIZE_KNOTS = [
 	[0.0151, FELT_REFERENCE_PARTICLE_SIZE],
 ];
 const FELT_JITTER_KNOTS = [
-	[0, 3.0],
+	[0, 0.5],
 	[0.0015, 0.5],
 	[0.005, 1.0],
 	[0.015, 0.0],
