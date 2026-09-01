@@ -208,10 +208,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
-		noiseScale1 = 2,
+		noiseScale1 = CURRENT_PARAMS.noiseScale1 ?? 2,
 		noiseScale2 = CURRENT_PARAMS.noiseScale2 ?? 1,
-		noiseScale3 = 0.001,
-		noiseScale4 = 3,
+		noiseScale3 = CURRENT_PARAMS.noiseScale3 ?? 2,
+		noiseScale4 = CURRENT_PARAMS.noiseScale4 ?? 3,
 		octave = CURRENT_PARAMS.octave ?? 1,
 		a1 = amplitude1,
 		a2 = amplitude2;
