@@ -48,4 +48,7 @@ if (typeof ParamsPanel !== "undefined") {
 			presentation: true,
 		},
 	});
+	if (typeof groupNoiseScaleControls === "function") {
+		groupNoiseScaleControls();
+	}
 }

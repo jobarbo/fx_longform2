@@ -28,7 +28,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		externalFrame: ["on", "off"],
 		swirlIndex: ["none", "low", "medium", "high", "veryHigh", "extreme"],
 		zigzag: ["hairline", "fine", "normal", "large", "XL"],
-		noiseScale2: ["low", "medium", "high", "intense", "extreme"],
+		noiseScale: ["low", "medium", "high", "intense", "extreme"],
 		palettes: [], // filled once palettes are loaded
 		paletteDirections: ["default", "reversed"],
 		paletteModes: ["oklch", "oklab", "lch", "lab", "hsl", "rgb", "lrgb"], // chroma.scale interpolation modes
@@ -38,7 +38,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 	maps: {
 		swirl: {none: 0.3, low: 10, medium: 100, high: 500, veryHigh: 1000, extreme: 2000},
 		zigzag: {hairline: 0.0018, fine: 0.003, normal: 0.005, large: 0.007, XL: 0.009},
-		noiseScale2: {low: 1, medium: 2, high: 4, intense: 6, extreme: 8},
+		noiseScale: {low: 1, medium: 2, high: 4, intense: 6, extreme: 8},
 		patternIntensity: {low: 15, normal: 10, high: 5, intense: 1, extreme: 0.1},
 		speed: {
 			veryFast: 0.015,
@@ -81,7 +81,10 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		swirlIndex: "none",
 		horizontalZigzag: "normal",
 		verticalZigzag: "normal",
+		noiseScale1: "medium",
 		noiseScale2: "low",
+		noiseScale3: "medium",
+		noiseScale4: "medium",
 	},
 
 	// ---- UI metadata (drives ParamsPanel control generation) ----
@@ -179,10 +182,28 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			optionsKey: "swirlIndex",
 		},
 		{
+			key: "noiseScale1",
+			id: "param-noise-scale-1",
+			label: "1",
+			optionsKey: "noiseScale",
+		},
+		{
 			key: "noiseScale2",
 			id: "param-noise-scale-2",
-			label: "Detail complexity",
-			optionsKey: "noiseScale2",
+			label: "2",
+			optionsKey: "noiseScale",
+		},
+		{
+			key: "noiseScale3",
+			id: "param-noise-scale-3",
+			label: "3",
+			optionsKey: "noiseScale",
+		},
+		{
+			key: "noiseScale4",
+			id: "param-noise-scale-4",
+			label: "4",
+			optionsKey: "noiseScale",
 		},
 		{
 			key: "octaveLevel",
@@ -241,12 +262,41 @@ window.resolveParams = function resolveParams() {
 		swirlFactor: maps.swirl[current.swirlIndex] ?? maps.swirl.none,
 		horizontalZigzagStrength: maps.zigzag[current.horizontalZigzag] ?? maps.zigzag.normal,
 		verticalZigzagStrength: maps.zigzag[current.verticalZigzag] ?? maps.zigzag.normal,
-		noiseScale2: maps.noiseScale2[current.noiseScale2] ?? maps.noiseScale2.low,
+		noiseScale1: maps.noiseScale[current.noiseScale1] ?? maps.noiseScale.medium,
+		noiseScale2: maps.noiseScale[current.noiseScale2] ?? maps.noiseScale.low,
+		noiseScale3: maps.noiseScale[current.noiseScale3] ?? maps.noiseScale.medium,
+		noiseScale4: maps.noiseScale[current.noiseScale4] ?? maps.noiseScale.medium,
 	});
 };
 
 // Populate resolved on first load.
 window.resolveParams();
+
+/** Groups the four noise-scale selects into one labelled row. */
+window.groupNoiseScaleControls = function groupNoiseScaleControls() {
+	const form = document.querySelector(".controls-form");
+	if (!form || form.querySelector(".noise-scale-group")) return;
+
+	const rows = ["param-noise-scale-1", "param-noise-scale-2", "param-noise-scale-3", "param-noise-scale-4"]
+		.map((id) => document.getElementById(id)?.closest(".select-row"))
+		.filter(Boolean);
+
+	if (rows.length !== 4) return;
+
+	const group = document.createElement("div");
+	group.className = "noise-scale-group";
+
+	const title = document.createElement("div");
+	title.className = "noise-scale-group__title";
+	title.textContent = "Noise scale";
+
+	const controls = document.createElement("div");
+	controls.className = "noise-scale-group__controls";
+
+	group.append(title, controls);
+	form.insertBefore(group, rows[0]);
+	rows.forEach((row) => controls.appendChild(row));
+};
 
 const CURRENT_PARAMS = window.PARAMS_UI?.resolved ?? {};
 console.log(CURRENT_PARAMS);
