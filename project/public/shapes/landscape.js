@@ -3,7 +3,7 @@
 function createBuildingField(seed) {
 	let state = Math.floor(seed * 104729) >>> 0;
 	const random = () => {
-		state = (state + 0x6D2B79F5) >>> 0;
+		state = (state + 0x6d2b79f5) >>> 0;
 		let t = Math.imul(state ^ (state >>> 15), 1 | state);
 		t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
 		return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
@@ -20,23 +20,33 @@ function createBuildingField(seed) {
 		return {c: Math.cos(angle), s: Math.sin(angle), x: between(0, 1000), y: between(0, 1000)};
 	});
 	const oct = (x, y, scale, index, octaves = 1) => {
-		let value = 0, frequency = 1;
+		let value = 0,
+			frequency = 1;
 		for (let o = 0; o < octaves; o++) {
-			const n = index * octaves + o, r = rotations[n % rotations.length];
+			const n = index * octaves + o,
+				r = rotations[n % rotations.length];
 			const nx = (x * r.c - y * r.s) * scale * frequency + r.x;
 			const ny = (y * r.c + x * r.s) * scale * frequency + r.y;
-			const ix = Math.floor(nx), iy = Math.floor(ny);
-			let u = nx - ix, v = ny - iy;
-			u = u * u * (3 - 2 * u); v = v * v * (3 - 2 * v);
-			const a = lattice(ix, iy, n), b = lattice(ix + 1, iy, n);
-			const c = lattice(ix, iy + 1, n), d = lattice(ix + 1, iy + 1, n);
+			const ix = Math.floor(nx),
+				iy = Math.floor(ny);
+			let u = nx - ix,
+				v = ny - iy;
+			u = u * u * (3 - 2 * u);
+			v = v * v * (3 - 2 * v);
+			const a = lattice(ix, iy, n),
+				b = lattice(ix + 1, iy, n);
+			const c = lattice(ix, iy + 1, n),
+				d = lattice(ix + 1, iy + 1, n);
 			value += ((a + (b - a) * u) * (1 - v) + (c + (d - c) * u) * v) / frequency;
 			frequency *= 2;
 		}
 		return value;
 	};
 	return {
-		seed, noiseSeed, random, oct,
+		seed,
+		noiseSeed,
+		random,
+		oct,
 		scale: [between(0.45, 2.8), between(0.45, 2.8), between(0.6, 2.4)],
 		amplitude: [between(0.4, 3), between(0.4, 3)],
 		params: {
@@ -57,37 +67,44 @@ function createArchitecturalFace(origin, axisU, axisV, localWidth, localHeight, 
 	const det = axisU.x * axisV.y - axisU.y * axisV.x;
 	if (Math.abs(det) < 1e-8) throw new Error("Degenerate architectural face");
 	const face = {
-		origin, axisU, axisV, localWidth, localHeight, field, seed: field.seed,
+		origin,
+		axisU,
+		axisV,
+		localWidth,
+		localHeight,
+		field,
+		seed: field.seed,
 		projectedScale: Math.sqrt(Math.abs(det) / (localWidth * localHeight)),
 		project(x, y) {
-			return {x: origin.x + axisU.x * x / localWidth + axisV.x * y / localHeight,
-				y: origin.y + axisU.y * x / localWidth + axisV.y * y / localHeight};
+			return {x: origin.x + (axisU.x * x) / localWidth + (axisV.x * y) / localHeight, y: origin.y + (axisU.y * x) / localWidth + (axisV.y * y) / localHeight};
 		},
 		unproject(x, y) {
-			const dx = x - origin.x, dy = y - origin.y;
-			return {x: (dx * axisV.y - dy * axisV.x) / det * localWidth,
-				y: (dy * axisU.x - dx * axisU.y) / det * localHeight};
+			const dx = x - origin.x,
+				dy = y - origin.y;
+			return {x: ((dx * axisV.y - dy * axisV.x) / det) * localWidth, y: ((dy * axisU.x - dx * axisU.y) / det) * localHeight};
 		},
 		contains(x, y) {
 			return x >= 0 && x < localWidth && y >= 0 && y < localHeight;
 		},
 		applyTransform(ctx) {
-			ctx.transform(axisU.x / localWidth, axisU.y / localWidth,
-				axisV.x / localHeight, axisV.y / localHeight, origin.x, origin.y);
+			ctx.transform(axisU.x / localWidth, axisU.y / localWidth, axisV.x / localHeight, axisV.y / localHeight, origin.x, origin.y);
 		},
 	};
-	face.vertices = [face.project(0, 0), face.project(localWidth, 0),
-		face.project(localWidth, localHeight), face.project(0, localHeight)];
+	face.vertices = [face.project(0, 0), face.project(localWidth, 0), face.project(localWidth, localHeight), face.project(0, localHeight)];
 	face.path = new Path2D();
-	face.vertices.forEach((p, i) => i ? face.path.lineTo(p.x, p.y) : face.path.moveTo(p.x, p.y));
+	face.vertices.forEach((p, i) => (i ? face.path.lineTo(p.x, p.y) : face.path.moveTo(p.x, p.y)));
 	face.path.closePath();
 	return face;
 }
 
 function createLandscape() {
 	const columns = 1024;
-	const left = xMin * width, right = xMax * width, bottom = yMax * height;
-	const span = right - left, tall = (yMax - yMin) * height, step = span / columns;
+	const left = xMin * width,
+		right = xMax * width,
+		bottom = yMax * height;
+	const span = right - left,
+		tall = (yMax - yMin) * height,
+		step = span / columns;
 	const count = CURRENT_PARAMS.landscapeLayers ?? 5;
 	const horizon = CURRENT_PARAMS.landscapeHorizon ?? 0.32;
 	const architecture = CURRENT_PARAMS.architectureScale ?? 1;
@@ -95,7 +112,7 @@ function createLandscape() {
 	const source = baseHSLPalette[baseHSLPalette.length - 1];
 	const sky = {h: source.h, s: Math.min(source.s * 0.22, 18), l: 94};
 	const regions = [];
-	const css = c => `hsl(${c.h}, ${c.s}%, ${c.l}%)`;
+	const css = (c) => `hsl(${c.h}, ${c.s}%, ${c.l}%)`;
 	const atmosphere = (c, depth, shade = 0) => {
 		const fog = Math.pow(1 - depth, 1.3) * haze;
 		return {h: c.h, s: c.s * (1 - fog * 0.85), l: (c.l + shade) * (1 - fog) + sky.l * fog};
@@ -114,7 +131,7 @@ function createLandscape() {
 			region.path.lineTo(right, bottom);
 			region.path.closePath();
 		}
-		region.columnAt = x => Math.max(0, Math.min(columns - 1, Math.floor((x - left) / step)));
+		region.columnAt = (x) => Math.max(0, Math.min(columns - 1, Math.floor((x - left) / step)));
 		region.contains = (x, y) => x >= left && x < right && region.visible[region.columnAt(x)].some(([a, b]) => y >= a && y < b);
 		region.bottomAt = (x, y) => region.visible[region.columnAt(x)].find(([a, b]) => y >= a && y < b)?.[1] ?? y;
 		regions.push(region);
@@ -127,9 +144,10 @@ function createLandscape() {
 			const x = left + (j + 0.5) * step;
 			const hits = [];
 			for (let e = 0; e < 4; e++) {
-				const a = face.vertices[e], b = face.vertices[(e + 1) % 4];
+				const a = face.vertices[e],
+					b = face.vertices[(e + 1) % 4];
 				if (x >= Math.min(a.x, b.x) && x < Math.max(a.x, b.x)) {
-					hits.push(a.y + (x - a.x) / (b.x - a.x) * (b.y - a.y));
+					hits.push(a.y + ((x - a.x) / (b.x - a.x)) * (b.y - a.y));
 				}
 			}
 			if (hits.length >= 2) {
@@ -142,21 +160,20 @@ function createLandscape() {
 
 	for (let layer = 0; layer < count; layer++) {
 		const depth = (layer + 1) / count;
-		const groundY = yMin * height + tall * (horizon + (0.90 - horizon) * Math.pow(layer / count, 1.35));
+		const groundY = yMin * height + tall * (horizon + (0.9 - horizon) * Math.pow(layer / count, 1.35));
 		const pigment = baseHSLPalette[Math.floor((0.18 + depth * 0.66) * (baseHSLPalette.length - 1))];
 		const ground = new Float64Array(columns);
 		for (let j = 0; j < columns; j++) {
 			const u = (j + 0.5) / columns;
-			ground[j] = groundY + tall * (0.025 + depth * 0.045) * (
-				Math.sin(u * 5.5 + layer * 1.8 + rseed) + 0.5 * Math.sin(u * 13 + nseed + layer));
+			ground[j] = groundY + tall * (0.025 + depth * 0.045) * (Math.sin(u * 5.5 + layer * 1.8 + rseed) + 0.5 * Math.sin(u * 13 + nseed + layer));
 		}
-		const groundAt = x => ground[Math.max(0, Math.min(columns - 1, Math.floor((x - left) / step)))];
+		const groundAt = (x) => ground[Math.max(0, Math.min(columns - 1, Math.floor((x - left) / step)))];
 		const foundations = [];
 		const buildings = Math.max(2, Math.round(7 - depth * 4));
 		for (let b = 0; b < buildings; b++) {
 			const center = left + span * ((b + random(0.2, 0.8)) / buildings);
 			const w = span * random(0.055, 0.12) * (0.5 + depth) * architecture;
-			const h = tall * random(0.10, 0.22) * (0.35 + depth * 0.8) * architecture;
+			const h = tall * random(0.1, 0.62) * (0.35 + depth * 0.8) * architecture;
 			const origin = {x: center - w / 2, y: 0};
 			const u = {x: w, y: random(-0.09, 0.09) * w};
 			const v = {x: random(-0.07, 0.07) * h, y: h};
@@ -166,11 +183,13 @@ function createLandscape() {
 			let base = -Infinity;
 			for (let k = 0; k <= 32; k++) {
 				const t = k / 32;
-				base = Math.max(base,
+				base = Math.max(
+					base,
 					groundAt(footX + u.x * t) - u.y * t,
 					groundAt(footX + u.x * t + extrusion.x) - u.y * t - extrusion.y,
 					groundAt(footX + extrusion.x * t) - extrusion.y * t,
-					groundAt(footX + u.x + extrusion.x * t) - u.y - extrusion.y * t);
+					groundAt(footX + u.x + extrusion.x * t) - u.y - extrusion.y * t,
+				);
 			}
 			base += h * 0.035;
 			origin.y = base - h;
@@ -182,19 +201,17 @@ function createLandscape() {
 				{x: footX + extrusion.x, y: groundAt(footX + extrusion.x)},
 			];
 			foundations.push({footprint, center, height: h, width: w});
-			const lightX = (CURRENT_PARAMS.terrainLightX ?? -1) - (center - left) / span * 2 + 1;
+			const lightX = (CURRENT_PARAMS.terrainLightX ?? -1) - ((center - left) / span) * 2 + 1;
 			const lightZ = CURRENT_PARAMS.terrainLightHeight ?? 1;
 			const lightLength = Math.hypot(lightX, 1, lightZ);
-			const frontShade = -23 + 28 * Math.max(0, (1 + u.y / w * lightX) / lightLength);
+			const frontShade = -23 + 28 * Math.max(0, (1 + (u.y / w) * lightX) / lightLength);
 			const sideShade = -23 + 28 * Math.max(0, (lightX + u.y / w) / lightLength);
-			const roofShade = -8 + 24 * lightZ / lightLength;
+			const roofShade = -8 + (24 * lightZ) / lightLength;
 			const localW = 420 * MULTIPLIER;
-			const localH = localW * h / w;
+			const localH = (localW * h) / w;
 			// The three faces share this building's independent generation.
-			addFace(createArchitecturalFace({x: origin.x + extrusion.x, y: origin.y + extrusion.y},
-				u, {x: -extrusion.x, y: -extrusion.y}, localW, localW * 0.45, field), depth, pigment, roofShade);
-			addFace(createArchitecturalFace({x: origin.x + u.x, y: origin.y + u.y},
-				extrusion, v, localW * 0.45, localH, field), depth, pigment, sideShade);
+			addFace(createArchitecturalFace({x: origin.x + extrusion.x, y: origin.y + extrusion.y}, u, {x: -extrusion.x, y: -extrusion.y}, localW, localW * 0.45, field), depth, pigment, roofShade);
+			addFace(createArchitecturalFace({x: origin.x + u.x, y: origin.y + u.y}, extrusion, v, localW * 0.45, localH, field), depth, pigment, sideShade);
 			addFace(createArchitecturalFace(origin, u, v, localW, localH, field), depth, pigment, frontShade);
 		}
 		// Draw the supporting terrain in front of the foundations. This same
@@ -213,7 +230,8 @@ function createLandscape() {
 		r.cumulative = new Float64Array(columns);
 		let area = 0;
 		for (let j = 0; j < columns; j++) {
-			const a = r.top[j], b = r.floor[j];
+			const a = r.top[j],
+				b = r.floor[j];
 			let cursor = a;
 			for (const [c, d] of cover[j]) {
 				if (d <= cursor || c >= b) continue;
@@ -241,7 +259,8 @@ function createLandscape() {
 		r.area = area;
 		r.sample = (rng = r.face ? r.face.field.random : random) => {
 			const target = rng() * r.area;
-			let lo = 0, hi = columns - 1;
+			let lo = 0,
+				hi = columns - 1;
 			while (lo < hi) {
 				const mid = (lo + hi) >>> 1;
 				if (r.cumulative[mid] <= target) lo = mid + 1;
@@ -266,7 +285,7 @@ function createLandscape() {
 		}
 	}
 	return {
-		regions: regions.filter(r => r.area > 0),
+		regions: regions.filter((r) => r.area > 0),
 		paint(canvas) {
 			const ctx = canvas.drawingContext;
 			ctx.save();

@@ -17,7 +17,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		landscapeLayers: [3, 4, 5, 6, 7],
 		landscapeHorizons: [0.22, 0.32, 0.42, 0.52],
 		architectureScales: [0.5, 0.75, 1, 1.25, 1.5],
-		landscapeHazes: [0.25, 0.45, 0.65, 0.85],
+		landscapeHazes: [0.25, 0.45, 0.65, 0.85, 1.5],
 		terrainShadings: [0, 0.5, 1, 1.5],
 		terrainLightPositions: ["left", "center", "right"],
 		terrainLightHeights: [0.5, 1, 2],
@@ -306,9 +306,7 @@ window.groupNoiseScaleControls = function groupNoiseScaleControls() {
 	const form = document.querySelector(".controls-form");
 	if (!form || form.querySelector(".noise-scale-group")) return;
 
-	const rows = ["param-noise-scale-1", "param-noise-scale-2", "param-noise-scale-3", "param-noise-scale-4"]
-		.map((id) => document.getElementById(id)?.closest(".select-row"))
-		.filter(Boolean);
+	const rows = ["param-noise-scale-1", "param-noise-scale-2", "param-noise-scale-3", "param-noise-scale-4"].map((id) => document.getElementById(id)?.closest(".select-row")).filter(Boolean);
 
 	if (rows.length !== 4) return;
 

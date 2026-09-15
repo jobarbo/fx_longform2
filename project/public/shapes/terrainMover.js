@@ -28,8 +28,7 @@ function createTerrainLighting(region, bounds, seed) {
 		const dx = ((worldX - lightX) * building.height * 1.4) / elevation;
 		const dy = (building.height * (0.55 + region.depth * 0.3)) / elevation;
 		const hull = terrainShadowHull([...building.footprint, ...building.footprint.map((p) => ({x: p.x + dx, y: p.y + dy}))]);
-		const origin = {x: building.footprint.reduce((sum, p) => sum + p.x, 0) / building.footprint.length,
-			y: building.footprint.reduce((sum, p) => sum + p.y, 0) / building.footprint.length};
+		const origin = {x: building.footprint.reduce((sum, p) => sum + p.x, 0) / building.footprint.length, y: building.footprint.reduce((sum, p) => sum + p.y, 0) / building.footprint.length};
 		return {hull, dx, dy, origin, softness: Math.max(4 * MULTIPLIER, building.width * (0.25 + (1 - region.depth) * 0.25))};
 	});
 	const cols = 160,
@@ -49,7 +48,7 @@ function createTerrainLighting(region, bounds, seed) {
 			const nx = -slope * roll * 1.6,
 				ny = -roll,
 				nz = 1;
-			const lx = lightX - ((x - left) / (right - left)) * 2 + 1,
+			const lx = lightX - ((x - left) / (right - left)) * 12 + 1,
 				ly = -1;
 			const diffuse = Math.max(0, (nx * lx + ny * ly + nz * elevation) / (Math.hypot(nx, ny, nz) * Math.hypot(lx, ly, elevation)));
 			let shadow = 0,
@@ -70,14 +69,14 @@ function createTerrainLighting(region, bounds, seed) {
 				const softness = source.softness + travel * length * 0.22;
 				const coverage = (1 / (1 + Math.exp(-edgeDistance / softness))) * Math.exp(-travel * 1.1);
 				shadow = 1 - (1 - shadow) * (1 - coverage * 0.8);
-				directionX += source.dx / length * coverage;
-				directionY += source.dy / length * coverage;
+				directionX += (source.dx / length) * coverage;
+				directionY += (source.dy / length) * coverage;
 			}
 			const index = row * cols + col;
 			values[index] = Math.min(1, shadow * 0.95 + (0.62 - diffuse) * 0.35 - 0.12);
 			const directionLength = Math.hypot(directionX, directionY);
 			vx[index] = directionX / directionLength;
-			vy[index] = directionY / directionLength + slope * directionX / directionLength * 0.25;
+			vy[index] = directionY / directionLength + ((slope * directionX) / directionLength) * 0.25;
 		}
 	const sample = (x, y) => {
 		const u = Math.max(0, Math.min(cols - 1.001, ((x - left) / (right - left)) * (cols - 1)));
@@ -91,12 +90,15 @@ function createTerrainLighting(region, bounds, seed) {
 		return {shade: mix(values), x: mix(vx), y: mix(vy)};
 	};
 	const padding = MULTIPLIER * (8 + region.depth * 8);
-	const ridgeAt = x => region.top[region.columnAt(x)];
+	const ridgeAt = (x) => region.top[region.columnAt(x)];
 	return {
-		random, sample, shadows, padding,
+		random,
+		sample,
+		shadows,
+		padding,
 		spawn() {
 			// Uniform area coverage, plus an upstream band feeding the entire ridge.
-			if (random() < 0.2) {
+			if (random() < 0.02) {
 				const x = left + random() * (right - left);
 				return {x, y: ridgeAt(x) - random() * padding};
 			}
@@ -114,7 +116,7 @@ class TerrainMover {
 	constructor(region) {
 		this.landscape = region;
 		this.lighting = region.lighting;
-		this.s = (0.55 + region.depth * 0.85) * MULTIPLIER * (CURRENT_PARAMS.particleSize ?? 0.75);
+		this.s = (0.155 + region.depth * 0.185) * MULTIPLIER * (CURRENT_PARAMS.particleSize ?? 0.75);
 		this.phase = this.lighting.random() * Math.PI * 2;
 		this.age = 0;
 		this.reset();
@@ -124,7 +126,7 @@ class TerrainMover {
 		this.x = p.x;
 		this.y = p.y;
 		this.age = 0;
-		this.lifetime = 24 + Math.floor(this.lighting.random() * 24);
+		this.lifetime = 124 + Math.floor(this.lighting.random() * 24);
 		const flow = this.lighting.sample(this.x, this.y);
 		// Start strokes upstream; the visible terrain mask trims them at the ridge.
 		this.previousX = this.x - flow.x * MULTIPLIER * 3;
@@ -136,11 +138,11 @@ class TerrainMover {
 		const shade = this.lighting.sample(this.x, this.y).shade;
 		const strength = CURRENT_PARAMS.terrainShading ?? 1;
 		// Every particle leaves a trace, including the illuminated terrain.
-		const opacity = Math.min(0.32, strength * (0.1 + this.landscape.depth * 0.1));
+		const opacity = Math.min(0.92, strength * (0.1 + this.landscape.depth * 0.1));
 		const c = this.landscape.fill;
-		const contrast = 0.25 + this.landscape.depth * 0.75;
+		const contrast = 1.25 + this.landscape.depth * 0.75;
 		const tone = (4 - shade * 42 + Math.sin(this.phase) * 2) * contrast;
-		const lightness = Math.max(3, Math.min(96, c.l + tone));
+		const lightness = Math.max(3, Math.min(76, c.l + tone));
 		ctx.strokeStyle = `hsla(${c.h}, ${c.s * 0.8}%, ${lightness}%, ${opacity})`;
 		ctx.lineWidth = this.s;
 		ctx.beginPath();
@@ -152,7 +154,7 @@ class TerrainMover {
 		this.previousX = this.x;
 		this.previousY = this.y;
 		const flow = this.lighting.sample(this.x, this.y);
-		const speed = MULTIPLIER * (0.8 + this.landscape.depth * 1.8);
+		const speed = MULTIPLIER * (0.8 + this.landscape.depth * 31.8);
 		const bend = Math.sin(this.phase + this.age++ * 0.12) * 0.13;
 		this.x += (flow.x - flow.y * bend) * speed;
 		this.y += (flow.y + flow.x * bend) * speed;
