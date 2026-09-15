@@ -1,6 +1,6 @@
 // Piecewise speed → value knots [speed, output]. Linear within each segment, not one global map().
 // Y-values are tuned for FELT_REFERENCE_PARTICLE_SIZE; scaled at runtime by CURRENT_PARAMS.particleSize.
-const FELT_REFERENCE_PARTICLE_SIZE = CURRENT_PARAMS.particleSize ?? 0.75 * MULTIPLIER;
+const FELT_REFERENCE_PARTICLE_SIZE = CURRENT_PARAMS.particleSize ?? 0.75;
 
 const FELT_SKIPPER_KNOTS = [
 	[0, 1.5],
@@ -101,19 +101,45 @@ class Mover {
 		this._rotCos = Math.cos(inputRot);
 	}
 
-	show(canvas = null) {
-		// Get the drawing context - either from provided canvas or default
-		const drawingCtx = canvas ? canvas.drawingContext : drawingContext;
+	attachFace(face) {
+		this.face = face;
+		const local = face.unproject(this.x, this.y);
+		this.localX = local.x;
+		this.localY = local.y;
+		this.rseed = face.field.seed;
+		this.nseed = face.field.noiseSeed;
+		this.scl1 *= face.field.scale[0];
+		this.scl2 *= face.field.scale[1];
+		this.scl3 *= face.field.scale[2];
+		this.amplitude1 *= face.field.amplitude[0];
+		this.amplitude2 *= face.field.amplitude[1];
+		const rotation = (this.rseed * 0.000137 + this.nseed * 0.000024) % TAU;
+		this._rotSin = Math.sin(rotation);
+		this._rotCos = Math.cos(rotation);
+	}
 
-		// Use the original color format that preserves vibrancy
-		drawingCtx.fillStyle = `hsla(${this.currentColor.h}, ${this.currentColor.s}%, ${this.currentColor.l}%, ${this.a}%)`;
-		drawingCtx.fillRect(this.x, this.y, this.s, this.s);
+	show(canvas = null) {
+		if (this.landscape && !this.landscape.contains(this.x, this.y)) return;
+		const ctx = canvas ? canvas.drawingContext : drawingContext;
+		const ink = this.currentColor;
+		ctx.fillStyle = `hsla(${ink.h}, ${ink.s}%, ${ink.l}%, ${this.a}%)`;
+		const size = this.s * (this.landscape ? 0.4 + this.landscape.depth * 0.6 : 1);
+		if (this.face) {
+			// The renderer has installed this face's clip and local-to-world transform.
+			const face = this.face;
+			const localSize = size / face.projectedScale;
+			ctx.fillRect(this.localX, this.localY,
+				Math.min(localSize, face.localWidth - this.localX),
+				Math.min(localSize, face.localHeight - this.localY));
+		} else {
+			ctx.fillRect(this.x, this.y, size, size);
+		}
 	}
 
 	move(frameCount, maxFrames) {
 		const p = superCurve(
-			this.x,
-			this.y,
+			this.face ? this.localX : this.x,
+			this.face ? this.localY : this.y,
 			this.scl1,
 			this.scl2,
 			this.scl3,
@@ -122,16 +148,19 @@ class Mover {
 			this.sclOffset3,
 			this.amplitude1,
 			this.amplitude2,
-			this.xMin,
-			this.yMin,
-			this.xMax,
-			this.yMax,
+			this.face ? 0 : this.xMin,
+			this.face ? 0 : this.yMin,
+			this.face ? 1 : this.xMax,
+			this.face ? 1 : this.yMax,
 			this.rseed,
 			this.nseed,
-			width / 2,
-			height / 2,
+			this.face ? this.face.localWidth / 2 : width / 2,
+			this.face ? this.face.localHeight / 2 : height / 2,
 			this._rotSin,
 			this._rotCos,
+			this.face?.localWidth,
+			this.face?.localHeight,
+			this.face?.field,
 		);
 
 		this._applyFieldDisplacement(p);
@@ -141,6 +170,11 @@ class Mover {
 	}
 
 	_applyFieldDisplacement(p) {
+		if (this.landscape && !this.face) {
+			const depthScale = 0.25 + this.landscape.depth * 0.75;
+			p.x *= depthScale;
+			p.y *= depthScale;
+		}
 		const speed = abs(p.x + p.y);
 		const speedX = abs(p.x);
 		const speedY = abs(p.y);
@@ -154,18 +188,30 @@ class Mover {
 
 		const jitterStrength = mapPiecewise(speed, FELT_JITTER_KNOTS);
 		if (jitterStrength > 0) {
-			this.xRandSkipper = random(-this.xRandSkipperOffset, this.xRandSkipperOffset) * MULTIPLIER * jitterStrength;
-			this.yRandSkipper = random(-this.yRandSkipperOffset, this.yRandSkipperOffset) * MULTIPLIER * jitterStrength;
+			const rng = this.face ? this.face.field.random : random;
+			this.xRandSkipper = (rng() * 2 - 1) * this.xRandSkipperOffset * MULTIPLIER * jitterStrength;
+			this.yRandSkipper = (rng() * 2 - 1) * this.yRandSkipperOffset * MULTIPLIER * jitterStrength;
 		} else {
 			this.xRandSkipper = 0;
 			this.yRandSkipper = 0;
 		}
 
-		this.x += (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
-		this.y += (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
+		const dx = (p.x * MULTIPLIER) / this.xRandDivider + this.xRandSkipper;
+		const dy = (p.y * MULTIPLIER) / this.yRandDivider + this.yRandSkipper;
+		if (this.face) {
+			this.localX += dx;
+			this.localY += dy;
+		} else {
+			this.x += dx;
+			this.y += dy;
+		}
 	}
 
 	_updateColor(frameCount, maxFrames) {
+		if (this.landscape) {
+			this.currentColor = this.landscape.ink;
+			return;
+		}
 		const maxColorIndex = this.palette.length - 1;
 		const mappedFrame = map(frameCount, 0, maxFrames / 1.25, maxColorIndex, 0, true);
 		this.colorIndex = Math.floor(mappedFrame);
@@ -173,6 +219,23 @@ class Mover {
 	}
 
 	_handleBounds() {
+		if (this.face) {
+			const {localWidth: w, localHeight: h} = this.face;
+			// Wrap inside this surface only; never cross a building edge onto another face.
+			this.localX = ((this.localX % w) + w) % w;
+			this.localY = ((this.localY % h) + h) % h;
+			const projected = this.face.project(this.localX, this.localY);
+			this.x = projected.x;
+			this.y = projected.y;
+			return;
+		}
+		if (this.landscape) {
+			if (!this.landscape.contains(this.x, this.y)) {
+				this.x = this.initX;
+				this.y = this.initY;
+			}
+			return;
+		}
 		if (this.isBordered) {
 			if (this.isOutside()) {
 				this.hasBeenOutside = true;
@@ -199,7 +262,9 @@ class Mover {
 	}
 }
 
-function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude1, amplitude2, xMin, yMin, xMax, yMax, rseed, nseed, centerX, centerY, sinIn, cosIn) {
+function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude1, amplitude2, xMin, yMin, xMax, yMax, rseed, nseed, centerX, centerY, sinIn, cosIn, fieldWidth = width, fieldHeight = height, field = null) {
+	const params = field?.params ?? CURRENT_PARAMS;
+	const sampleOct = field?.oct ?? oct;
 	let nx = x,
 		ny = y,
 		scale1 = scl1,
@@ -208,11 +273,11 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		scaleOffset1 = sclOff1,
 		scaleOffset2 = sclOff2,
 		scaleOffset3 = sclOff3,
-		noiseScale1 = CURRENT_PARAMS.noiseScale1 ?? 2,
-		noiseScale2 = CURRENT_PARAMS.noiseScale2 ?? 1,
-		noiseScale3 = CURRENT_PARAMS.noiseScale3 ?? 2,
-		noiseScale4 = CURRENT_PARAMS.noiseScale4 ?? 3,
-		octave = CURRENT_PARAMS.octave ?? 1,
+		noiseScale1 = params.noiseScale1 ?? 2,
+		noiseScale2 = params.noiseScale2 ?? 1,
+		noiseScale3 = params.noiseScale3 ?? 2,
+		noiseScale4 = params.noiseScale4 ?? 3,
+		octave = params.octave ?? 1,
 		a1 = amplitude1,
 		a2 = amplitude2;
 
@@ -231,11 +296,11 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		a1_04 = a1 * 10.4,
 		a2_04 = a2 * 10.4,
 		a1_03 = a1 * 10.3,
-		a2_03 = a2 * CURRENT_PARAMS.swirlFactor;
+		a2_03 = a2 * params.swirlFactor;
 
 	// Rotate inputs by a stable seed-based angle around composition center to avoid persistent 45° bias
-	const cx = centerX ?? width / 2;
-	const cy = centerY ?? height / 2;
+	const cx = centerX ?? fieldWidth / 2;
+	const cy = centerY ?? fieldHeight / 2;
 	if (sinIn === undefined) {
 		const inputRot = (rseed * 0.000137 + nseed * 0.000024) % TAU;
 		sinIn = sin(inputRot);
@@ -248,40 +313,40 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	// Enhanced multi-layer octave calculations with cross-coupling and varied scales
 	// Layer 1: Primary flow with cross-coupling
-	dx = oct(nx, ny, scale1, 0, octave);
-	dy = oct(ny, nx, scale2, 2, octave); // Swapped coordinates for cross-coupling
+	let dx = sampleOct(nx, ny, scale1, 0, octave);
+	let dy = sampleOct(ny, nx, scale2, 2, octave); // Swapped coordinates for cross-coupling
 	nx += dx * a1;
 	ny += dy * a2;
 
 	// Layer 2: Secondary flow with different scales and offsets
 	const mx1 = nx * 0.7 + ny * 0.3,
 		my1 = ny * 0.7 + nx * 0.3;
-	dx = oct(mx1, my1, scale1_13, 4, octave);
-	dy = oct(my1, mx1, scale2_13, 5, octave);
+	dx = sampleOct(mx1, my1, scale1_13, 4, octave);
+	dy = sampleOct(my1, mx1, scale2_13, 5, octave);
 	nx += dx * a1_06;
 	ny += dy * a2_06;
 
 	// Layer 3: Fine detail layer with cross-coupling
-	dx = oct(nx, ny, scale1_05, 6, octave);
-	dy = oct(ny, nx, scale2_05, 7, octave);
+	dx = sampleOct(nx, ny, scale1_05, 6, octave);
+	dy = sampleOct(ny, nx, scale2_05, 7, octave);
 	nx += dx * a1_04;
 	ny += dy * a2_04;
 
 	// Layer 4: Rotational component using mixed coordinates
-	const rotAngle = oct(nx * 0.5, ny * 0.5, scale3, 8, octave) * PI,
+	const rotAngle = sampleOct(nx * 0.5, ny * 0.5, scale3, 8, octave) * PI,
 		crot = cos(rotAngle),
 		srot = sin(rotAngle),
 		rotX = crot * nx - srot * ny,
 		rotY = srot * nx + crot * ny;
-	dx = oct(rotX, rotY, scale1_08, 9, octave);
-	dy = oct(rotY, rotX, scale2_08, 10, octave);
+	dx = sampleOct(rotX, rotY, scale1_08, 9, octave);
+	dy = sampleOct(rotY, rotX, scale2_08, 10, octave);
 	nx += dx * a1_03;
 	ny += dy * a2_03;
 
 	// Enhanced sine/cosine with cross-coupling and mixed scales
-	un = sin(nx * s1o1 + ny * (s2o2 * 0.5) + rseed) + cos(nx * s2o2 + ny * (s1o1 * 0.5) + rseed) - sin(nx * s3o3 + ny * (s1o1 * 0.3) + rseed) + oct(ny * s1o1, nx * s2o2, 0.5, 11, octave) * 0.5;
+	const un = sin(nx * s1o1 + ny * (s2o2 * 0.5) + rseed) + cos(nx * s2o2 + ny * (s1o1 * 0.5) + rseed) - sin(nx * s3o3 + ny * (s1o1 * 0.3) + rseed) + sampleOct(ny * s1o1, nx * s2o2, 0.5, 11, octave) * 0.5;
 
-	vn = cos(ny * s1o1 + nx * (s2o2 * 0.5) + rseed) + sin(ny * s2o2 + nx * (s1o1 * 0.5) + rseed) - cos(ny * s3o3 + nx * (s1o1 * 0.3) + rseed) + oct(nx * s2o2, ny * s1o1, 0.5, 11, octave) * 0.5;
+	const vn = cos(ny * s1o1 + nx * (s2o2 * 0.5) + rseed) + sin(ny * s2o2 + nx * (s1o1 * 0.5) + rseed) - cos(ny * s3o3 + nx * (s1o1 * 0.3) + rseed) + sampleOct(nx * s2o2, ny * s1o1, 0.5, 11, octave) * 0.5;
 
 	//! sine x cos x oct
 	/*
@@ -290,36 +355,36 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 		sin(y * scl1 * scaleOffset1 + time) +
 		cos(y * scl2 * scaleOffset2 + time) +
 		sin(y * scl2 * 1.05 + time) +
-		oct(ny * scl1 * scaleOffset1 + time, nx * scl2 * scaleOffset2 + time, x_sine_scale, 2, octave);
+		sampleOct(ny * scl1 * scaleOffset1 + time, nx * scl2 * scaleOffset2 + time, x_sine_scale, 2, octave);
 	let vn =
 		sin(x * scl1 * scaleOffset1 + time) +
 		cos(x * scl2 * scaleOffset2 + time) -
 		sin(x * scl2 * 1.05 + time) +
-		oct(nx * scl2 * scaleOffset2 + time, ny * scl1 * scaleOffset1 + time, y_sine_scale, 3, octave);
+		sampleOct(nx * scl2 * scaleOffset2 + time, ny * scl1 * scaleOffset1 + time, y_sine_scale, 3, octave);
 	*/
 	//! noise x SineCos
 	/* un = noise(sin(nx * (scale1 * scaleOffset1) + rseed)) + noise(cos(nx * (scale2 * scaleOffset2) + rseed)) - noise(sin(nx * (scale3 * scaleOffset3) + rseed));
 	vn = noise(cos(ny * (scale1 * scaleOffset1) + rseed)) + noise(sin(ny * (scale2 * scaleOffset2) + rseed)) - noise(cos(ny * (scale3 * scaleOffset3) + rseed)); */
 
 	//! center focused introverted
-	/* let maxU = map(ny, xMin * width, xMax * width, 3, -3, true);
-	let maxV = map(nx, yMin * height, yMax * height, 3, -3, true);
-	let minU = map(ny, xMin * width, xMax * width, -3, 3, true);
-	let minV = map(nx, yMin * height, yMax * height, -3, 3, true); */
+	/* let maxU = map(ny, xMin * fieldWidth, xMax * fieldWidth, 3, -3, true);
+	let maxV = map(nx, yMin * fieldHeight, yMax * fieldHeight, 3, -3, true);
+	let minU = map(ny, xMin * fieldWidth, xMax * fieldWidth, -3, 3, true);
+	let minV = map(nx, yMin * fieldHeight, yMax * fieldHeight, -3, 3, true); */
 
 	//! center focused extroverted
-	/* 	let maxU = map(nx, xMin * width, xMax * width, 3, -3, true);
-	let maxV = map(ny, yMin * height, yMax * height, 3, -3, true);
-	let minU = map(nx, xMin * width, xMax * width, -3, 3, true);
-	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
+	/* 	let maxU = map(nx, xMin * fieldWidth, xMax * fieldWidth, 3, -3, true);
+	let maxV = map(ny, yMin * fieldHeight, yMax * fieldHeight, 3, -3, true);
+	let minU = map(nx, xMin * fieldWidth, xMax * fieldWidth, -3, 3, true);
+	let minV = map(ny, yMin * fieldHeight, yMax * fieldHeight, -3, 3, true); */
 
 	//! Enhanced pNoise x SineCos with cross-coupling and varied noise indices
 	const mapIn = -0.000000025,
 		mapOut = 0.000000025;
-	let maxU = map(oct(ny * s1o1 + nx * (s2o2 * 1.3) + rseed, ny * s2o2 + nx * (s1o1 * 1.3) + rseed, noiseScale1, 13, octave), mapIn, mapOut, -1, 1, true);
-	let maxV = map(oct(nx * s2o2 + ny * (s1o1 * 1.3) + rseed, nx * s1o1 + ny * (s2o2 * 1.3) + rseed, noiseScale2, 14, octave), mapIn, mapOut, -1, 1, true);
-	let minU = map(oct(ny * s3o3 + nx * (s1o1 * 1.4) + rseed, ny * s1o1 + nx * (s3o3 * 1.4) + rseed, noiseScale3, 15, octave), mapIn, mapOut, -1, 1, true);
-	let minV = map(oct(nx * s1o1 + ny * (s3o3 * 1.4) + rseed, nx * s3o3 + ny * (s1o1 * 1.4) + rseed, noiseScale4, 16, octave), mapIn, mapOut, -1, 1, true);
+	let maxU = map(sampleOct(ny * s1o1 + nx * (s2o2 * 1.3) + rseed, ny * s2o2 + nx * (s1o1 * 1.3) + rseed, noiseScale1, 13, octave), mapIn, mapOut, -1, 1, true);
+	let maxV = map(sampleOct(nx * s2o2 + ny * (s1o1 * 1.3) + rseed, nx * s1o1 + ny * (s2o2 * 1.3) + rseed, noiseScale2, 14, octave), mapIn, mapOut, -1, 1, true);
+	let minU = map(sampleOct(ny * s3o3 + nx * (s1o1 * 1.4) + rseed, ny * s1o1 + nx * (s3o3 * 1.4) + rseed, noiseScale3, 15, octave), mapIn, mapOut, -1, 1, true);
+	let minV = map(sampleOct(nx * s1o1 + ny * (s3o3 * 1.4) + rseed, nx * s3o3 + ny * (s1o1 * 1.4) + rseed, noiseScale4, 16, octave), mapIn, mapOut, -1, 1, true);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
@@ -340,10 +405,10 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 
 	//! Enhanced introverted with cross-coupling and dynamic range variation
 	//* Mix both nx/ny and ny/nx for more complex mapping
-	const xMinW = xMin * width,
-		xMaxW = xMax * width,
-		yMinH = yMin * height,
-		yMaxH = yMax * height;
+	const xMinW = xMin * fieldWidth,
+		xMaxW = xMax * fieldWidth,
+		yMinH = yMin * fieldHeight,
+		yMaxH = yMax * fieldHeight;
 	let nxRangeMin = map(nx, xMinW, xMaxW, -1.5, -0.001);
 	let nxRangeMax = map(nx, xMinW, xMaxW, 0.001, 1.5);
 	let nyRangeMin = map(ny, yMinH, yMaxH, -1.5, -0.001);
@@ -361,8 +426,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let v = map(un * 0.7 + vn * 0.3, vRangeMin, vRangeMax, minV, maxV, true);
 
 	//! Extroverted
-	/* 	let u = map(vn, map(ny, xMin * width, xMax * width, -5.4, -0.0001), map(ny, xMin * width, xMax * width, 0.0001, 5.4), minU, maxU, true);
-	let v = map(un, map(nx, yMin * height, yMax * height, -5.4, -0.0001), map(nx, yMin * height, yMax * height, 0.0001, 5.4), minV, maxV, true); */
+	/* 	let u = map(vn, map(ny, xMin * fieldWidth, xMax * fieldWidth, -5.4, -0.0001), map(ny, xMin * fieldWidth, xMax * fieldWidth, 0.0001, 5.4), minU, maxU, true);
+	let v = map(un, map(nx, yMin * fieldHeight, yMax * fieldHeight, -5.4, -0.0001), map(nx, yMin * fieldHeight, yMax * fieldHeight, 0.0001, 5.4), minV, maxV, true); */
 
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
@@ -371,16 +436,16 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	// Add subtle asymmetry to break directional bias
 
 	//! really interesting to change the multipliers at the end here
-	const zzU = ZZ(Math.abs(u), 35, 300, CURRENT_PARAMS.horizontalZigzagStrength),
-		zzV = ZZ(Math.abs(v), 35, 300, CURRENT_PARAMS.verticalZigzagStrength);
+	const zzU = ZZ(Math.abs(u), 35, 300, params.horizontalZigzagStrength),
+		zzV = ZZ(Math.abs(v), 35, 300, params.verticalZigzagStrength);
 
 	//! to test the effect of the multipliers with zzPos and zzNeg
 	/* 	let zzuMult = map(zzU, -1, 1, 0.000001, 1, true);
 	let zzvMult = map(zzV, -1, 1, 0.000001, 1, true); */
 
 	// Pattern intensity controls (UI-driven). Lower numeric value = stronger intensity.
-	const hPattern = CURRENT_PARAMS.horizontalPatternIntensity ?? 10; // "normal"
-	const vPattern = CURRENT_PARAMS.verticalPatternIntensity ?? 10; // "normal"
+	const hPattern = params.horizontalPatternIntensity ?? 10; // "normal"
+	const vPattern = params.verticalPatternIntensity ?? 10; // "normal"
 
 	let zzuPos = map(zzU, -hPattern, hPattern, minU, maxU, true) * 0.0001;
 	let zzvPos = map(zzV, -vPattern, vPattern, minV, maxV, true) * 0.001;
@@ -388,8 +453,8 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let zzvNeg = map(zzV, -vPattern, vPattern, minV, maxV, true) * 1;
 
 	// User-controlled thresholds for when to use inner vs outer flow
-	const innerThreshold = CURRENT_PARAMS.innerFlowThreshold ?? 0;
-	const outerThreshold = CURRENT_PARAMS.outerFlowThreshold ?? 0;
+	const innerThreshold = params.innerFlowThreshold ?? 0;
+	const outerThreshold = params.outerFlowThreshold ?? 0;
 
 	// Apply transformation preserving sign but with variation for both directions.
 	// Neg path = full-strength ZZ (visible line patterns); pos path = tiny felt step.

@@ -38,8 +38,8 @@ let debugBounds = false;
 // Artwork layout — orientation + ratio without blowing up pixel count.
 // ratio = long edge : short edge (e.g. 3 → 3:1 strip). Canvas area stays ~viewportMin².
 const ARTWORK_LAYOUT = {
-	orientation: "vertical", // "horizontal" | "vertical"
-	ratio: 1.21, // long : short — horizontal 3 = 3:1 wide, vertical 3 = 1:3 tall
+	orientation: "horizontal", // "horizontal" | "vertical"
+	ratio: 1.6, // long : short — horizontal 3 = 3:1 wide, vertical 3 = 1:3 tall
 	baseSize: 1000, // reference size for particle scaling (≈ viewport min at 1:1)
 };
 
@@ -81,6 +81,7 @@ let pixel_density; // Calculated in setup() after windowWidth/Height are availab
 
 let features = "";
 let movers = [];
+let landscape;
 let startTime;
 let elapsedTime = 0;
 let executionTimer = new ExecutionTimer();
@@ -326,6 +327,7 @@ async function setup() {
 	if (CURRENT_PARAMS.showExternalFrame !== false) {
 		renderOutsideFrame();
 	}
+	landscape.paint(mainCanvas);
 	// Start the custom draw loop
 	drawLoop.start();
 
@@ -408,6 +410,27 @@ function startSketchAnimation() {
 		// ignore
 	}
 
+	// Clip once per contiguous region, not once per particle. Restore before each
+	// generator yield so shaders, exports and Apply always see the normal canvas.
+	let activeRegion = null;
+	const ctx = mainCanvas.drawingContext;
+	const endRegion = () => {
+		if (activeRegion) ctx.restore();
+		activeRegion = null;
+	};
+	const beginRegion = region => {
+		if (activeRegion === region) return;
+		endRegion();
+		activeRegion = region;
+		ctx.save();
+		ctx.clip(region.visiblePath);
+		if (!region.face) ctx.clip(region.path);
+		if (region.face) {
+			ctx.clip(region.face.path);
+			region.face.applyTransform(ctx);
+		}
+	};
+
 	// Create animation generator with configuration
 	const animConfig = {
 		items: movers,
@@ -417,6 +440,7 @@ function startSketchAnimation() {
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
 			if (currentFrame > -1) {
+				beginRegion(mover.landscape);
 				mover.show(mainCanvas);
 			}
 		},
@@ -424,6 +448,7 @@ function startSketchAnimation() {
 			mover.move(currentFrame, maxFrames);
 		},
 		onComplete: () => {
+			endRegion();
 			executionTimer.stop().logElapsedTime("Sketch completed in");
 			if (sketchShadersEnabled() && shaderCanvas) {
 				shaderEffects.setParticleAnimationComplete(true);
@@ -446,7 +471,16 @@ function startSketchAnimation() {
 	};
 
 	// Create and start the animation
-	generator = createAnimationGenerator(animConfig);
+	const source = createAnimationGenerator(animConfig);
+	generator = {
+		next() {
+			try {
+				return source.next();
+			} finally {
+				endRegion();
+			}
+		},
+	};
 }
 
 function INIT(rseed, nseed) {
@@ -475,11 +509,11 @@ function INIT(rseed, nseed) {
 	// Allow UI to force palette selection by name (stable, may be a local palette),
 	// otherwise default to deterministic selection
 	const forcedPaletteName = CURRENT_PARAMS.paletteName;
+	const paletteSelectionRand = fxrand();
 	if (forcedPaletteName && paletteManager.getPaletteNames().includes(forcedPaletteName)) {
 		currentPaletteName = forcedPaletteName;
 		selectedPalette = sortedFileNames.indexOf(forcedPaletteName);
 	} else {
-		const paletteSelectionRand = fxrand();
 		selectedPalette = Math.floor(paletteSelectionRand * sortedFileNames.length);
 		currentPaletteName = sortedFileNames[selectedPalette];
 		if (window.PARAMS_UI?.current) {
@@ -516,15 +550,36 @@ function INIT(rseed, nseed) {
 	yMin = BASE_PADDING;
 	yMax = 1 - BASE_PADDING;
 
-	let baseParticleCount = particleNum;
-	let scaledParticleCount = baseParticleCount;
-
-	for (let i = 0; i < scaledParticleCount; i++) {
-		let x = random(xMin, xMax) * width;
-		let y = random(yMin, yMax) * height;
-
-		movers.push(new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette));
+	landscape = createLandscape();
+	const texturedRegions = landscape.regions.filter(region => region.face);
+	const totalArea = texturedRegions.reduce((sum, region) => sum + region.area, 0);
+	let assigned = 0;
+	let cumulativeArea = 0;
+	for (const region of texturedRegions) {
+		cumulativeArea += region.area;
+		const target = Math.round(particleNum * cumulativeArea / totalArea);
+		for (; assigned < target; assigned++) {
+			const {x, y} = region.sample();
+			const mover = new Mover(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, baseHSLPalette);
+			mover.landscape = region;
+			if (region.face) mover.attachFace(region.face);
+			mover.currentColor = region.ink;
+			mover.initAlpha = 24 + region.depth * 30;
+			mover.a = mover.initAlpha;
+			movers.push(mover);
+		}
 	}
+
+	const terrainRegions = landscape.regions.filter(region => region.lighting);
+	const terrainArea = terrainRegions.reduce((sum, region) => sum + region.area, 0);
+	const terrainPopulation = Math.min(180000, Math.max(40000, Math.round(particleNum * 0.4)));
+	let terrainAssigned = 0, terrainCumulative = 0;
+	for (const region of terrainRegions) {
+		terrainCumulative += region.area;
+		const target = Math.round(terrainPopulation * terrainCumulative / terrainArea);
+		for (; terrainAssigned < target; terrainAssigned++) movers.push(new TerrainMover(region));
+	}
+	cycle = computeCycle(maxFrames, movers.length);
 
 	let bgCol = color(random(0, 35), 5, 100);
 	mainCanvas.background(bgCol);
@@ -584,6 +639,7 @@ window.applyGenerativeSettings = async function applyGenerativeSettings(settings
 		renderOutsideFrame();
 	}
 
+	landscape.paint(mainCanvas);
 	startSketchAnimation();
 	drawLoop?.start();
 };

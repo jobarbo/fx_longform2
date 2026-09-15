@@ -1,7 +1,8 @@
 //* PARAMS *//
 fx = $fx;
 fxhash = $fx.hash;
-fxrand = $fx.rand;
+// reset() replaces $fx.rand in the local runtime; keep the alias live.
+fxrand = () => $fx.rand();
 rand = fxrand;
 features = $fx.getFeatures();
 seed = parseInt(fxrand() * 10000000);
@@ -13,6 +14,13 @@ seed = parseInt(fxrand() * 10000000);
 window.PARAMS_UI = window.PARAMS_UI ?? {
 	// ---- Available options (drives the UI dropdowns) ----
 	options: {
+		landscapeLayers: [3, 4, 5, 6, 7],
+		landscapeHorizons: [0.22, 0.32, 0.42, 0.52],
+		architectureScales: [0.5, 0.75, 1, 1.25, 1.5],
+		landscapeHazes: [0.25, 0.45, 0.65, 0.85],
+		terrainShadings: [0, 0.5, 1, 1.5],
+		terrainLightPositions: ["left", "center", "right"],
+		terrainLightHeights: [0.5, 1, 2],
 		populations: [100000, 300000, 500000, 1000000, 1500000, 2500000, 3500000],
 		particleSizes: [0.25, 0.35, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0],
 		horizontalSpeeds: ["veryFast", "fast", "standard", "slow", "snail"],
@@ -63,6 +71,13 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 
 	// ---- Current selections (string keys or plain numbers) ----
 	current: {
+		landscapeLayers: 5,
+		landscapeHorizon: 0.32,
+		architectureScale: 1,
+		landscapeHaze: 0.65,
+		terrainShading: 1,
+		terrainLightPosition: "left",
+		terrainLightHeight: 1,
 		population: 500000,
 		particleSize: 0.75,
 		horizontalSpeed: "standard",
@@ -90,6 +105,13 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 	// ---- UI metadata (drives ParamsPanel control generation) ----
 	// kind / format are optional declarative hints for the reusable panel module
 	ui: [
+		{key: "landscapeLayers", id: "param-landscape-layers", label: "Depth layers", optionsKey: "landscapeLayers"},
+		{key: "landscapeHorizon", id: "param-landscape-horizon", label: "Horizon height", optionsKey: "landscapeHorizons"},
+		{key: "architectureScale", id: "param-architecture-scale", label: "Architecture scale", optionsKey: "architectureScales"},
+		{key: "landscapeHaze", id: "param-landscape-haze", label: "Atmospheric haze", optionsKey: "landscapeHazes"},
+		{key: "terrainShading", id: "param-terrain-shading", label: "Terrain shading", optionsKey: "terrainShadings"},
+		{key: "terrainLightPosition", id: "param-terrain-light", label: "Terrain light position", optionsKey: "terrainLightPositions"},
+		{key: "terrainLightHeight", id: "param-terrain-light-height", label: "Terrain light height", optionsKey: "terrainLightHeights"},
 		{
 			key: "paletteName",
 			id: "param-palette",
@@ -244,6 +266,13 @@ window.resolveParams = function resolveParams() {
 	const {current, maps} = window.PARAMS_UI;
 	// Mutate the *same* object so any `const` alias (CURRENT_PARAMS) stays live.
 	Object.assign(window.PARAMS_UI.resolved, {
+		landscapeLayers: current.landscapeLayers ?? 5,
+		landscapeHorizon: current.landscapeHorizon ?? 0.32,
+		architectureScale: current.architectureScale ?? 1,
+		landscapeHaze: current.landscapeHaze ?? 0.65,
+		terrainShading: current.terrainShading ?? 1,
+		terrainLightX: {left: -1, center: 0, right: 1}[current.terrainLightPosition] ?? -1,
+		terrainLightHeight: current.terrainLightHeight ?? 1,
 		population: current.population,
 		particleSize: current.particleSize,
 		horizontalSpeed: maps.speed[current.horizontalSpeed] ?? maps.speed.standard,
