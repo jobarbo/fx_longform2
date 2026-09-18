@@ -71,13 +71,13 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 
 	// ---- Current selections (string keys or plain numbers) ----
 	current: {
-		landscapeLayers: 5,
-		landscapeHorizon: 0.32,
-		architectureScale: 1,
+		landscapeLayers: 7,
+		landscapeHorizon: 0.42,
+		architectureScale: 0.5,
 		landscapeHaze: 0.65,
 		terrainShading: 1,
 		terrainLightPosition: "left",
-		terrainLightHeight: 1,
+		terrainLightHeight: 0.5,
 		population: 500000,
 		particleSize: 0.75,
 		horizontalSpeed: "standard",
