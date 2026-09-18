@@ -203,6 +203,7 @@ class ShaderEffects {
 				debug: 0.0, // 0.0 = normal, 1.0 = debug mode (shows fold lines and center)
 				center: [0.5, 0.5], // symmetry center in normalized coords
 				translationEnabled: 1.0, // Master toggle for translation animation
+				translationAmount: [0.0, 0.0], // Static UV offset (applied even when animation is off)
 				translationSpeedX: 0.01, // Horizontal translation speed (0 = none)
 				translationSpeedY: 0.01, // Vertical translation speed (0 = none)
 				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field, 4=continuous scroll
@@ -227,6 +228,7 @@ class ShaderEffects {
 					uCenter: "center",
 					uTime: "shaderTime * timeMultiplier",
 					uTranslationEnabled: "translationEnabled",
+					uTranslationAmount: "translationAmount",
 					uTranslationSpeedX: "translationSpeedX",
 					uTranslationSpeedY: "translationSpeedY",
 					uTranslationMode: "translationMode",
@@ -280,6 +282,7 @@ class ShaderEffects {
 			pixelGrid: {
 				enabled: false,
 				gridSize: [24.0, 24.0],
+				lockGridSize: 0.0, // 1 = lock pixel X/Y to the same value
 				cellRatio: 0.0,
 				gridMode: 0.0,
 				diffuse: 1.5,
