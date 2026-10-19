@@ -427,6 +427,7 @@ class ShaderEffects {
 				enabled: true,
 				amount: 0.1,
 				grainSize: 1.0, // 1 = original look; higher values make larger grain
+				angle: 0.25, // grain field rotation in radians (0.25 = original look)
 				timeMultiplier: 0.0,
 				// Spatial threshold (UV 0-1): grain visible only inside this rectangle
 				thresholdMinX: 0.0, // left [0..1]
@@ -439,6 +440,7 @@ class ShaderEffects {
 					uSeed: "shaderSeed + 345.0",
 					uAmount: "amount",
 					uGrainSize: "grainSize",
+					uAngle: "angle",
 					uThresholdMinX: "thresholdMinX",
 					uThresholdMaxX: "thresholdMaxX",
 					uThresholdMinY: "thresholdMinY",
