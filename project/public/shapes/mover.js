@@ -201,11 +201,11 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	let minV = map(ny, yMin * height, yMax * height, -3, 3, true); */
 
 	//! pNoise x SineCos
-	//* LIGNIS HARDLINE
-	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset2) + rseed, noiseScale1, 1, octave), -0.0025, 0.0025, -1, 1, true);
-	let maxV = map(oct(nx * (scale2 * scaleOffset2) + rseed, nx * (scale1 * scaleOffset1) + rseed, noiseScale2, 2, octave), -0.0025, 0.0025, -1, 1, true);
-	let minU = map(oct(ny * (scale3 * scaleOffset3) + rseed, ny * (scale1 * scaleOffset1) + rseed, noiseScale3, 0, octave), -0.0025, 0.0025, -1, 1, true);
-	let minV = map(oct(nx * (scale1 * scaleOffset1) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.0025, 0.0025, -1, 1, true);
+	//* LIGNIS ORGANICS
+	let maxU = map(oct(ny * (scale1 * scaleOffset1) + rseed, ny * (scale2 * scaleOffset2) + rseed, noiseScale1, 1, octave), -0.004, 0.004, -1, 1, true);
+	let maxV = map(oct(nx * (scale2 * scaleOffset2) + rseed, nx * (scale1 * scaleOffset1) + rseed, noiseScale2, 2, octave), -0.004, 0.004, -1, 1, true);
+	let minU = map(oct(ny * (scale3 * scaleOffset3) + rseed, ny * (scale1 * scaleOffset1) + rseed, noiseScale3, 0, octave), -0.004, 0.004, -1, 1, true);
+	let minV = map(oct(nx * (scale1 * scaleOffset1) + rseed, nx * (scale3 * scaleOffset3) + rseed, noiseScale4, 3, octave), -0.004, 0.004, -1, 1, true);
 	//! Wobbly noise square and stuff
 	/* 	let maxU = map(noise(ny * (scale1 * scaleOffset1) + nseed), 0, 1, 0, 3, true);
 	let maxV = map(noise(nx * (scale2 * scaleOffset2) + nseed), 0, 1, 0, 3, true);
@@ -237,9 +237,9 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, amplitude
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
 	let v = map(un, -0.000000000000000001, 0.000000000000000001, minV, maxV, true); */
 	// Apply ZZ symmetrically - preserve sign but apply transformation to absolute value
-	//* LIGNIS HARDLINE
-	let zzu = map(ZZ(u, 35, 80, 0.0058), -11, 11, minU, maxU, true);
-	let zzv = map(ZZ(v, 35, 80, 0.0058), -11, 11, minV, maxV, true);
+	//* LIGNIS ORGANICS
+	let zzu = map(ZZ(u, 35, 80, 0.0028), -1, 1, minU, maxU, true);
+	let zzv = map(ZZ(v, 35, 80, 0.0028), -1, 1, minV, maxV, true);
 
 	let zu = u < 0 ? u : zzu;
 	let zv = v < 0 ? v : zzv;
