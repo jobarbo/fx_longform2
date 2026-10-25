@@ -6,15 +6,18 @@ const PAPER = [42, 9, 95];
 const GRAPHITE = [225, 14, 20];
 const HATCH_ANGLE = 62;
 
-function renderPerspective(g, comp, {W, H, construction = true, debug = false}) {
+function renderPerspective(g, comp, {W, H, debug = false}) {
+	setPencilBounds([-30, -30, W + 30, H + 30]);
 	drawPaper(g, W, H, PAPER);
 
 	for (const l of comp.groundLines) pencilLine(g, l.p, l.q, {...PENCIL_PRESETS[l.preset], ink: GRAPHITE});
 	for (const bx of comp.boxes) drawBox(g, bx, comp);
 
-	// Construction goes on top: like a hand drawing, it is never erased
-	if (construction) drawConstruction(g, comp, W);
-	if (debug) drawDebug(g, comp, W, H);
+	// Construction (horizon, VP marks, vanishing lines) only shows in debug mode
+	if (debug) {
+		drawConstruction(g, comp, W);
+		drawDebug(g, comp, W, H);
+	}
 }
 
 function drawBox(g, bx, comp) {
@@ -37,7 +40,8 @@ function drawBox(g, bx, comp) {
 
 function drawWindows(g, bx, face) {
 	const floorH = bx.style.floorH;
-	const floors = Math.floor(bx.h / floorH);
+	// Round: h is a whole number of floors, floor() would lose one to float error
+	const floors = Math.round(bx.h / floorH);
 	const cols = Math.max(1, Math.round(bx.faceWidth(face.name) / bx.style.colW));
 	if (floors < 2) return;
 

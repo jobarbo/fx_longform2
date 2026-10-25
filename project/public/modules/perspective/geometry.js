@@ -73,6 +73,34 @@ function clipLineToConvex(p, d, poly) {
 	];
 }
 
+/** Clip segment (a,b) to the rectangle [x0,y0,x1,y1] (Liang-Barsky). Null when outside. */
+function clipSegmentToRect(a, b, [x0, y0, x1, y1]) {
+	const dx = b.x - a.x;
+	const dy = b.y - a.y;
+	let t0 = 0;
+	let t1 = 1;
+	const edges = [
+		[-dx, a.x - x0],
+		[dx, x1 - a.x],
+		[-dy, a.y - y0],
+		[dy, y1 - a.y],
+	];
+	for (const [p, q] of edges) {
+		if (p === 0) {
+			if (q < 0) return null;
+			continue;
+		}
+		const t = q / p;
+		if (p < 0) t0 = Math.max(t0, t);
+		else t1 = Math.min(t1, t);
+		if (t0 > t1) return null;
+	}
+	return [
+		{x: a.x + dx * t0, y: a.y + dy * t0},
+		{x: a.x + dx * t1, y: a.y + dy * t1},
+	];
+}
+
 function polygonSignedArea(poly) {
 	let s = 0;
 	for (let i = 0; i < poly.length; i++) {

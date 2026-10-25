@@ -6,6 +6,7 @@
 // toggling a layer (construction, debug) never changes the other strokes.
 
 let PENCIL_SEED = 1;
+let PENCIL_BOUNDS = null; // [x0, y0, x1, y1]: strokes are clipped to this rectangle
 
 const PENCIL_PRESETS = {
 	construction: {weight: 0.45, alpha: 16, passes: 1, wobble: 0.6, jitter: 0.6, overshoot: 0, freq: 0.004, step: 14, taper: 0.15},
@@ -18,6 +19,10 @@ const PENCIL_PRESETS = {
 
 function setPencilSeed(seed) {
 	PENCIL_SEED = seed >>> 0;
+}
+
+function setPencilBounds(bounds) {
+	PENCIL_BOUNDS = bounds;
 }
 
 function pencilRng(...values) {
@@ -42,6 +47,13 @@ function pencilRng(...values) {
 function pencilLine(g, a, b, opts = {}) {
 	const o = {...PENCIL_PRESETS.contour, ...opts};
 	const ink = o.ink || [220, 15, 18];
+	const r = pencilRng(a.x, a.y, b.x, b.y, o.salt || 0);
+	// Near the eye, edges can run far past the canvas: only draw what can show
+	if (PENCIL_BOUNDS) {
+		const seg = clipSegmentToRect(a, b, PENCIL_BOUNDS);
+		if (!seg) return;
+		[a, b] = seg;
+	}
 	const dx = b.x - a.x;
 	const dy = b.y - a.y;
 	const len = Math.hypot(dx, dy);
@@ -50,7 +62,6 @@ function pencilLine(g, a, b, opts = {}) {
 	const uy = dy / len;
 	const nx = -uy;
 	const ny = ux;
-	const r = pencilRng(a.x, a.y, b.x, b.y, o.salt || 0);
 
 	for (let pass = 0; pass < o.passes; pass++) {
 		const start = -o.overshoot * r();
@@ -98,6 +109,12 @@ function pencilHatch(g, poly, {angle = 60, spacing = 6, ...opts} = {}) {
 		const s = p.x * n.x + p.y * n.y;
 		lo = Math.min(lo, s);
 		hi = Math.max(hi, s);
+	}
+	if (PENCIL_BOUNDS) {
+		const [x0, y0, x1, y1] = PENCIL_BOUNDS;
+		const corners = [x0 * n.x + y0 * n.y, x1 * n.x + y0 * n.y, x0 * n.x + y1 * n.y, x1 * n.x + y1 * n.y];
+		lo = Math.max(lo, Math.min(...corners));
+		hi = Math.min(hi, Math.max(...corners));
 	}
 	const r = pencilRng(poly[0].x, poly[0].y, angle, spacing);
 	for (let s = lo + spacing * r(); s < hi; s += spacing * (0.75 + 0.5 * r())) {

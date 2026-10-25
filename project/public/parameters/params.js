@@ -20,7 +20,7 @@ const horizonArr = [
 	["high", 30],
 ];
 
-const horizonFrac = {low: 0.68, mid: 0.5, high: 0.32};
+const horizonFrac = {low: 0.72, mid: 0.64, high: 0.55};
 
 const vpSpreadArr = [
 	["narrow", 40],

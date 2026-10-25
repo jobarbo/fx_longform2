@@ -28,8 +28,7 @@ let MULTIPLIER;
 let compositionParams;
 let composition;
 let renderSeed;
-let showConstruction = true; // key C
-let showDebug = false; // key D
+let showDebug = false; // key D: construction lines, VP marks and validation
 
 let executionTimer = new ExecutionTimer();
 // Canvas references
@@ -55,7 +54,7 @@ function renderArtwork() {
 	noiseSeed(renderSeed);
 	mainCanvas.push();
 	mainCanvas.scale(MULTIPLIER);
-	renderPerspective(mainCanvas, composition, {W: BASE_WIDTH, H: BASE_HEIGHT, construction: showConstruction, debug: showDebug});
+	renderPerspective(mainCanvas, composition, {W: BASE_WIDTH, H: BASE_HEIGHT, debug: showDebug});
 	mainCanvas.pop();
 	if (showDebug) validatePerspective(composition.scene, composition.boxes);
 }
@@ -173,10 +172,6 @@ function keyPressed() {
 
 	if (key === "E" || key === "e") {
 		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.toggle();
-	}
-	if (key === "C" || key === "c") {
-		showConstruction = !showConstruction;
-		renderArtwork();
 	}
 	if (key === "D" || key === "d") {
 		showDebug = !showDebug;

@@ -139,6 +139,14 @@ class GroundFrame {
 		return intersectLines(paTop, s.vpLeft, vg0, vg1);
 	}
 
+	/** Distance in front of the eye (along the view axis) of ground point (a, b). */
+	depth(a, b) {
+		const s = this.scene;
+		const c = this.camera();
+		if (s.mode === "1pt") return b - c.b;
+		return (a - c.a) * Math.sin(s.theta) + (b - c.b) * Math.cos(s.theta);
+	}
+
 	/** Eye position in frame coordinates (for face culling and painter order). */
 	camera() {
 		const s = this.scene;
