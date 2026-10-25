@@ -56,7 +56,24 @@ function renderArtwork() {
 	mainCanvas.scale(MULTIPLIER);
 	renderPerspective(mainCanvas, composition, {W: BASE_WIDTH, H: BASE_HEIGHT, debug: showDebug});
 	mainCanvas.pop();
-	if (showDebug) validatePerspective(composition.scene, composition.boxes);
+	if (showDebug) validatePerspective(composition.scene, composition.items);
+}
+
+/**
+ * createGraphics on a CPU-backed canvas. The drawing is hundreds of thousands
+ * of short strokes: a GPU canvas defers them in a backlog that gets very slow
+ * to replay, while a CPU canvas draws them as they come.
+ */
+function createCpuGraphics(w, h) {
+	const getContext = HTMLCanvasElement.prototype.getContext;
+	HTMLCanvasElement.prototype.getContext = function (type, attrs) {
+		return getContext.call(this, type, type === "2d" ? {...attrs, willReadFrequently: true} : attrs);
+	};
+	try {
+		return createGraphics(w, h);
+	} finally {
+		HTMLCanvasElement.prototype.getContext = getContext;
+	}
 }
 
 function setup() {
@@ -68,7 +85,7 @@ function setup() {
 	MULTIPLIER = screenRatio < baseRatio ? window.innerWidth / BASE_WIDTH : window.innerHeight / BASE_HEIGHT;
 
 	// Create main canvas for artwork
-	mainCanvas = createGraphics(BASE_WIDTH * MULTIPLIER, BASE_HEIGHT * MULTIPLIER);
+	mainCanvas = createCpuGraphics(BASE_WIDTH * MULTIPLIER, BASE_HEIGHT * MULTIPLIER);
 
 	// Create shader canvas (WEBGL) or regular canvas
 	if (shadersEnabled()) {

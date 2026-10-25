@@ -8,7 +8,7 @@ $fx.features({
 	Horizon: composition_params.horizon,
 	"Vanishing spread": composition_params.perspective_type === "2pt" ? composition_params.vp_spread : "none",
 	Light: composition_params.light,
-	Density: composition_params.density_name,
+	District: composition_params.district,
 });
 
 console.log("features", $fx.getFeatures());

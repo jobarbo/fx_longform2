@@ -32,22 +32,21 @@ const lightArr = [
 	["right", 50],
 ];
 
-const densityArr = [
-	["sparse", 30],
-	["regular", 50],
-	["dense", 20],
+const districtArr = [
+	["downtown", 25],
+	["mixed", 35],
+	["suburb", 25],
+	["industrial", 15],
 ];
 
-const densityValue = {sparse: 0.6, regular: 1, dense: 1.5};
-
 // all input parameters are optional, they will be chosen at random if not passed into the function
-function generate_composition_params(perspective_type, horizon, vp_spread, light, density) {
+function generate_composition_params(perspective_type, horizon, vp_spread, light, district) {
 	// SET DEFAULTS IF NOT PASSED IN
 	if (perspective_type === undefined) perspective_type = weighted_choice(perspectiveArr);
 	if (horizon === undefined) horizon = weighted_choice(horizonArr);
 	if (vp_spread === undefined) vp_spread = weighted_choice(vpSpreadArr);
 	if (light === undefined) light = weighted_choice(lightArr);
-	if (density === undefined) density = weighted_choice(densityArr);
+	if (district === undefined) district = weighted_choice(districtArr);
 
 	//* PACK PARAMETERS INTO OBJECT *//
 	var composition_params = {
@@ -56,8 +55,7 @@ function generate_composition_params(perspective_type, horizon, vp_spread, light
 		horizon_frac: horizonFrac[horizon],
 		vp_spread: vp_spread,
 		light: light,
-		density_name: density,
-		density: densityValue[density],
+		district: district,
 	};
 
 	//* RETURN PARAMETERS *//
