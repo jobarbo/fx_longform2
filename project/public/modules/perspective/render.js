@@ -24,6 +24,8 @@ function drawItem(g, it, comp) {
 	if (it.kind === "box") drawBox(g, it, comp);
 	else if (it.kind === "cylinder") drawCylinder(g, it, comp);
 	else if (it.kind === "tree") drawTree(g, it, comp);
+	else if (it.kind === "lamp") drawLamp(g, it, comp);
+	else if (it.kind === "bench") drawBench(g, it, comp);
 }
 
 function fillPaper(g, poly) {
@@ -46,7 +48,7 @@ function faceShade(face, shades) {
 	return shades[face.shadeAs];
 }
 
-function drawBox(g, bx, comp) {
+function drawBox(g, bx, comp, edgeOpts = {ink: GRAPHITE}) {
 	const minFace = 1.5;
 	for (const face of bx.faces) {
 		fillPaper(g, face.poly);
@@ -55,7 +57,7 @@ function drawBox(g, bx, comp) {
 		if (face.kind === "wall" && bx.style.windows && bx.style.facade) drawFacade(g, bx, face);
 		if (face.kind === "slope") drawRoofCourses(g, bx, face);
 	}
-	for (const e of bx.edges) pencilLine(g, e.p, e.q, {ink: GRAPHITE});
+	for (const e of bx.edges) pencilLine(g, e.p, e.q, edgeOpts);
 }
 
 // ----------------------------------------------------------------------------
@@ -196,6 +198,61 @@ function facadeStorefront(g, bx, face, fm, r) {
 		if (strokeQuad(g, quad) && r() < 0.4) pencilHatch(g, quad, {angle: HATCH_ANGLE + 20, spacing: 3.5, alpha: 24, ink: GRAPHITE});
 	}
 	if (floors > 1) facadeGrid(g, bx, face, fm, r, 1);
+	if (bx.style.awning && bx.z === 0) for (let c = 0; c < cols; c++) drawAwning(g, bx, face, (c + 0.03) / cols, (c + 0.97) / cols);
+}
+
+/**
+ * Shop awning from the wall above the window out over the sidewalk, with a
+ * hanging valance. Seen from eye level it shows its underside.
+ */
+function drawAwning(g, bx, face, u0, u1) {
+	const m = bx.frame.metre;
+	const {depth, striped} = bx.style.awning;
+	const zTop = 0.78 * bx.style.floorH;
+	const zLow = Math.max(2.3 * m, zTop - 0.8 * m);
+	const vt = zTop / bx.h;
+	const vb = zLow / bx.h;
+	const vv = (zLow - 0.25 * m) / bx.h;
+	const P = (u, v, out) => bx.facePointOut(face.name, u, v, out);
+	const T0 = P(u0, vt, 0);
+	const T1 = P(u1, vt, 0);
+	const B0 = P(u0, vb, depth);
+	const B1 = P(u1, vb, depth);
+	if (Math.hypot(B0.x - T0.x, B0.y - T0.y) < 2) return;
+
+	const canvas = [T0, T1, B1, B0];
+	fillPaper(g, canvas);
+	if (bx.frame.camera().k < zTop) pencilHatch(g, canvas, {angle: HATCH_ANGLE, spacing: 6, alpha: 24, ink: GRAPHITE});
+	if (striped) {
+		// Stripes run from the wall to the edge, so they head for the VP of the wall's normal
+		const n = Math.max(2, Math.round((bx.faceWidth(face.name) * (u1 - u0)) / (0.5 * m)));
+		for (let i = 0; i < n; i += 2) {
+			const ua = u0 + ((u1 - u0) * i) / n;
+			const ub = u0 + ((u1 - u0) * (i + 1)) / n;
+			pencilHatch(g, [P(ua, vt, 0), P(ub, vt, 0), P(ub, vb, depth), P(ua, vb, depth)], {angle: HATCH_ANGLE + 25, spacing: 2.6, alpha: 30, ink: GRAPHITE});
+		}
+	}
+	pencilPolyline(g, canvas, DETAIL, true);
+
+	// End panels the eye can see (outer side toward the eye along the wall)
+	const cam = bx.frame.camera();
+	const alongB = face.name[0] === "a";
+	const camU = alongB ? cam.b : cam.a;
+	const uAt = (u) => (alongB ? bx.b + u * bx.wb : bx.a + u * bx.wa);
+	for (const [u, show] of [
+		[u0, camU < uAt(u0)],
+		[u1, camU > uAt(u1)],
+	]) {
+		if (!show) continue;
+		const side = [P(u, vt, 0), P(u, vb, depth), P(u, vv, depth), P(u, vv, 0)];
+		fillPaper(g, side);
+		pencilPolyline(g, side, DETAIL, true);
+	}
+
+	// Valance hanging from the front edge
+	const valance = [B0, B1, P(u1, vv, depth), P(u0, vv, depth)];
+	fillPaper(g, valance);
+	pencilPolyline(g, valance, DETAIL, true);
 }
 
 /** Continuous glazed band on every storey, with mullions; a lobby entrance below. */
@@ -264,6 +321,26 @@ function drawRoofCourses(g, bx, face) {
 // ----------------------------------------------------------------------------
 // Props
 // ----------------------------------------------------------------------------
+
+/** Pole, curved arm over the road, and a flat lamp head at its end. */
+function drawLamp(g, lamp, comp) {
+	const edge = {...PENCIL_PRESETS.contour, passes: 1, alpha: 58, weight: 0.85, overshoot: 3, ink: GRAPHITE};
+	const w = 0.08 * lamp.ppm;
+	if (w > 0.8) {
+		pencilLine(g, pt(lamp.base.x - w, lamp.base.y), pt(lamp.poleTop.x - w * 0.6, lamp.poleTop.y), edge);
+		pencilLine(g, pt(lamp.base.x + w, lamp.base.y), pt(lamp.poleTop.x + w * 0.6, lamp.poleTop.y), edge);
+	} else pencilLine(g, lamp.base, lamp.poleTop, edge);
+	pencilPolyline(g, [lamp.poleTop, lamp.armMid, lamp.armEnd], edge);
+	drawBox(g, lamp.head, comp, edge);
+}
+
+/** Legs, then the farther of seat and backrest, then the nearer one. */
+function drawBench(g, bench, comp) {
+	const edge = {...PENCIL_PRESETS.detail, ink: GRAPHITE};
+	for (const [p, q] of bench.legs) pencilLine(g, p, q, FAINT);
+	const parts = bench.backFirst ? [bench.back, bench.seat] : [bench.seat, bench.back];
+	for (const part of parts) drawBox(g, part, comp, edge);
+}
 
 /** Which of two screen points is on the shadow side (away from the light). */
 function shadowSide(comp, p, q) {

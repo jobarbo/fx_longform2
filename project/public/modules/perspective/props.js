@@ -111,3 +111,84 @@ class PTree {
 		}
 	}
 }
+
+class PLamp {
+	/** Street lamp at (ca, cb), height h, with an arm of length `arm` pointing along (da, db) over the road. */
+	constructor(frame, {ca, cb, h, arm, da, db}) {
+		this.kind = "lamp";
+		this.frame = frame;
+		const m = frame.metre;
+		const ea = ca + da * arm;
+		const eb = cb + db * arm;
+		const r = 0.5 * m;
+		this.a = Math.min(ca, ea) - r;
+		this.b = Math.min(cb, eb) - r;
+		this.wa = Math.abs(ea - ca) + 2 * r;
+		this.wb = Math.abs(eb - cb) + 2 * r;
+		this.z = 0;
+		this.top = h + 0.4 * m;
+		this.corners = bboxCorners(frame, this.a, this.b, this.wa, this.wb, 0, this.top);
+
+		this.base = frame.lift(ca, cb, 0);
+		this.poleTop = frame.lift(ca, cb, h);
+		// The arm rises a little toward its end, where a flat head hangs
+		this.armMid = frame.lift(ca + da * arm * 0.5, cb + db * arm * 0.5, h + 0.25 * m);
+		this.armEnd = frame.lift(ea, eb, h + 0.15 * m);
+		const len = 0.7 * m;
+		const wid = 0.3 * m;
+		const alongA = da !== 0;
+		this.head = new PBox(frame, {
+			a: ea - (alongA ? len / 2 : wid / 2),
+			b: eb - (alongA ? wid / 2 : len / 2),
+			wa: alongA ? len : wid,
+			wb: alongA ? wid : len,
+			z: h - 0.05 * m,
+			h: 0.18 * m,
+		});
+		this.ppm = pixelsPerMetre(frame, ca, cb);
+	}
+}
+
+class PBench {
+	/**
+	 * Bench whose seat runs along `axis` ("a" or "b") from (a, b), `len` long.
+	 * back: -1 or 1, the side (across the seat) where the backrest stands.
+	 */
+	constructor(frame, {a, b, axis, len, back}) {
+		this.kind = "bench";
+		this.frame = frame;
+		const m = frame.metre;
+		const depth = 0.5 * m;
+		const across = (o) => (axis === "a" ? {a, b: b + o, wa: len, wb: 0.06 * m} : {a: a + o, b, wa: 0.06 * m, wb: len});
+		const seat = axis === "a" ? {a, b, wa: len, wb: depth} : {a, b, wa: depth, wb: len};
+		this.a = seat.a;
+		this.b = seat.b;
+		this.wa = seat.wa;
+		this.wb = seat.wb;
+		this.z = 0;
+		this.top = 0.9 * m;
+		this.corners = bboxCorners(frame, this.a, this.b, this.wa, this.wb, 0, this.top);
+
+		this.seat = new PBox(frame, {...seat, z: 0.42 * m, h: 0.06 * m});
+		this.back = new PBox(frame, {...across(back > 0 ? depth - 0.06 * m : 0), z: 0.5 * m, h: 0.4 * m});
+		// Legs at the four corners of the seat, from the ground up to it
+		const legs = [];
+		for (const [i, j] of [
+			[0, 0],
+			[1, 0],
+			[0, 1],
+			[1, 1],
+		]) {
+			const la = seat.a + i * seat.wa;
+			const lb = seat.b + j * seat.wb;
+			legs.push([frame.lift(la, lb, 0), frame.lift(la, lb, 0.42 * m)]);
+		}
+		this.legs = legs;
+		// Draw the backrest first when it is the farther part
+		const cam = frame.camera();
+		const backCentre = axis === "a" ? b + (back > 0 ? depth : 0) : a + (back > 0 ? depth : 0);
+		const eye = axis === "a" ? cam.b : cam.a;
+		const seatCentre = axis === "a" ? b + depth / 2 : a + depth / 2;
+		this.backFirst = Math.abs(backCentre - eye) > Math.abs(seatCentre - eye);
+	}
+}

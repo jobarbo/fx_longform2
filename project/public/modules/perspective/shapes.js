@@ -130,6 +130,22 @@ class PBox {
 		return null;
 	}
 
+	/** Like facePoint, pushed `out` frame units away from the wall (awnings, canopies). */
+	facePointOut(faceName, u, v, out) {
+		const z = this.z + v * this.h;
+		switch (faceName) {
+			case "a0":
+				return this.frame.lift(this.a - out, this.b + u * this.wb, z);
+			case "a1":
+				return this.frame.lift(this.a + this.wa + out, this.b + u * this.wb, z);
+			case "b0":
+				return this.frame.lift(this.a + u * this.wa, this.b - out, z);
+			case "b1":
+				return this.frame.lift(this.a + u * this.wa, this.b + this.wb + out, z);
+		}
+		return null;
+	}
+
 	/** Map (u, t) on a roof slope to the screen: u along the ridge, t from eave (0) to ridge (1). */
 	slopePoint(faceName, u, t) {
 		const k = this.z + this.h + t * this.roof.height;

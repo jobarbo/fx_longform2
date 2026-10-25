@@ -124,7 +124,27 @@ function randomTree(ctx, density = "medium") {
 }
 
 function facadeStyle(ctx, facade, floorH) {
-	return {facade, floorH, colW: rr(FACADE_COLW[facade]) * ctx.m, windows: facade === "house" || facade === "grid" ? random() < 0.9 : true};
+	const style = {facade, floorH, colW: rr(FACADE_COLW[facade]) * ctx.m, windows: facade === "house" || facade === "grid" ? random() < 0.9 : true};
+	// Most shops have an awning over their windows, plain or striped
+	if (facade === "storefront" && random() < 0.75) style.awning = {striped: random() < 0.6, depth: random(1.2, 1.8) * ctx.m};
+	return style;
+}
+
+function addLamp(ctx, spec) {
+	if (ctx.frame.depth(spec.ca, spec.cb) < 8 * ctx.m) return;
+	const lamp = new PLamp(ctx.frame, spec);
+	if (Math.abs(lamp.poleTop.y - lamp.base.y) < 8 || !onCanvas(lamp, ctx.W, ctx.H)) return;
+	ctx.items.push(lamp);
+}
+
+function addBench(ctx, spec) {
+	const m = ctx.m;
+	const fp = spec.axis === "a" ? {a: spec.a, b: spec.b, wa: spec.len, wb: 0.5 * m} : {a: spec.a, b: spec.b, wa: 0.5 * m, wb: spec.len};
+	if (!inRange(ctx, fp) || ctx.frame.depth(fp.a, fp.b) < 3 * m) return;
+	const bench = new PBench(ctx.frame, spec);
+	const ends = [ctx.frame.point(fp.a, fp.b), ctx.frame.point(fp.a + fp.wa, fp.b + fp.wb)];
+	if (Math.hypot(ends[1].x - ends[0].x, ends[1].y - ends[0].y) < 4 || !onCanvas(bench, ctx.W, ctx.H)) return;
+	ctx.items.push(bench);
 }
 
 /** Ground segment from (a0,b0) to (a1,b1), cut where it passes too close to the eye. */
@@ -418,6 +438,7 @@ function buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewal
 			const split = random() < 0.75 ? longer : longer === "a" ? "b" : "a";
 			layoutLot(ctx, lot, zoneInfo, split);
 			if (zoneInfo.zone === "residential" && random() < 0.5) addStreetTrees(ctx, lot, sidewalk);
+			addStreetFurniture(ctx, lot, sidewalk, zoneInfo);
 		}
 	}
 }
@@ -436,6 +457,44 @@ function addStreetTrees(ctx, lot, sidewalk) {
 		for (let s = random(2, 6) * m; s < len - 2 * m; s += random(8, 12) * m) {
 			const tree = randomTree(ctx);
 			addTree(ctx, a0 + da * s, b0 + db * s, {...tree, crownR: Math.min(tree.crownR, sidewalk * 1.2)});
+		}
+	}
+}
+
+// Chance of benches along a block, per zone and density
+const BENCH_CHANCE = {commercial: {low: 0.8, medium: 0.6, high: 0.5}, residential: {low: 0, medium: 0.4, high: 0.5}, park: {low: 0.7, medium: 0.8, high: 0.6}, industrial: {low: 0, medium: 0, high: 0}};
+
+/**
+ * Street lamps at the curb, their arms over the road, and benches against the
+ * building line, backs to the block, on each of the four sides of a block.
+ */
+function addStreetFurniture(ctx, lot, sidewalk, {zone, density}) {
+	const m = ctx.m;
+	const lampH = random(6, 8) * m;
+	const lampPitch = random(25, 35) * m;
+	const curb = sidewalk * 0.85;
+	const near = sidewalk * 0.3;
+	const benchLen = 1.8 * m;
+	const benchD = 0.5 * m;
+	const benches = random() < BENCH_CHANCE[zone][density];
+	// [start a, start b, along a?, length, outward da, outward db]
+	const sides = [
+		[lot.a, lot.b, false, lot.wb, -1, 0],
+		[lot.a + lot.wa, lot.b, false, lot.wb, 1, 0],
+		[lot.a, lot.b, true, lot.wa, 0, -1],
+		[lot.a, lot.b + lot.wb, true, lot.wa, 0, 1],
+	];
+	for (const [a0, b0, alongA, len, da, db] of sides) {
+		const at = (s, off) => (alongA ? [a0 + s, b0 + db * off] : [a0 + da * off, b0 + s]);
+		for (let s = random(0.3, 0.7) * lampPitch; s < len; s += lampPitch) {
+			const [ca, cb] = at(s, curb);
+			addLamp(ctx, {ca, cb, h: lampH, arm: random(1, 1.6) * m, da, db});
+		}
+		if (!benches) continue;
+		for (let s = random(5, 15) * m; s + benchLen < len; s += random(25, 50) * m) {
+			// The seat footprint starts on the street side of the bench, the back faces the block
+			const [ca, cb] = at(s, near + (da + db > 0 ? 0 : benchD));
+			addBench(ctx, {a: ca, b: cb, axis: alongA ? "a" : "b", len: benchLen, back: da + db > 0 ? -1 : 1});
 		}
 	}
 }
