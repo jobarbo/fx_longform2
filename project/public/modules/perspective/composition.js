@@ -10,6 +10,7 @@
 const EYE_HEIGHT_M = 2.1;
 const NEAR_M = 1; // nothing is built closer than this in front of the eye
 const FAR_M = 1450;
+const TREE_NEAR_M = 15;
 
 // Shade level per face: 0 lit, 1 half-tone, 2 shadow
 const FACE_SHADES = {
@@ -102,6 +103,8 @@ function addBox(ctx, rawSpec) {
 
 function addTree(ctx, ca, cb, {crownR, trunkH, type}) {
 	if (!inRange(ctx, {a: ca - crownR, b: cb - crownR, wa: crownR * 2, wb: crownR * 2})) return;
+	// A tree right next to the eye would only be a blob over the picture
+	if (ctx.frame.depth(ca, cb) < TREE_NEAR_M * ctx.m) return;
 	const tree = new PTree(ctx.frame, {ca, cb, crownR, trunkH, type});
 	if (tree.radius < 0.7 || !onCanvas(tree, ctx.W, ctx.H)) return;
 	ctx.items.push(tree);
@@ -160,13 +163,12 @@ function pushGroundQuad(lines, frame, a, b, wa, wb, preset) {
 /**
  * Fill a lot according to its zone and density.
  * split: axis along which buildings stand side by side ("a" or "b").
- * front: {axis, side} edge of the lot on the street (1pt), or null.
  */
-function layoutLot(ctx, lot, {zone, density}, split, front) {
+function layoutLot(ctx, lot, {zone, density}, split) {
 	const arch = ZONES[zone][density];
 	if (zone === "park") return buildPark(ctx, lot, arch, density);
 	if (zone === "residential" && density === "low") return buildHouses(ctx, lot, arch);
-	return buildBlockBuildings(ctx, lot, arch, split, front);
+	return buildBlockBuildings(ctx, lot, arch, split);
 }
 
 /** Detached houses on a grid of plots, gable roofs, trees in the yards. */
@@ -214,67 +216,80 @@ function buildHouses(ctx, lot, arch) {
 }
 
 /** Rows of buildings, high-rises with podium or tiers, industrial halls with chimneys and silos. */
-function buildBlockBuildings(ctx, lot, arch, split, front) {
+function buildBlockBuildings(ctx, lot, arch, split) {
 	const m = ctx.m;
 	const depthAxis = split === "a" ? "b" : "a";
 	const inset = rr(arch.inset) * m;
 	const inner = {a: lot.a + inset, b: lot.b + inset, wa: lot.wa - inset * 2, wb: lot.wb - inset * 2};
 	if (inner.wa < 4 * m || inner.wb < 4 * m) return;
 
-	// Built strip along the street side, the rest of the lot stays open (yard, depot)
+	// Rows and towers face the streets on both long sides of the block (a courtyard
+	// in between); a single high-rise or an industrial strip leaves the rest open
 	const fullDepth = depthAxis === "a" ? inner.wa : inner.wb;
-	const depth = fullDepth * rr(arch.depthFill);
-	const side = front && front.axis === depthAxis ? front.side : random() < 0.5 ? 0 : 1;
-	const start = (depthAxis === "a" ? inner.a : inner.b) + (side === 1 ? fullDepth - depth : 0);
-	const free = {start: side === 1 ? (depthAxis === "a" ? inner.a : inner.b) : start + depth, size: fullDepth - depth};
+	const depthStart = depthAxis === "a" ? inner.a : inner.b;
+	const twoRows = !arch.podium && !arch.tiers && arch.facade !== "industrial";
+	const rows = [];
+	let free = {start: depthStart, size: 0};
+	if (twoRows) {
+		const depth = Math.min((fullDepth * rr(arch.depthFill)) / 2, 20 * m);
+		rows.push({start: depthStart, depth}, {start: depthStart + fullDepth - depth, depth});
+	} else {
+		const depth = fullDepth * rr(arch.depthFill);
+		const side = random() < 0.5 ? 0 : 1;
+		const start = depthStart + (side === 1 ? fullDepth - depth : 0);
+		rows.push({start, depth});
+		free = {start: side === 1 ? depthStart : start + depth, size: fullDepth - depth};
+	}
 
 	const length = split === "a" ? inner.wa : inner.wb;
-	const parts = ri(arch.parts);
-	const gap = parts > 1 && arch.gap ? rr(arch.gap) * m : 0;
-	const size = (length - gap * (parts - 1)) / parts;
-	if (size < 4 * m) return;
 	const floorH = rr(arch.floorH) * m;
 	const splitStart = split === "a" ? inner.a : inner.b;
 	const rect = (s0, ss, d0, ds) => (split === "a" ? {a: s0, wa: ss, b: d0, wb: ds} : {b: s0, wb: ss, a: d0, wa: ds});
 
 	const halls = [];
-	for (let p = 0; p < parts; p++) {
-		const fp = rect(splitStart + p * (size + gap), size, start, depth);
-		const floors = ri(arch.floors);
-		const style = facadeStyle(ctx, arch.facade, floorH);
-		let topBox = null;
+	for (const row of rows) {
+		const parts = ri(arch.parts);
+		const gap = parts > 1 && arch.gap ? rr(arch.gap) * m : 0;
+		const size = (length - gap * (parts - 1)) / parts;
+		if (size < 4 * m) continue;
+		for (let p = 0; p < parts; p++) {
+			const fp = rect(splitStart + p * (size + gap), size, row.start, row.depth);
+			const floors = ri(arch.floors);
+			const style = facadeStyle(ctx, arch.facade, floorH);
+			let topBox = null;
 
-		if (arch.podium) {
-			// Residential tower on a podium
-			const podFloors = ri(arch.podium);
-			addBox(ctx, {...fp, h: podFloors * floorH, ...facadeStyle(ctx, "grid", floorH)});
-			const share = rr(arch.towerShare);
-			const tw = fp.wa * share;
-			const tb = fp.wb * share;
-			const tower = {a: fp.a + random(0, fp.wa - tw), b: fp.b + random(0, fp.wb - tb), wa: tw, wb: tb};
-			topBox = addBox(ctx, {...tower, z: podFloors * floorH, h: Math.max(1, floors - podFloors) * floorH, ...style});
-		} else if (arch.tiers) {
-			// Skyscraper: a base, then tiers stepping back
-			const tiers = ri(arch.tiers);
-			let remaining = floors;
-			let z = 0;
-			let cur = fp;
-			for (let t = 0; t <= tiers && remaining > 0; t++) {
-				const n = t === tiers ? remaining : Math.max(2, Math.round(remaining * random(0.3, 0.5)));
-				topBox = addBox(ctx, {...cur, z, h: n * floorH, ...style}) || topBox;
-				z += n * floorH;
-				remaining -= n;
-				const sa = cur.wa * random(0.08, 0.18);
-				const sb = cur.wb * random(0.08, 0.18);
-				cur = {a: cur.a + sa, b: cur.b + sb, wa: cur.wa - sa * 2, wb: cur.wb - sb * 2};
+			if (arch.podium) {
+				// Residential tower on a podium
+				const podFloors = ri(arch.podium);
+				addBox(ctx, {...fp, h: podFloors * floorH, ...facadeStyle(ctx, "grid", floorH)});
+				const share = rr(arch.towerShare);
+				const tw = fp.wa * share;
+				const tb = fp.wb * share;
+				const tower = {a: fp.a + random(0, fp.wa - tw), b: fp.b + random(0, fp.wb - tb), wa: tw, wb: tb};
+				topBox = addBox(ctx, {...tower, z: podFloors * floorH, h: Math.max(1, floors - podFloors) * floorH, ...style});
+			} else if (arch.tiers) {
+				// Skyscraper: a base, then tiers stepping back
+				const tiers = ri(arch.tiers);
+				let remaining = floors;
+				let z = 0;
+				let cur = fp;
+				for (let t = 0; t <= tiers && remaining > 0; t++) {
+					const n = t === tiers ? remaining : Math.max(2, Math.round(remaining * random(0.3, 0.5)));
+					topBox = addBox(ctx, {...cur, z, h: n * floorH, ...style}) || topBox;
+					z += n * floorH;
+					remaining -= n;
+					const sa = cur.wa * random(0.08, 0.18);
+					const sb = cur.wb * random(0.08, 0.18);
+					cur = {a: cur.a + sa, b: cur.b + sb, wa: cur.wa - sa * 2, wb: cur.wb - sb * 2};
+				}
+			} else {
+				const roof = arch.gable && random() < arch.gable ? {axis: split, height: ((split === "a" ? fp.wb : fp.wa) / 2) * random(0.4, 0.7)} : null;
+				topBox = addBox(ctx, {...fp, h: floors * floorH, roof, ...style});
+				if (topBox && arch.facade === "industrial") halls.push(topBox);
 			}
-		} else {
-			const roof = arch.gable && random() < arch.gable ? {axis: split, height: ((split === "a" ? fp.wb : fp.wa) / 2) * random(0.4, 0.7)} : null;
-			topBox = addBox(ctx, {...fp, h: floors * floorH, roof, ...style});
-			if (topBox && arch.facade === "industrial") halls.push(topBox);
-		}
 
-		if (topBox && !topBox.roof && random() < arch.roofBlock) addRoofBlock(ctx, topBox);
+			if (topBox && !topBox.roof && random() < arch.roofBlock) addRoofBlock(ctx, topBox);
+		}
 	}
 
 	if (arch.chimneys) {
@@ -371,7 +386,81 @@ function buildPark(ctx, lot, arch, density) {
 // Scenes
 // ----------------------------------------------------------------------------
 
-/** Standing in a street that runs toward a single VP, lots on both sides. */
+/**
+ * A grid of blocks. Streets of width `streetA` separate the blocks along a,
+ * streets of width `streetB` along b; `aLine0` / `bLine0` are the centre lines
+ * of one street of each direction. Each block gets a zone from `zoneAt(i, j)`.
+ */
+function buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewalk, zoneAt}) {
+	const {frame, m, W} = ctx;
+	const pitchA = cellA + streetA;
+	const pitchB = cellB + streetB;
+	const reachA = Math.ceil((FAR_M * m) / pitchA);
+	const reachB = Math.ceil((FAR_M * m) / pitchB);
+
+	for (let i = -reachA; i <= reachA; i++) {
+		for (let j = -reachB; j <= reachB; j++) {
+			const lot = {a: aLine0 + i * pitchA + streetA / 2, b: bLine0 + j * pitchB + streetB / 2, wa: cellA, wb: cellB};
+			const depths = footprintDepths(frame, lot);
+			if (Math.max(...depths) < NEAR_M * m || Math.min(...depths) > FAR_M * m) continue;
+			// Verticals stay vertical, so a block whose ground lies beside the canvas can't show
+			if (Math.min(...depths) > NEAR_M * m) {
+				const xs = [frame.point(lot.a, lot.b), frame.point(lot.a + lot.wa, lot.b), frame.point(lot.a, lot.b + lot.wb), frame.point(lot.a + lot.wa, lot.b + lot.wb)].map((p) => p.x);
+				if (Math.max(...xs) < -20 || Math.min(...xs) > W + 20) continue;
+			}
+
+			// Building line and curb around the block
+			pushGroundQuad(ctx.groundLines, frame, lot.a, lot.b, lot.wa, lot.wb, "detail");
+			pushGroundQuad(ctx.groundLines, frame, lot.a - sidewalk, lot.b - sidewalk, lot.wa + sidewalk * 2, lot.wb + sidewalk * 2, "ground");
+
+			const zoneInfo = zoneAt(i, j);
+			const longer = cellA > cellB ? "a" : "b";
+			const split = random() < 0.75 ? longer : longer === "a" ? "b" : "a";
+			layoutLot(ctx, lot, zoneInfo, split);
+			if (zoneInfo.zone === "residential" && random() < 0.5) addStreetTrees(ctx, lot, sidewalk);
+		}
+	}
+}
+
+/** Trees on the sidewalk all around a block. */
+function addStreetTrees(ctx, lot, sidewalk) {
+	const m = ctx.m;
+	const off = sidewalk * 0.5;
+	const edges = [
+		[lot.a - off, lot.b, 0, 1, lot.wb],
+		[lot.a + lot.wa + off, lot.b, 0, 1, lot.wb],
+		[lot.a, lot.b - off, 1, 0, lot.wa],
+		[lot.a, lot.b + lot.wb + off, 1, 0, lot.wa],
+	];
+	for (const [a0, b0, da, db, len] of edges) {
+		for (let s = random(2, 6) * m; s < len - 2 * m; s += random(8, 12) * m) {
+			const tree = randomTree(ctx);
+			addTree(ctx, a0 + da * s, b0 + db * s, {...tree, crownR: Math.min(tree.crownR, sidewalk * 1.2)});
+		}
+	}
+}
+
+/**
+ * Zebra crossings on the arms of the crossing of street centre lines aLine and
+ * bLine: the ones across the street along a, and across the street along b.
+ */
+function addCrossings(ctx, aLine, bLine, streetA, streetB, {acrossA = true, acrossB = true} = {}) {
+	const m = ctx.m;
+	const stripe = 0.5 * m;
+	const zebra = 3 * m;
+	for (const side of [-1, 1]) {
+		const a = aLine + side * (streetA * 0.5 + m) - (side < 0 ? zebra : 0);
+		const b = bLine + side * (streetB * 0.5 + m) - (side < 0 ? zebra : 0);
+		for (let t = -streetB * 0.5 + stripe; acrossA && t + stripe < streetB * 0.5; t += stripe * 2) {
+			pushGroundQuad(ctx.groundLines, ctx.frame, a, bLine + t, zebra, stripe, "detail");
+		}
+		for (let t = -streetA * 0.5 + stripe; acrossB && t + stripe < streetA * 0.5; t += stripe * 2) {
+			pushGroundQuad(ctx.groundLines, ctx.frame, aLine + t, b, stripe, zebra, "detail");
+		}
+	}
+}
+
+/** Standing on a street of the grid that runs toward the single VP; cross streets are frontal. */
 function buildStreet1pt(params, W, H) {
 	const horizonY = H * params.horizon_frac;
 	const vpX = W * (0.5 + random(-0.12, 0.12));
@@ -383,56 +472,27 @@ function buildStreet1pt(params, W, H) {
 
 	const roadHalf = random(3.5, 7) * m;
 	const sidewalk = random(2, 4) * m;
-	// The eye stands on the road, not always in the middle
-	const centre = cam.a + random(-0.7, 0.7) * roadHalf;
-	const bNear = cam.b + NEAR_M * m;
-	const bFar = cam.b + FAR_M * m;
-	// Zones change every ~40 m along the street; the densest stretch lies ahead
-	const zoneAt = makeZoneMap(params.district, {x: 0, y: random(3, 9)});
-	const zoneStep = 40 * m;
+	const streetA = (roadHalf + sidewalk) * 2;
+	const streetB = random(12, 20) * m;
+	// Blocks are long along the street the eye looks down
+	const cellA = random(35, 60) * m;
+	const cellB = random(60, 120) * m;
+	// The eye stands on the road, not always in the middle; the next cross street is ahead
+	const aLine0 = cam.a + random(-0.7, 0.7) * roadHalf;
+	const bLine0 = cam.b + random(15, 70) * m;
+	const zoneAt = makeZoneMap(params.district, {x: 0, y: random(2, 6)});
 
-	for (const side of [-1, 1]) {
-		const edge = centre + side * (roadHalf + sidewalk);
-		let b = cam.b - random(0, 15) * m;
-		let count = 0;
-		while (b < bFar && count < 60) {
-			const zoneInfo = zoneAt(side * 1.4, (b - cam.b) / zoneStep);
-			const length = (zoneInfo.zone === "park" ? random(30, 80) : random(20, 60)) * m;
-			const depth = (zoneInfo.zone === "industrial" ? random(30, 60) : random(15, 35)) * m;
-			const lot = {a: side < 0 ? edge - depth : edge, b, wa: depth, wb: length};
-			layoutLot(ctx, lot, zoneInfo, "b", {axis: "a", side: side < 0 ? 1 : 0});
+	buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewalk, zoneAt});
+	// Only the crossings over the eye's street: the others are seen edge-on
+	addCrossings(ctx, aLine0, bLine0, streetA, streetB, {acrossA: false});
 
-			// Street trees on the sidewalk of residential stretches
-			if (zoneInfo.zone === "residential" && random() < 0.6) {
-				const ta = centre + side * (roadHalf + sidewalk * 0.5);
-				for (let tb = b + random(2, 6) * m; tb < b + length; tb += random(8, 12) * m) {
-					const tree = randomTree(ctx);
-					addTree(ctx, ta, tb, {...tree, crownR: Math.min(tree.crownR, sidewalk * 1.2)});
-				}
-			}
-			// Alleys and side streets
-			b += length + (random() < 0.25 ? random(3, 14) * m : 0);
-			count++;
-		}
-	}
-
-	// Curbs run straight to the VP
-	for (const a of [centre - roadHalf, centre + roadHalf]) {
-		const seg = groundSegment(frame, a, bNear, a, bFar, "ground");
-		if (seg) ctx.groundLines.push(seg);
-	}
-	// Centre dashes, equal true length, foreshortened by construction
+	// Centre dashes along the eye's street, broken at the crossings
 	const dash = 3 * m;
-	for (let b = bNear + random(0, dash); b < cam.b + 150 * m; b += dash * 3) {
-		ctx.groundLines.push({p: frame.point(centre, b), q: frame.point(centre, b + dash), preset: "detail"});
-	}
-	// Zebra crossing a few steps ahead
-	if (random() < 0.7) {
-		const b0 = cam.b + random(8, 25) * m;
-		const stripe = 0.5 * m;
-		for (let a = centre - roadHalf + stripe; a + stripe < centre + roadHalf; a += stripe * 2) {
-			pushGroundQuad(ctx.groundLines, frame, a, b0, stripe, 3 * m, "detail");
-		}
+	const pitchB = cellB + streetB;
+	for (let b = cam.b + NEAR_M * m + random(0, dash); b < cam.b + 200 * m; b += dash * 3) {
+		const inBlock = (((b - bLine0 - streetB / 2) % pitchB) + pitchB) % pitchB;
+		if (inBlock > cellB - dash) continue;
+		ctx.groundLines.push({p: frame.point(aLine0, b), q: frame.point(aLine0, b + dash), preset: "detail"});
 	}
 
 	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines};
@@ -457,39 +517,21 @@ function buildBlock2pt(params, W, H) {
 	const m = ctx.m;
 	const cam = frame.camera();
 
-	const street = random(12, 24) * m;
-	const cell = random(30, 55) * m;
-	const pitch = cell + street;
+	const streetA = random(12, 24) * m;
+	const streetB = random(12, 24) * m;
+	const sidewalk = random(2, 4) * m;
+	const cellA = random(30, 60) * m;
+	const cellB = random(30, 60) * m;
 
 	// Street centre lines: the eye stands at the near corner of a crossing,
 	// looking across it at the opposite corner block
-	const aLine0 = cam.a + random(0.2, 0.45) * street;
-	const bLine0 = cam.b + random(0.2, 0.45) * street;
+	const aLine0 = cam.a + random(0.2, 0.45) * streetA;
+	const bLine0 = cam.b + random(0.2, 0.45) * streetB;
 	// The densest quarter lies a few blocks ahead
 	const zoneAt = makeZoneMap(params.district, {x: random(1, 5), y: random(1, 5)});
 
-	const reach = Math.ceil((FAR_M * m) / pitch);
-	for (let i = -reach; i <= reach; i++) {
-		for (let j = -reach; j <= reach; j++) {
-			const lot = {a: aLine0 + i * pitch + street * 0.5, b: bLine0 + j * pitch + street * 0.5, wa: cell, wb: cell};
-			const depths = footprintDepths(frame, lot);
-			if (Math.max(...depths) < NEAR_M * m || Math.min(...depths) > FAR_M * m) continue;
-			pushGroundQuad(ctx.groundLines, frame, lot.a, lot.b, cell, cell, "ground");
-			layoutLot(ctx, lot, zoneAt(i, j), random() < 0.5 ? "a" : "b", null);
-		}
-	}
-
-	// Zebra crossings on the arms of the eye's crossing (stripes follow the traffic)
-	const stripe = 0.5 * m;
-	const zebra = 3 * m;
-	for (const side of [-1, 1]) {
-		const a = aLine0 + side * (street * 0.5 + m) - (side < 0 ? zebra : 0);
-		const b = bLine0 + side * (street * 0.5 + m) - (side < 0 ? zebra : 0);
-		for (let t = -street * 0.5 + stripe; t + stripe < street * 0.5; t += stripe * 2) {
-			pushGroundQuad(ctx.groundLines, frame, a, bLine0 + t, zebra, stripe, "detail");
-			pushGroundQuad(ctx.groundLines, frame, aLine0 + t, b, stripe, zebra, "detail");
-		}
-	}
+	buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewalk, zoneAt});
+	addCrossings(ctx, aLine0, bLine0, streetA, streetB);
 
 	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines};
 }

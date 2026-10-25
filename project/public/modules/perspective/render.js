@@ -111,32 +111,67 @@ function drawFacade(g, bx, face) {
 		case "chimney":
 			return facadeChimney(g, bx, face);
 		default:
-			return facadeGrid(g, bx, face, fm, r, 1);
+			return facadeGrid(g, bx, face, fm, r, 0, true);
 	}
 }
 
-/** Punched windows on every storey from `firstRow` up; some dark panes. */
-function facadeGrid(g, bx, face, {floors, cols}, r, firstRow) {
+/**
+ * A door on the ground floor, centred at u, sized in metres. Only boxes standing
+ * on the ground get doors. Returns false when it is too small to draw.
+ */
+function drawDoor(g, bx, face, u, widthM, heightM, {double = false, glass = false, canopy = false} = {}) {
+	if (bx.z > 0) return false;
+	const m = bx.frame.metre;
+	const hu = (widthM * m) / bx.faceWidth(face.name) / 2;
+	const v1 = Math.min((heightM * m) / bx.h, 0.9);
+	const quad = faceQuad(bx, face, u - hu, u + hu, 0, v1);
+	if (!strokeQuad(g, quad, DETAIL, 2)) return false;
+	if (double) faceLine(g, bx, face, u, 0, u, v1);
+	if (glass) pencilHatch(g, quad, {angle: HATCH_ANGLE + 20, spacing: 3, alpha: 20, ink: GRAPHITE});
+	else faceLine(g, bx, face, u - hu * 0.6, v1 * 0.55, u - hu * 0.45, v1 * 0.55, DETAIL); // handle
+	if (canopy) {
+		const vc = v1 + (0.25 * m) / bx.h;
+		faceLine(g, bx, face, u - hu * 1.6, vc, u + hu * 1.6, vc, DETAIL);
+	}
+	return true;
+}
+
+/** Column centres where a facade gets its entrances: one every `spacingM` metres, at least one. */
+function entranceColumns(bx, face, cols, spacingM, r) {
+	const count = Math.max(1, Math.round(bx.faceWidth(face.name) / (spacingM * bx.frame.metre)));
+	const out = new Set();
+	for (let k = 0; k < count; k++) {
+		const jitter = count === 1 ? floor(r() * cols) : Math.round(((k + 0.5) * cols) / count - 0.5);
+		out.add(Math.min(cols - 1, Math.max(0, jitter)));
+	}
+	return out;
+}
+
+/** Punched windows on every storey from `firstRow` up, some dark panes; entrance doors on the ground floor. */
+function facadeGrid(g, bx, face, {floors, cols}, r, firstRow, doors = false) {
 	const mu = 0.24;
 	const mv = 0.28;
+	const entrances = doors && bx.z === 0 ? entranceColumns(bx, face, cols, 25, r) : new Set();
+	for (const c of entrances) drawDoor(g, bx, face, (c + 0.5) / cols, 1.8, 2.4, {double: true, canopy: true});
 	for (let row = firstRow; row < floors; row++) {
 		for (let c = 0; c < cols; c++) {
+			if (row === 0 && entrances.has(c)) continue;
 			const quad = faceQuad(bx, face, (c + mu) / cols, (c + 1 - mu) / cols, (row + mv) / floors, (row + 1 - mv * 0.6) / floors);
 			if (strokeQuad(g, quad) && r() < 0.35) pencilHatch(g, quad, {angle: HATCH_ANGLE, spacing: 2.4, alpha: 40, ink: GRAPHITE});
 		}
 	}
 }
 
-/** A few windows per storey and a door on the ground floor of one wall. */
+/** A few windows per storey; the front door is on one of the walls the eye sees. */
 function facadeHouse(g, bx, face, fm, r) {
 	const {floors, cols} = fm;
-	const door = r() < 0.5 ? floor(r() * cols) : -1;
+	const walls = bx.faces.filter((f) => f.kind === "wall");
+	const doorWall = walls[floor(pencilRng(bx.a, bx.b, 11)() * walls.length)];
+	const door = doorWall === face ? floor(r() * cols) : -1;
+	if (door >= 0) drawDoor(g, bx, face, (door + 0.5) / cols, 1, 2.1, {canopy: r() < 0.5});
 	for (let row = 0; row < floors; row++) {
 		for (let c = 0; c < cols; c++) {
-			if (row === 0 && c === door) {
-				strokeQuad(g, faceQuad(bx, face, (c + 0.32) / cols, (c + 0.68) / cols, 0, 0.72 / floors));
-				continue;
-			}
+			if (row === 0 && c === door) continue;
 			const quad = faceQuad(bx, face, (c + 0.3) / cols, (c + 0.7) / cols, (row + 0.32) / floors, (row + 0.78) / floors);
 			if (strokeQuad(g, quad)) faceLineQuadCross(g, quad);
 		}
@@ -153,16 +188,20 @@ function facadeStorefront(g, bx, face, fm, r) {
 	const {floors, cols} = fm;
 	const f = 1 / floors;
 	strokeQuad(g, faceQuad(bx, face, 0.02, 0.98, 0.8 * f, 0.95 * f));
+	// One shop door per face, the other bays are shop windows
+	const door = bx.z === 0 ? floor(r() * cols) : -1;
 	for (let c = 0; c < cols; c++) {
+		if (c === door && drawDoor(g, bx, face, (c + 0.5) / cols, 1.6, 2.4, {double: true, glass: true})) continue;
 		const quad = faceQuad(bx, face, (c + 0.06) / cols, (c + 0.94) / cols, 0.06 * f, 0.7 * f);
 		if (strokeQuad(g, quad) && r() < 0.4) pencilHatch(g, quad, {angle: HATCH_ANGLE + 20, spacing: 3.5, alpha: 24, ink: GRAPHITE});
 	}
 	if (floors > 1) facadeGrid(g, bx, face, fm, r, 1);
 }
 
-/** Continuous glazed band on every storey, with mullions. */
+/** Continuous glazed band on every storey, with mullions; a lobby entrance below. */
 function facadeRibbon(g, bx, face, {floors, cols}, r) {
-	for (let row = 0; row < floors; row++) {
+	const lobby = drawDoor(g, bx, face, 0.3 + r() * 0.4, 3.6, 3, {double: true, glass: true, canopy: true});
+	for (let row = lobby ? 1 : 0; row < floors; row++) {
 		const v0 = (row + 0.3) / floors;
 		const v1 = (row + 0.82) / floors;
 		const band = faceQuad(bx, face, 0.015, 0.985, v0, v1);
@@ -178,6 +217,7 @@ function facadeCurtain(g, bx, face, {floors, cols, px}, r) {
 	const stepC = px < 6 ? 4 : px < 10 ? 2 : 1;
 	for (let c = stepC; c < cols; c += stepC) faceLine(g, bx, face, c / cols, 0, c / cols, 1);
 	for (let row = 1; row < floors; row++) faceLine(g, bx, face, 0, row / floors, 1, row / floors);
+	drawDoor(g, bx, face, 0.3 + r() * 0.4, 4.2, 3.4, {double: true, glass: true, canopy: true});
 	const streaks = floor(r() * 3);
 	for (let s = 0; s < streaks; s++) {
 		const u = r() * 0.8;
@@ -192,6 +232,8 @@ function facadeIndustrial(g, bx, face, {cols}, r) {
 	for (let c = 0; c < cols; c++) strokeQuad(g, faceQuad(bx, face, (c + 0.08) / cols, (c + 0.92) / cols, 0.68, 0.84));
 
 	const width = bx.faceWidth(face.name);
+	// Staff door next to the loading bays
+	drawDoor(g, bx, face, (1.6 * m) / width, 1, 2.1);
 	const doorW = 4.2 * m;
 	const doorH = Math.min(4.6 * m, bx.h * 0.6) / bx.h;
 	if (width < doorW * 2) return;
@@ -271,11 +313,14 @@ function drawTree(g, tree, comp) {
 	// Round crown: a lumpy outline, a few inner clumps, shadow on one half
 	const c = tree.centre;
 	const R = tree.radius;
-	const n = R < 4 ? 8 : 18;
+	const n = R < 4 ? 8 : Math.min(48, Math.max(18, Math.round(R / 3)));
+	// Foliage clumps: a few smooth lobes rather than random spikes
+	const ph1 = r() * Math.PI * 2;
+	const ph2 = r() * Math.PI * 2;
 	const crown = [];
 	for (let i = 0; i < n; i++) {
 		const t = (i / n) * Math.PI * 2;
-		const k = 0.82 + 0.3 * r();
+		const k = 0.9 + 0.1 * Math.sin(t * 5 + ph1) + 0.05 * Math.sin(t * 9 + ph2) + 0.04 * r();
 		crown.push(pt(c.x + Math.cos(t) * R * k, c.y + Math.sin(t) * R * k * 0.92));
 	}
 	fillPaper(g, crown);
