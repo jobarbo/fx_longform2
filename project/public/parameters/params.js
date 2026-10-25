@@ -3,31 +3,61 @@ fx = $fx;
 fxhash = $fx.hash;
 fxrand = $fx.rand;
 rand = fxrand;
-features = $fx.getFeatures();
 seed = parseInt(fxrand() * 10000000);
 
 //* COMPOSITION TYPE DEFINITION *//
 // CATEGORISE VARIABILITY INSIDE ARRAYS //
 
-const shapeArr = [
+const perspectiveArr = [
 	// name, probability(0-100)
-	["ellipse", 50],
-	["rectangle", 50],
+	["1pt", 45],
+	["2pt", 55],
 ];
 
-// all input parameters are optional, they will be chosen at random if not passed into the function
-function generate_composition_params(shape_type) {
-	// SET DEFAULTS IF NOT PASSED IN
-	if (shape_type === undefined) {
-		shape_type = weighted_choice(shapeArr);
-	}
+const horizonArr = [
+	["low", 30],
+	["mid", 40],
+	["high", 30],
+];
 
-	//* EXCEPTIONS AND OVER-RIDES *//
-	// if necessary, add exceptions and over-rides here
+const horizonFrac = {low: 0.68, mid: 0.5, high: 0.32};
+
+const vpSpreadArr = [
+	["narrow", 40],
+	["wide", 60],
+];
+
+const lightArr = [
+	["left", 50],
+	["right", 50],
+];
+
+const densityArr = [
+	["sparse", 30],
+	["regular", 50],
+	["dense", 20],
+];
+
+const densityValue = {sparse: 0.6, regular: 1, dense: 1.5};
+
+// all input parameters are optional, they will be chosen at random if not passed into the function
+function generate_composition_params(perspective_type, horizon, vp_spread, light, density) {
+	// SET DEFAULTS IF NOT PASSED IN
+	if (perspective_type === undefined) perspective_type = weighted_choice(perspectiveArr);
+	if (horizon === undefined) horizon = weighted_choice(horizonArr);
+	if (vp_spread === undefined) vp_spread = weighted_choice(vpSpreadArr);
+	if (light === undefined) light = weighted_choice(lightArr);
+	if (density === undefined) density = weighted_choice(densityArr);
 
 	//* PACK PARAMETERS INTO OBJECT *//
 	var composition_params = {
-		shape_type: shape_type,
+		perspective_type: perspective_type,
+		horizon: horizon,
+		horizon_frac: horizonFrac[horizon],
+		vp_spread: vp_spread,
+		light: light,
+		density_name: density,
+		density: densityValue[density],
 	};
 
 	//* RETURN PARAMETERS *//

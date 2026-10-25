@@ -24,9 +24,12 @@ let H = window.innerHeight;
 let DIM;
 let MULTIPLIER;
 
-// Source image (replaces particle system)
-let sourceImage;
-const SOURCE_IMAGE_PATH = "./assets/p.gif";
+// Perspective drawing
+let compositionParams;
+let composition;
+let renderSeed;
+let showConstruction = true; // key C
+let showDebug = false; // key D
 
 let executionTimer = new ExecutionTimer();
 // Canvas references
@@ -40,35 +43,24 @@ function shadersEnabled() {
 }
 
 function preload() {
-	sourceImage = loadImage(SOURCE_IMAGE_PATH);
-
 	// Initialize shader effects (optional - will work without it)
 	if (shadersEnabled()) {
 		shaderEffects.preload(this);
 	}
 }
 
-/** Draw the GIF so it fits entirely in the canvas (letterboxed if needed). */
-function drawImageContain(g, img) {
-	const cw = g.width;
-	const ch = g.height;
-	const scale = Math.min(cw / img.width, ch / img.height);
-	const dw = img.width * scale;
-	const dh = img.height * scale;
-	g.push();
-	g.imageMode(CORNER);
-	// Dest-only image() so p5 advances animated GIF frames (source-rect form can freeze them).
-	g.image(img, (cw - dw) * 0.5, (ch - dh) * 0.5, dw, dh);
-	g.pop();
-}
-
-function drawGifFrame() {
-	mainCanvas.background(35, 100, 20);
-	drawImageContain(mainCanvas, sourceImage);
+/** Redraw the whole drawing into mainCanvas, in base units. */
+function renderArtwork() {
+	setPencilSeed(renderSeed);
+	noiseSeed(renderSeed);
+	mainCanvas.push();
+	mainCanvas.scale(MULTIPLIER);
+	renderPerspective(mainCanvas, composition, {W: BASE_WIDTH, H: BASE_HEIGHT, construction: showConstruction, debug: showDebug});
+	mainCanvas.pop();
+	if (showDebug) validatePerspective(composition.scene, composition.boxes);
 }
 
 function setup() {
-	features = $fx.getFeatures();
 	executionTimer.start();
 
 	// Canvas setup
@@ -100,7 +92,7 @@ function setup() {
 	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
 	mainCanvas.rectMode(CENTER);
 	mainCanvas.angleMode(DEGREES);
-	mainCanvas.background(50, 10, 0);
+	mainCanvas.strokeCap(ROUND);
 
 	// Set global color mode
 	colorMode(HSB, 360, 100, 100, 100);
@@ -113,11 +105,13 @@ function setup() {
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
 
-	if (typeof sourceImage.play === "function") {
-		sourceImage.play();
-	}
+	// Generated in src/index.js (bundle), which also sets the fxhash features
+	compositionParams = window.composition_params;
+	features = $fx.getFeatures();
 
-	drawGifFrame();
+	renderSeed = Math.floor(fxrand() * 1e9);
+	composition = buildComposition(compositionParams, BASE_WIDTH, BASE_HEIGHT);
+	renderArtwork();
 
 	executionTimer.stop().logElapsedTime("Sketch completed in");
 	if (shadersEnabled()) {
@@ -126,13 +120,12 @@ function setup() {
 	$fx.preview();
 	document.complete = true;
 	sketchComplete = true;
-	console.log("GIF playing (contain)");
 
 	if (ENABLE_DEV_PANELS) {
 		setupDevPanels();
 	}
 
-	// Start the custom draw loop (shaders keep running after the image is drawn)
+	// Start the custom draw loop (shaders keep running after the drawing is done)
 	customDraw();
 }
 
@@ -157,10 +150,8 @@ function startPanelLoop() {
 // Track sketch completion state
 let sketchComplete = false;
 
-// Custom draw loop - redraws the GIF, then applies shader effects
+// Custom draw loop - the drawing is static, only the shader effects run per frame
 function customDraw() {
-	drawGifFrame();
-
 	if (shadersEnabled()) {
 		const shouldContinue = shaderEffects.renderFrame(sketchComplete, customDraw);
 		if (shouldContinue) {
@@ -182,5 +173,13 @@ function keyPressed() {
 
 	if (key === "E" || key === "e") {
 		if (typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.toggle();
+	}
+	if (key === "C" || key === "c") {
+		showConstruction = !showConstruction;
+		renderArtwork();
+	}
+	if (key === "D" || key === "d") {
+		showDebug = !showDebug;
+		renderArtwork();
 	}
 }
