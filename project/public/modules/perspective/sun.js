@@ -8,6 +8,13 @@
 
 // Sun position ranges, in degrees. Azimuth 0 = straight ahead (backlit).
 const SUN_HEIGHTS = {low: [5, 15], mid: [15, 35], high: [35, 60]};
+// Faces are toned with a drawing light: the sun, turned about the vertical until
+// any two walls facing the eye differ in light by at least this share of its
+// horizontal strength. Each face then departs from the walls' mean value by its
+// difference in light, times the contrast.
+const TONE_MIN_SPLIT = 0.6;
+const TONE_CONTRAST = 1.6;
+const TONE_SHADOW_MIN = 0.4;
 
 class Sun {
 	/** azimuth: degrees from the view direction (positive to the right); elevation: degrees above the horizon. */
@@ -24,6 +31,14 @@ class Sun {
 		const p = frame.fromView(this.view.x, this.view.z);
 		// Frame axes are orthonormal and share the vertical with the view
 		this.dir = {a: p.a - o.a, b: p.b - o.b, k: this.view.y};
+		// Walls turned toward the eye; faces are toned against their mean light
+		const fwd = frame.fromView(0, 1);
+		const walls = [{a: -1, b: 0}, {a: 1, b: 0}, {a: 0, b: -1}, {a: 0, b: 1}].filter((n) => n.a * (fwd.a - o.a) + n.b * (fwd.b - o.b) <= 1e-6);
+		this.toneDir = drawingLight(this.dir, walls);
+		this.toneMid = walls.reduce((sum, n) => sum + n.a * this.toneDir.a + n.b * this.toneDir.b, 0) / walls.length;
+		// Which screen side the drawing light comes from: +1 right, -1 left
+		const right = frame.fromView(1, 0);
+		this.toneSide = Math.sign(this.toneDir.a * (right.a - o.a) + this.toneDir.b * (right.b - o.b)) || 1;
 
 		if (Math.abs(this.view.z) > 1e-6) {
 			this.rayVP = pt(s.centerX + (s.d * this.view.x) / this.view.z, s.horizonY - (s.d * this.view.y) / this.view.z);
@@ -64,11 +79,53 @@ class Sun {
 		return n.a * this.dir.a + n.b * this.dir.b + n.k * this.dir.k;
 	}
 
+	/**
+	 * How dark a face reads, 0 (lit) to 1, from the drawing light. The walls facing
+	 * the eye set the overall value (dark against the light, light with it); each
+	 * face then departs from it by how much more or less light it gets, so two
+	 * sides always part clearly, even both in shadow.
+	 */
+	darkness(n) {
+		const c = n.a * this.toneDir.a + n.b * this.toneDir.b + n.k * this.toneDir.k;
+		const overall = Math.min(0.8, Math.max(0, (0.75 - this.toneMid) / 1.35));
+		const d = overall + (this.toneMid - c) * TONE_CONTRAST;
+		// A face really turned from the sun never reads lit
+		return Math.min(1, Math.max(this.lambert(n) < 0 ? TONE_SHADOW_MIN : 0, d));
+	}
+
 	/** 0 lit, 1 half-tone, 2 in its own shadow. */
 	shadeLevel(n) {
 		const c = this.lambert(n);
 		return c < 0.02 ? 2 : c < 0.5 ? 1 : 0;
 	}
+}
+
+/**
+ * The drawing light: the sun turned about the vertical by the smallest angle that
+ * parts every two of `walls` (horizontal unit normals). With the sun straight
+ * ahead or behind, a draughtsman still picks a lit side.
+ */
+function drawingLight(dir, walls) {
+	const h = Math.hypot(dir.a, dir.b);
+	if (h < 1e-9) return dir;
+	const phi = Math.atan2(dir.b, dir.a);
+	const split = (turn) => {
+		const c = walls.map((n) => n.a * Math.cos(phi + turn) + n.b * Math.sin(phi + turn));
+		let min = Infinity;
+		for (let i = 0; i < c.length; i++) for (let j = i + 1; j < c.length; j++) min = Math.min(min, Math.abs(c[i] - c[j]));
+		return min;
+	};
+	let best = 0;
+	for (let deg = 0; deg <= 45; deg++) {
+		const turns = deg ? [(deg * Math.PI) / 180, (-deg * Math.PI) / 180] : [0];
+		const ok = turns.find((t) => split(t) >= TONE_MIN_SPLIT);
+		if (ok !== undefined) {
+			best = ok;
+			break;
+		}
+		for (const t of turns) if (split(t) > split(best)) best = t;
+	}
+	return {a: Math.cos(phi + best) * h, b: Math.sin(phi + best) * h, k: dir.k};
 }
 
 /** Pick the sun for a composition from the params (azimuth jitter drawn with p5 random). */

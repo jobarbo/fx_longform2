@@ -28,15 +28,15 @@ function renderPerspective(g, comp, {W, H, debug = false}) {
 	for (const l of comp.groundLines) {
 		for (const piece of splitByDepth(l, cuts)) groundByInterval[intervalOf(piece.mid)].push(piece);
 	}
-	const shadowsByInterval = cuts.map(() => []).concat([[]]);
-	for (const poly of comp.groundShadows) {
-		splitShadowByDepth(comp.frame, poly, cuts).forEach((pieces, k) => shadowsByInterval[k].push(...pieces));
-	}
+	// Ground shadows on screen. A depth on the ground is a screen row, so each
+	// interval washes the band of rows between its events: no seams, no overlaps.
+	const groundShadows = comp.groundShadows.map((poly) => poly.map((q) => comp.frame.point(q.x, q.y)));
+	const rowOf = (depth) => comp.scene.horizonY + (comp.scene.d * comp.frame.eyeHeight) / depth;
 
 	let cursor = 0;
 	const drawGround = (k) => {
 		setPencilItemDepth(null);
-		if (shadowsByInterval[k].length) hatchGroundShadows(g, comp, shadowsByInterval[k]);
+		washGroundShadows(g, groundShadows, k === 0 ? -Infinity : rowOf(cuts[k - 1]), k === cuts.length ? Infinity : rowOf(cuts[k]));
 		for (const l of groundByInterval[k]) pencilLine(g, l.p, l.q, {...PENCIL_PRESETS[l.preset], ink: GRAPHITE, capStart: l.capStart, capEnd: l.capEnd});
 	};
 	const advanceTo = (k) => {
@@ -79,6 +79,10 @@ function drawTerrain(g, layer, comp) {
 	setPencilItemDepth(layer.depth);
 	fillPaper(g, layer.outline);
 	const st = layer.style;
+	const n = comp.terrain.length;
+	const near = n > 1 ? comp.terrain.filter((l) => l.depth > layer.depth).length / (n - 1) : 0.5;
+	toneTerrain(g, layer, near);
+	if (st.hatch) shadeSlopes(g, layer, comp, near);
 	const r = pencilRng(layer.depth, layer.ridge.length, 5);
 	const minK = 0.3 * comp.frame.metre;
 	const ridgeOpts = {...PENCIL_PRESETS.ridge, ink: GRAPHITE};
@@ -97,52 +101,85 @@ function drawTerrain(g, layer, comp) {
 	}
 	flush();
 
-	if (st.hatch) hatchSlopes(g, layer, comp, r);
-	if (st.faceHatch) hatchFace(g, layer, r);
 	if (st.strata) drawStrata(g, layer, st.strata);
 	if (st.snowLine) drawSnowLine(g, layer, st.snowLine, r);
 }
 
-/**
- * Fall-line strokes: dense on slopes turned away from the sun, sparser in
- * half-tone, a few on the lit side. A slope's normal leans toward the viewer.
- */
-function hatchSlopes(g, layer, comp, r) {
-	const sv = comp.sun.view;
-	const base = layer.base[0].y;
-	const opts = {...PENCIL_PRESETS.hatch, ink: GRAPHITE};
+// Terrain, as in a pencil landscape: each layer gets a flat tone by distance
+// (the farthest range palest, the nearest darkest), then its slopes turned from
+// the light a graphite wash, darkest under the crest and fading down the face.
+// Pairs: [farthest, nearest] layer.
+const TERRAIN_WASH = [0.03, 0.22];
+const SLOPE_WASH = [0.3, 0.72];
+const SLOPE_PASSES = 8; // stacked washes reaching farther down, so the shade fades
+const SPUR_SLANT = 0.35; // the shade's edge leans toward the light as it runs down
+const SLOPE_SCALE = 14; // px: crest bumps smaller than this don't make faces of their own
+
+/** A layer's flat wash; `near` is 0 for the farthest layer, 1 for the nearest. Snow stays white. */
+function toneTerrain(g, layer, near) {
 	const snow = layer.style.snowLine;
-	const R = layer.ridge;
-	for (let i = 1; i < R.length - 1; i++) {
-		const p = R[i];
-		if (p.k <= 0) continue;
-		const slope = (R[i + 1].y - R[i - 1].y) / (R[i + 1].x - R[i - 1].x || 1);
-		const dkdX = (R[i + 1].k - R[i - 1].k) / (R[i + 1].X - R[i - 1].X || 1);
-		const nx = -dkdX;
-		const nz = -0.7;
-		const lambert = (nx * sv.x + sv.y + nz * sv.z) / Math.hypot(nx, 1, nz);
-		const level = lambert < 0.05 ? 2 : lambert < 0.35 ? 1 : 0;
-		if (r() > [0.08, 0.45, 0.85][level]) continue;
-		const start = snow && p.k > snow ? layer.point(p.X, snow) : p;
-		const depthPx = base - start.y;
-		if (depthPx < 2) continue;
-		const len = depthPx * [0.1 + 0.15 * r(), 0.2 + 0.3 * r(), 0.3 + 0.5 * r()][level];
-		const sx = slope > 0 ? 1 : -1;
-		const dir = {x: sx * Math.min(0.6, Math.abs(slope)) * 0.5, y: 1};
-		const n = Math.hypot(dir.x, dir.y);
-		const end = {x: start.x + (dir.x / n) * len, y: Math.min(base, start.y + (dir.y / n) * len), d: layer.depth};
-		pencilLine(g, {x: start.x, y: start.y, d: layer.depth}, end, opts);
-	}
+	const top = snow ? layer.ridge.map((p) => (p.k > snow ? layer.point(p.X, snow) : p)) : layer.ridge;
+	wash(g, [[...top, ...layer.base]], TERRAIN_WASH[0] + (TERRAIN_WASH[1] - TERRAIN_WASH[0]) * near);
 }
 
-/** Vertical streaks down a cliff face. */
-function hatchFace(g, layer, r) {
-	const opts = {...PENCIL_PRESETS.hatch, ink: GRAPHITE};
-	const top = layer.maxK;
-	for (let i = 0; i < layer.ridge.length; i += 2) {
-		const p = layer.ridge[i];
-		if (p.k < top * 0.6 || r() > 0.55) continue;
-		pencilLine(g, p, layer.point(p.X, p.k * (0.2 + 0.5 * r())), opts);
+/**
+ * The slopes turned from the light: runs of the crest that rise toward it. Under
+ * each, washes hang from the crest, each pass reaching farther down a ragged
+ * line, so the shade is darkest at the top. At the peak, the shade's edge runs
+ * down toward the light like a spur, drawn as a light stroke.
+ */
+function shadeSlopes(g, layer, comp, near) {
+	const side = comp.sun.toneSide;
+	const base = layer.base[0].y;
+	const R = layer.ridge;
+	const seed = layer.depth * 0.0001;
+	const alpha = (SLOPE_WASH[0] + (SLOPE_WASH[1] - SLOPE_WASH[0]) * near) / SLOPE_PASSES;
+	// Light from the right: slopes rising to the right face away from it. The
+	// rise is read over SLOPE_SCALE, then gaps and runs narrower than it are
+	// dropped, so the shade falls on a few large faces
+	const step = Math.max(0.5, Math.abs(R[R.length - 1].x - R[0].x) / (R.length - 1));
+	const w = Math.max(1, Math.round(SLOPE_SCALE / step));
+	const shaded = R.map((p, i) => {
+		const lo = R[Math.max(0, i - w)];
+		const hi = R[Math.min(R.length - 1, i + w)];
+		return p.k > 0 && ((hi.k - lo.k) / (hi.X - lo.X || 1)) * side > 0.04;
+	});
+	const fill = (value, maxLen) => {
+		for (let i = 0; i < shaded.length; ) {
+			let j = i;
+			while (j < shaded.length && shaded[j] === shaded[i]) j++;
+			if (shaded[i] !== value && j - i < maxLen && i > 0 && j < shaded.length) shaded.fill(value, i, j);
+			i = j;
+		}
+	};
+	fill(true, w); // close small gaps
+	fill(false, w); // drop small runs
+	const runs = [];
+	let run = [];
+	for (let i = 0; i < R.length; i++) {
+		if (shaded[i]) run.push({p: R[i], i});
+		else if (run.length) {
+			runs.push(run);
+			run = [];
+		}
+	}
+	if (run.length) runs.push(run);
+
+	const below = (q, reach) => {
+		const drop = (base - q.p.y) * reach;
+		return pt(q.p.x + side * drop * SPUR_SLANT, Math.min(base, q.p.y + drop));
+	};
+	const spur = {...PENCIL_PRESETS.detail, alpha: 34, ink: GRAPHITE};
+	for (const run of runs) {
+		if (run.length < 2) continue;
+		const top = run.map((q) => q.p);
+		for (let pass = 1; pass <= SLOPE_PASSES; pass++) {
+			const bottom = run.map((q) => below(q, ((0.3 + 0.55 * noise(seed + pass * 7.3 + q.i * 0.05)) * pass) / SLOPE_PASSES));
+			wash(g, [top.concat(bottom.reverse())], alpha, {clip: layer.outline});
+		}
+		// The peak is the run's end toward the light
+		const peak = side > 0 ? run[run.length - 1] : run[0];
+		pencilLine(g, peak.p, below(peak, 0.3 + 0.3 * noise(seed + 90 + peak.i * 0.05)), spur);
 	}
 }
 
@@ -232,64 +269,136 @@ function fillPaper(g, poly) {
 	g.endShape(CLOSE);
 }
 
-// Shading, as in a ruled pen drawing: lit faces stay white; half-tone and own
-// shadow are strokes along the surface (up walls, down roof slopes); cast shadows
-// are dense strokes along the sun's rays projected on the surface they fall on
-// (toward the shadows' VP on the ground, slanted on walls), crossing the others.
-// Target spacings in px.
-const TONE_SPACING = {1: 5, 2: 2.4};
-const CAST_SPACING = 2.2;
-const SOFFIT_SPACING = 1.8;
-const TONE_HATCH = {...PENCIL_PRESETS.hatch, alpha: 62, weight: 0.7, jitter: 0.8, overshoot: 0.6, taper: 0.06, ink: GRAPHITE};
+// Shading as a graphite wash multiplied over the drawing: lit faces stay white,
+// half-tone and own shadow are flat washes, cast shadows a darker one. Edges are
+// crisp; the softness is inside, in the grain of the wash. Alphas of WASH_INK.
+const WASH_INK = "44, 46, 51"; // GRAPHITE in RGB
+const WASH = {1: 0.17, 2: 0.36, cast: 0.48};
+const FACE_WASH = 0.42; // a face turned fully from the light; cast shadows stay darker
 
-/** Screen hatching for a shade level (round shapes): 0 lit, 1 half-tone, 2 shadow. */
-function shadeHatch(g, poly, shade) {
-	if (shade > 0) pencilHatch(g, poly, {...TONE_HATCH, angle: 90, spacing: TONE_SPACING[shade] * 1.4});
+/**
+ * Multiply a wash over polygons (screen), optionally clipped to a polygon. One
+ * fill for all: with the nonzero rule overlaps don't darken; with "evenodd" a
+ * polygon inside another cuts a hole in it.
+ */
+function wash(g, polys, alpha, {clip = null, rule = "nonzero"} = {}) {
+	const ctx = g.drawingContext;
+	ctx.save();
+	if (clip) {
+		tracePolygons(ctx, [clip]);
+		ctx.clip();
+	}
+	ctx.globalCompositeOperation = "multiply";
+	ctx.globalAlpha = alpha;
+	ctx.fillStyle = graphiteGrain(ctx);
+	tracePolygons(ctx, polys);
+	ctx.fill(rule);
+	ctx.restore();
 }
 
-/** A face as a surface: its map from (p, q) to the screen, and its outline in (p, q). */
-function faceSurface(bx, face) {
-	const n = face.name;
-	const unit = [pt(0, 0), pt(1, 0), pt(1, 1), pt(0, 1)];
-	if (face.kind === "wall") return {map: (u, v) => bx.facePoint(n, u, v), poly: unit};
-	// Gables lie in their wall's plane, above v = 1
-	if (face.kind === "gable") return {map: (u, v) => bx.facePoint(n.slice(1), u, v), poly: [pt(0, 1), pt(1, 1), pt(0.5, 1 + bx.roof.height / bx.h)]};
-	// Slopes: p along the ridge, so the strokes run down the fall line
-	if (face.kind === "slope") return {map: (u, t) => bx.slopePoint(n, u, t), poly: unit};
-	const k = n === "k1" ? bx.z + bx.h : bx.z;
-	return {map: (u, v) => bx.frame.lift(bx.a + u * bx.wa, bx.b + v * bx.wb, k), poly: unit};
+let GRAIN = null; // {seed, canvas}
+const GRAIN_SIZE = 768;
+
+/**
+ * The wash's texture, graphite rubbed into paper, tileable:
+ * - mottling: smooth noise, so a wash is never one flat value
+ * - tooth: specks of paper left bare, and denser graphite particles
+ * - a few soft diagonal streaks of the pencil's side
+ * 1 tile pixel = half a base unit.
+ */
+function graphiteGrain(ctx) {
+	if (!GRAIN || GRAIN.seed !== PENCIL_SEED) {
+		const size = GRAIN_SIZE;
+		const canvas = document.createElement("canvas");
+		canvas.width = canvas.height = size;
+		const c = canvas.getContext("2d");
+		const r = pencilRng(size, 11);
+		const mottle = tileableNoise(size, [6, 12, 24, 48], [0.45, 0.3, 0.17, 0.08], r);
+		const img = c.createImageData(size, size);
+		const [ir, ig, ib] = WASH_INK.split(",").map(Number);
+		for (let i = 0; i < size * size; i++) {
+			const m = mottle[i];
+			let a = 0.5 + 0.5 * m * m * (3 - 2 * m) + (r() - 0.5) * 0.12;
+			const t = r();
+			if (t < 0.1) a *= 0.35; // bare tooth
+			else if (t > 0.975) a = Math.min(1, a + 0.35); // particle
+			img.data[i * 4] = ir;
+			img.data[i * 4 + 1] = ig;
+			img.data[i * 4 + 2] = ib;
+			img.data[i * 4 + 3] = Math.max(0, Math.min(255, a * 235));
+		}
+		c.putImageData(img, 0, 0);
+		c.lineCap = "round";
+		const angle = ((HATCH_ANGLE + 180) * Math.PI) / 180;
+		for (let i = 0; i < 1400; i++) {
+			const x = r() * size;
+			const y = r() * size;
+			const len = 8 + r() * 26;
+			const t = angle + (r() - 0.5) * 0.25;
+			c.strokeStyle = `rgba(${WASH_INK}, ${0.05 + r() * 0.12})`;
+			c.lineWidth = 0.8 + r() * 1.6;
+			// Drawn in the neighbouring tiles too, so the texture wraps
+			for (const ox of [-size, 0, size]) {
+				for (const oy of [-size, 0, size]) {
+					c.beginPath();
+					c.moveTo(x + ox, y + oy);
+					c.lineTo(x + ox + Math.cos(t) * len, y + oy + Math.sin(t) * len);
+					c.stroke();
+				}
+			}
+		}
+		GRAIN = {seed: PENCIL_SEED, canvas};
+	}
+	const pattern = ctx.createPattern(GRAIN.canvas, "repeat");
+	pattern.setTransform(new DOMMatrix().scale(0.5));
+	return pattern;
+}
+
+/** Value noise in [0, 1] on a size x size tile that wraps, summed over lattices of `cells` cells. */
+function tileableNoise(size, cells, weights, r) {
+	const out = new Float32Array(size * size);
+	const total = weights.reduce((u, v) => u + v, 0);
+	cells.forEach((n, o) => {
+		const lattice = Array.from({length: n * n}, () => r());
+		const at = (i, j) => lattice[(j % n) * n + (i % n)];
+		const cell = size / n;
+		for (let y = 0; y < size; y++) {
+			const fy = y / cell;
+			const j = Math.floor(fy);
+			const ty = fy - j;
+			const sy = ty * ty * (3 - 2 * ty);
+			for (let x = 0; x < size; x++) {
+				const fx = x / cell;
+				const i = Math.floor(fx);
+				const tx = fx - i;
+				const sx = tx * tx * (3 - 2 * tx);
+				const top = at(i, j) + (at(i + 1, j) - at(i, j)) * sx;
+				const bottom = at(i, j + 1) + (at(i + 1, j + 1) - at(i, j + 1)) * sx;
+				out[y * size + x] += ((top + (bottom - top) * sy) * weights[o]) / total;
+			}
+		}
+	});
+	return out;
+}
+
+/** One path of polygons, all wound the same way so a nonzero fill is their union. */
+function tracePolygons(ctx, polys) {
+	ctx.beginPath();
+	for (const poly of polys) {
+		const pts = polygonSignedArea(poly) < 0 ? poly.slice().reverse() : poly;
+		pts.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+		ctx.closePath();
+	}
 }
 
 /** A face's own tone from the sun, then the shadows other items cast on it. */
 function shadeFace(g, bx, face, sun) {
-	if (face.kind === "gable" && bx.h <= 0) return;
-	const surf = faceSurface(bx, face);
-	const own = face.kind === "bottom" ? 2 : sun.shadeLevel(faceNormal(bx, face));
-	const spacing = face.kind === "bottom" ? SOFFIT_SPACING : TONE_SPACING[own];
-	if (spacing) pencilSurfaceHatch(g, surf.map, [surf.poly], {...TONE_HATCH, spacing, step: 1 / 65536});
-
+	const alpha = face.kind === "bottom" ? WASH.cast : FACE_WASH * sun.darkness(faceNormal(bx, face));
+	if (alpha > 0.01) wash(g, [face.poly], alpha);
 	const cast = bx.castShadows && bx.castShadows[face.name];
 	if (!cast) return;
-	// In metres on the wall's plane (s along it, k up), turned to the rays' slant
-	const along = face.name[0] === "a" ? "b" : "a";
-	const width = bx.faceWidth(face.name);
-	const m = bx.frame.metre;
-	const wall = (s, k) => bx.facePoint(face.name, (s * m) / width, (k * m) / bx.h);
-	const polys = cast.map((poly) => poly.map((q) => pt((q.x * width) / m, (q.y * bx.h) / m)));
-	const len = Math.hypot(sun.dir[along], sun.dir.k);
-	const rays = surfaceAlong(wall, polys, {x: sun.dir[along] / len, y: sun.dir.k / len});
-	pencilSurfaceHatch(g, rays.map, rays.polys, {...TONE_HATCH, spacing: CAST_SPACING, step: 1 / 512});
-}
-
-/** Ground shadows (frame coordinates) hatched along the rays, toward the shadows' VP. */
-function hatchGroundShadows(g, comp, polys) {
-	const {frame, sun} = comp;
-	const m = frame.metre;
-	const len = Math.hypot(sun.dir.a, sun.dir.b);
-	const metres = polys.map((poly) => poly.map((q) => pt(q.x / m, q.y / m)));
-	const rays = surfaceAlong((a, b) => frame.point(a * m, b * m), metres, {x: sun.dir.a / len, y: sun.dir.b / len});
-	// One grid in metres: overlapping shadows and pieces cut by the haze share their strokes
-	pencilSurfaceHatch(g, rays.map, rays.polys, {...TONE_HATCH, spacing: CAST_SPACING, step: 1 / 512});
+	const polys = cast.map((uv) => uv.map((q) => bx.facePoint(face.name, q.x, q.y)));
+	wash(g, polys, WASH.cast, {clip: face.poly});
 }
 
 function drawBox(g, bx, comp, edgeOpts = {ink: GRAPHITE}) {
@@ -571,8 +680,10 @@ function drawLamp(g, lamp, comp) {
 	const edge = {...PENCIL_PRESETS.contour, passes: 1, alpha: 58, weight: 0.85, overshoot: 3, ink: GRAPHITE};
 	const w = 0.08 * lamp.ppm;
 	if (w > 0.8) {
-		pencilLine(g, pt(lamp.base.x - w, lamp.base.y), pt(lamp.poleTop.x - w * 0.6, lamp.poleTop.y), edge);
-		pencilLine(g, pt(lamp.base.x + w, lamp.base.y), pt(lamp.poleTop.x + w * 0.6, lamp.poleTop.y), edge);
+		const pole = [pt(lamp.base.x - w, lamp.base.y), pt(lamp.poleTop.x - w * 0.6, lamp.poleTop.y), pt(lamp.poleTop.x + w * 0.6, lamp.poleTop.y), pt(lamp.base.x + w, lamp.base.y)];
+		fillPaper(g, pole);
+		pencilLine(g, pole[0], pole[1], edge);
+		pencilLine(g, pole[3], pole[2], edge);
 	} else pencilLine(g, lamp.base, lamp.poleTop, edge);
 	pencilPolyline(g, [lamp.poleTop, lamp.armMid, lamp.armEnd], edge);
 	drawBox(g, lamp.head, comp, edge);
@@ -595,14 +706,15 @@ function drawCylinder(g, cyl, comp) {
 	// Shade the visible side band by band, by how much each faces the sun
 	const sun = comp.sun;
 	const n = 24;
-	const levelAt = (t) => sun.shadeLevel({a: Math.cos(t), b: Math.sin(t), k: 0});
+	// Darkness in five steps, so the side reads as a few flat bands
+	const levelAt = (t) => Math.round(sun.darkness({a: Math.cos(t), b: Math.sin(t), k: 0}) * 5);
 	let start = cyl.t0;
 	let level = levelAt(cyl.t0);
 	for (let i = 1; i <= n; i++) {
 		const t = cyl.t0 + ((cyl.t1 - cyl.t0) * i) / n;
 		const lv = i === n ? -1 : levelAt(t);
 		if (lv === level) continue;
-		if (level > 0) shadeHatch(g, cyl.band(start, t), level);
+		if (level > 0) wash(g, [cyl.band(start, t)], (FACE_WASH * level) / 5);
 		start = t;
 		level = lv;
 	}
@@ -629,8 +741,10 @@ function drawTree(g, tree, comp) {
 	// Trunk
 	const tw = tree.trunkHalf;
 	if (tw > 0.8) {
-		pencilLine(g, pt(tree.base.x - tw, tree.base.y), pt(tree.trunkTop.x - tw * 0.7, tree.trunkTop.y), edge);
-		pencilLine(g, pt(tree.base.x + tw, tree.base.y), pt(tree.trunkTop.x + tw * 0.7, tree.trunkTop.y), edge);
+		const trunk = [pt(tree.base.x - tw, tree.base.y), pt(tree.trunkTop.x - tw * 0.7, tree.trunkTop.y), pt(tree.trunkTop.x + tw * 0.7, tree.trunkTop.y), pt(tree.base.x + tw, tree.base.y)];
+		fillPaper(g, trunk);
+		pencilLine(g, trunk[0], trunk[1], edge);
+		pencilLine(g, trunk[3], trunk[2], edge);
 	} else pencilLine(g, tree.base, tree.trunkTop, edge);
 
 	if (tree.type === "conifer") return drawConifer(g, tree, comp, r, edge);
@@ -653,13 +767,14 @@ function drawTree(g, tree, comp) {
 	if (R < 4) return;
 
 	const {side, backlit} = treeShading(tree, comp);
-	if (backlit) pencilHatch(g, crown, {angle: HATCH_ANGLE, spacing: Math.max(3, R / 4), alpha: 20, ink: GRAPHITE});
-	const half = [];
-	for (let i = 0; i <= 10; i++) {
-		const t = -Math.PI / 2 + (i / 10) * Math.PI;
-		half.push(pt(c.x + side * Math.cos(t) * R * 0.85, c.y + Math.sin(t) * R * 0.8));
+	if (backlit) wash(g, [crown], WASH[1]);
+	// Shadow: a crescent, the crown minus a disc shifted toward the light
+	const lit = [];
+	for (let i = 0; i < 24; i++) {
+		const t = (i / 24) * Math.PI * 2;
+		lit.push(pt(c.x - side * R * 0.42 + Math.cos(t) * R * 0.8, c.y - R * 0.15 + Math.sin(t) * R * 0.78));
 	}
-	pencilHatch(g, half, {angle: HATCH_ANGLE, spacing: Math.max(2.5, R / 6), alpha: 30, ink: GRAPHITE});
+	wash(g, [crown, lit], WASH[2], {clip: crown, rule: "evenodd"});
 	for (let k = 0; k < 4; k++) {
 		const a0 = r() * Math.PI * 2;
 		const rr = R * (0.25 + 0.4 * r());
@@ -698,8 +813,8 @@ function drawConifer(g, tree, comp, r, edge) {
 	pencilPolyline(g, outline, edge, true);
 	if (R < 4) return;
 	const {side, backlit} = treeShading(tree, comp);
-	if (backlit) pencilHatch(g, outline, {angle: HATCH_ANGLE, spacing: Math.max(3, R / 4), alpha: 20, ink: GRAPHITE});
-	pencilHatch(g, [apex, pt(apex.x + side * R, base.y), pt(apex.x, base.y)], {angle: HATCH_ANGLE, spacing: Math.max(2.5, R / 5), alpha: 32, ink: GRAPHITE});
+	if (backlit) wash(g, [outline], WASH[1]);
+	wash(g, [[apex, pt(apex.x + side * R, base.y), pt(apex.x, base.y)]], WASH[2], {clip: outline});
 }
 
 /**
@@ -737,26 +852,16 @@ function drawSunDisc(g, sun) {
 	}
 }
 
-/**
- * Cut a ground shadow (convex, frame coordinates {x: a, y: b}) at the event
- * depths; returns, per interval, its pieces (frame coordinates).
- */
-function splitShadowByDepth(frame, poly, cuts) {
-	const depthOf = (q) => frame.depth(q.x, q.y);
-	const out = cuts.map(() => []).concat([[]]);
-	const ds = poly.map(depthOf);
-	const lo = Math.min(...ds);
-	const hi = Math.max(...ds);
-	for (let k = 0; k <= cuts.length; k++) {
-		const far = k === 0 ? Infinity : cuts[k - 1];
-		const near = k === cuts.length ? -Infinity : cuts[k];
-		if (hi <= near || lo > far) continue;
-		let piece = poly;
-		if (far !== Infinity) piece = clipPolygon(piece, (q) => far - depthOf(q));
-		if (near !== -Infinity) piece = clipPolygon(piece, (q) => depthOf(q) - near);
-		if (piece.length >= 3) out[k].push(piece);
-	}
-	return out;
+/** The ground shadows' wash between screen rows y0 and y1. */
+function washGroundShadows(g, polys, y0, y1) {
+	const inBand = polys.filter((poly) => {
+		const ys = poly.map((q) => q.y);
+		return Math.max(...ys) > y0 && Math.min(...ys) < y1;
+	});
+	if (!inBand.length) return;
+	const top = Math.max(y0, -1e4);
+	const bottom = Math.min(y1, 1e4);
+	wash(g, inBand, WASH.cast, {clip: [pt(-1e4, top), pt(1e4, top), pt(1e4, bottom), pt(-1e4, bottom)]});
 }
 
 // ----------------------------------------------------------------------------
