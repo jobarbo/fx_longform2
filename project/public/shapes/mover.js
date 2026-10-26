@@ -149,18 +149,18 @@ function superCurve(x, y, scl1, scl2, scl3, sclOff1, sclOff2, sclOff3, seed) {
 	let minV = random(-4, -0.001); */
 
 	//! Standard Mode
-	let maxU = 0.11;
+	let maxU = 0.01;
 	let maxV = 0.11;
-	let minU = -0.11;
+	let minU = -0.01;
 	let minV = -0.11;
 
 	//! Introverted
-	let u = map(vn, map(nx, 0, width, -0.5, -0.0000001), map(nx, 0, width, 0.0000001, 0.5), minU, maxU, true);
-	let v = map(un, map(ny, 0, height, -0.5, -0.0000001), map(ny, 0, height, 0.0000001, 0.5), minV, maxV, true);
+	/* 	let u = map(vn, map(nx, 0, width, -1.5, -0.0000001), map(nx, 0, width, 0.0000001, 1.5), minU, maxU, true);
+	let v = map(un, map(ny, 0, height, -1.5, -0.0000001), map(ny, 0, height, 0.0000001, 1.5), minV, maxV, true); */
 
 	//! Extroverted
-	/* 	let u = map(vn, map(ny, 0, width, -5.4, -0.0001), map(ny, 0, width, 0.0001, 5.4), minU, maxU, true);
-	let v = map(un, map(nx, 0, height, -5.4, -0.0001), map(nx, 0, height, 0.0001, 5.4), minV, maxV, true); */
+	let u = map(vn, map(ny, 0, width, -0.04, -0.2), map(ny, 0, width, 0.0001, 0.2), minU, maxU, true);
+	let v = map(un, map(nx, 0, height, -0.04, -0.2), map(nx, 0, height, 0.0001, 0.2), minV, maxV, true);
 
 	//! Equilibrium
 	/* 	let u = map(vn, -0.000000000000000001, 0.000000000000000001, minU, maxU, true);
