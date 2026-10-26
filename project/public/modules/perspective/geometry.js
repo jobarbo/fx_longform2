@@ -7,7 +7,14 @@ function pt(x, y) {
 }
 
 function lerpPt(a, b, t) {
-	return {x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t};
+	const p = {x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t};
+	if (a.d !== undefined && b.d !== undefined) p.d = lerpDepth(a.d, b.d, t);
+	return p;
+}
+
+/** Depth at screen fraction t between two projected points: 1/depth is linear on screen. */
+function lerpDepth(d0, d1, t) {
+	return 1 / (1 / d0 + (1 / d1 - 1 / d0) * t);
 }
 
 /** Intersection of the infinite lines (p1,p2) and (p3,p4). Null when parallel. */

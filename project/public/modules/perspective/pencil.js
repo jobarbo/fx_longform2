@@ -7,14 +7,18 @@
 
 let PENCIL_SEED = 1;
 let PENCIL_BOUNDS = null; // [x0, y0, x1, y1]: strokes are clipped to this rectangle
+// Distance fade: strokes get lighter and thinner the farther they are from the eye.
+// Points may carry a depth `d` (frame units); PENCIL_ITEM_DEPTH stands in for those that don't.
+let PENCIL_DEPTH = null; // {metre, near, falloff, min}
+let PENCIL_ITEM_DEPTH = null;
 
 const PENCIL_PRESETS = {
-	construction: {weight: 0.45, alpha: 16, passes: 1, wobble: 0.6, jitter: 0.6, overshoot: 0, freq: 0.004, step: 14, taper: 0.15},
+	construction: {weight: 0.45, alpha: 16, passes: 1, wobble: 0.6, jitter: 0.6, overshoot: 0, freq: 0.004, step: 14, taper: 0.15, fade: false},
 	contour: {weight: 1.0, alpha: 62, passes: 2, wobble: 0.55, jitter: 0.9, overshoot: 7, freq: 0.012, step: 5, taper: 0.08},
 	ground: {weight: 0.75, alpha: 38, passes: 2, wobble: 0.6, jitter: 0.8, overshoot: 12, freq: 0.01, step: 7, taper: 0.1},
 	detail: {weight: 0.65, alpha: 48, passes: 1, wobble: 0.3, jitter: 0.5, overshoot: 2, freq: 0.02, step: 4, taper: 0.1},
 	hatch: {weight: 0.5, alpha: 30, passes: 1, wobble: 0.35, jitter: 0, overshoot: 2.5, freq: 0.03, step: 8, taper: 0.25},
-	debug: {weight: 0.9, alpha: 80, passes: 1, wobble: 0, jitter: 0, overshoot: 0, freq: 0, step: 1000, taper: 0},
+	debug: {weight: 0.9, alpha: 80, passes: 1, wobble: 0, jitter: 0, overshoot: 0, freq: 0, step: 1000, taper: 0, fade: false},
 };
 
 function setPencilSeed(seed) {
@@ -23,6 +27,49 @@ function setPencilSeed(seed) {
 
 function setPencilBounds(bounds) {
 	PENCIL_BOUNDS = bounds;
+}
+
+/** cfg: {metre, near (m), falloff (m), min}, or null to turn the distance fade off. */
+function setPencilDepth(cfg) {
+	PENCIL_DEPTH = cfg;
+}
+
+/** Depth used for points without their own (the item being drawn), or null. */
+function setPencilItemDepth(d) {
+	PENCIL_ITEM_DEPTH = d;
+}
+
+/** 1 up close, easing toward `min` with distance (atmospheric perspective). */
+function depthFade(d) {
+	if (!PENCIL_DEPTH || d === null || d === undefined) return 1;
+	const {metre, near, falloff, min} = PENCIL_DEPTH;
+	return min + (1 - min) * Math.exp(-Math.max(0, d / metre - near) / falloff);
+}
+
+function pointDepth(p) {
+	return p.d !== undefined ? p.d : PENCIL_ITEM_DEPTH;
+}
+
+/** Depth of a point lying on the outline of a polygon whose vertices carry depths. */
+function depthOnPolygon(p, poly) {
+	let best = null;
+	let bestDist = Infinity;
+	for (let i = 0; i < poly.length; i++) {
+		const a = poly[i];
+		const b = poly[(i + 1) % poly.length];
+		const dx = b.x - a.x;
+		const dy = b.y - a.y;
+		const len2 = dx * dx + dy * dy;
+		const t = len2 > 0 ? Math.min(1, Math.max(0, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2)) : 0;
+		const dist = Math.hypot(a.x + dx * t - p.x, a.y + dy * t - p.y);
+		if (dist < bestDist) {
+			bestDist = dist;
+			const da = pointDepth(a);
+			const db = pointDepth(b);
+			best = da && db ? lerpDepth(da, db, t) : null;
+		}
+	}
+	return best;
 }
 
 function pencilRng(...values) {
@@ -48,10 +95,19 @@ function pencilLine(g, a, b, opts = {}) {
 	const o = {...PENCIL_PRESETS.contour, ...opts};
 	const ink = o.ink || [220, 15, 18];
 	const r = pencilRng(a.x, a.y, b.x, b.y, o.salt || 0);
+	let da = o.fade === false ? null : pointDepth(a);
+	let db = o.fade === false ? null : pointDepth(b);
 	// Near the eye, edges can run far past the canvas: only draw what can show
 	if (PENCIL_BOUNDS) {
 		const seg = clipSegmentToRect(a, b, PENCIL_BOUNDS);
 		if (!seg) return;
+		if (da && db) {
+			const ex = b.x - a.x;
+			const ey = b.y - a.y;
+			const l2 = ex * ex + ey * ey || 1;
+			const at = (p) => ((p.x - a.x) * ex + (p.y - a.y) * ey) / l2;
+			[da, db] = [lerpDepth(da, db, at(seg[0])), lerpDepth(da, db, at(seg[1]))];
+		}
 		[a, b] = seg;
 	}
 	const dx = b.x - a.x;
@@ -84,8 +140,9 @@ function pencilLine(g, a, b, opts = {}) {
 			const y = a.y + uy * s + ny * w;
 			const pressure = noise(nOff + 500 + s * o.freq * 0.7);
 			const fade = Math.min(1, (s - start) / taperLen, (end - s) / taperLen);
-			g.stroke(ink[0], ink[1], ink[2], passAlpha * (0.45 + pressure) * (0.35 + 0.65 * fade));
-			g.strokeWeight(o.weight * (0.6 + 0.8 * pressure));
+			const far = da && db ? depthFade(lerpDepth(da, db, Math.min(1, Math.max(0, s / len)))) : depthFade(da || db);
+			g.stroke(ink[0], ink[1], ink[2], passAlpha * (0.45 + pressure) * (0.35 + 0.65 * fade) * far);
+			g.strokeWeight(o.weight * (0.6 + 0.8 * pressure) * (0.55 + 0.45 * far));
 			g.line(px, py, x, y);
 			px = x;
 			py = y;
@@ -119,7 +176,10 @@ function pencilHatch(g, poly, {angle = 60, spacing = 6, ...opts} = {}) {
 	const r = pencilRng(poly[0].x, poly[0].y, angle, spacing);
 	for (let s = lo + spacing * r(); s < hi; s += spacing * (0.75 + 0.5 * r())) {
 		const seg = clipLineToConvex({x: n.x * s, y: n.y * s}, d, poly);
-		if (seg) pencilLine(g, seg[0], seg[1], {...PENCIL_PRESETS.hatch, ...opts});
+		if (!seg) continue;
+		// Hatch ends sit on the polygon outline: give them its depth for the distance fade
+		if (poly[0].d !== undefined) for (const p of seg) p.d = depthOnPolygon(p, poly) ?? undefined;
+		pencilLine(g, seg[0], seg[1], {...PENCIL_PRESETS.hatch, ...opts});
 	}
 }
 

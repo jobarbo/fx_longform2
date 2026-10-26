@@ -5,13 +5,22 @@
 const PAPER = [42, 9, 95];
 const GRAPHITE = [225, 14, 20];
 const HATCH_ANGLE = 62;
+// Atmospheric perspective: full strength within `near` metres, then fading toward `min`
+const DEPTH_FADE = {near: 15, falloff: 150, min: 0.25};
 
 function renderPerspective(g, comp, {W, H, debug = false}) {
 	setPencilBounds([-30, -30, W + 30, H + 30]);
 	drawPaper(g, W, H, PAPER);
 
+	setPencilDepth({...DEPTH_FADE, metre: comp.frame.metre});
+	setPencilItemDepth(null);
 	for (const l of comp.groundLines) pencilLine(g, l.p, l.q, {...PENCIL_PRESETS[l.preset], ink: GRAPHITE});
-	for (const it of comp.items) drawItem(g, it, comp);
+	for (const it of comp.items) {
+		// Points that don't carry their own depth (tree crowns, offsets) use the item's
+		setPencilItemDepth(comp.frame.depth(it.a + it.wa / 2, it.b + it.wb / 2));
+		drawItem(g, it, comp);
+	}
+	setPencilItemDepth(null);
 
 	// Construction (horizon, VP marks, vanishing lines) only shows in debug mode
 	if (debug) {

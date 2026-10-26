@@ -103,8 +103,22 @@ class GroundFrame {
 		return this.scene.measure(this.origin, b, "b").point;
 	}
 
-	/** Ground point (a, b): intersect the line from the a-mark toward vpB with the line from the b-mark toward vpA. */
+	/** Ground point (a, b), tagged with its depth `d` (for the pencil's distance fade). */
 	point(a, b) {
+		const p = this.groundPoint(a, b);
+		p.d = this.depth(a, b);
+		return p;
+	}
+
+	/** Point (a, b) at height k, tagged with its depth `d`. */
+	lift(a, b, k) {
+		const p = this.liftPoint(a, b, k);
+		p.d = this.depth(a, b);
+		return p;
+	}
+
+	/** Ground point (a, b): intersect the line from the a-mark toward vpB with the line from the b-mark toward vpA. */
+	groundPoint(a, b) {
 		const s = this.scene;
 		const pa = this.alongA(a);
 		const pb = this.alongB(b);
@@ -116,8 +130,8 @@ class GroundFrame {
 	}
 
 	/** Point (a, b) at height k, carried from the height line at the origin. */
-	lift(a, b, k) {
-		const g = this.point(a, b);
+	liftPoint(a, b, k) {
+		const g = this.groundPoint(a, b);
 		if (k === 0) return g;
 		const s = this.scene;
 		const top = pt(this.origin.x, this.origin.y - k);
@@ -149,6 +163,12 @@ class GroundFrame {
 
 	/** Eye position in frame coordinates (for face culling and painter order). */
 	camera() {
+		if (this.cachedCamera) return this.cachedCamera;
+		this.cachedCamera = this.computeCamera();
+		return this.cachedCamera;
+	}
+
+	computeCamera() {
 		const s = this.scene;
 		if (s.mode === "1pt") {
 			return {a: s.vp.x - this.origin.x, b: -s.d, k: this.eyeHeight};
