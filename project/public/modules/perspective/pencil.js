@@ -172,8 +172,12 @@ function pencilPath(g, points, opts) {
 	}
 }
 
-/** Parallel hatching clipped to a convex polygon. */
-function pencilHatch(g, poly, {angle = 60, spacing = 6, ...opts} = {}) {
+/**
+ * Parallel hatching clipped to a convex polygon. With `aligned`, the lines sit
+ * on one screen-wide grid, so overlapping polygons share them instead of
+ * stacking denser patterns (cast shadows).
+ */
+function pencilHatch(g, poly, {angle = 60, spacing = 6, aligned = false, ...opts} = {}) {
 	const rad = (angle * Math.PI) / 180;
 	const d = {x: Math.cos(rad), y: Math.sin(rad)};
 	const n = {x: -d.y, y: d.x};
@@ -191,7 +195,8 @@ function pencilHatch(g, poly, {angle = 60, spacing = 6, ...opts} = {}) {
 		hi = Math.min(hi, Math.max(...corners));
 	}
 	const r = pencilRng(poly[0].x, poly[0].y, angle, spacing);
-	for (let s = lo + spacing * r(); s < hi; s += spacing * (0.75 + 0.5 * r())) {
+	const first = aligned ? Math.ceil(lo / spacing) * spacing : lo + spacing * r();
+	for (let s = first; s < hi; s += aligned ? spacing : spacing * (0.75 + 0.5 * r())) {
 		const seg = clipLineToConvex({x: n.x * s, y: n.y * s}, d, poly);
 		if (!seg) continue;
 		// Hatch ends sit on the polygon outline: give them its depth for the distance fade

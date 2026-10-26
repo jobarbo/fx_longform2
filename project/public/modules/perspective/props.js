@@ -117,6 +117,9 @@ class PLamp {
 	constructor(frame, {ca, cb, h, arm, da, db}) {
 		this.kind = "lamp";
 		this.frame = frame;
+		this.ca = ca;
+		this.cb = cb;
+		this.h = h;
 		const m = frame.metre;
 		const ea = ca + da * arm;
 		const eb = cb + db * arm;

@@ -28,10 +28,15 @@ function renderPerspective(g, comp, {W, H, debug = false}) {
 	for (const l of comp.groundLines) {
 		for (const piece of splitByDepth(l, cuts)) groundByInterval[intervalOf(piece.mid)].push(piece);
 	}
+	const shadowsByInterval = cuts.map(() => []).concat([[]]);
+	for (const poly of comp.groundShadows) {
+		splitShadowByDepth(comp.frame, poly, cuts).forEach((pieces, k) => shadowsByInterval[k].push(...pieces));
+	}
 
 	let cursor = 0;
 	const drawGround = (k) => {
 		setPencilItemDepth(null);
+		for (const poly of shadowsByInterval[k]) pencilHatch(g, poly, CAST_SHADOW);
 		for (const l of groundByInterval[k]) pencilLine(g, l.p, l.q, {...PENCIL_PRESETS[l.preset], ink: GRAPHITE, capStart: l.capStart, capEnd: l.capEnd});
 	};
 	const advanceTo = (k) => {
@@ -44,6 +49,8 @@ function renderPerspective(g, comp, {W, H, debug = false}) {
 		}
 	};
 
+	// The sun is farther than anything: drawn first, everything else covers it
+	if (comp.sun.inFrame(W)) drawSunDisc(g, comp.sun);
 	drawGround(0);
 	for (const it of comp.items) {
 		// Painter order runs roughly far to near; the events only ever move forward
@@ -96,9 +103,12 @@ function drawTerrain(g, layer, comp) {
 	if (st.snowLine) drawSnowLine(g, layer, st.snowLine, r);
 }
 
-/** Fall-line strokes down the slopes turned away from the light; a few on the lit side. */
+/**
+ * Fall-line strokes: dense on slopes turned away from the sun, sparser in
+ * half-tone, a few on the lit side. A slope's normal leans toward the viewer.
+ */
 function hatchSlopes(g, layer, comp, r) {
-	const lightLeft = comp.params.light === "left";
+	const sv = comp.sun.view;
 	const base = layer.base[0].y;
 	const opts = {...PENCIL_PRESETS.hatch, ink: GRAPHITE};
 	const snow = layer.style.snowLine;
@@ -107,13 +117,16 @@ function hatchSlopes(g, layer, comp, r) {
 		const p = R[i];
 		if (p.k <= 0) continue;
 		const slope = (R[i + 1].y - R[i - 1].y) / (R[i + 1].x - R[i - 1].x || 1);
-		// Light from the left: slopes that descend to the right are in shadow
-		const shadow = lightLeft ? slope > 0.04 : slope < -0.04;
-		if (r() > (shadow ? 0.85 : 0.1)) continue;
+		const dkdX = (R[i + 1].k - R[i - 1].k) / (R[i + 1].X - R[i - 1].X || 1);
+		const nx = -dkdX;
+		const nz = -0.7;
+		const lambert = (nx * sv.x + sv.y + nz * sv.z) / Math.hypot(nx, 1, nz);
+		const level = lambert < 0.05 ? 2 : lambert < 0.35 ? 1 : 0;
+		if (r() > [0.08, 0.45, 0.85][level]) continue;
 		const start = snow && p.k > snow ? layer.point(p.X, snow) : p;
 		const depthPx = base - start.y;
 		if (depthPx < 2) continue;
-		const len = depthPx * (shadow ? 0.3 + 0.5 * r() : 0.1 + 0.15 * r());
+		const len = depthPx * [0.1 + 0.15 * r(), 0.2 + 0.3 * r(), 0.3 + 0.5 * r()][level];
 		const sx = slope > 0 ? 1 : -1;
 		const dir = {x: sx * Math.min(0.6, Math.abs(slope)) * 0.5, y: 1};
 		const n = Math.hypot(dir.x, dir.y);
@@ -225,18 +238,18 @@ function shadeHatch(g, poly, shade) {
 	if (shade === 2) pencilHatch(g, poly, {angle: HATCH_ANGLE, spacing: 4.5, alpha: 34, ink: GRAPHITE});
 }
 
-/** Walls and flat roofs follow the light table; gables like their wall; slopes one step lighter than the wall they face. */
-function faceShade(face, shades) {
-	if (face.kind === "slope") return Math.max(0, shades[face.shadeAs] - 1);
-	return shades[face.shadeAs];
-}
+// Cast shadows read as solid patches: denser, at their own angle
+const CAST_SHADOW = {angle: HATCH_ANGLE + 35, spacing: 3.2, alpha: 34, ink: GRAPHITE, aligned: true};
 
 function drawBox(g, bx, comp, edgeOpts = {ink: GRAPHITE}) {
 	const minFace = 1.5;
 	for (const face of bx.faces) {
 		fillPaper(g, face.poly);
 		if (Math.abs(polygonSignedArea(face.poly)) < minFace) continue;
-		shadeHatch(g, face.poly, faceShade(face, comp.shades));
+		shadeHatch(g, face.poly, comp.sun.shadeLevel(faceNormal(bx, face)));
+		for (const uv of (bx.castShadows && bx.castShadows[face.name]) || []) {
+			pencilHatch(g, uv.map((q) => bx.facePoint(face.name, q.x, q.y)), CAST_SHADOW);
+		}
 		if (face.kind === "wall" && bx.style.windows && bx.style.facade) drawFacade(g, bx, face);
 		if (face.kind === "slope") drawRoofCourses(g, bx, face);
 	}
@@ -525,22 +538,26 @@ function drawBench(g, bench, comp) {
 	for (const part of parts) drawBox(g, part, comp, edge);
 }
 
-/** Which of two screen points is on the shadow side (away from the light). */
-function shadowSide(comp, p, q) {
-	const lightLeft = comp.params.light === "left";
-	return (p.x > q.x) === lightLeft ? p : q;
-}
-
 function drawCylinder(g, cyl, comp) {
 	fillPaper(g, cyl.outline);
-	pencilHatch(g, cyl.outline, {angle: HATCH_ANGLE, spacing: 10, alpha: 22, ink: GRAPHITE});
-
-	// Darker half on the side away from the light
 	const zt = cyl.z + cyl.h;
 	const p0 = cyl.rim(zt, cyl.t0);
 	const p1 = cyl.rim(zt, cyl.t1);
-	const dark = shadowSide(comp, p0, p1) === p0 ? cyl.band(cyl.t0, cyl.phi) : cyl.band(cyl.phi, cyl.t1);
-	pencilHatch(g, dark, {angle: HATCH_ANGLE, spacing: 4.5, alpha: 32, ink: GRAPHITE});
+
+	// Shade the visible side band by band, by how much each faces the sun
+	const sun = comp.sun;
+	const n = 24;
+	const levelAt = (t) => sun.shadeLevel({a: Math.cos(t), b: Math.sin(t), k: 0});
+	let start = cyl.t0;
+	let level = levelAt(cyl.t0);
+	for (let i = 1; i <= n; i++) {
+		const t = cyl.t0 + ((cyl.t1 - cyl.t0) * i) / n;
+		const lv = i === n ? -1 : levelAt(t);
+		if (lv === level) continue;
+		if (level > 0) shadeHatch(g, cyl.band(start, t), level);
+		start = t;
+		level = lv;
+	}
 
 	// Ring bands on the near side
 	for (const v of [0.33, 0.66]) pencilPolyline(g, cyl.arc(cyl.z + cyl.h * v, cyl.t0, cyl.t1, 16), FAINT);
@@ -587,7 +604,8 @@ function drawTree(g, tree, comp) {
 	pencilPolyline(g, crown, edge, true);
 	if (R < 4) return;
 
-	const side = comp.params.light === "left" ? 1 : -1;
+	const {side, backlit} = treeShading(tree, comp);
+	if (backlit) pencilHatch(g, crown, {angle: HATCH_ANGLE, spacing: Math.max(3, R / 4), alpha: 20, ink: GRAPHITE});
 	const half = [];
 	for (let i = 0; i <= 10; i++) {
 		const t = -Math.PI / 2 + (i / 10) * Math.PI;
@@ -631,8 +649,66 @@ function drawConifer(g, tree, comp, r, edge) {
 	fillPaper(g, outline);
 	pencilPolyline(g, outline, edge, true);
 	if (R < 4) return;
-	const side = comp.params.light === "left" ? 1 : -1;
+	const {side, backlit} = treeShading(tree, comp);
+	if (backlit) pencilHatch(g, outline, {angle: HATCH_ANGLE, spacing: Math.max(3, R / 4), alpha: 20, ink: GRAPHITE});
 	pencilHatch(g, [apex, pt(apex.x + side * R, base.y), pt(apex.x, base.y)], {angle: HATCH_ANGLE, spacing: Math.max(2.5, R / 5), alpha: 32, ink: GRAPHITE});
+}
+
+/**
+ * Which screen side of a crown is in shadow (+1 right, -1 left), and whether
+ * the sun stands behind the tree, leaving the whole visible side dim.
+ */
+function treeShading(tree, comp) {
+	const sun = comp.sun;
+	const kc = tree.trunkH + tree.crownR;
+	const c = comp.frame.lift(tree.ca, tree.cb, kc);
+	const towardSun = comp.frame.lift(tree.ca + sun.dir.a * tree.crownR, tree.cb + sun.dir.b * tree.crownR, kc);
+	const cam = comp.frame.camera();
+	const v = {a: cam.a - tree.ca, b: cam.b - tree.cb, k: cam.k - kc};
+	const len = Math.hypot(v.a, v.b, v.k);
+	const facing = sun.lambert({a: v.a / len, b: v.b / len, k: v.k / len});
+	return {side: towardSun.x > c.x ? -1 : 1, backlit: facing < -0.3};
+}
+
+/** The sun disc, a ring of short rays half of the time. */
+function drawSunDisc(g, sun) {
+	const c = sun.rayVP;
+	const R = 24;
+	const opts = {...PENCIL_PRESETS.contour, alpha: 75, weight: 1.1};
+	const ring = [];
+	for (let i = 0; i < 40; i++) ring.push(pt(c.x + Math.cos((i / 40) * Math.PI * 2) * R, c.y + Math.sin((i / 40) * Math.PI * 2) * R));
+	pencilPolyline(g, ring, opts, true);
+	const r = pencilRng(c.x, c.y, 77);
+	if (r() < 0.5) return;
+	const rayOpts = {...PENCIL_PRESETS.detail, alpha: 45};
+	for (let i = 0; i < 16; i++) {
+		const t = (i / 16) * Math.PI * 2 + r() * 0.1;
+		const r0 = R * 1.45;
+		const r1 = R * (i % 2 ? 1.85 : 2.3);
+		pencilLine(g, pt(c.x + Math.cos(t) * r0, c.y + Math.sin(t) * r0), pt(c.x + Math.cos(t) * r1, c.y + Math.sin(t) * r1), rayOpts);
+	}
+}
+
+/**
+ * Cut a ground shadow (convex, frame coordinates {x: a, y: b}) at the event
+ * depths; returns, per interval, its pieces as screen polygons.
+ */
+function splitShadowByDepth(frame, poly, cuts) {
+	const depthOf = (q) => frame.depth(q.x, q.y);
+	const out = cuts.map(() => []).concat([[]]);
+	const ds = poly.map(depthOf);
+	const lo = Math.min(...ds);
+	const hi = Math.max(...ds);
+	for (let k = 0; k <= cuts.length; k++) {
+		const far = k === 0 ? Infinity : cuts[k - 1];
+		const near = k === cuts.length ? -Infinity : cuts[k];
+		if (hi <= near || lo > far) continue;
+		let piece = poly;
+		if (far !== Infinity) piece = clipPolygon(piece, (q) => far - depthOf(q));
+		if (near !== -Infinity) piece = clipPolygon(piece, (q) => depthOf(q) - near);
+		if (piece.length >= 3) out[k].push(piece.map((q) => frame.point(q.x, q.y)));
+	}
+	return out;
 }
 
 // ----------------------------------------------------------------------------
@@ -702,12 +778,30 @@ function drawDebug(g, comp, W, H) {
 	}
 	markCross(g, o, 6, dbg(120));
 
+	// Sun: the rays' vanishing point and, on the horizon, the shadows' one, with
+	// the construction of a few corner shadows (ray through the top, line from the foot)
+	const sun = comp.sun;
+	if (sun.rayVP) {
+		markCross(g, sun.rayVP, 12, dbg(45));
+		markCross(g, sun.shadowVP, 9, dbg(45));
+		for (const bx of comp.items.filter((it) => it.kind === "box" && it.z === 0).slice(-4)) {
+			const top = fr.lift(bx.a, bx.b, bx.h);
+			const foot = fr.point(bx.a, bx.b);
+			const gs = sun.groundShadow(bx.a, bx.b, bx.h);
+			const shadow = fr.point(gs.a, gs.b);
+			pencilLine(g, sun.rayVP, shadow, dbg(45, 30));
+			pencilLine(g, sun.shadowVP, shadow, dbg(45, 30));
+			markCross(g, shadow, 4, dbg(45, 70));
+			pencilLine(g, foot, top, dbg(45, 50));
+		}
+	}
+
 	g.noStroke();
 	g.fill(0, 0, 10, 90);
 	g.textSize(12);
 	g.textAlign(LEFT, BOTTOM);
 	const cam = fr.camera();
-	g.text(`${s.mode}  items ${comp.items.length}  eye ${cam.k.toFixed(0)}  d ${s.d.toFixed(0)}`, 12, H - 12);
+	g.text(`${s.mode}  items ${comp.items.length}  eye ${cam.k.toFixed(0)}  d ${s.d.toFixed(0)}  sun ${sun.azimuth.toFixed(0)}° / ${sun.elevation.toFixed(0)}°`, 12, H - 12);
 	g.pop();
 }
 

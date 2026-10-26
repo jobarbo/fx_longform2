@@ -27,9 +27,17 @@ const vpSpreadArr = [
 	["wide", 60],
 ];
 
-const lightArr = [
-	["left", 50],
-	["right", 50],
+// Sun: ahead in the sky (backlit), to the side, or behind the viewer
+const sunPositionArr = [
+	["backlit", 30],
+	["side", 40],
+	["behind", 30],
+];
+
+const sunHeightArr = [
+	["low", 35],
+	["mid", 40],
+	["high", 25],
 ];
 
 const districtArr = [
@@ -87,12 +95,13 @@ const citySizeArr = [
 ];
 
 // all input parameters are optional, they will be chosen at random if not passed into the function
-function generate_composition_params(perspective_type, horizon, vp_spread, light, district, foreground, background, city_size) {
+function generate_composition_params(perspective_type, horizon, vp_spread, sun_position, sun_height, district, foreground, background, city_size) {
 	// SET DEFAULTS IF NOT PASSED IN
 	if (perspective_type === undefined) perspective_type = weighted_choice(perspectiveArr);
 	if (horizon === undefined) horizon = weighted_choice(horizonArr);
 	if (vp_spread === undefined) vp_spread = weighted_choice(vpSpreadArr);
-	if (light === undefined) light = weighted_choice(lightArr);
+	if (sun_position === undefined) sun_position = weighted_choice(sunPositionArr);
+	if (sun_height === undefined) sun_height = weighted_choice(sunHeightArr);
 	if (district === undefined) district = weighted_choice(districtArr);
 	if (foreground === undefined) foreground = weighted_choice(foregroundArr);
 	if (background === undefined) background = weighted_choice(LANDSCAPE_PAIRS[foreground]);
@@ -104,7 +113,8 @@ function generate_composition_params(perspective_type, horizon, vp_spread, light
 		horizon: horizon,
 		horizon_frac: horizonFrac[horizon],
 		vp_spread: vp_spread,
-		light: light,
+		sun_position: sun_position,
+		sun_height: sun_height,
 		district: district,
 		foreground: foreground,
 		background: background,

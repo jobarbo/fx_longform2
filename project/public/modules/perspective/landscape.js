@@ -280,16 +280,34 @@ function buildQuay(ctx, {axis, quay}) {
 	}
 }
 
-/** Short horizontal ripples over the water, packed tighter toward the horizon. */
+/**
+ * Short horizontal ripples over the water, packed tighter toward the horizon.
+ * Under a sun ahead, a path of glints runs down from the horizon toward the eye.
+ */
 function addRipples(ctx, isWater) {
 	const s = ctx.scene;
 	const frame = ctx.frame;
+	const sun = ctx.sun;
+	const glitter = sun.ahead && sun.rayVP && sun.rayVP.x > -100 && sun.rayVP.x < ctx.W + 100;
 	for (let y = s.horizonY + 0.8; y < ctx.H + 10; y += Math.max(2.2, (y - s.horizonY) * 0.07)) {
 		const dy = y - s.horizonY;
 		const len = Math.min(45, Math.max(3, dy * 0.45));
 		const count = Math.ceil((ctx.W / (len * 3)) * random(0.6, 1.2));
+		// The glitter path widens toward the eye, more so when the sun is low
+		const half = glitter ? (14 + dy * 0.35) * (1.2 - sun.elevation / 90) : 0;
+		const inPath = (x) => glitter && Math.abs(x - sun.rayVP.x) < half;
+		if (glitter) {
+			for (let i = 0; i < Math.ceil(half / 3); i++) {
+				const x = sun.rayVP.x + random(-1, 1) * random() * half;
+				const gl = Math.max(1.5, len * random(0.08, 0.25));
+				const g0 = frame.groundAt(x - gl / 2, y);
+				const g1 = frame.groundAt(x + gl / 2, y);
+				if (isWater(g0) && isWater(g1)) ctx.groundLines.push({p: frame.point(g0.a, g0.b), q: frame.point(g1.a, g1.b), preset: "detail"});
+			}
+		}
 		for (let i = 0; i < count; i++) {
 			const x = random(-20, ctx.W + 20);
+			if (inPath(x) && random() < 0.8) continue;
 			const g0 = frame.groundAt(x - len / 2, y);
 			const g1 = frame.groundAt(x + len / 2, y);
 			if (!isWater(g0) || !isWater(g1) || frame.depth(g0.a, g0.b) < NEAR_M * ctx.m * 3) continue;

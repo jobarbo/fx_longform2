@@ -12,17 +12,6 @@ const NEAR_M = 1; // nothing is built closer than this in front of the eye
 const FAR_M = 1450;
 const TREE_NEAR_M = 15;
 
-// Shade level per face: 0 lit, 1 half-tone, 2 shadow
-const FACE_SHADES = {
-	"1pt": {
-		left: {a0: 0, a1: 2, b0: 1, b1: 2, k0: 2, k1: 0},
-		right: {a0: 2, a1: 0, b0: 1, b1: 2, k0: 2, k1: 0},
-	},
-	"2pt": {
-		left: {a0: 0, a1: 2, b0: 2, b1: 2, k0: 2, k1: 0},
-		right: {a0: 2, a1: 2, b0: 0, b1: 2, k0: 2, k1: 0},
-	},
-};
 
 // Window / mullion spacing per facade style, in metres
 const FACADE_COLW = {house: [3.5, 4.5], grid: [3.5, 5], storefront: [4, 6], ribbon: [1.6, 2.4], curtain: [1.5, 2.2], industrial: [5, 8], chimney: [1, 1]};
@@ -33,10 +22,41 @@ const ri = ([lo, hi]) => floor(random(lo, hi + 1));
 function buildComposition(params, W, H) {
 	const comp = params.perspective_type === "1pt" ? buildStreet1pt(params, W, H) : buildBlock2pt(params, W, H);
 	comp.params = params;
-	comp.shades = FACE_SHADES[params.perspective_type][params.light];
-	comp.items = cullHidden(sortForPainter(comp.items, comp.frame.camera()));
+	const all = sortForPainter(comp.items, comp.frame.camera());
+	comp.items = cullHidden(all);
 	comp.terrain = comp.terrain || [];
+	addCastShadows(comp, all, W, H);
 	return comp;
+}
+
+/**
+ * Cast shadows: on the walls of the visible boxes, and on the ground. Hidden
+ * items still cast them (a tower behind another can shade the street).
+ */
+function addCastShadows(comp, all, W, H) {
+	const {sun, frame} = comp;
+	computeFacadeShadows(sun, comp.items, all);
+	comp.groundShadows = [];
+	const near = NEAR_M * frame.metre;
+	for (const it of all) {
+		if (it.kind === "lamp") {
+			// A thin pole: its shadow is a line from its foot
+			const g = sun.groundShadow(it.ca, it.cb, it.h);
+			const seg = groundSegment(frame, it.ca, it.cb, g.a, g.b, "detail");
+			if (seg) comp.groundLines.push(seg);
+			continue;
+		}
+		let poly = groundShadowPolygon(sun, it);
+		if (!poly) continue;
+		// Keep the part in front of the eye
+		poly = clipPolygon(poly, (q) => frame.depth(q.x, q.y) - near);
+		if (poly.length < 3) continue;
+		const screen = poly.map((q) => frame.point(q.x, q.y));
+		const xs = screen.map((q) => q.x);
+		const ys = screen.map((q) => q.y);
+		if (Math.max(...xs) < 0 || Math.min(...xs) > W || Math.min(...ys) > H) continue;
+		comp.groundShadows.push(poly);
+	}
 }
 
 /** Frame whose origin is on the ground at the bottom of the picture, with its metre scale. */
@@ -47,7 +67,7 @@ function eyeLevelFrame(scene, origin) {
 }
 
 function makeContext(scene, frame, params, W, H) {
-	return {scene, frame, params, W, H, m: frame.metre, items: [], groundLines: [], terrain: []};
+	return {scene, frame, params, W, H, m: frame.metre, items: [], groundLines: [], terrain: [], sun: makeSun(frame, params, W)};
 }
 
 function footprintDepths(frame, {a, b, wa, wb}) {
@@ -573,7 +593,7 @@ function buildStreet1pt(params, W, H) {
 		ctx.groundLines.push({p: frame.point(aLine0, b), q: frame.point(aLine0, b + dash), preset: "detail"});
 	}
 
-	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines, terrain: ctx.terrain};
+	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines, terrain: ctx.terrain, sun: ctx.sun};
 }
 
 /** Waterfront street centred on `line` along `axis`: beyond its far curb, a promenade, then the quay. */
@@ -637,5 +657,5 @@ function buildBlock2pt(params, W, H) {
 		],
 	});
 
-	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines, terrain: ctx.terrain};
+	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines, terrain: ctx.terrain, sun: ctx.sun};
 }
