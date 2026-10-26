@@ -24,20 +24,6 @@ function smoothNoise(x, off, octaves = 3) {
 	return sum / total;
 }
 
-/** Sharp crests: folded noise, squared. */
-function ridgedNoise(x, off, octaves = 4) {
-	let sum = 0;
-	let amp = 1;
-	let total = 0;
-	for (let o = 0; o < octaves; o++) {
-		const n = 1 - Math.abs(nz(x * 2.1 ** o + off + o * 17.3) * 2 - 1);
-		sum += n * n * amp;
-		total += amp;
-		amp *= 0.5;
-	}
-	return sum / total;
-}
-
 /** Visible lateral range [X0, X1] at view depth Z (frame units), with a margin in pixels. */
 function viewSpan(ctx, Z, marginPx = 60) {
 	const s = ctx.scene;
@@ -107,13 +93,16 @@ function buildMountains(ctx) {
 		const t = n === 1 ? 1 : i / (n - 1);
 		const Zm = (18000 + (5000 - 18000) * t) * random(0.85, 1.15);
 		const H = random(2200, 3800) + (random(800, 1400) - random(2200, 3800)) * t;
-		const scale = random(5000, 10000) * (Zm / 12000);
+		const scale = random(4000, 8000) * (Zm / 12000);
 		const off = random(1000);
 		const snowLine = i === 0 && H > 2000 && random() < 0.7 ? H * random(0.62, 0.78) : null;
+		// Rounded slopes from smooth noise (as in Haute Montagne): more octaves, so more
+		// detail, on the far ranges, broad soft shapes in front
+		const octaves = Math.max(2, 5 - i);
 		addTerrain(
 			ctx,
 			Zm,
-			(X) => H * (0.12 + 0.88 * ridgedNoise(X / scale, off) ** 1.25) * (0.55 + 0.45 * smoothNoise(X / (scale * 4), off + 50)),
+			(X) => H * (0.1 + 0.9 * smoothNoise(X / scale, off, octaves) ** 1.6) * (0.6 + 0.4 * smoothNoise(X / (scale * 3), off + 50, 2)),
 			{kind: "mountain", hatch: true, snowLine: snowLine && snowLine * ctx.m},
 			{peakM: H}
 		);
