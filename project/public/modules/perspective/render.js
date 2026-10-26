@@ -5,28 +5,89 @@
 const PAPER = [42, 9, 95];
 const GRAPHITE = [225, 14, 20];
 const HATCH_ANGLE = 62;
-// Atmospheric perspective: full strength within `near` metres, then fading toward `min`
-const DEPTH_FADE = {near: 15, falloff: 150, min: 0.25};
+// Atmospheric perspective, in two parts:
+// - strokes thin out with distance (full width within `near` metres, toward `min`)
+// - a light paper-coloured veil is laid each time the drawing, which goes from far to
+//   near, crosses one of the `bands` (metres): what lies behind gets washed out
+const DEPTH_THIN = {near: 15, falloff: 150, min: 0.45};
+const HAZE = {bands: [400, 250, 150, 90, 50, 25], alpha: 7};
 
 function renderPerspective(g, comp, {W, H, debug = false}) {
 	setPencilBounds([-30, -30, W + 30, H + 30]);
-	drawPaper(g, W, H, PAPER);
+	paperBackground(g, PAPER);
+	setPencilDepth({...DEPTH_THIN, metre: comp.frame.metre});
 
-	setPencilDepth({...DEPTH_FADE, metre: comp.frame.metre});
-	setPencilItemDepth(null);
-	for (const l of comp.groundLines) pencilLine(g, l.p, l.q, {...PENCIL_PRESETS[l.preset], ink: GRAPHITE});
+	const thresholds = HAZE.bands.map((b) => b * comp.frame.metre);
+	const bandOf = (d) => thresholds.filter((t) => d < t).length;
+	const groundByBand = thresholds.map(() => []).concat([[]]);
+	for (const l of comp.groundLines) {
+		for (const piece of splitByDepth(l, thresholds)) groundByBand[bandOf(piece.mid)].push(piece);
+	}
+
+	let band = 0;
+	const drawGround = (b) => {
+		setPencilItemDepth(null);
+		for (const l of groundByBand[b]) pencilLine(g, l.p, l.q, {...PENCIL_PRESETS[l.preset], ink: GRAPHITE, capStart: l.capStart, capEnd: l.capEnd});
+	};
+	const enterBand = (b) => {
+		while (band < b) {
+			band++;
+			hazeVeil(g, W, H);
+			drawGround(band);
+		}
+	};
+
+	drawGround(0);
 	for (const it of comp.items) {
+		// Painter order runs roughly far to near; the haze only ever moves forward
+		enterBand(bandOf(Math.min(...footprintDepths(comp.frame, it))));
 		// Points that don't carry their own depth (tree crowns, offsets) use the item's
 		setPencilItemDepth(comp.frame.depth(it.a + it.wa / 2, it.b + it.wb / 2));
 		drawItem(g, it, comp);
 	}
+	enterBand(thresholds.length);
 	setPencilItemDepth(null);
+	paperTooth(g, W, H, PAPER);
 
 	// Construction (horizon, VP marks, vanishing lines) only shows in debug mode
 	if (debug) {
 		drawConstruction(g, comp, W);
 		drawDebug(g, comp, W, H);
 	}
+}
+
+/** A translucent wash of paper over everything drawn so far. */
+function hazeVeil(g, W, H) {
+	g.push();
+	g.noStroke();
+	g.rectMode(CORNER);
+	g.fill(PAPER[0], PAPER[1], PAPER[2], HAZE.alpha);
+	g.rect(-40, -40, W + 80, H + 80);
+	g.pop();
+}
+
+/**
+ * Cut a ground line where its depth crosses the haze thresholds, so each piece
+ * is drawn in its own band. Pieces keep their caps only at the line's real ends.
+ */
+function splitByDepth(line, thresholds) {
+	const d0 = line.p.d;
+	const d1 = line.q.d;
+	if (d0 === undefined || d1 === undefined) return [{...line, mid: Infinity}];
+	const cuts = thresholds.filter((t) => (d0 - t) * (d1 - t) < 0).map((t) => (1 / t - 1 / d0) / (1 / d1 - 1 / d0));
+	const ts = [0, ...cuts.sort((x, y) => x - y), 1];
+	const pieces = [];
+	for (let i = 0; i < ts.length - 1; i++) {
+		pieces.push({
+			p: lerpPt(line.p, line.q, ts[i]),
+			q: lerpPt(line.p, line.q, ts[i + 1]),
+			preset: line.preset,
+			mid: lerpDepth(d0, d1, (ts[i] + ts[i + 1]) / 2),
+			capStart: i === 0 ? undefined : false,
+			capEnd: i === ts.length - 2 ? undefined : false,
+		});
+	}
+	return pieces;
 }
 
 function drawItem(g, it, comp) {

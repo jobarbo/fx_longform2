@@ -7,8 +7,9 @@
 
 let PENCIL_SEED = 1;
 let PENCIL_BOUNDS = null; // [x0, y0, x1, y1]: strokes are clipped to this rectangle
-// Distance fade: strokes get lighter and thinner the farther they are from the eye.
-// Points may carry a depth `d` (frame units); PENCIL_ITEM_DEPTH stands in for those that don't.
+// Distance thinning: strokes get finer the farther they are from the eye (the haze
+// that washes them out is laid by render.js). Points may carry a depth `d` (frame
+// units); PENCIL_ITEM_DEPTH stands in for those that don't.
 let PENCIL_DEPTH = null; // {metre, near, falloff, min}
 let PENCIL_ITEM_DEPTH = null;
 
@@ -39,7 +40,7 @@ function setPencilItemDepth(d) {
 	PENCIL_ITEM_DEPTH = d;
 }
 
-/** 1 up close, easing toward `min` with distance (atmospheric perspective). */
+/** Stroke width factor: 1 up close, easing toward `min` with distance. */
 function depthFade(d) {
 	if (!PENCIL_DEPTH || d === null || d === undefined) return 1;
 	const {metre, near, falloff, min} = PENCIL_DEPTH;
@@ -89,7 +90,8 @@ function pencilRng(...values) {
 
 /**
  * A wobbly, pressure-varying line from a to b.
- * opts: preset fields above + {ink: [h, s, b], salt}
+ * opts: preset fields above + {ink: [h, s, b], salt, capStart, capEnd}
+ * capStart / capEnd: false when the stroke continues another piece there (no overshoot, no taper).
  */
 function pencilLine(g, a, b, opts = {}) {
 	const o = {...PENCIL_PRESETS.contour, ...opts};
@@ -120,8 +122,10 @@ function pencilLine(g, a, b, opts = {}) {
 	const ny = ux;
 
 	for (let pass = 0; pass < o.passes; pass++) {
-		const start = -o.overshoot * r();
-		const end = len + o.overshoot * r();
+		const overStart = o.overshoot * r();
+		const overEnd = o.overshoot * r();
+		const start = o.capStart === false ? 0 : -overStart;
+		const end = len + (o.capEnd === false ? 0 : overEnd);
 		const off0 = (r() - 0.5) * o.jitter;
 		const off1 = (r() - 0.5) * o.jitter;
 		const nOff = r() * 1000;
@@ -139,10 +143,12 @@ function pencilLine(g, a, b, opts = {}) {
 			const x = a.x + ux * s + nx * w;
 			const y = a.y + uy * s + ny * w;
 			const pressure = noise(nOff + 500 + s * o.freq * 0.7);
-			const fade = Math.min(1, (s - start) / taperLen, (end - s) / taperLen);
+			const fadeIn = o.capStart === false ? 1 : (s - start) / taperLen;
+			const fadeOut = o.capEnd === false ? 1 : (end - s) / taperLen;
+			const fade = Math.min(1, fadeIn, fadeOut);
 			const far = da && db ? depthFade(lerpDepth(da, db, Math.min(1, Math.max(0, s / len)))) : depthFade(da || db);
-			g.stroke(ink[0], ink[1], ink[2], passAlpha * (0.45 + pressure) * (0.35 + 0.65 * fade) * far);
-			g.strokeWeight(o.weight * (0.6 + 0.8 * pressure) * (0.55 + 0.45 * far));
+			g.stroke(ink[0], ink[1], ink[2], passAlpha * (0.45 + pressure) * (0.35 + 0.65 * fade));
+			g.strokeWeight(o.weight * (0.6 + 0.8 * pressure) * far);
 			g.line(px, py, x, y);
 			px = x;
 			py = y;
@@ -183,9 +189,12 @@ function pencilHatch(g, poly, {angle = 60, spacing = 6, ...opts} = {}) {
 	}
 }
 
-/** Paper tone with a light graphite tooth. */
-function drawPaper(g, w, h, paper) {
+function paperBackground(g, paper) {
 	g.background(paper[0], paper[1], paper[2]);
+}
+
+/** A light graphite tooth over the whole sheet. */
+function paperTooth(g, w, h, paper) {
 	const r = pencilRng(w, h, 7);
 	g.noStroke();
 	for (let i = 0; i < 9000; i++) {
