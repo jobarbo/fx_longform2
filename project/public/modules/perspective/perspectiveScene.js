@@ -161,6 +161,31 @@ class GroundFrame {
 		return (a - c.a) * Math.sin(s.theta) + (b - c.b) * Math.cos(s.theta);
 	}
 
+	/** Frame coordinates of the ground point at lateral offset X and depth Z from the eye (frame units). */
+	fromView(X, Z) {
+		const s = this.scene;
+		const c = this.camera();
+		if (s.mode === "1pt") return {a: c.a + X, b: c.b + Z};
+		const cs = Math.cos(s.theta);
+		const sn = Math.sin(s.theta);
+		return {a: c.a + X * cs + Z * sn, b: c.b - X * sn + Z * cs};
+	}
+
+	/** Lateral offset X from the eye of frame point (a, b) (the depth is depth(a, b)). */
+	lateral(a, b) {
+		const s = this.scene;
+		const c = this.camera();
+		if (s.mode === "1pt") return a - c.a;
+		return (a - c.a) * Math.cos(s.theta) - (b - c.b) * Math.sin(s.theta);
+	}
+
+	/** The ground point under screen point (x, y), which must lie below the horizon. */
+	groundAt(x, y) {
+		const s = this.scene;
+		const Z = (s.d * this.eyeHeight) / (y - s.horizonY);
+		return this.fromView(((x - s.centerX) * Z) / s.d, Z);
+	}
+
 	/** Eye position in frame coordinates (for face culling and painter order). */
 	camera() {
 		if (this.cachedCamera) return this.cachedCamera;

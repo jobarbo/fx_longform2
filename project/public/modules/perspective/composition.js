@@ -35,6 +35,7 @@ function buildComposition(params, W, H) {
 	comp.params = params;
 	comp.shades = FACE_SHADES[params.perspective_type][params.light];
 	comp.items = cullHidden(sortForPainter(comp.items, comp.frame.camera()));
+	comp.terrain = comp.terrain || [];
 	return comp;
 }
 
@@ -46,7 +47,7 @@ function eyeLevelFrame(scene, origin) {
 }
 
 function makeContext(scene, frame, params, W, H) {
-	return {scene, frame, params, W, H, m: frame.metre, items: [], groundLines: []};
+	return {scene, frame, params, W, H, m: frame.metre, items: [], groundLines: [], terrain: []};
 }
 
 function footprintDepths(frame, {a, b, wa, wb}) {
@@ -411,8 +412,9 @@ function buildPark(ctx, lot, arch, density) {
  * streets of width `streetB` along b; `aLine0` / `bLine0` are the centre lines
  * of one street of each direction. Each block gets a zone from `zoneAt(i, j)`.
  */
-function buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewalk, zoneAt}) {
+function buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewalk, zoneAt, cityR, shore}) {
 	const {frame, m, W} = ctx;
+	const cam = frame.camera();
 	const pitchA = cellA + streetA;
 	const pitchB = cellB + streetB;
 	const reachA = Math.ceil((FAR_M * m) / pitchA);
@@ -423,6 +425,10 @@ function buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewal
 			const lot = {a: aLine0 + i * pitchA + streetA / 2, b: bLine0 + j * pitchB + streetB / 2, wa: cellA, wb: cellB};
 			const depths = footprintDepths(frame, lot);
 			if (Math.max(...depths) < NEAR_M * m || Math.min(...depths) > FAR_M * m) continue;
+			// The city ends on a ragged edge, or on the quay
+			const dist = Math.hypot(lot.a + lot.wa / 2 - cam.a, lot.b + lot.wb / 2 - cam.b);
+			if (dist > cityR * (0.8 + 0.4 * noise(i * 0.53 + 71.3, j * 0.53 + 13.1))) continue;
+			if (shore && lot[shore.axis] + (shore.axis === "a" ? lot.wa : lot.wb) > shore.line) continue;
 			// Verticals stay vertical, so a block whose ground lies beside the canvas can't show
 			if (Math.min(...depths) > NEAR_M * m) {
 				const xs = [frame.point(lot.a, lot.b), frame.point(lot.a + lot.wa, lot.b), frame.point(lot.a, lot.b + lot.wb), frame.point(lot.a + lot.wa, lot.b + lot.wb)].map((p) => p.x);
@@ -503,17 +509,17 @@ function addStreetFurniture(ctx, lot, sidewalk, {zone, density}) {
  * Zebra crossings on the arms of the crossing of street centre lines aLine and
  * bLine: the ones across the street along a, and across the street along b.
  */
-function addCrossings(ctx, aLine, bLine, streetA, streetB, {acrossA = true, acrossB = true} = {}) {
+function addCrossings(ctx, aLine, bLine, streetA, streetB, {acrossA = true, acrossB = true, onLand = () => true} = {}) {
 	const m = ctx.m;
 	const stripe = 0.5 * m;
 	const zebra = 3 * m;
 	for (const side of [-1, 1]) {
 		const a = aLine + side * (streetA * 0.5 + m) - (side < 0 ? zebra : 0);
 		const b = bLine + side * (streetB * 0.5 + m) - (side < 0 ? zebra : 0);
-		for (let t = -streetB * 0.5 + stripe; acrossA && t + stripe < streetB * 0.5; t += stripe * 2) {
+		for (let t = -streetB * 0.5 + stripe; acrossA && onLand(a + zebra, bLine) && t + stripe < streetB * 0.5; t += stripe * 2) {
 			pushGroundQuad(ctx.groundLines, ctx.frame, a, bLine + t, zebra, stripe, "detail");
 		}
-		for (let t = -streetA * 0.5 + stripe; acrossB && t + stripe < streetA * 0.5; t += stripe * 2) {
+		for (let t = -streetA * 0.5 + stripe; acrossB && onLand(aLine, b + zebra) && t + stripe < streetA * 0.5; t += stripe * 2) {
 			pushGroundQuad(ctx.groundLines, ctx.frame, aLine + t, b, stripe, zebra, "detail");
 		}
 	}
@@ -540,21 +546,43 @@ function buildStreet1pt(params, W, H) {
 	const aLine0 = cam.a + random(-0.7, 0.7) * roadHalf;
 	const bLine0 = cam.b + random(15, 70) * m;
 	const zoneAt = makeZoneMap(params.district, {x: 0, y: random(2, 6)});
+	const pitchB = cellB + streetB;
+	const cityR = rr(CITY_RADIUS_M[params.city_size]) * m;
+	// By the water, the street ends on the waterfront: the first cross street far enough
+	// ahead that the blocks along the way come into view
+	let shore = null;
+	if (isWaterfront(params)) {
+		const ahead = random(45, 110) * m;
+		let line = bLine0;
+		while (line - cam.b < ahead) line += pitchB;
+		shore = makeShore(ctx, "b", line, streetB);
+	}
+	const onLand = (a, b) => !shore || b < shore.line + streetB / 2;
 
-	buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewalk, zoneAt});
+	buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewalk, zoneAt, cityR, shore});
 	// Only the crossings over the eye's street: the others are seen edge-on
-	addCrossings(ctx, aLine0, bLine0, streetA, streetB, {acrossA: false});
+	addCrossings(ctx, aLine0, bLine0, streetA, streetB, {acrossA: false, onLand});
+	buildLandscape(ctx, params, {cityR, shore, roads: [{axis: "b", line: aLine0, half: roadHalf}]});
 
 	// Centre dashes along the eye's street, broken at the crossings
 	const dash = 3 * m;
-	const pitchB = cellB + streetB;
-	for (let b = cam.b + NEAR_M * m + random(0, dash); b < cam.b + 200 * m; b += dash * 3) {
+	const dashEnd = Math.min(cam.b + 200 * m, shore ? shore.quay - 2 * m : Infinity);
+	for (let b = cam.b + NEAR_M * m + random(0, dash); b < dashEnd; b += dash * 3) {
 		const inBlock = (((b - bLine0 - streetB / 2) % pitchB) + pitchB) % pitchB;
 		if (inBlock > cellB - dash) continue;
 		ctx.groundLines.push({p: frame.point(aLine0, b), q: frame.point(aLine0, b + dash), preset: "detail"});
 	}
 
-	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines};
+	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines, terrain: ctx.terrain};
+}
+
+/** Waterfront street centred on `line` along `axis`: beyond its far curb, a promenade, then the quay. */
+function makeShore(ctx, axis, line, street) {
+	return {axis, line, street, quay: line + street / 2 + random(4, 8) * ctx.m};
+}
+
+function isWaterfront(params) {
+	return params.foreground === "ocean" || params.foreground === "lake";
 }
 
 /** Standing at a crossing of a city grid aligned to two VPs. */
@@ -588,9 +616,26 @@ function buildBlock2pt(params, W, H) {
 	const bLine0 = cam.b + random(0.2, 0.45) * streetB;
 	// The densest quarter lies a few blocks ahead
 	const zoneAt = makeZoneMap(params.district, {x: random(1, 5), y: random(1, 5)});
+	const cityR = rr(CITY_RADIUS_M[params.city_size]) * m;
+	// By the water, the street past the corner block runs along the waterfront: the
+	// corner block stands between the eye and the water, which opens beside it
+	let shore = null;
+	if (isWaterfront(params)) {
+		const axis = random() < 0.5 ? "a" : "b";
+		shore = axis === "a" ? makeShore(ctx, "a", aLine0 + cellA + streetA, streetA) : makeShore(ctx, "b", bLine0 + cellB + streetB, streetB);
+	}
+	const onLand = (a, b) => !shore || (shore.axis === "a" ? a : b) < shore.line + shore.street / 2;
 
-	buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewalk, zoneAt});
-	addCrossings(ctx, aLine0, bLine0, streetA, streetB);
+	buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewalk, zoneAt, cityR, shore});
+	addCrossings(ctx, aLine0, bLine0, streetA, streetB, {onLand});
+	buildLandscape(ctx, params, {
+		cityR,
+		shore,
+		roads: [
+			{axis: "a", line: bLine0, half: streetB / 2 - sidewalk},
+			{axis: "b", line: aLine0, half: streetA / 2 - sidewalk},
+		],
+	});
 
-	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines};
+	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines, terrain: ctx.terrain};
 }

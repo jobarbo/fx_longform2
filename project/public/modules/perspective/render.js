@@ -10,42 +10,49 @@ const HATCH_ANGLE = 62;
 // - a light paper-coloured veil is laid each time the drawing, which goes from far to
 //   near, crosses one of the `bands` (metres): what lies behind gets washed out
 const DEPTH_THIN = {near: 15, falloff: 150, min: 0.45};
-const HAZE = {bands: [400, 250, 150, 90, 50, 25], alpha: 7};
+// Far bands are lighter: distant ranges should step back, not vanish
+const HAZE = {bands: [15000, 5000, 1500, 400, 250, 150, 90, 50, 25], alpha: 7, farAlpha: 5, farFrom: 1500};
 
 function renderPerspective(g, comp, {W, H, debug = false}) {
 	setPencilBounds([-30, -30, W + 30, H + 30]);
 	paperBackground(g, PAPER);
-	setPencilDepth({...DEPTH_THIN, metre: comp.frame.metre});
+	const m = comp.frame.metre;
+	setPencilDepth({...DEPTH_THIN, metre: m});
 
-	const thresholds = HAZE.bands.map((b) => b * comp.frame.metre);
-	const bandOf = (d) => thresholds.filter((t) => d < t).length;
-	const groundByBand = thresholds.map(() => []).concat([[]]);
+	// Events from far to near: haze veils and terrain layers. Ground lines are cut
+	// at every event depth so each piece is drawn between the right events.
+	const veils = new Set(HAZE.bands.map((b) => b * m));
+	const cuts = [...new Set([...veils, ...comp.terrain.map((l) => l.depth)])].sort((x, y) => y - x);
+	const intervalOf = (d) => cuts.filter((c) => d < c).length;
+	const groundByInterval = cuts.map(() => []).concat([[]]);
 	for (const l of comp.groundLines) {
-		for (const piece of splitByDepth(l, thresholds)) groundByBand[bandOf(piece.mid)].push(piece);
+		for (const piece of splitByDepth(l, cuts)) groundByInterval[intervalOf(piece.mid)].push(piece);
 	}
 
-	let band = 0;
-	const drawGround = (b) => {
+	let cursor = 0;
+	const drawGround = (k) => {
 		setPencilItemDepth(null);
-		for (const l of groundByBand[b]) pencilLine(g, l.p, l.q, {...PENCIL_PRESETS[l.preset], ink: GRAPHITE, capStart: l.capStart, capEnd: l.capEnd});
+		for (const l of groundByInterval[k]) pencilLine(g, l.p, l.q, {...PENCIL_PRESETS[l.preset], ink: GRAPHITE, capStart: l.capStart, capEnd: l.capEnd});
 	};
-	const enterBand = (b) => {
-		while (band < b) {
-			band++;
-			hazeVeil(g, W, H);
-			drawGround(band);
+	const advanceTo = (k) => {
+		while (cursor < k) {
+			const c = cuts[cursor];
+			if (veils.has(c)) hazeVeil(g, W, H, c >= HAZE.farFrom * m ? HAZE.farAlpha : HAZE.alpha);
+			for (const layer of comp.terrain) if (layer.depth === c) drawTerrain(g, layer, comp);
+			cursor++;
+			drawGround(cursor);
 		}
 	};
 
 	drawGround(0);
 	for (const it of comp.items) {
-		// Painter order runs roughly far to near; the haze only ever moves forward
-		enterBand(bandOf(Math.min(...footprintDepths(comp.frame, it))));
+		// Painter order runs roughly far to near; the events only ever move forward
+		advanceTo(intervalOf(Math.min(...footprintDepths(comp.frame, it))));
 		// Points that don't carry their own depth (tree crowns, offsets) use the item's
 		setPencilItemDepth(comp.frame.depth(it.a + it.wa / 2, it.b + it.wb / 2));
 		drawItem(g, it, comp);
 	}
-	enterBand(thresholds.length);
+	advanceTo(cuts.length);
 	setPencilItemDepth(null);
 	paperTooth(g, W, H, PAPER);
 
@@ -56,12 +63,118 @@ function renderPerspective(g, comp, {W, H, debug = false}) {
 	}
 }
 
+// ----------------------------------------------------------------------------
+// Terrain
+// ----------------------------------------------------------------------------
+
+/** Paper fill, then the crest, shading, strata and snow of one terrain layer. */
+function drawTerrain(g, layer, comp) {
+	setPencilItemDepth(layer.depth);
+	fillPaper(g, layer.outline);
+	const st = layer.style;
+	const r = pencilRng(layer.depth, layer.ridge.length, 5);
+	const minK = 0.3 * comp.frame.metre;
+	const ridgeOpts = {...PENCIL_PRESETS.ridge, ink: GRAPHITE};
+
+	// Crest, in runs where the ground actually rises
+	let run = [];
+	const flush = () => {
+		if (run.length > 1) pencilPath(g, run, ridgeOpts);
+		run = [];
+	};
+	for (let i = 0; i < layer.ridge.length; i++) {
+		const p = layer.ridge[i];
+		const next = layer.ridge[i + 1];
+		if (p.k > minK || (next && next.k > minK) || (run.length && run[run.length - 1].k > minK)) run.push(p);
+		else flush();
+	}
+	flush();
+
+	if (st.hatch) hatchSlopes(g, layer, comp, r);
+	if (st.faceHatch) hatchFace(g, layer, r);
+	if (st.strata) drawStrata(g, layer, st.strata);
+	if (st.snowLine) drawSnowLine(g, layer, st.snowLine, r);
+}
+
+/** Fall-line strokes down the slopes turned away from the light; a few on the lit side. */
+function hatchSlopes(g, layer, comp, r) {
+	const lightLeft = comp.params.light === "left";
+	const base = layer.base[0].y;
+	const opts = {...PENCIL_PRESETS.hatch, ink: GRAPHITE};
+	const snow = layer.style.snowLine;
+	const R = layer.ridge;
+	for (let i = 1; i < R.length - 1; i++) {
+		const p = R[i];
+		if (p.k <= 0) continue;
+		const slope = (R[i + 1].y - R[i - 1].y) / (R[i + 1].x - R[i - 1].x || 1);
+		// Light from the left: slopes that descend to the right are in shadow
+		const shadow = lightLeft ? slope > 0.04 : slope < -0.04;
+		if (r() > (shadow ? 0.85 : 0.1)) continue;
+		const start = snow && p.k > snow ? layer.point(p.X, snow) : p;
+		const depthPx = base - start.y;
+		if (depthPx < 2) continue;
+		const len = depthPx * (shadow ? 0.3 + 0.5 * r() : 0.1 + 0.15 * r());
+		const sx = slope > 0 ? 1 : -1;
+		const dir = {x: sx * Math.min(0.6, Math.abs(slope)) * 0.5, y: 1};
+		const n = Math.hypot(dir.x, dir.y);
+		const end = {x: start.x + (dir.x / n) * len, y: Math.min(base, start.y + (dir.y / n) * len), d: layer.depth};
+		pencilLine(g, {x: start.x, y: start.y, d: layer.depth}, end, opts);
+	}
+}
+
+/** Vertical streaks down a cliff face. */
+function hatchFace(g, layer, r) {
+	const opts = {...PENCIL_PRESETS.hatch, ink: GRAPHITE};
+	const top = layer.maxK;
+	for (let i = 0; i < layer.ridge.length; i += 2) {
+		const p = layer.ridge[i];
+		if (p.k < top * 0.6 || r() > 0.55) continue;
+		pencilLine(g, p, layer.point(p.X, p.k * (0.2 + 0.5 * r())), opts);
+	}
+}
+
+/** Horizontal rock layers across the parts of the face that rise above each level. */
+function drawStrata(g, layer, {from, to, count, height}) {
+	const opts = {...PENCIL_PRESETS.detail, alpha: 30, ink: GRAPHITE};
+	for (let s = 0; s < count; s++) {
+		const level = height * (from + ((to - from) * s) / Math.max(1, count - 1));
+		let startX = null;
+		let lastX = null;
+		const close = () => {
+			if (startX !== null && lastX > startX) pencilLine(g, layer.point(startX, level), layer.point(lastX, level), opts);
+			startX = null;
+		};
+		for (const p of layer.ridge) {
+			if (p.k > level + height * 0.02) {
+				if (startX === null) startX = p.X;
+				lastX = p.X;
+			} else close();
+		}
+		close();
+	}
+}
+
+/** A ragged line where the snow ends, under the peaks that rise above it. */
+function drawSnowLine(g, layer, snow, r) {
+	const opts = {...PENCIL_PRESETS.detail, alpha: 32, ink: GRAPHITE};
+	let run = [];
+	const flush = () => {
+		if (run.length > 1) pencilPath(g, run, opts);
+		run = [];
+	};
+	for (const p of layer.ridge) {
+		if (p.k > snow) run.push(layer.point(p.X, snow + (r() - 0.5) * (p.k - snow) * 0.5));
+		else flush();
+	}
+	flush();
+}
+
 /** A translucent wash of paper over everything drawn so far. */
-function hazeVeil(g, W, H) {
+function hazeVeil(g, W, H, alpha = HAZE.alpha) {
 	g.push();
 	g.noStroke();
 	g.rectMode(CORNER);
-	g.fill(PAPER[0], PAPER[1], PAPER[2], HAZE.alpha);
+	g.fill(PAPER[0], PAPER[1], PAPER[2], alpha);
 	g.rect(-40, -40, W + 80, H + 80);
 	g.pop();
 }

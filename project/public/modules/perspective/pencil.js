@@ -19,6 +19,9 @@ const PENCIL_PRESETS = {
 	ground: {weight: 0.75, alpha: 38, passes: 2, wobble: 0.6, jitter: 0.8, overshoot: 12, freq: 0.01, step: 7, taper: 0.1},
 	detail: {weight: 0.65, alpha: 48, passes: 1, wobble: 0.3, jitter: 0.5, overshoot: 2, freq: 0.02, step: 4, taper: 0.1},
 	hatch: {weight: 0.5, alpha: 30, passes: 1, wobble: 0.35, jitter: 0, overshoot: 2.5, freq: 0.03, step: 8, taper: 0.25},
+	ridge: {weight: 1.5, alpha: 70, passes: 1, wobble: 0.25, jitter: 0, overshoot: 0, freq: 0.02, step: 4, taper: 0.1},
+	water: {weight: 0.8, alpha: 44, passes: 1, wobble: 0.2, jitter: 0.3, overshoot: 0, freq: 0.05, step: 5, taper: 0.35},
+	reflect: {weight: 0.5, alpha: 22, passes: 1, wobble: 0.3, jitter: 0.3, overshoot: 0, freq: 0.05, step: 4, taper: 0.3},
 	debug: {weight: 0.9, alpha: 80, passes: 1, wobble: 0, jitter: 0, overshoot: 0, freq: 0, step: 1000, taper: 0, fade: false},
 };
 
@@ -159,6 +162,14 @@ function pencilLine(g, a, b, opts = {}) {
 function pencilPolyline(g, points, opts, closed = false) {
 	const n = closed ? points.length : points.length - 1;
 	for (let i = 0; i < n; i++) pencilLine(g, points[i], points[(i + 1) % points.length], opts);
+}
+
+/** One continuous stroke through several points (no overshoot or taper at the joints). */
+function pencilPath(g, points, opts) {
+	const n = points.length - 1;
+	for (let i = 0; i < n; i++) {
+		pencilLine(g, points[i], points[i + 1], {...opts, capStart: i === 0 ? undefined : false, capEnd: i === n - 1 ? undefined : false});
+	}
 }
 
 /** Parallel hatching clipped to a convex polygon. */

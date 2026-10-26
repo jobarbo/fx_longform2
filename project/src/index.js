@@ -9,6 +9,9 @@ $fx.features({
 	"Vanishing spread": composition_params.perspective_type === "2pt" ? composition_params.vp_spread : "none",
 	Light: composition_params.light,
 	District: composition_params.district,
+	Foreground: composition_params.foreground,
+	Background: composition_params.background,
+	"City size": composition_params.city_size,
 });
 
 console.log("features", $fx.getFeatures());
