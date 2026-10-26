@@ -15,11 +15,9 @@ let isBordered = true;
 let img;
 let mask;
 
-function preload() {
-	img = loadImage("./image/Mono.png");
-}
-
-function setup() {
+// p5 2.x : preload() n'existe plus, on charge les assets dans un setup async
+async function setup() {
+	img = await loadImage("./image/Mono.png");
 	console.log(features);
 	features = $fx.getFeatures();
 
@@ -126,6 +124,6 @@ function INIT(seed) {
 		initHue = initHue > 360 ? initHue - 360 : initHue < 0 ? initHue + 360 : initHue;
 		movers.push(new Mover(x, y, initHue, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, xMin, xMax, yMin, yMax, isBordered, seed));
 	}
-	let bgCol = spectral.mix("#000", "#fff", 0.88);
+	let bgCol = spectral.mix([new spectral.Color("#000000"), 0.12], [new spectral.Color("#ffffff"), 0.88]).toString();
 	background(bgCol);
 }
