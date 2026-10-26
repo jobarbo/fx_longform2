@@ -36,7 +36,7 @@ function renderPerspective(g, comp, {W, H, debug = false}) {
 	let cursor = 0;
 	const drawGround = (k) => {
 		setPencilItemDepth(null);
-		for (const poly of shadowsByInterval[k]) pencilHatch(g, poly, CAST_SHADOW);
+		if (shadowsByInterval[k].length) hatchGroundShadows(g, comp, shadowsByInterval[k]);
 		for (const l of groundByInterval[k]) pencilLine(g, l.p, l.q, {...PENCIL_PRESETS[l.preset], ink: GRAPHITE, capStart: l.capStart, capEnd: l.capEnd});
 	};
 	const advanceTo = (k) => {
@@ -232,24 +232,72 @@ function fillPaper(g, poly) {
 	g.endShape(CLOSE);
 }
 
-/** Hatching for a shade level: 0 lit, 1 half-tone, 2 shadow. */
+// Shading, as in a ruled pen drawing: lit faces stay white; half-tone and own
+// shadow are strokes along the surface (up walls, down roof slopes); cast shadows
+// are dense strokes along the sun's rays projected on the surface they fall on
+// (toward the shadows' VP on the ground, slanted on walls), crossing the others.
+// Target spacings in px.
+const TONE_SPACING = {1: 5, 2: 2.4};
+const CAST_SPACING = 2.2;
+const SOFFIT_SPACING = 1.8;
+const TONE_HATCH = {...PENCIL_PRESETS.hatch, alpha: 62, weight: 0.7, jitter: 0.8, overshoot: 0.6, taper: 0.06, ink: GRAPHITE};
+
+/** Screen hatching for a shade level (round shapes): 0 lit, 1 half-tone, 2 shadow. */
 function shadeHatch(g, poly, shade) {
-	if (shade === 1) pencilHatch(g, poly, {angle: HATCH_ANGLE, spacing: 9, ink: GRAPHITE});
-	if (shade === 2) pencilHatch(g, poly, {angle: HATCH_ANGLE, spacing: 4.5, alpha: 34, ink: GRAPHITE});
+	if (shade > 0) pencilHatch(g, poly, {...TONE_HATCH, angle: 90, spacing: TONE_SPACING[shade] * 1.4});
 }
 
-// Cast shadows read as solid patches: denser, at their own angle
-const CAST_SHADOW = {angle: HATCH_ANGLE + 35, spacing: 3.2, alpha: 34, ink: GRAPHITE, aligned: true};
+/** A face as a surface: its map from (p, q) to the screen, and its outline in (p, q). */
+function faceSurface(bx, face) {
+	const n = face.name;
+	const unit = [pt(0, 0), pt(1, 0), pt(1, 1), pt(0, 1)];
+	if (face.kind === "wall") return {map: (u, v) => bx.facePoint(n, u, v), poly: unit};
+	// Gables lie in their wall's plane, above v = 1
+	if (face.kind === "gable") return {map: (u, v) => bx.facePoint(n.slice(1), u, v), poly: [pt(0, 1), pt(1, 1), pt(0.5, 1 + bx.roof.height / bx.h)]};
+	// Slopes: p along the ridge, so the strokes run down the fall line
+	if (face.kind === "slope") return {map: (u, t) => bx.slopePoint(n, u, t), poly: unit};
+	const k = n === "k1" ? bx.z + bx.h : bx.z;
+	return {map: (u, v) => bx.frame.lift(bx.a + u * bx.wa, bx.b + v * bx.wb, k), poly: unit};
+}
+
+/** A face's own tone from the sun, then the shadows other items cast on it. */
+function shadeFace(g, bx, face, sun) {
+	if (face.kind === "gable" && bx.h <= 0) return;
+	const surf = faceSurface(bx, face);
+	const own = face.kind === "bottom" ? 2 : sun.shadeLevel(faceNormal(bx, face));
+	const spacing = face.kind === "bottom" ? SOFFIT_SPACING : TONE_SPACING[own];
+	if (spacing) pencilSurfaceHatch(g, surf.map, [surf.poly], {...TONE_HATCH, spacing, step: 1 / 65536});
+
+	const cast = bx.castShadows && bx.castShadows[face.name];
+	if (!cast) return;
+	// In metres on the wall's plane (s along it, k up), turned to the rays' slant
+	const along = face.name[0] === "a" ? "b" : "a";
+	const width = bx.faceWidth(face.name);
+	const m = bx.frame.metre;
+	const wall = (s, k) => bx.facePoint(face.name, (s * m) / width, (k * m) / bx.h);
+	const polys = cast.map((poly) => poly.map((q) => pt((q.x * width) / m, (q.y * bx.h) / m)));
+	const len = Math.hypot(sun.dir[along], sun.dir.k);
+	const rays = surfaceAlong(wall, polys, {x: sun.dir[along] / len, y: sun.dir.k / len});
+	pencilSurfaceHatch(g, rays.map, rays.polys, {...TONE_HATCH, spacing: CAST_SPACING, step: 1 / 512});
+}
+
+/** Ground shadows (frame coordinates) hatched along the rays, toward the shadows' VP. */
+function hatchGroundShadows(g, comp, polys) {
+	const {frame, sun} = comp;
+	const m = frame.metre;
+	const len = Math.hypot(sun.dir.a, sun.dir.b);
+	const metres = polys.map((poly) => poly.map((q) => pt(q.x / m, q.y / m)));
+	const rays = surfaceAlong((a, b) => frame.point(a * m, b * m), metres, {x: sun.dir.a / len, y: sun.dir.b / len});
+	// One grid in metres: overlapping shadows and pieces cut by the haze share their strokes
+	pencilSurfaceHatch(g, rays.map, rays.polys, {...TONE_HATCH, spacing: CAST_SPACING, step: 1 / 512});
+}
 
 function drawBox(g, bx, comp, edgeOpts = {ink: GRAPHITE}) {
 	const minFace = 1.5;
 	for (const face of bx.faces) {
 		fillPaper(g, face.poly);
 		if (Math.abs(polygonSignedArea(face.poly)) < minFace) continue;
-		shadeHatch(g, face.poly, comp.sun.shadeLevel(faceNormal(bx, face)));
-		for (const uv of (bx.castShadows && bx.castShadows[face.name]) || []) {
-			pencilHatch(g, uv.map((q) => bx.facePoint(face.name, q.x, q.y)), CAST_SHADOW);
-		}
+		shadeFace(g, bx, face, comp.sun);
 		if (face.kind === "wall" && bx.style.windows && bx.style.facade) drawFacade(g, bx, face);
 		if (face.kind === "slope") drawRoofCourses(g, bx, face);
 	}
@@ -691,7 +739,7 @@ function drawSunDisc(g, sun) {
 
 /**
  * Cut a ground shadow (convex, frame coordinates {x: a, y: b}) at the event
- * depths; returns, per interval, its pieces as screen polygons.
+ * depths; returns, per interval, its pieces (frame coordinates).
  */
 function splitShadowByDepth(frame, poly, cuts) {
 	const depthOf = (q) => frame.depth(q.x, q.y);
@@ -706,7 +754,7 @@ function splitShadowByDepth(frame, poly, cuts) {
 		let piece = poly;
 		if (far !== Infinity) piece = clipPolygon(piece, (q) => far - depthOf(q));
 		if (near !== -Infinity) piece = clipPolygon(piece, (q) => depthOf(q) - near);
-		if (piece.length >= 3) out[k].push(piece.map((q) => frame.point(q.x, q.y)));
+		if (piece.length >= 3) out[k].push(piece);
 	}
 	return out;
 }

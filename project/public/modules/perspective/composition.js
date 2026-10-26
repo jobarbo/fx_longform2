@@ -48,14 +48,17 @@ function addCastShadows(comp, all, W, H) {
 		}
 		let poly = groundShadowPolygon(sun, it);
 		if (!poly) continue;
-		// Keep the part in front of the eye
-		poly = clipPolygon(poly, (q) => frame.depth(q.x, q.y) - near);
-		if (poly.length < 3) continue;
-		const screen = poly.map((q) => frame.point(q.x, q.y));
-		const xs = screen.map((q) => q.x);
-		const ys = screen.map((q) => q.y);
-		if (Math.max(...xs) < 0 || Math.min(...xs) > W || Math.min(...ys) > H) continue;
-		comp.groundShadows.push(poly);
+		// Keep the part on the canvas (with a margin): in front of the eye, above the
+		// bottom edge, between the side edges
+		const s = frame.scene;
+		const margin = 40;
+		const zMin = Math.max(near, (s.d * frame.eyeHeight) / (H + margin - s.horizonY));
+		const depth = (q) => frame.depth(q.x, q.y);
+		const lateral = (q) => frame.lateral(q.x, q.y);
+		poly = clipPolygon(poly, (q) => depth(q) - zMin);
+		poly = clipPolygon(poly, (q) => lateral(q) + ((s.centerX + margin) * depth(q)) / s.d);
+		poly = clipPolygon(poly, (q) => ((W + margin - s.centerX) * depth(q)) / s.d - lateral(q));
+		if (poly.length >= 3) comp.groundShadows.push(poly);
 	}
 }
 

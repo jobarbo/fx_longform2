@@ -67,7 +67,7 @@ class Sun {
 	/** 0 lit, 1 half-tone, 2 in its own shadow. */
 	shadeLevel(n) {
 		const c = this.lambert(n);
-		return c < 0.02 ? 2 : c < 0.35 ? 1 : 0;
+		return c < 0.02 ? 2 : c < 0.5 ? 1 : 0;
 	}
 }
 
