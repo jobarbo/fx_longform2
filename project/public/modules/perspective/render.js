@@ -261,12 +261,14 @@ function drawItem(g, it, comp) {
 	else if (it.kind === "bench") drawBench(g, it, comp);
 }
 
+/** Paper over what lies behind, with a light graphite grain so lit parts aren't blank. */
 function fillPaper(g, poly) {
 	g.noStroke();
 	g.fill(PAPER[0], PAPER[1], PAPER[2]);
 	g.beginShape();
 	for (const p of poly) g.vertex(p.x, p.y);
 	g.endShape(CLOSE);
+	wash(g, [poly], LIT_GRAIN);
 }
 
 // Shading as a graphite wash multiplied over the drawing: lit faces stay white,
@@ -274,6 +276,7 @@ function fillPaper(g, poly) {
 // crisp; the softness is inside, in the grain of the wash. Alphas of WASH_INK.
 const WASH_INK = "44, 46, 51"; // GRAPHITE in RGB
 const WASH = {1: 0.17, 2: 0.36, cast: 0.48};
+const LIT_GRAIN = 0.12; // every solid element, lit or not
 const FACE_WASH = 0.42; // a face turned fully from the light; cast shadows stay darker
 
 /**
