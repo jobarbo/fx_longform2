@@ -37,29 +37,35 @@ function addCastShadows(comp, all, W, H) {
 	const {sun, frame} = comp;
 	computeFacadeShadows(sun, comp.items, all);
 	comp.groundShadows = [];
-	const near = NEAR_M * frame.metre;
 	for (const it of all) {
-		if (it.kind === "lamp") {
-			// A thin pole: its shadow is a line from its foot
-			const g = sun.groundShadow(it.ca, it.cb, it.h);
-			const seg = groundSegment(frame, it.ca, it.cb, g.a, g.b, "detail");
-			if (seg) comp.groundLines.push(seg);
-			continue;
+		for (const poly of groundShadowPolygons(sun, it)) {
+			const seen = clipToView(frame, poly, W, H);
+			if (seen) comp.groundShadows.push(seen);
 		}
-		let poly = groundShadowPolygon(sun, it);
-		if (!poly) continue;
-		// Keep the part on the canvas (with a margin): in front of the eye, above the
-		// bottom edge, between the side edges
-		const s = frame.scene;
-		const margin = 40;
-		const zMin = Math.max(near, (s.d * frame.eyeHeight) / (H + margin - s.horizonY));
-		const depth = (q) => frame.depth(q.x, q.y);
-		const lateral = (q) => frame.lateral(q.x, q.y);
-		poly = clipPolygon(poly, (q) => depth(q) - zMin);
-		poly = clipPolygon(poly, (q) => lateral(q) + ((s.centerX + margin) * depth(q)) / s.d);
-		poly = clipPolygon(poly, (q) => ((W + margin - s.centerX) * depth(q)) / s.d - lateral(q));
-		if (poly.length >= 3) comp.groundShadows.push(poly);
 	}
+}
+
+/**
+ * The part of a ground polygon (frame coordinates {x: a, y: b}) on the canvas,
+ * with a margin: in front of the eye, above the bottom edge, between the side
+ * edges. Null when nothing is left.
+ */
+function clipToView(frame, poly, W, H) {
+	const s = frame.scene;
+	const margin = 40;
+	const zMin = Math.max(NEAR_M * frame.metre, (s.d * frame.eyeHeight) / (H + margin - s.horizonY));
+	const depth = (q) => frame.depth(q.x, q.y);
+	const lateral = (q) => frame.lateral(q.x, q.y);
+	poly = clipPolygon(poly, (q) => depth(q) - zMin);
+	poly = clipPolygon(poly, (q) => lateral(q) + ((s.centerX + margin) * depth(q)) / s.d);
+	poly = clipPolygon(poly, (q) => ((W + margin - s.centerX) * depth(q)) / s.d - lateral(q));
+	return poly.length >= 3 ? poly : null;
+}
+
+/** A ground area for the colouring (street, sidewalk, lot, road, water): rectangle a..a+wa, b..b+wb. */
+function addGroundArea(ctx, kind, a, b, wa, wb, extra = {}) {
+	const poly = clipToView(ctx.frame, [pt(a, b), pt(a + wa, b), pt(a + wa, b + wb), pt(a, b + wb)], ctx.W, ctx.H);
+	if (poly) ctx.groundAreas.push({kind, poly, ...extra});
 }
 
 /** Frame whose origin is on the ground at the bottom of the picture, with its metre scale. */
@@ -70,7 +76,7 @@ function eyeLevelFrame(scene, origin) {
 }
 
 function makeContext(scene, frame, params, W, H) {
-	return {scene, frame, params, W, H, m: frame.metre, items: [], groundLines: [], terrain: [], sun: makeSun(frame, params, W)};
+	return {scene, frame, params, W, H, m: frame.metre, items: [], groundLines: [], groundAreas: [], terrain: [], sun: makeSun(frame, params, W)};
 }
 
 function footprintDepths(frame, {a, b, wa, wb}) {
@@ -447,11 +453,15 @@ function buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewal
 		for (let j = -reachB; j <= reachB; j++) {
 			const lot = {a: aLine0 + i * pitchA + streetA / 2, b: bLine0 + j * pitchB + streetB / 2, wa: cellA, wb: cellB};
 			const depths = footprintDepths(frame, lot);
-			if (Math.max(...depths) < NEAR_M * m || Math.min(...depths) > FAR_M * m) continue;
+			if (Math.min(...depths) > FAR_M * m) continue;
 			// The city ends on a ragged edge, or on the quay
 			const dist = Math.hypot(lot.a + lot.wa / 2 - cam.a, lot.b + lot.wb / 2 - cam.b);
 			if (dist > cityR * (0.8 + 0.4 * noise(i * 0.53 + 71.3, j * 0.53 + 13.1))) continue;
 			if (shore && lot[shore.axis] + (shore.axis === "a" ? lot.wa : lot.wb) > shore.line) continue;
+			// Its half of the streets around may show even when the block doesn't (behind the eye, beside the canvas)
+			addGroundArea(ctx, "street", lot.a - streetA / 2, lot.b - streetB / 2, lot.wa + streetA, lot.wb + streetB);
+			addGroundArea(ctx, "sidewalk", lot.a - sidewalk, lot.b - sidewalk, lot.wa + sidewalk * 2, lot.wb + sidewalk * 2);
+			if (Math.max(...depths) < NEAR_M * m) continue;
 			// Verticals stay vertical, so a block whose ground lies beside the canvas can't show
 			if (Math.min(...depths) > NEAR_M * m) {
 				const xs = [frame.point(lot.a, lot.b), frame.point(lot.a + lot.wa, lot.b), frame.point(lot.a, lot.b + lot.wb), frame.point(lot.a + lot.wa, lot.b + lot.wb)].map((p) => p.x);
@@ -463,6 +473,7 @@ function buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewal
 			pushGroundQuad(ctx.groundLines, frame, lot.a - sidewalk, lot.b - sidewalk, lot.wa + sidewalk * 2, lot.wb + sidewalk * 2, "ground");
 
 			const zoneInfo = zoneAt(i, j);
+			addGroundArea(ctx, "lot", lot.a, lot.b, lot.wa, lot.wb, {zone: zoneInfo.zone});
 			const longer = cellA > cellB ? "a" : "b";
 			const split = random() < 0.75 ? longer : longer === "a" ? "b" : "a";
 			layoutLot(ctx, lot, zoneInfo, split);
@@ -532,19 +543,22 @@ function addStreetFurniture(ctx, lot, sidewalk, {zone, density}) {
  * Zebra crossings on the arms of the crossing of street centre lines aLine and
  * bLine: the ones across the street along a, and across the street along b.
  */
-function addCrossings(ctx, aLine, bLine, streetA, streetB, {acrossA = true, acrossB = true, onLand = () => true} = {}) {
+function addCrossings(ctx, aLine, bLine, streetA, streetB, sidewalk, {acrossA = true, acrossB = true, onLand = () => true} = {}) {
 	const m = ctx.m;
 	const stripe = 0.5 * m;
 	const zebra = 3 * m;
+	// Stripes stay on the roadway, from curb to curb
+	const roadA = streetA * 0.5 - sidewalk;
+	const roadB = streetB * 0.5 - sidewalk;
+	const add = (a, b, wa, wb) => {
+		pushGroundQuad(ctx.groundLines, ctx.frame, a, b, wa, wb, "detail");
+		addGroundArea(ctx, "marking", a, b, wa, wb);
+	};
 	for (const side of [-1, 1]) {
 		const a = aLine + side * (streetA * 0.5 + m) - (side < 0 ? zebra : 0);
 		const b = bLine + side * (streetB * 0.5 + m) - (side < 0 ? zebra : 0);
-		for (let t = -streetB * 0.5 + stripe; acrossA && onLand(a + zebra, bLine) && t + stripe < streetB * 0.5; t += stripe * 2) {
-			pushGroundQuad(ctx.groundLines, ctx.frame, a, bLine + t, zebra, stripe, "detail");
-		}
-		for (let t = -streetA * 0.5 + stripe; acrossB && onLand(aLine, b + zebra) && t + stripe < streetA * 0.5; t += stripe * 2) {
-			pushGroundQuad(ctx.groundLines, ctx.frame, aLine + t, b, stripe, zebra, "detail");
-		}
+		for (let t = -roadB + stripe * 0.5; acrossA && onLand(a + zebra, bLine) && t + stripe <= roadB - stripe * 0.5; t += stripe * 2) add(a, bLine + t, zebra, stripe);
+		for (let t = -roadA + stripe * 0.5; acrossB && onLand(aLine, b + zebra) && t + stripe <= roadA - stripe * 0.5; t += stripe * 2) add(aLine + t, b, stripe, zebra);
 	}
 }
 
@@ -584,7 +598,7 @@ function buildStreet1pt(params, W, H) {
 
 	buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewalk, zoneAt, cityR, shore});
 	// Only the crossings over the eye's street: the others are seen edge-on
-	addCrossings(ctx, aLine0, bLine0, streetA, streetB, {acrossA: false, onLand});
+	addCrossings(ctx, aLine0, bLine0, streetA, streetB, sidewalk, {acrossA: false, onLand});
 	buildLandscape(ctx, params, {cityR, shore, roads: [{axis: "b", line: aLine0, half: roadHalf}]});
 
 	// Centre dashes along the eye's street, broken at the crossings
@@ -596,7 +610,7 @@ function buildStreet1pt(params, W, H) {
 		ctx.groundLines.push({p: frame.point(aLine0, b), q: frame.point(aLine0, b + dash), preset: "detail"});
 	}
 
-	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines, terrain: ctx.terrain, sun: ctx.sun};
+	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines, groundAreas: ctx.groundAreas, terrain: ctx.terrain, sun: ctx.sun};
 }
 
 /** Waterfront street centred on `line` along `axis`: beyond its far curb, a promenade, then the quay. */
@@ -650,7 +664,7 @@ function buildBlock2pt(params, W, H) {
 	const onLand = (a, b) => !shore || (shore.axis === "a" ? a : b) < shore.line + shore.street / 2;
 
 	buildGrid(ctx, {aLine0, bLine0, streetA, streetB, cellA, cellB, sidewalk, zoneAt, cityR, shore});
-	addCrossings(ctx, aLine0, bLine0, streetA, streetB, {onLand});
+	addCrossings(ctx, aLine0, bLine0, streetA, streetB, sidewalk, {onLand});
 	buildLandscape(ctx, params, {
 		cityR,
 		shore,
@@ -660,5 +674,5 @@ function buildBlock2pt(params, W, H) {
 		],
 	});
 
-	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines, terrain: ctx.terrain, sun: ctx.sun};
+	return {scene, frame, items: ctx.items, groundLines: ctx.groundLines, groundAreas: ctx.groundAreas, terrain: ctx.terrain, sun: ctx.sun};
 }

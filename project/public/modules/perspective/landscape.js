@@ -358,6 +358,9 @@ function buildLandscape(ctx, params, {cityR, roads, shore}) {
 		const s1 = shore && shore.axis === road.axis ? shore.quay : cam[road.axis] + 3000 * m;
 		if (s1 <= s0) continue;
 		const at = (o, s) => (road.axis === "a" ? [s, o] : [o, s]);
+		const [ra, rb] = at(road.line - road.half, s0);
+		const [ra1, rb1] = at(road.line + road.half, s1);
+		addGroundArea(ctx, "road", ra, rb, ra1 - ra, rb1 - rb);
 		for (const o of [road.line - road.half, road.line + road.half]) {
 			const [a0, b0] = at(o, s0);
 			const [a1, b1] = at(o, s1);
@@ -373,6 +376,11 @@ function buildLandscape(ctx, params, {cityR, roads, shore}) {
 
 	const fg = params.foreground;
 	if (fg === "ocean" || fg === "lake") {
+		// The water: everything past the quay, out to the horizon (a lake's far shore covers its end)
+		const far = 1e5 * m;
+		const o = cam[shore.axis === "a" ? "b" : "a"];
+		if (shore.axis === "a") addGroundArea(ctx, "water", shore.quay, o - far, far, far * 2);
+		else addGroundArea(ctx, "water", o - far, shore.quay, far * 2, far);
 		buildQuay(ctx, shore);
 		addRipples(ctx, (g) => g[shore.axis] > shore.quay + 0.3 * m);
 		if (fg === "lake") buildFarShore(ctx);

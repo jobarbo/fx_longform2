@@ -120,6 +120,9 @@ class PLamp {
 		this.ca = ca;
 		this.cb = cb;
 		this.h = h;
+		this.arm = arm;
+		this.da = da;
+		this.db = db;
 		const m = frame.metre;
 		const ea = ca + da * arm;
 		const eb = cb + db * arm;

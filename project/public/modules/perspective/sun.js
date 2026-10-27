@@ -150,46 +150,71 @@ function makeSun(frame, params, W) {
 // Shadow casters
 // ----------------------------------------------------------------------------
 
-/** 3D points ({a, b, k}) outlining an item, for its cast shadow. */
-function casterPoints(it) {
+/** Points ({a, b, k}) on `n` rings of radius r around (ca, cb), at heights ks. */
+function ringPoints(ca, cb, r, ks, n = 8) {
 	const pts = [];
+	for (const k of ks) {
+		for (let i = 0; i < n; i++) {
+			const t = (i / n) * Math.PI * 2;
+			pts.push({a: ca + r * Math.cos(t), b: cb + r * Math.sin(t), k});
+		}
+	}
+	return pts;
+}
+
+/** A thin bar from p to q ({a, b, k}), `r` thick, as the corners around both ends. */
+function barPoints(p, q, r) {
+	const pts = [];
+	for (const e of [p, q]) for (const [da, db, dk] of [[r, 0, 0], [-r, 0, 0], [0, r, 0], [0, -r, 0], [0, 0, r], [0, 0, -r]]) pts.push({a: e.a + da, b: e.b + db, k: e.k + dk});
+	return pts;
+}
+
+/**
+ * An item as the convex parts that cast its shadow, each a list of 3D points
+ * ({a, b, k}): one hull would bridge the gaps between them (a tree's shadow
+ * would be a cone from its foot to its crown).
+ */
+function casterParts(it) {
+	const m = it.frame.metre;
 	if (it.kind === "box") {
+		const pts = [];
 		for (const i of [0, 1]) for (const j of [0, 1]) for (const k of [0, 1]) pts.push({a: it.a + i * it.wa, b: it.b + j * it.wb, k: it.z + k * it.h});
 		if (it.roof) {
 			const kr = it.top;
 			if (it.roof.axis === "a") pts.push({a: it.a, b: it.b + it.wb / 2, k: kr}, {a: it.a + it.wa, b: it.b + it.wb / 2, k: kr});
 			else pts.push({a: it.a + it.wa / 2, b: it.b, k: kr}, {a: it.a + it.wa / 2, b: it.b + it.wb, k: kr});
 		}
-	} else if (it.kind === "cylinder") {
-		for (let i = 0; i < 12; i++) {
-			const t = (i / 12) * Math.PI * 2;
-			const a = it.ca + it.r * Math.cos(t);
-			const b = it.cb + it.r * Math.sin(t);
-			pts.push({a, b, k: it.z}, {a, b, k: it.z + it.h});
-		}
+		return [pts];
+	}
+	if (it.kind === "cylinder") {
+		const pts = ringPoints(it.ca, it.cb, it.r, [it.z, it.z + it.h], 12);
 		if (it.cap) pts.push({a: it.ca, b: it.cb, k: it.top});
-	} else if (it.kind === "tree") {
+		return [pts];
+	}
+	if (it.kind === "tree") {
 		const R = it.crownR;
-		pts.push({a: it.ca, b: it.cb, k: 0});
+		// Trunk up into the crown, then the crown: a cone for a conifer, a ball otherwise
 		if (it.type === "conifer") {
 			const kb = it.trunkH * 0.6;
-			for (let i = 0; i < 8; i++) {
-				const t = (i / 8) * Math.PI * 2;
-				pts.push({a: it.ca + R * 0.9 * Math.cos(t), b: it.cb + R * 0.9 * Math.sin(t), k: kb});
-			}
-			pts.push({a: it.ca, b: it.cb, k: it.top});
-		} else {
-			const kc = it.trunkH + R;
-			for (let i = 0; i < 8; i++) {
-				const t = (i / 8) * Math.PI * 2;
-				pts.push({a: it.ca + R * Math.cos(t), b: it.cb + R * Math.sin(t), k: kc});
-			}
-			pts.push({a: it.ca, b: it.cb, k: kc + R}, {a: it.ca, b: it.cb, k: kc - R * 0.8});
+			return [ringPoints(it.ca, it.cb, 0.18 * m, [0, kb], 6), [...ringPoints(it.ca, it.cb, R * 0.9, [kb]), {a: it.ca, b: it.cb, k: it.top}]];
 		}
-	} else if (it.kind === "bench") {
-		for (const i of [0, 1]) for (const j of [0, 1]) pts.push({a: it.a + i * it.wa, b: it.b + j * it.wb, k: 0}, {a: it.a + i * it.wa, b: it.b + j * it.wb, k: 0.9 * it.frame.metre});
+		const kc = it.trunkH + R;
+		const crown = [...ringPoints(it.ca, it.cb, R, [kc]), ...ringPoints(it.ca, it.cb, R * 0.75, [kc - R * 0.6, kc + R * 0.6]), {a: it.ca, b: it.cb, k: kc + R}];
+		return [ringPoints(it.ca, it.cb, 0.18 * m, [0, kc - R * 0.5], 6), crown];
 	}
-	return pts;
+	if (it.kind === "lamp") {
+		// Pole, the arm in two bars, the head
+		const top = {a: it.ca, b: it.cb, k: it.h};
+		const mid = {a: it.ca + it.da * it.arm * 0.5, b: it.cb + it.db * it.arm * 0.5, k: it.h + 0.25 * m};
+		const end = {a: it.ca + it.da * it.arm, b: it.cb + it.db * it.arm, k: it.h + 0.15 * m};
+		return [ringPoints(it.ca, it.cb, 0.09 * m, [0, it.h], 6), barPoints(top, mid, 0.04 * m), barPoints(mid, end, 0.04 * m), ...casterParts(it.head)];
+	}
+	if (it.kind === "bench") {
+		const pts = [];
+		for (const i of [0, 1]) for (const j of [0, 1]) pts.push({a: it.a + i * it.wa, b: it.b + j * it.wb, k: 0}, {a: it.a + i * it.wa, b: it.b + j * it.wb, k: 0.9 * m});
+		return [pts];
+	}
+	return [];
 }
 
 /** Convex hull (monotone chain) of points with fields x, y. */
@@ -232,13 +257,18 @@ function clipPolygon(poly, f) {
 	return out;
 }
 
-/** Ground shadow of an item: a convex polygon in frame coordinates ({x: a, y: b}). */
-function groundShadowPolygon(sun, it) {
-	const pts = casterPoints(it).map(({a, b, k}) => {
-		const g = sun.groundShadow(a, b, k);
-		return {x: g.a, y: g.b};
-	});
-	return pts.length >= 3 ? convexHull(pts) : null;
+/** Ground shadow of an item: one convex polygon per part, in frame coordinates ({x: a, y: b}). */
+function groundShadowPolygons(sun, it) {
+	return casterParts(it)
+		.map((part) =>
+			convexHull(
+				part.map(({a, b, k}) => {
+					const g = sun.groundShadow(a, b, k);
+					return {x: g.a, y: g.b};
+				}),
+			),
+		)
+		.filter((poly) => poly.length >= 3);
 }
 
 /**
@@ -246,8 +276,8 @@ function groundShadowPolygon(sun, it) {
  * box, castShadows[faceName] = list of convex polygons in face coordinates (u, v).
  */
 function computeFacadeShadows(sun, items, allItems = items) {
-	const casters = allItems.filter((it) => it.kind === "box" || it.kind === "cylinder" || it.kind === "tree");
-	const pointsOf = new Map(casters.map((it) => [it, casterPoints(it)]));
+	const casters = allItems.filter((it) => it.kind === "box" || it.kind === "cylinder" || it.kind === "tree" || it.kind === "lamp");
+	const partsOf = new Map(casters.map((it) => [it, casterParts(it)]));
 	for (const B of items) {
 		if (B.kind !== "box" || B.h <= 0) continue;
 		B.castShadows = {};
@@ -277,18 +307,20 @@ function computeFacadeShadows(sun, items, allItems = items) {
 				const aLo = A[along] + Math.min(0, shift);
 				const aHi = A[along] + (along === "a" ? A.wa : A.wb) + Math.max(0, shift);
 				if (aHi <= u0 || aLo >= u0 + uw) continue;
-				const uv = [];
-				for (const p of pointsOf.get(A)) {
-					const s = sun.planeShadow(p.a, p.b, p.k, axis, value);
-					if (s) uv.push({x: (s[along] - u0) / uw, y: (s.k - B.z) / B.h});
+				for (const part of partsOf.get(A)) {
+					const uv = [];
+					for (const p of part) {
+						const s = sun.planeShadow(p.a, p.b, p.k, axis, value);
+						if (s) uv.push({x: (s[along] - u0) / uw, y: (s.k - B.z) / B.h});
+					}
+					if (uv.length < 3) continue;
+					const xs = uv.map((q) => q.x);
+					const ys = uv.map((q) => q.y);
+					if (Math.max(...xs) <= 0 || Math.min(...xs) >= 1 || Math.max(...ys) <= 0 || Math.min(...ys) >= 1) continue;
+					let poly = convexHull(uv);
+					for (const f of [(q) => q.x, (q) => 1 - q.x, (q) => q.y, (q) => 1 - q.y]) poly = clipPolygon(poly, f);
+					if (poly.length >= 3 && Math.abs(polygonSignedArea(poly)) > 1e-4) polys.push(poly);
 				}
-				if (uv.length < 3) continue;
-				const xs = uv.map((q) => q.x);
-				const ys = uv.map((q) => q.y);
-				if (Math.max(...xs) <= 0 || Math.min(...xs) >= 1 || Math.max(...ys) <= 0 || Math.min(...ys) >= 1) continue;
-				let poly = convexHull(uv);
-				for (const f of [(q) => q.x, (q) => 1 - q.x, (q) => q.y, (q) => 1 - q.y]) poly = clipPolygon(poly, f);
-				if (poly.length >= 3 && Math.abs(polygonSignedArea(poly)) > 1e-4) polys.push(poly);
 			}
 			if (polys.length) B.castShadows[face.name] = polys;
 		}

@@ -31,12 +31,16 @@ function renderPerspective(g, comp, {W, H, debug = false}) {
 	// Ground shadows on screen. A depth on the ground is a screen row, so each
 	// interval washes the band of rows between its events: no seams, no overlaps.
 	const groundShadows = comp.groundShadows.map((poly) => poly.map((q) => comp.frame.point(q.x, q.y)));
+	const groundAreas = (comp.groundAreas || []).map((area) => ({...area, poly: area.poly.map((q) => comp.frame.point(q.x, q.y))})).sort((u, v) => GROUND_ORDER[u.kind] - GROUND_ORDER[v.kind]);
 	const rowOf = (depth) => comp.scene.horizonY + (comp.scene.d * comp.frame.eyeHeight) / depth;
 
 	let cursor = 0;
 	const drawGround = (k) => {
 		setPencilItemDepth(null);
-		washGroundShadows(g, groundShadows, k === 0 ? -Infinity : rowOf(cuts[k - 1]), k === cuts.length ? Infinity : rowOf(cuts[k]));
+		const y0 = k === 0 ? -Infinity : rowOf(cuts[k - 1]);
+		const y1 = k === cuts.length ? Infinity : rowOf(cuts[k]);
+		paintGround(g, comp, groundAreas, Math.max(y0, comp.scene.horizonY), y1, W);
+		washGroundShadows(g, groundShadows, y0, y1);
 		for (const l of groundByInterval[k]) pencilLine(g, l.p, l.q, {...PENCIL_PRESETS[l.preset], ink: GRAPHITE, capStart: l.capStart, capEnd: l.capEnd});
 	};
 	const advanceTo = (k) => {
@@ -49,8 +53,10 @@ function renderPerspective(g, comp, {W, H, debug = false}) {
 		}
 	};
 
-	// The sun is farther than anything: drawn first, everything else covers it
+	// The sky and the sun are farther than anything: drawn first, everything else covers them
+	paintSky(g, comp, W);
 	if (comp.sun.inFrame(W)) drawSunDisc(g, comp.sun);
+	drawClouds(g, comp, W);
 	drawGround(0);
 	for (const it of comp.items) {
 		// Painter order runs roughly far to near; the events only ever move forward
@@ -112,13 +118,17 @@ function drawTerrain(g, layer, comp) {
 const TERRAIN_WASH = [0.03, 0.22];
 const SLOPE_WASH = [0.3, 0.72];
 const SLOPE_PASSES = 8; // stacked washes reaching farther down, so the shade fades
-const SPUR_SLANT = 0.35; // the shade's edge leans toward the light as it runs down
+// The shade's edge leans away from the light as it runs down, as the shadows on
+// the ground do: more under a low sun, whose shadows are long
+const SPUR_SLANT = [0.12, 0.6];
 const SLOPE_SCALE = 14; // px: crest bumps smaller than this don't make faces of their own
 
-/** A layer's flat wash; `near` is 0 for the farthest layer, 1 for the nearest. Snow stays white. */
+/** A layer's colour and flat wash; `near` is 0 for the farthest layer, 1 for the nearest. Snow stays white. */
 function toneTerrain(g, layer, near) {
 	const snow = layer.style.snowLine;
 	const top = snow ? layer.ridge.map((p) => (p.k > snow ? layer.point(p.X, snow) : p)) : layer.ridge;
+	const [far, close] = TINTS.terrain[layer.style.kind] || TINTS.terrain.hills;
+	paint(g, [[...top, ...layer.base]], mixTint(far, close, near));
 	wash(g, [[...top, ...layer.base]], TERRAIN_WASH[0] + (TERRAIN_WASH[1] - TERRAIN_WASH[0]) * near);
 }
 
@@ -126,10 +136,14 @@ function toneTerrain(g, layer, near) {
  * The slopes turned from the light: runs of the crest that rise toward it. Under
  * each, washes hang from the crest, each pass reaching farther down a ragged
  * line, so the shade is darkest at the top. At the peak, the shade's edge runs
- * down toward the light like a spur, drawn as a light stroke.
+ * down away from the light like a spur, drawn as a light stroke.
  */
 function shadeSlopes(g, layer, comp, near) {
-	const side = comp.sun.toneSide;
+	// The real sun's side, as for the cast shadows; the drawing light's only when
+	// the sun stands almost straight ahead or behind
+	const sv = comp.sun.view;
+	const side = Math.abs(sv.x) > 0.1 ? Math.sign(sv.x) : comp.sun.toneSide;
+	const slant = Math.min(SPUR_SLANT[1], Math.max(SPUR_SLANT[0], (0.3 * Math.abs(sv.x)) / Math.max(0.05, sv.y)));
 	const base = layer.base[0].y;
 	const R = layer.ridge;
 	const seed = layer.depth * 0.0001;
@@ -167,7 +181,7 @@ function shadeSlopes(g, layer, comp, near) {
 
 	const below = (q, reach) => {
 		const drop = (base - q.p.y) * reach;
-		return pt(q.p.x + side * drop * SPUR_SLANT, Math.min(base, q.p.y + drop));
+		return pt(q.p.x - side * drop * slant, Math.min(base, q.p.y + drop));
 	};
 	const spur = {...PENCIL_PRESETS.detail, alpha: 34, ink: GRAPHITE};
 	for (const run of runs) {
@@ -261,14 +275,83 @@ function drawItem(g, it, comp) {
 	else if (it.kind === "bench") drawBench(g, it, comp);
 }
 
-/** Paper over what lies behind, with a light graphite grain so lit parts aren't blank. */
-function fillPaper(g, poly) {
+/**
+ * Paper over what lies behind, coloured with `tint` (RGB, see palette.js), with a
+ * light graphite grain so lit parts aren't blank.
+ */
+function fillPaper(g, poly, tint = null) {
 	g.noStroke();
 	g.fill(PAPER[0], PAPER[1], PAPER[2]);
 	g.beginShape();
 	for (const p of poly) g.vertex(p.x, p.y);
 	g.endShape(CLOSE);
+	if (tint) paint(g, [poly], tint);
 	wash(g, [poly], LIT_GRAIN);
+}
+
+/**
+ * Fill polygons (screen) with a flat colour, optionally clipped to a polygon:
+ * multiplied on what is there, laid over it ("source-over"), or lightening it ("screen").
+ */
+function paint(g, polys, rgb, {clip = null, mode = "multiply", alpha = 1} = {}) {
+	const ctx = g.drawingContext;
+	ctx.save();
+	ctx.globalAlpha = alpha;
+	if (clip) {
+		tracePolygons(ctx, [clip]);
+		ctx.clip();
+	}
+	ctx.globalCompositeOperation = mode;
+	ctx.fillStyle = `rgb(${rgb.map(Math.round).join(", ")})`;
+	tracePolygons(ctx, polys);
+	ctx.fill("nonzero");
+	ctx.restore();
+}
+
+/** A tint as it shows on the paper, to lay over (rather than multiply on) what is drawn. */
+function onPaper(tint) {
+	const paper = hsbToRgb(PAPER);
+	return tint.map((v, i) => (v * paper[i]) / 255);
+}
+
+// ----------------------------------------------------------------------------
+// Sky and ground colours
+// ----------------------------------------------------------------------------
+
+// Ground areas are laid in this order, each over the previous
+const GROUND_ORDER = {water: 0, road: 1, street: 1, sidewalk: 2, lot: 3, marking: 4};
+
+/** A pale gradient from the top of the sheet down to the horizon. */
+function paintSky(g, comp, W) {
+	const ctx = g.drawingContext;
+	const y = comp.scene.horizonY;
+	const [top, low] = TINTS.sky.map(onPaper);
+	const grad = ctx.createLinearGradient(0, 0, 0, y);
+	grad.addColorStop(0, `rgb(${top.map(Math.round).join(", ")})`);
+	grad.addColorStop(1, `rgb(${low.map(Math.round).join(", ")})`);
+	ctx.save();
+	ctx.fillStyle = grad;
+	ctx.fillRect(-40, -40, W + 80, y + 40);
+	ctx.restore();
+}
+
+/**
+ * The ground's colours between screen rows y0 and y1: the land, then water,
+ * streets, sidewalks and lots, then the grain over all of it.
+ */
+function paintGround(g, comp, areas, y0, y1, W) {
+	if (y1 <= y0) return;
+	const top = Math.max(y0, -1e4);
+	const bottom = Math.min(y1, 1e4);
+	const band = [pt(-40, top), pt(W + 40, top), pt(W + 40, bottom), pt(-40, bottom)];
+	paint(g, [band], onPaper(TINTS.land[comp.params.foreground] || TINTS.land.plain), {mode: "source-over"});
+	for (const area of areas) {
+		const ys = area.poly.map((q) => q.y);
+		if (Math.max(...ys) <= top || Math.min(...ys) >= bottom) continue;
+		const tint = area.kind === "lot" ? TINTS.lot[area.zone] : TINTS.ground[area.kind];
+		paint(g, [area.poly], onPaper(tint), {clip: band, mode: "source-over"});
+	}
+	wash(g, [band], LIT_GRAIN);
 }
 
 // Shading as a graphite wash multiplied over the drawing: lit faces stay white,
@@ -408,13 +491,37 @@ function shadeFace(g, bx, face, sun) {
 function drawBox(g, bx, comp, edgeOpts = {ink: GRAPHITE}) {
 	const minFace = 1.5;
 	for (const face of bx.faces) {
-		fillPaper(g, face.poly);
+		fillPaper(g, face.poly, faceTint(bx, face));
 		if (Math.abs(polygonSignedArea(face.poly)) < minFace) continue;
 		shadeFace(g, bx, face, comp.sun);
+		if (face.kind === "wall" && bx.style.facade === "curtain") drawGlints(g, bx, face, comp.sun);
 		if (face.kind === "wall" && bx.style.windows && bx.style.facade) drawFacade(g, bx, face);
 		if (face.kind === "slope") drawRoofCourses(g, bx, face);
 	}
 	for (const e of bx.edges) pencilLine(g, e.p, e.q, edgeOpts);
+}
+
+/**
+ * Light reflected by a glass wall: diagonal streaks across it, at the same slant
+ * on every face of the building, brighter on the face turned to the sun.
+ */
+function drawGlints(g, bx, face, sun) {
+	const m = bx.frame.metre;
+	const width = bx.faceWidth(face.name) / m;
+	const height = bx.h / m;
+	const r = pencilRng(bx.a, bx.b, face.name.charCodeAt(1), 5);
+	const slant = 0.6 + 0.6 * pencilRng(bx.a, bx.b, 6)();
+	const strength = 0.14 + 0.32 * (1 - sun.darkness(faceNormal(bx, face)));
+	// Streak coordinate t = s + k * slant (metres): runs from one corner of the face to the other
+	const streaks = [];
+	for (let t = -r() * 40; t < width + height * slant; t += 25 + r() * 60) {
+		if (r() < 0.3) continue;
+		const w = 3 + r() * 14;
+		let poly = [pt(t, 0), pt(t + w, 0), pt(t + w - height * slant, height), pt(t - height * slant, height)];
+		for (const f of [(q) => q.x, (q) => width - q.x, (q) => q.y, (q) => height - q.y]) poly = clipPolygon(poly, f);
+		if (poly.length >= 3) streaks.push(poly.map((q) => bx.facePoint(face.name, q.x / width, q.y / height)));
+	}
+	if (streaks.length) paint(g, streaks, TINTS.glint, {mode: "screen", alpha: strength, clip: face.poly});
 }
 
 // ----------------------------------------------------------------------------
@@ -432,6 +539,7 @@ function faceQuad(bx, face, u0, u1, v0, v1) {
 /** Draw a window-like quad unless it is smaller than a pencil tip. */
 function strokeQuad(g, quad, opts = DETAIL, minSize = 1.5) {
 	if (Math.hypot(quad[2].x - quad[0].x, quad[2].y - quad[0].y) < minSize) return false;
+	paint(g, [quad], TINTS.glass);
 	pencilPolyline(g, quad, opts, true);
 	return true;
 }
@@ -578,7 +686,8 @@ function drawAwning(g, bx, face, u0, u1) {
 	if (Math.hypot(B0.x - T0.x, B0.y - T0.y) < 2) return;
 
 	const canvas = [T0, T1, B1, B0];
-	fillPaper(g, canvas);
+	const cloth = pickTint(TINTS.awning, bx.a, bx.b, u0);
+	fillPaper(g, canvas, cloth);
 	if (bx.frame.camera().k < zTop) pencilHatch(g, canvas, {angle: HATCH_ANGLE, spacing: 6, alpha: 24, ink: GRAPHITE});
 	if (striped) {
 		// Stripes run from the wall to the edge, so they head for the VP of the wall's normal
@@ -602,13 +711,13 @@ function drawAwning(g, bx, face, u0, u1) {
 	]) {
 		if (!show) continue;
 		const side = [P(u, vt, 0), P(u, vb, depth), P(u, vv, depth), P(u, vv, 0)];
-		fillPaper(g, side);
+		fillPaper(g, side, cloth);
 		pencilPolyline(g, side, DETAIL, true);
 	}
 
 	// Valance hanging from the front edge
 	const valance = [B0, B1, P(u1, vv, depth), P(u0, vv, depth)];
-	fillPaper(g, valance);
+	fillPaper(g, valance, cloth);
 	pencilPolyline(g, valance, DETAIL, true);
 }
 
@@ -685,11 +794,12 @@ function drawLamp(g, lamp, comp) {
 	const w = 0.08 * lamp.ppm;
 	if (w > 0.8) {
 		const pole = [pt(lamp.base.x - w, lamp.base.y), pt(lamp.poleTop.x - w * 0.6, lamp.poleTop.y), pt(lamp.poleTop.x + w * 0.6, lamp.poleTop.y), pt(lamp.base.x + w, lamp.base.y)];
-		fillPaper(g, pole);
+		fillPaper(g, pole, TINTS.lamp);
 		pencilLine(g, pole[0], pole[1], edge);
 		pencilLine(g, pole[3], pole[2], edge);
 	} else pencilLine(g, lamp.base, lamp.poleTop, edge);
 	pencilPolyline(g, [lamp.poleTop, lamp.armMid, lamp.armEnd], edge);
+	lamp.head.tints = {wall: TINTS.lamp, roof: TINTS.lamp, top: TINTS.lamp};
 	drawBox(g, lamp.head, comp, edge);
 }
 
@@ -698,11 +808,14 @@ function drawBench(g, bench, comp) {
 	const edge = {...PENCIL_PRESETS.detail, ink: GRAPHITE};
 	for (const [p, q] of bench.legs) pencilLine(g, p, q, FAINT);
 	const parts = bench.backFirst ? [bench.back, bench.seat] : [bench.seat, bench.back];
-	for (const part of parts) drawBox(g, part, comp, edge);
+	for (const part of parts) {
+		part.tints = {wall: TINTS.bench, roof: TINTS.bench, top: TINTS.bench};
+		drawBox(g, part, comp, edge);
+	}
 }
 
 function drawCylinder(g, cyl, comp) {
-	fillPaper(g, cyl.outline);
+	fillPaper(g, cyl.outline, TINTS.silo);
 	const zt = cyl.z + cyl.h;
 	const p0 = cyl.rim(zt, cyl.t0);
 	const p1 = cyl.rim(zt, cyl.t1);
@@ -746,7 +859,7 @@ function drawTree(g, tree, comp) {
 	const tw = tree.trunkHalf;
 	if (tw > 0.8) {
 		const trunk = [pt(tree.base.x - tw, tree.base.y), pt(tree.trunkTop.x - tw * 0.7, tree.trunkTop.y), pt(tree.trunkTop.x + tw * 0.7, tree.trunkTop.y), pt(tree.base.x + tw, tree.base.y)];
-		fillPaper(g, trunk);
+		fillPaper(g, trunk, TINTS.trunk);
 		pencilLine(g, trunk[0], trunk[1], edge);
 		pencilLine(g, trunk[3], trunk[2], edge);
 	} else pencilLine(g, tree.base, tree.trunkTop, edge);
@@ -766,7 +879,7 @@ function drawTree(g, tree, comp) {
 		const k = 0.9 + 0.1 * Math.sin(t * 5 + ph1) + 0.05 * Math.sin(t * 9 + ph2) + 0.04 * r();
 		crown.push(pt(c.x + Math.cos(t) * R * k, c.y + Math.sin(t) * R * k * 0.92));
 	}
-	fillPaper(g, crown);
+	fillPaper(g, crown, crownTint(tree));
 	pencilPolyline(g, crown, edge, true);
 	if (R < 4) return;
 
@@ -813,12 +926,18 @@ function drawConifer(g, tree, comp, r, edge) {
 		}
 	}
 	const outline = [...right, ...left.reverse()];
-	fillPaper(g, outline);
+	fillPaper(g, outline, crownTint(tree));
 	pencilPolyline(g, outline, edge, true);
 	if (R < 4) return;
 	const {side, backlit} = treeShading(tree, comp);
 	if (backlit) wash(g, [outline], WASH[1]);
 	wash(g, [[apex, pt(apex.x + side * R, base.y), pt(apex.x, base.y)]], WASH[2], {clip: outline});
+}
+
+/** Green of a crown: by type, olive for desert shrubs. */
+function crownTint(tree) {
+	const list = tree.type === "conifer" ? TINTS.crown.conifer : tree.trunkH < 0.5 * tree.frame.metre ? TINTS.crown.shrub : TINTS.crown.round;
+	return pickTint(list, tree.ca, tree.cb);
 }
 
 /**
@@ -837,23 +956,115 @@ function treeShading(tree, comp) {
 	return {side: towardSun.x > c.x ? -1 : 1, backlit: facing < -0.3};
 }
 
-/** The sun disc, a ring of short rays half of the time. */
+/** The sun: a warm halo, a pale yellow disc, a ring of short rays half of the time. */
 function drawSunDisc(g, sun) {
 	const c = sun.rayVP;
 	const R = 24;
-	const opts = {...PENCIL_PRESETS.contour, alpha: 75, weight: 1.1};
+	const ctx = g.drawingContext;
+	ctx.save();
+	const halo = ctx.createRadialGradient(c.x, c.y, R * 0.8, c.x, c.y, R * 4);
+	halo.addColorStop(0, `rgba(${TINTS.sunHalo.join(", ")}, 0.55)`);
+	halo.addColorStop(1, `rgba(${TINTS.sunHalo.join(", ")}, 0)`);
+	ctx.fillStyle = halo;
+	ctx.fillRect(c.x - R * 4, c.y - R * 4, R * 8, R * 8);
+	ctx.restore();
 	const ring = [];
 	for (let i = 0; i < 40; i++) ring.push(pt(c.x + Math.cos((i / 40) * Math.PI * 2) * R, c.y + Math.sin((i / 40) * Math.PI * 2) * R));
-	pencilPolyline(g, ring, opts, true);
+	paint(g, [ring], onPaper(TINTS.sun), {mode: "source-over"});
+	const ink = [32, 60, 62];
+	pencilPolyline(g, ring, {...PENCIL_PRESETS.contour, alpha: 75, weight: 1.1, ink}, true);
 	const r = pencilRng(c.x, c.y, 77);
 	if (r() < 0.5) return;
-	const rayOpts = {...PENCIL_PRESETS.detail, alpha: 45};
+	const rayOpts = {...PENCIL_PRESETS.detail, alpha: 55, ink};
 	for (let i = 0; i < 16; i++) {
 		const t = (i / 16) * Math.PI * 2 + r() * 0.1;
 		const r0 = R * 1.45;
 		const r1 = R * (i % 2 ? 1.85 : 2.3);
 		pencilLine(g, pt(c.x + Math.cos(t) * r0, c.y + Math.sin(t) * r0), pt(c.x + Math.cos(t) * r1, c.y + Math.sin(t) * r1), rayOpts);
 	}
+}
+
+// ----------------------------------------------------------------------------
+// Clouds
+// ----------------------------------------------------------------------------
+
+/**
+ * Fair-weather cumulus: puffs heaped on a flat base, the base in a light
+ * shade, a pencil line along the top. Clouds near the horizon are farther:
+ * smaller and flatter. Picked with the pencil's seed, never p5's random.
+ */
+function drawClouds(g, comp, W) {
+	const horizon = comp.scene.horizonY;
+	if (horizon < 180) return;
+	const r = pencilRng(W, horizon, 93);
+	const count = Math.floor(2 + r() * 5);
+	const clouds = [];
+	for (let i = 0; i < count; i++) {
+		// Up the sky is nearer: bigger, taller clouds
+		const up = r() ** 0.8;
+		const baseY = horizon - 70 - up * (horizon - 110);
+		const near = (horizon - baseY) / horizon;
+		clouds.push({x: r() * W, baseY, width: (80 + r() * 150) * (0.4 + near), height: (0.6 + 0.4 * r()) * (0.55 + near * 0.6), r});
+	}
+	// Farthest (lowest) first
+	clouds.sort((u, v) => v.baseY - u.baseY);
+	for (const cl of clouds) drawCloud(g, cl);
+}
+
+function drawCloud(g, {x, baseY, width, height, r}) {
+	// Puffs along the base, biggest toward the middle
+	const n = Math.max(3, Math.round(width / 28));
+	const puffs = [];
+	for (let i = 0; i < n; i++) {
+		const t = (i + 0.5) / n - 0.5;
+		const rad = (width / n) * (0.6 + 1.1 * (1 - Math.abs(t) * 1.7) + 0.4 * r()) * height;
+		puffs.push({x: x + t * width * 0.9, y: baseY - rad * (0.15 + 0.45 * r()), rad});
+	}
+	const circle = (p, k = 1) => {
+		const pts = [];
+		for (let i = 0; i < 28; i++) pts.push(pt(p.x + Math.cos((i / 28) * Math.PI * 2) * p.rad * k, p.y + Math.sin((i / 28) * Math.PI * 2) * p.rad * k * 0.82));
+		return pts;
+	};
+	const shapes = puffs.map((p) => circle(p));
+	const above = [pt(x - width * 2, -1e4), pt(x + width * 2, -1e4), pt(x + width * 2, baseY), pt(x - width * 2, baseY)];
+	const ctx = g.drawingContext;
+	// Body (cut flat at the base), then the shaded underside
+	ctx.save();
+	tracePolygons(ctx, [above]);
+	ctx.clip();
+	paint(g, shapes, onPaper(TINTS.cloud), {mode: "source-over", alpha: 0.92});
+	const top = Math.min(...puffs.map((p) => p.y - p.rad));
+	// Shade rising from the base, fading upward
+	ctx.save();
+	tracePolygons(ctx, shapes);
+	ctx.clip("nonzero");
+	const grad = ctx.createLinearGradient(0, baseY, 0, baseY - (baseY - top) * 0.55);
+	grad.addColorStop(0, `rgba(${TINTS.cloudShade.join(", ")}, 1)`);
+	grad.addColorStop(1, `rgba(${TINTS.cloudShade.join(", ")}, 0)`);
+	ctx.globalCompositeOperation = "multiply";
+	ctx.fillStyle = grad;
+	ctx.fillRect(x - width * 2, top, width * 4, baseY - top);
+	ctx.restore();
+	wash(g, shapes, LIT_GRAIN * 0.6);
+	ctx.restore();
+
+	// Pencil along the outer outline: the parts of each puff inside no other puff, above the base
+	const opts = {...PENCIL_PRESETS.detail, alpha: 38, ink: GRAPHITE};
+	const inside = (q, j) => puffs.some((p, k) => k !== j && ((q.x - p.x) / p.rad) ** 2 + ((q.y - p.y) / (p.rad * 0.82)) ** 2 < 0.98);
+	shapes.forEach((ring, j) => {
+		let run = [];
+		const flush = () => {
+			if (run.length > 1) pencilPath(g, run, opts);
+			run = [];
+		};
+		for (let i = 0; i <= ring.length; i++) {
+			const q = ring[i % ring.length];
+			if (q.y < baseY - 0.5 && !inside(q, j)) run.push(q);
+			else flush();
+		}
+		flush();
+	});
+	pencilLine(g, pt(x - width * 0.45, baseY), pt(x + width * 0.45, baseY), {...opts, alpha: 18});
 }
 
 /** The ground shadows' wash between screen rows y0 and y1. */
