@@ -323,7 +323,8 @@ function graphiteGrain(ctx) {
 			const m = mottle[i];
 			let a = 0.5 + 0.5 * m * m * (3 - 2 * m) + (r() - 0.5) * 0.12;
 			const t = r();
-			if (t < 0.1) a *= 0.35; // bare tooth
+			if (t < 0.1)
+				a *= 0.35; // bare tooth
 			else if (t > 0.975) a = Math.min(1, a + 0.35); // particle
 			img.data[i * 4] = ir;
 			img.data[i * 4 + 1] = ig;
