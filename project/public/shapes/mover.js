@@ -1,6 +1,5 @@
 class Mover {
 	constructor(x, y, scl1, scl2, scl3, sclOffset1, sclOffset2, sclOffset3, amplitude1, amplitude2, xMin, xMax, yMin, yMax, isBordered, rseed, nseed, preCalculatedPalette) {
-		// Resolved config (parameters/configs.js + panel multipliers) — see resolveParams()
 		this.cfg = ACTIVE_CONFIG;
 		this.x = x;
 		this.initX = x;
@@ -27,7 +26,6 @@ class Mover {
 		this.amplitude2 = amplitude2;
 		this.rseed = rseed;
 		this.nseed = nseed;
-		// Constant superCurve inputs, built once per mover
 		this.curve = {
 			scale1: scl1,
 			scale2: scl2,
@@ -59,7 +57,7 @@ class Mover {
 		// Start from the last color (inverted progression)
 		this.colorIndex = this.palette.length - 1;
 
-		// Pre-calculate padding values (fraction of the short edge)
+		// Pre-calculate padding values
 		const [wrapFactorX, wrapFactorY] = this.cfg.wrap.padding;
 		this.wrapPaddingX = (min(width, height) * wrapFactorX) / width;
 		this.wrapPaddingY = WRAP_Y_MODES[this.cfg.wrap.yMode](this.wrapPaddingX, wrapFactorY);
@@ -143,30 +141,28 @@ class Mover {
 // WRAP HELPERS
 // ============================================================================
 
-// Y wrap padding, normalized to height
 const WRAP_Y_MODES = {
 	ratio: (padX, factorY) => ((min(width, height) * factorY) / height) * ARTWORK_RATIO,
 	plain: (padX, factorY) => (min(width, height) * factorY) / height,
 	fromX: (padX) => padX * ARTWORK_RATIO,
 };
 
-// Fixed reentry (number) or random range ([min, max])
 function reentryFactor(reentry) {
 	return Array.isArray(reentry) ? random(reentry[0], reentry[1]) : reentry;
 }
 
 // ============================================================================
-// SUPERCURVE MODES (the old //! blocks — pick them per config in configs.js)
+// SUPERCURVE MODES
 // ============================================================================
 
-//! un / vn generators
+//! un / vn
 const FLOW_MODES = {
 	//! sine x cos
 	sine: (nx, ny, s) => [
 		sin(nx * (s.scale1 * s.scaleOffset1) + s.rseed) + cos(nx * (s.scale2 * s.scaleOffset2) + s.rseed) - sin(nx * (s.scale3 * s.scaleOffset3) + s.rseed),
 		cos(ny * (s.scale1 * s.scaleOffset1) + s.rseed) + sin(ny * (s.scale2 * s.scaleOffset2) + s.rseed) - cos(ny * (s.scale3 * s.scaleOffset3) + s.rseed),
 	],
-	//! noise (rug / landscape)
+	//! noise
 	noise: (nx, ny, s) => [
 		noise(nx * (s.scale1 * s.scaleOffset1) + s.rseed) + noise(nx * (s.scale2 * s.scaleOffset2) + s.rseed) - noise(nx * (s.scale3 * s.scaleOffset3) + s.rseed),
 		noise(cos(ny * (s.scale1 * s.scaleOffset1) + s.rseed)) + noise(ny * (s.scale2 * s.scaleOffset2) + s.rseed) - noise(ny * (s.scale3 * s.scaleOffset3) + s.rseed),
@@ -178,7 +174,7 @@ const FLOW_MODES = {
 	],
 };
 
-//! min / max bounds → [maxU, maxV, minU, minV]
+//! [maxU, maxV, minU, minV]
 const BOUNDS_MODES = {
 	//! pNoise x SineCos
 	pNoise: (nx, ny, s, b) => {
@@ -217,10 +213,9 @@ const BOUNDS_MODES = {
 	standard: () => [1, 1, -1, -1],
 };
 
-//! u / v mapping → [u, v]
+//! [u, v]
 const UV_MODES = {
 	//! Introverted
-	//* higher span gives particles a more introverted movement
 	introverted: (un, vn, nx, ny, s, uv, [maxU, maxV, minU, minV]) => [
 		map(vn, map(nx, s.xMin * width, s.xMax * width, -uv.span, -uv.inner), map(nx, s.xMin * width, s.xMax * width, uv.inner, uv.span), minU, maxU, true),
 		map(un, map(ny, s.yMin * height, s.yMax * height, -uv.span, -uv.inner), map(ny, s.yMin * height, s.yMax * height, uv.inner, uv.span), minV, maxV, true),
@@ -237,17 +232,17 @@ const UV_MODES = {
 	],
 };
 
-//! ZZ zigzag → [zu, zv]. zzu / zzv are already mapped onto min/max when zz.mapRange is set
+//! ZZ → [zu, zv]
 const ZZ_RULES = {
-	//! raw — ZZ everywhere (ZZ already returns x for negatives)
+	//! raw
 	raw: (u, v, zzu, zzv) => [zzu, zzv],
-	//! half — LIGNIS OG, zigzag on positives only
+	//! half (LIGNIS OG)
 	half: (u, v, zzu, zzv) => [u < 0 ? u : zzu, v < 0 ? v : zzv],
-	//! sym — preserve sign, zigzag both sides
+	//! sym
 	sym: (u, v, zzu, zzv) => [u < 0 ? -zzu : zzu, v < 0 ? -zzv : zzv],
-	//! cross — u and v swapped on negatives (stacked)
+	//! cross
 	cross: (u, v, zzu, zzv) => [u < 0 ? -zzv : zzu, v < 0 ? -zzu : zzv],
-	//! abs — ZZ equilibrium, negatives use their own k (zz.kNeg)
+	//! abs (negatives use zz.kNeg)
 	abs: (u, v, zzu, zzv, zz, bounds) => [u < 0 ? -zzValue(Math.abs(u), zz.kNeg ?? zz.ku, zz, bounds[2], bounds[0]) : zzu, v < 0 ? -zzValue(Math.abs(v), zz.kNeg ?? zz.kv, zz, bounds[3], bounds[1]) : zzv],
 };
 

@@ -19,10 +19,8 @@ const AUDIO_SOURCE = "microphone"; // "microphone" | "chime" (mic opens on first
 // Canvas sizing — FORCE_SIZE true uses FIXED_WIDTH/HEIGHT; false uses viewport + ARTWORK_RATIO + ORIENTATION
 const CANVAS_CONFIG = {
 	BASE_WIDTH: 1000,
-	// Long : short edge (e.g. 1.77). Combined with ORIENTATION → 1.77:1 or 1:1.77
 	ARTWORK_RATIO: 1.21,
 	ORIENTATION: "vertical", // "horizontal" | "vertical"
-	// Fraction of the shorter canvas edge — equal absolute border on all sides
 	ARTWORK_PADDING: 0.05,
 	WRAP_PADDING_FACTOR: 0.0,
 	SCALE_FACTOR_X: 1.0,
@@ -30,14 +28,9 @@ const CANVAS_CONFIG = {
 	FORCE_SIZE: false,
 	FIXED_WIDTH: 240,
 	FIXED_HEIGHT: 228,
-	// Shared by p5 mainCanvas, display/shader canvas, and shader pipeline
 	PIXEL_DENSITY: 2,
 	PIXEL_DENSITY_MOBILE: 1,
-	// Shader output framing (final pass only).
-	// fitCanvas: true = no crop (full texture). false = object-fit cover with width:height.
-	// matchArtwork: true = derive width/height from ARTWORK_RATIO + ORIENTATION (or FIXED_*).
 	SHADER_RENDER: {fitCanvas: false, matchArtwork: true, width: 1, height: 1},
-	// Master shader animation speed — 1.0 = default, 0.5 = half, 2.0 = double
 	SHADER_ANIMATION_SPEED: 1.0,
 };
 
@@ -45,18 +38,17 @@ const CANVAS_CONFIG = {
 const WRAP_PADDING_FACTOR = CANVAS_CONFIG.WRAP_PADDING_FACTOR;
 const BASE_PADDING = CANVAS_CONFIG.ARTWORK_PADDING;
 
-// Particle size comes from the active config (render.particleSize), in canvas units at PARTICLE_DPI_REFERENCE density
+// Particle size in canvas units at PARTICLE_DPI_REFERENCE density
 // (curve + defaults in library/utils/utils.js → particleDensityScale)
-const PARTICLE_DPI_REFERENCE = 4; // density particle sizes are expressed at
+const PARTICLE_DPI_REFERENCE = 4;
 const PARTICLE_DPI_COMPENSATION = 0.7; // 0 = no compensation; omit either to use utils defaults
 
-// Animation configuration — overwritten from ACTIVE_CONFIG in setup() / Apply
+// Animation configuration (from ACTIVE_CONFIG)
 let maxFrames = 25;
 let particleNum = 500000;
 let cycle = computeCycle(maxFrames, particleNum);
 
 function computeCycle(frames, population) {
-	// Divisor scales with population: 1150 @ 500k, ~150 @ 100k
 	const divisor = Math.max(1, Math.round(1150 * Math.pow(population / 500000, 1.25)));
 	return parseInt((frames * population) / divisor);
 }
@@ -78,7 +70,7 @@ let ARTWORK_RATIO = CANVAS_CONFIG.ARTWORK_RATIO;
 // Calculated dimensions (set in setup())
 let DIM; // Canvas dimension (min of canvas width/height)
 let MULTIPLIER; // Scaling factor based on screen size
-let CONFIG_MULTIPLIER = 1; // MULTIPLIER as the active config knew it (render.sizeRef) — set in INIT
+let CONFIG_MULTIPLIER = 1; // MULTIPLIER of the active config's layout
 let W = window.innerWidth; // Window width
 let H = window.innerHeight; // Window height
 
@@ -115,11 +107,7 @@ function getCanvasDimensions() {
 	return {width: viewportDim, height: viewportDim / r};
 }
 
-/**
- * Artwork padding from the active framing (ACTIVE_CONFIG.layout.padding); returns normalized {x, y}.
- * Number = equal absolute padding, a fraction of min(canvasW, canvasH).
- * {x, y} = legacy per-axis padding, already normalized to width / height.
- */
+// Padding from ACTIVE_CONFIG.layout: number = fraction of the short edge, {x, y} = per axis
 function getArtworkPaddingNorm(canvasW = width, canvasH = height) {
 	const padding = ACTIVE_CONFIG.layout?.padding ?? CANVAS_CONFIG.ARTWORK_PADDING;
 	if (typeof padding === "object") {
@@ -221,7 +209,7 @@ let rseed, nseed; // Random and noise seeds
 let xMin, xMax, yMin, yMax;
 let isBordered = true;
 
-let drawLoop = null; // createSketchDrawLoop instance
+let drawLoop = null;
 
 async function setup() {
 	console.log(features);
@@ -232,13 +220,11 @@ async function setup() {
 	// Reset the random seed to ensure consistency
 	$fx.rand.reset();
 
-	// p5.js 2.0 removed preload() — load assets here with async/await
-	// Initialize shader effects (will load all shaders) - optional
+	// p5.js 2.0 removed preload()
 	if (shadersEnabled()) {
 		await shaderEffects.preload(window);
 	}
 
-	// Initialize swatch palette system
 	swatchPalette = new SwatchPalette();
 
 	// Load swatch palettes - REQUIRED for this project (no hardcoded fallback)
@@ -321,7 +307,7 @@ async function setup() {
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
 
-	// Lock seeds on first run so Apply doesn't change the underlying randomness
+	// Lock seeds so Apply keeps the same randomness
 	if (window.PARAMS_UI && !window.PARAMS_UI.lockedSeeds) {
 		window.PARAMS_UI.lockedSeeds = {
 			mainRandomSeed,
@@ -419,7 +405,6 @@ function startPanelLoop() {
 	panelLoopId = requestAnimationFrame(tick);
 }
 
-// Zoom from CANVAS_CONFIG × active framing (ACTIVE_CONFIG.layout.scale). Re-applied on Apply.
 function canvasSetup() {
 	try {
 		mainCanvas?.resetMatrix?.();
@@ -432,7 +417,7 @@ function canvasSetup() {
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
 }
 
-// External frame (ported from retro-futura) — drawn around the artwork bounds set in INIT
+// External frame (from retro-futura)
 function renderOutsideFrame() {
 	mainCanvas.colorMode(HSL, 360, 100, 100, 100);
 	let firstParticleColor = baseHSLPalette[baseHSLPalette.length - 1];
@@ -469,7 +454,6 @@ function renderOutsideFrame() {
 	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW, baseRectH);
 }
 
-// Exposure / population from the active config (or the panel override)
 function applyRenderSettings() {
 	maxFrames = ACTIVE_CONFIG.render.maxFrames;
 	particleNum = ACTIVE_CONFIG.render.particleNum;
@@ -477,7 +461,6 @@ function applyRenderSettings() {
 }
 
 function startSketchAnimation() {
-	// Notify UI that a render is starting (panel spinner, status text, etc.)
 	window.dispatchEvent(new CustomEvent("render:started"));
 
 	const drawFirstFrame = ACTIVE_CONFIG.render.drawFirstFrame;
@@ -506,7 +489,6 @@ function startSketchAnimation() {
 			$fx.preview();
 			document.complete = true;
 
-			// Notify UI that render is complete
 			window.dispatchEvent(new CustomEvent("render:completed"));
 
 			// Create download button after sketch is complete
@@ -520,7 +502,6 @@ function startSketchAnimation() {
 	generator = createAnimationGenerator(animConfig);
 }
 
-// Inform UI about available palettes + selected palette (after INIT chooses it)
 function dispatchSwatchesReady() {
 	window.dispatchEvent(
 		new CustomEvent("swatches:ready", {
@@ -558,8 +539,7 @@ function INIT(rseed, nseed) {
 	// across different environments regardless of loading timing
 	const sortedSwatchNames = [...swatchNames].sort();
 
-	// Select directly from sorted swatch palettes, unless the panel forces one by name
-	// (the fxrand draw above always happens so the rest of the sequence stays the same)
+	// Select directly from sorted swatch palettes, unless the panel forces one
 	const forcedPaletteName = CURRENT_PARAMS.paletteName;
 	if (forcedPaletteName && sortedSwatchNames.includes(forcedPaletteName)) {
 		selectedPalette = sortedSwatchNames.indexOf(forcedPaletteName);
@@ -573,7 +553,6 @@ function INIT(rseed, nseed) {
 		throw new Error(`Selected swatch palette '${currentPaletteName}' is empty or invalid`);
 	}
 
-	// Copy before reversing — getPalette may return the cached array
 	if (CURRENT_PARAMS.paletteDirection === "reversed") {
 		baseHSLPalette = [...baseHSLPalette].reverse();
 	}
@@ -581,7 +560,6 @@ function INIT(rseed, nseed) {
 	const cfg = ACTIVE_CONFIG;
 	console.log(`[config] ${configLabel(cfg.id)} (${cfg.commit}) · palette ${currentPaletteName}`);
 
-	// MULTIPLIER as it was when the config was made (older layouts used another reference size)
 	CONFIG_MULTIPLIER = cfg.render.sizeRef ? min(width, height) / cfg.render.sizeRef : MULTIPLIER;
 
 	// Scale noise values based on MULTIPLIER
@@ -595,7 +573,6 @@ function INIT(rseed, nseed) {
 	let amplitude1 = cfg.flow.a1 * amplitudeScale;
 	let amplitude2 = cfg.flow.a2 * amplitudeScale;
 
-	// Artwork padding from the active framing (see getArtworkPaddingNorm)
 	const {x: padX, y: padY} = getArtworkPaddingNorm(width, height);
 	xMin = padX;
 	xMax = 1 - padX;
@@ -628,7 +605,7 @@ function shadersEnabled() {
 }
 
 // ============================================================================
-// UI APPLY HOOK (ParamsPanel → re-render with the same seeds)
+// UI APPLY HOOK
 // ============================================================================
 
 window.applyGenerativeSettings = async function applyGenerativeSettings(settings) {

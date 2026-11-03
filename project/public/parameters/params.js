@@ -9,9 +9,7 @@ seed = parseInt(fxrand() * 10000000);
 // ============================================================================
 // RUNTIME UI PARAMETERS (EXLIBRIS-style control panel)
 // ============================================================================
-// Keep options centralized here. Sketch + UI read from this object.
-// Same controls / labels / values as retro-futura. Each one is a multiplier on the active config
-// (the default value = the config untouched), except the absolute ones where "config" keeps the config value.
+// Same controls as retro-futura, as multipliers on the active config ("config" = keep the config value).
 window.PARAMS_UI = window.PARAMS_UI ?? {
 	// ---- Available options (drives the UI dropdowns) ----
 	options: {
@@ -33,19 +31,19 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		swirlIndex: ["none", "low", "medium", "high", "veryHigh", "extreme"],
 		zigzag: ["hairline", "fine", "normal", "large", "XL"],
 		noiseScale: ["low", "medium", "high", "intense", "extreme"],
-		palettes: [], // filled once swatches are loaded
+		palettes: [],
 		paletteDirections: ["default", "reversed"],
 	},
 
-	// ---- Lookup maps (single source of truth for every enum → multiplier on the config) ----
+	// ---- Lookup maps (enum → multiplier) ----
 	maps: {
-		swirl: {none: 1, low: 2, medium: 5, high: 10, veryHigh: 25, extreme: 50}, // × warp amplitude a1 / a2
-		zigzag: {hairline: 0.36, fine: 0.6, normal: 1, large: 1.4, XL: 1.8}, // × ZZ k (retro-futura values / normal)
-		noiseScale: {low: 1, medium: 2, high: 4, intense: 6, extreme: 8}, // × bounds noiseScale (retro-futura values)
-		patternIntensity: {low: 0.5, normal: 1, high: 1.5, intense: 2, extreme: 4}, // × U / V bounds
-		speed: {veryFast: 0.33, fast: 0.56, standard: 1, slow: 1.67, snail: 11.1}, // × divider (retro-futura values / standard)
-		innerFlow: {low: 0.5, standard: 1, medium: 2, high: 5}, // × uv.inner
-		outerFlow: {low: 0.5, standard: 1, medium: 2, high: 5}, // × uv.span
+		swirl: {none: 1, low: 2, medium: 5, high: 10, veryHigh: 25, extreme: 50},
+		zigzag: {hairline: 0.36, fine: 0.6, normal: 1, large: 1.4, XL: 1.8},
+		noiseScale: {low: 1, medium: 2, high: 4, intense: 6, extreme: 8},
+		patternIntensity: {low: 0.5, normal: 1, high: 1.5, intense: 2, extreme: 4},
+		speed: {veryFast: 0.33, fast: 0.56, standard: 1, slow: 1.67, snail: 11.1},
+		innerFlow: {low: 0.5, standard: 1, medium: 2, high: 5},
+		outerFlow: {low: 0.5, standard: 1, medium: 2, high: 5},
 	},
 
 	// ---- Current selections (string keys or plain numbers) ----
@@ -77,7 +75,6 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 	},
 
 	// ---- UI metadata (drives ParamsPanel control generation) ----
-	// kind / format are optional declarative hints for the reusable panel module
 	ui: [
 		{
 			key: "config",
@@ -96,7 +93,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			key: "paletteName",
 			id: "param-palette",
 			label: "Palette",
-			optionsKey: "palettes", // populated via swatches:ready
+			optionsKey: "palettes",
 			kind: "palette",
 		},
 		{
@@ -104,7 +101,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			id: "param-palette-direction",
 			label: "Palette direction",
 			optionsKey: "paletteDirections",
-			section: "palette", // rendered inside the palette fieldset at the bottom of the panel
+			section: "palette",
 		},
 		{
 			key: "exposure",
@@ -234,7 +231,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		},
 	],
 
-	// ---- Resolved values (numeric/boolean — read by sketch + mover) ----
+	// ---- Resolved values ----
 	resolved: {},
 
 	lockedSeeds: null,
@@ -245,16 +242,14 @@ function configLabel(id) {
 	return cfg ? `${cfg.family} · ${cfg.label}` : id;
 }
 
-// "config" (or anything non numeric) = keep the config value
 function configOverride(value, fallback) {
 	const num = Number(value);
 	return value === "config" || !Number.isFinite(num) ? fallback : num;
 }
 
-// Resolved config read by Mover / INIT. Mutated in place so the const alias stays live.
+// Read by Mover / INIT, mutated in place
 const ACTIVE_CONFIG = {};
 
-// Builds ACTIVE_CONFIG from the selected config + panel multipliers + framing
 function resolveActiveConfig(current, maps) {
 	const base = LIGNIS_CONFIGS[current.config] ?? LIGNIS_CONFIGS[DEFAULT_CONFIG_ID];
 	const speedX = maps.speed[current.horizontalSpeed] ?? 1;
@@ -298,11 +293,8 @@ function resolveActiveConfig(current, maps) {
 	Object.assign(ACTIVE_CONFIG, resolved, {id: LIGNIS_CONFIGS[current.config] ? current.config : DEFAULT_CONFIG_ID});
 }
 
-// Derives resolved values from current selections.
-// Call this once after any change to PARAMS_UI.current.
 window.resolveParams = function resolveParams() {
 	const {current, maps} = window.PARAMS_UI;
-	// Mutate the *same* object so any `const` alias (CURRENT_PARAMS) stays live.
 	Object.assign(window.PARAMS_UI.resolved, {
 		config: current.config,
 		framing: current.framing,
@@ -315,10 +307,8 @@ window.resolveParams = function resolveParams() {
 	resolveActiveConfig(current, maps);
 };
 
-// Populate resolved on first load.
 window.resolveParams();
 
-/** Groups the four noise-scale selects into one labelled row. */
 window.groupNoiseScaleControls = function groupNoiseScaleControls() {
 	const form = document.querySelector(".controls-form");
 	if (!form || form.querySelector(".noise-scale-group")) return;

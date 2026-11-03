@@ -1,13 +1,11 @@
 //* LIGNIS CONFIGS *//
-// Every config is a full description of one "look" (superCurve modes + motion + framing).
-// Template chain: BASE_CONFIG → FAMILY_* → config. Each level only writes what changes.
-// Values are ported from the commit listed in `commit` (git show <commit>:project/public/shapes/mover.js).
+// BASE_CONFIG → FAMILY_* → config, each level only writes what changes.
 
 // ============================================================================
 // TEMPLATE HELPERS
 // ============================================================================
 
-// Deep merge for plain objects. Arrays and primitives are replaced, never merged.
+// Deep merge, arrays are replaced
 function defineConfig(parent, overrides = {}) {
 	const out = {...parent};
 	for (const [key, value] of Object.entries(overrides)) {
@@ -18,49 +16,43 @@ function defineConfig(parent, overrides = {}) {
 }
 
 // ============================================================================
-// BASE (= current ex-lignis state, LIGNIS OG)
+// BASE (= LIGNIS OG)
 // ============================================================================
 
 const BASE_CONFIG = {
 	label: "",
 	family: "",
 	commit: "",
-	// Domain warp (3 oct() passes) + un/vn generator — see FLOW_MODES in mover.js
 	flow: {mode: "sine", octave: 1, a1: 1, a2: 1, scaleAmplitude: true},
-	// scl are divided by the canvas multiplier in INIT
 	noise: {scl: [0.002, 0.002, 0.002], sclOffset: [1, 1, 1], noiseScale: [1, 1, 1, 1]},
-	// min/max flow bounds — see BOUNDS_MODES. input = oct() range mapped onto [lo, hi]
 	bounds: {mode: "pNoise", octave: 1, input: 0.005, maxU: [-1, 1], maxV: [-1, 1], minU: [-1, 1], minV: [-1, 1]},
-	// u/v mapping — see UV_MODES. Higher span = more binary / blocky
 	uv: {mode: "introverted", inner: 0.0000001, span: 1.5},
-	// ZZ zigzag — see ZZ_RULES. mapRange null = raw ZZ value (no map onto min/max)
+	// mapRange null = raw ZZ
 	zz: {rule: "half", m: 35, b: 80, ku: 0.018, kv: 0.018, kNeg: null, mapRange: 1},
-	// Divider = step size (bigger = slower). skipper = random jitter that fades over skipperFrames * maxFrames
 	motion: {xDiv: 0.021, yDiv: 0.021, skipper: 0, skipperFrames: 0.5, reentryDecay: true, colorDivider: 1.25},
-	// Wrap padding is a fraction of the short edge. yMode: "ratio" | "plain" | "fromX". reentry: number or [min, max]
+	// reentry: number or [min, max]
 	wrap: {padding: [0, 0], yMode: "ratio", multiplier: 1, reentry: [0.025, 0.08]},
-	// sizeRef: short-edge reference of the MULTIPLIER used when the config was made (null = current layout)
+	// sizeRef: MULTIPLIER reference of older layouts (null = current)
 	render: {particleSize: 0.75, particleNum: 500000, maxFrames: 25, drawFirstFrame: false, sizeRef: null},
-	// Framing — scale = canvas zoom, padding = number (fraction of short edge) or {x, y} (fraction per axis)
+	// padding: number (fraction of short edge) or {x, y} (per axis)
 	layout: {scale: 1, padding: 0.05},
 };
 
-// Shared by every config when the "Framing" control is set to uniform
+// Framing: uniform
 const UNIFORM_LAYOUT = {scale: 1, padding: 0.05};
 
-// MULTIPLIER references of older layouts (short edge that gave MULTIPLIER = 1)
-const SIZE_REF_1185 = 1185; // BASE_WIDTH 948, MULTIPLIER = shortEdge / 1185 (july → october 2025)
-const SIZE_REF_1250 = 1250; // BASE_WIDTH 1000, MULTIPLIER = shortEdge / 1250 (august → november 2025)
-const SIZE_REF_1000 = 1000; // canvas sized on the long edge, MULTIPLIER = shortEdge / 1000 (april → june 2026)
+const SIZE_REF_1185 = 1185; // BASE_WIDTH 948
+const SIZE_REF_1250 = 1250; // BASE_WIDTH 1000
+const SIZE_REF_1000 = 1000; // canvas sized on the long edge
 
 // ============================================================================
 // FAMILIES
 // ============================================================================
 
-//! LIGNIS — wood / fibre look, ZZ on positives only
+//! LIGNIS
 const FAMILY_LIGNIS = defineConfig(BASE_CONFIG, {family: "Lignis"});
 
-// Pre-refactor Lignis (before CANVAS_CONFIG): per-axis padding, fixed reentry
+// Before CANVAS_CONFIG
 const FAMILY_LIGNIS_LEGACY = defineConfig(FAMILY_LIGNIS, {
 	zz: {mapRange: null},
 	motion: {xDiv: 0.01, yDiv: 0.01, reentryDecay: false},
@@ -69,7 +61,7 @@ const FAMILY_LIGNIS_LEGACY = defineConfig(FAMILY_LIGNIS, {
 	layout: {padding: {x: 0.1, y: 0.1}},
 });
 
-//! EQUILIBRIUM — strong warp (a = 21), thresholded bounds
+//! EQUILIBRIUM
 const FAMILY_EQUILIBRIUM = defineConfig(BASE_CONFIG, {
 	family: "Equilibrium",
 	flow: {a1: 21, a2: 21, scaleAmplitude: false},
@@ -82,7 +74,7 @@ const FAMILY_EQUILIBRIUM = defineConfig(BASE_CONFIG, {
 	layout: {padding: {x: 0.3, y: 0.3}},
 });
 
-//! GRIDFALL — tiny scl, V constrained to positives = vertical fall
+//! GRIDFALL
 const FAMILY_GRIDFALL = defineConfig(BASE_CONFIG, {
 	family: "Gridfall",
 	noise: {scl: [0.0002, 0.0002, 0.0002], noiseScale: [12, 12, 12, 12]},
@@ -95,7 +87,7 @@ const FAMILY_GRIDFALL = defineConfig(BASE_CONFIG, {
 	layout: {padding: {x: 0.1, y: 0.1}},
 });
 
-//! HIGH AMP — wide U, strong horizontal direction (xDiv >> yDiv)
+//! HIGH AMP
 const FAMILY_HIGH_AMP = defineConfig(FAMILY_GRIDFALL, {
 	family: "High amp",
 	noise: {scl: [0.002, 0.002, 0.002], noiseScale: [1, 1, 1, 1]},
@@ -105,7 +97,7 @@ const FAMILY_HIGH_AMP = defineConfig(FAMILY_GRIDFALL, {
 	wrap: {reentry: 0.01},
 });
 
-//! RUG — noise-based un/vn, 6 octaves
+//! RUG
 const FAMILY_RUG = defineConfig(FAMILY_EQUILIBRIUM, {
 	family: "Rug",
 	flow: {mode: "noise", octave: 6, a1: 1, a2: 1},
@@ -117,7 +109,7 @@ const FAMILY_RUG = defineConfig(FAMILY_EQUILIBRIUM, {
 	render: {particleSize: 0.25, particleNum: 150000},
 });
 
-//! PSYCHÉ — divinorum, wide bounds, x2 zoom
+//! PSYCHÉ
 const FAMILY_PSYCH = defineConfig(BASE_CONFIG, {
 	family: "Psyché",
 	flow: {scaleAmplitude: false},
@@ -131,7 +123,7 @@ const FAMILY_PSYCH = defineConfig(BASE_CONFIG, {
 	layout: {scale: 2, padding: {x: 0.3, y: 0.3}},
 });
 
-//! MOIRÉ — divinorum, a1 >> a2, thresholded bounds
+//! MOIRÉ
 const FAMILY_MOIRE = defineConfig(FAMILY_PSYCH, {
 	family: "Moiré",
 	flow: {a1: 121, a2: 1},
