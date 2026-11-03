@@ -1,6 +1,6 @@
 let features = "";
 
-let palette = [
+const basePalette = [
 	{name: "Engineering orange", hex: "d00000", rgb: [208, 0, 0], cmyk: [0, 100, 100, 18], hsb: [0, 100, 82], hsl: [0, 100, 41], lab: [43, 69, 58]},
 	{name: "Selective yellow", hex: "ffba08", rgb: [255, 186, 8], cmyk: [0, 27, 97, 0], hsb: [43, 97, 100], hsl: [43, 100, 52], lab: [80, 13, 81]},
 	{name: "Mauve", hex: "9f86c0", rgb: [159, 134, 192], cmyk: [17, 30, 0, 25], hsb: [263, 30, 75], hsl: [263, 31, 64], lab: [59, 19, -27]},
@@ -13,12 +13,9 @@ let palette = [
 	{name: "Coral pink", hex: "ff9b85", rgb: [255, 155, 133], cmyk: [0, 39, 48, 0], hsb: [11, 48, 100], hsl: [11, 100, 76], lab: [74, 35, 27]},
 ];
 
-// randomize the palette starting index
-let startingIndex = Math.floor(Math.random() * palette.length);
+// rotated copy of basePalette, see applyConfig (starting index is random unless fixed in the panel)
+let palette = basePalette;
 
-palette = palette.slice(startingIndex).concat(palette.slice(0, startingIndex));
-
-let maxDPI = 3;
 let RATIO = 1.41;
 
 let W = window.innerWidth;
@@ -28,20 +25,19 @@ let CM = 1;
 let DEFAULT_SIZE = 1200;
 let DIM;
 let MULTIPLIER;
+let C_WIDTH;
+let c;
+let currentPixelRatio;
 let xoff = 0.6;
 let yoff = 0.3;
 
-let xi = Math.random * 1000000000000;
-let yi = Math.random * 1000000000000;
+let xi;
+let yi;
 
 let pos_range_x;
 let pos_range_y;
-//! Standard noise
 let n_range_min = 0;
 let n_range_max = 1;
-//! Custom noise
-/* let n_range_min = -1;
-let n_range_max = 1; */
 
 let hue = 0;
 let sat = 0;
@@ -51,46 +47,31 @@ let bri_min = 60;
 //! Ink
 let particleBoost = 2; // particle multiplier, paid for by drawing each particle once with a per-frame style
 let alphaScale = 0.5; // particle transparency (1 = original alpha)
+let inkScale = 1; // line width multiplier
 let inkStyle = "";
 let inkW = 0;
 
 let displacement1 = 0;
 let displacement2 = 100;
 
-//let angle1 = [45, 105, 165, 225, 285, 345];
-// let angle1 = [0, 45, 90, 135, 180, 225, 270, 315];
-//let angle1 = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5];
 let angle1 = [225];
-//let angle1 = [45, 135, 225, 315];
-//let angle1 = [0, 90, 180, 270];
-//let angle1 = [0, 45, 90];
-//let angle1 = [0, 90, 270];
-//let angle1 = [180, 270];
-//let angle1 = [90, 270];
-//let angle1 = [45];
-//let angle1 = [5, 25, 45, 65, 85, 105, 125, 145, 165, 185, 205, 225, 245, 265, 285, 305, 325, 345];
-// let angle1 = [85, 105, 125, 145, 305, 325, 345, 5]; //! y-axis asymmetry
-//let angle1 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350];
-//let angle1 = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 315, 320, 325, 330, 335, 340, 345, 350, 355];
 
+let sketch;
 let animation;
+let completeTimer;
 let drawing = true;
+let startTime = 0;
 let elapsedTime = 0;
 let renderStart = Date.now();
 let framesRendered = 0;
 let totalElapsedTime = 0;
 
-let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor((10000 * particleBoost) / angle1.length);
-
-//let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
-//let cycle = parseInt(MAX_FRAMES / angle1.length);
-let cycle = 15000 * particleBoost; // keep the same number of yields per render
+let MAX_FRAMES;
+let particle_num;
+let cycle;
 
 let nx_scale = 0.00005;
 let ny_scale = 0.00005;
-/* let nx_scale = 0.001;
-let ny_scale = 0.001; */
 
 let skipperMax = 0;
 let xRandSkipper = 0;
@@ -103,40 +84,15 @@ let xoff_h = 1;
 let yoff_l_init = 0.6;
 let yoff_l = yoff_l_init;
 let yoff_h = 1;
-let x_val;
-let y_val;
 let cos_val;
 let col_cos;
 let off_cos;
 let noise_cos;
 let sin_val;
-let nd_cos;
 let angle_index = 0;
 
-/* const offValues_l = [
-	{low: 1.9, high: 1.0}, // case 0
-	{low: 1.9, high: 1.0}, // case 1
-	{low: 1.9, high: 1.0}, // case 2
-	{low: 1.9, high: 1.0}, // case 3
-	{low: 1.9, high: 1.0}, // case 4
-	{low: 1.9, high: 1.0}, // case 5
-	{low: 1.9, high: 1.0}, // case 6
-	{low: 1.9, high: 1.0}, // case 7
-	// Add more if needed
-];
-
-const offValues_h = [
-	{low: 2.0, high: 1.1}, // case 0
-	{low: 2.0, high: 1.1}, // case 1
-	{low: 2.0, high: 1.1}, // case 2
-	{low: 2.0, high: 1.1}, // case 3
-	{low: 2.0, high: 1.1}, // case 4
-	{low: 2.0, high: 1.1}, // case 5
-	{low: 2.0, high: 1.1}, // case 6
-	{low: 2.0, high: 1.1}, // case 7
-	// Add more if needed
-];
- */
+let offValues_l;
+let offValues_h;
 
 let minX = Infinity;
 let maxX = -Infinity;
@@ -145,6 +101,86 @@ let maxY = -Infinity;
 let centerOffsetX = 0;
 let centerOffsetY = 0;
 let calculatingBounds = true;
+
+//! Shapes: noise formulas returning the particle position in noise space (mapped to pos_range in paint)
+// x is always evaluated before y so the random() call order matches the original blocks
+const SHAPES = {
+	"simple block": {
+		x: (xoff, yoff) => noise(xoff),
+		y: (xoff, yoff) => noise(yoff),
+	},
+	"electron microscope": {
+		x: (xoff, yoff) => noise(xoff, yoff),
+		y: (xoff, yoff) => noise(yoff, xoff),
+	},
+	"electron microscope oct": {
+		x: (xoff, yoff) => oct(xoff, yoff, nx_scale, 1, 1),
+		y: (xoff, yoff) => oct(yoff, xoff, ny_scale, 1, 1),
+	},
+	"block rect": {
+		x: (xoff, yoff) => noise(xoff, xoff, xi),
+		y: (xoff, yoff) => noise(yoff, yoff, yi),
+	},
+	"block rect 2": {
+		x: (xoff, yoff) => noise(xoff, xoff, xi),
+		y: (xoff, yoff) => noise(yoff, yoff, xi),
+	},
+	"drapery yin/yang": {
+		x: (xoff, yoff) => noise(xoff, yoff, xi),
+		y: (xoff, yoff) => noise(xoff, yoff, yi),
+	},
+	"drapery equilibrium": {
+		x: (xoff, yoff) => noise(xoff, yoff, xi),
+		y: (xoff, yoff) => noise(yoff, xoff, yi),
+	},
+	"hybrid drapery/blocks": {
+		x: (xoff, yoff) => noise(xoff, random([xoff, xoff, yi])),
+		y: (xoff, yoff) => noise(yoff, random([yoff, xoff, yi])),
+	},
+	jellyfish: {
+		x: (xoff, yoff) => noise(xoff, xoff, yoff),
+		y: (xoff, yoff) => noise(yoff, yoff, xoff),
+	},
+	"jellyfish 2": {
+		x: (xoff, yoff) => noise(xoff, random([xoff, yi]), yoff),
+		y: (xoff, yoff) => noise(yoff, random([yoff, yi]), xoff),
+	},
+	"jellyfish 3": {
+		x: (xoff, yoff) => noise(xoff, random([xoff, xi]), random([yoff, yi])),
+		y: (xoff, yoff) => noise(yoff, random([yoff, xi]), random([xoff, yi])),
+	},
+	"astral beings": {
+		x: (xoff, yoff) => noise(xoff, random([xoff, yoff, yi])),
+		y: (xoff, yoff) => noise(yoff, random([yoff, xoff, yi])),
+	},
+	"astral beings 2": {
+		x: (xoff, yoff) => noise(xoff, random([yoff, yoff, yi])),
+		y: (xoff, yoff) => noise(yoff, random([xoff, xoff, yi])),
+	},
+	"astral beings 3": {
+		x: (xoff, yoff) => noise(xoff, xoff, random([yoff, yoff, yi])),
+		y: (xoff, yoff) => noise(yoff, yoff, random([xoff, xoff, yi])),
+	},
+	"astral beings 4": {
+		x: (xoff, yoff) => noise(yoff, xoff, random([xoff, yoff, yi])),
+		y: (xoff, yoff) => noise(xoff, yoff, random([xoff, yoff, yi])),
+	},
+	"astral beings asym": {
+		x: (xoff, yoff) => noise(xoff, random([xoff, yoff, xi])),
+		y: (xoff, yoff) => noise(yoff, random([yoff, xoff, yi])),
+	},
+	"complex organism": {
+		x: (xoff, yoff) => noise(xoff, yoff, random([xoff, xi, yi])),
+		y: (xoff, yoff) => noise(yoff, xoff, random([yoff, xi, yi])),
+	},
+};
+
+let shapeX = SHAPES["jellyfish 3"].x;
+let shapeY = SHAPES["jellyfish 3"].y;
+
+// per-frame oscillators, resolved from the panel in applyConfig
+let noiseCosFn;
+let colorCosFn;
 
 function generateUpDownPattern(maxPatternValue) {
 	const pattern = [];
@@ -174,82 +210,128 @@ function generateSymmetricOffValues(numCases, baseLow, baseHigh, maxPatternValue
 
 	return offValues;
 }
-console.log(angle1.length);
-const numCases = angle1.length; // Number of cases you want
 
-//! original
-const baseLow_l = 1;
-const baseHigh_l = 0.148;
-const maxPatternValue_l = 1;
+// Reads CURRENT_PARAMS (panel / hash features) into the sketch globals. Called before every render.
+function applyConfig() {
+	const p = CURRENT_PARAMS;
 
-const baseLow_h = 1.148;
-const baseHigh_h = 0;
-const maxPatternValue_h = 1;
+	angle1 = p.angles;
+	[n_range_min, n_range_max] = p.noiseRange;
 
-//! inverted
-/* const baseLow_l = 0.148;
-const baseHigh_l = 1;
-const maxPatternValue_l = 1;
+	const {l, h} = p.offPattern;
+	offValues_l = generateSymmetricOffValues(angle1.length, l.baseLow, l.baseHigh, l.maxPatternValue);
+	offValues_h = generateSymmetricOffValues(angle1.length, h.baseLow, h.baseHigh, h.maxPatternValue);
 
-const baseLow_h = 0;
-const baseHigh_h = 1.148;
-const maxPatternValue_h = 1; */
+	particleBoost = p.particleBoost;
+	alphaScale = p.alphaScale;
+	inkScale = p.inkScale;
 
-// !high pattern / eidolons
-/*const baseLow_l = 0.5;
-const baseHigh_l = 0;
-const maxPatternValue_l = 3;
+	MAX_FRAMES = p.maxFrames ?? Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
+	particle_num = Math.floor((10000 * particleBoost) / angle1.length);
+	cycle = 15000 * particleBoost; // keep the same number of yields per render
 
-const baseLow_h = 0;
-const baseHigh_h = 0.5;
-const maxPatternValue_h = 3;*/
+	shapeX = SHAPES[p.shape].x;
+	shapeY = SHAPES[p.shape].y;
 
-//! 2 fold symmetry to create eidolons
+	noiseCosFn = window[p.noiseCosFn];
+	colorCosFn = window[p.colorCosFn];
 
-const offValues_l = generateSymmetricOffValues(numCases, baseLow_l, baseHigh_l, maxPatternValue_l);
-const offValues_h = generateSymmetricOffValues(numCases, baseLow_h, baseHigh_h, maxPatternValue_h);
-
-console.log(offValues_l);
-console.log(offValues_h);
+	const start = p.paletteStart ?? window.PARAMS_UI.lockedSeeds.paletteStart;
+	palette = basePalette.slice(start).concat(basePalette.slice(0, start));
+}
 
 function setup() {
 	features = $fx.getFeatures();
 
 	console.log(features);
 
-	elapsedTime = 0;
-	framesRendered = 0;
-	drawing = true;
-	startTime = frameCount;
-	renderStart = Date.now();
+	// hash features are the defaults, then the panel restores saved controls on top
+	window.applyFeatureDefaults(features);
+	ParamsPanel.init({features: {paletteCreator: false, presentation: false}});
+	window.resolveParams();
 
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
 	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
 	c = createCanvas(C_WIDTH, C_WIDTH * 1);
-	pixelDensity(dpi(maxDPI));
+	currentPixelRatio = CURRENT_PARAMS.pixelRatio;
+	pixelDensity(dpi(currentPixelRatio));
 	colorMode(HSB, 360, 100, 100, 100);
-	randomSeed(fxrand() * 10000);
-	noiseSeed(fxrand() * 10000);
-	noiseDetail(4, 0.6);
 	rectMode(CENTER);
 	angleMode(DEGREES);
-	//background(45, 0, 5);
-	//background(45, 0, 100);
+
+	// seeds are drawn once per page load and reused by every Apply
+	window.PARAMS_UI.lockedSeeds = {
+		randomSeed: fxrand() * 10000,
+		noiseSeed: fxrand() * 10000,
+		paletteStart: Math.floor(Math.random() * basePalette.length),
+	};
+
+	applyConfig();
+	renderPiece();
+}
+
+// Apply from the panel: same hash and seeds, new settings
+window.applyGenerativeSettings = async function applyGenerativeSettings(settings) {
+	if (!settings || !window.PARAMS_UI?.lockedSeeds) return;
+
+	window.PARAMS_UI.current = {...window.PARAMS_UI.current, ...settings};
+	window.resolveParams();
+
+	if (CURRENT_PARAMS.pixelRatio !== currentPixelRatio) {
+		currentPixelRatio = CURRENT_PARAMS.pixelRatio;
+		pixelDensity(dpi(currentPixelRatio));
+	}
+
+	applyConfig();
+	renderPiece();
+};
+
+function drawBackground() {
 	drawingContext.globalCompositeOperation = "source-over";
-	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
-	gradient.addColorStop(0.5, "hsl(25, 100%, 95%)");
-	gradient.addColorStop(0.8, "hsl(36, 100%, 95%)");
-	drawingContext.fillStyle = gradient;
+	if (CURRENT_PARAMS.backdrop === "gradient") {
+		let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
+		gradient.addColorStop(0.5, "hsl(25, 100%, 95%)");
+		gradient.addColorStop(0.8, "hsl(36, 100%, 95%)");
+		drawingContext.fillStyle = gradient;
+	} else {
+		drawingContext.fillStyle = CURRENT_PARAMS.backdrop === "dark" ? "hsl(45, 0%, 5%)" : "hsl(45, 0%, 100%)";
+	}
 	drawingContext.fillRect(0, 0, width, height);
+}
+
+function renderPiece() {
+	// stop a render that is still running
+	clearTimeout(animation);
+	clearTimeout(completeTimer);
+	document.complete = false;
+	window.dispatchEvent(new CustomEvent("render:started"));
+
+	elapsedTime = 0;
+	framesRendered = 0;
+	drawing = true;
+	startTime = 0;
+	renderStart = Date.now();
+
+	const seeds = window.PARAMS_UI.lockedSeeds;
+	randomSeed(seeds.randomSeed);
+	noiseSeed(seeds.noiseSeed);
+	noiseDetail(4, 0.6);
+
+	resetMatrix();
+	drawBackground();
 
 	xi = random(1000000000000);
 	yi = random(1000000000000);
-	pos_range_x = height * 0.6;
-	pos_range_y = height * 0.6;
+	pos_range_x = height * CURRENT_PARAMS.posRange;
+	pos_range_y = height * CURRENT_PARAMS.posRange;
 
 	translate(width / 2, height / 2);
 
 	// First pass: calculate bounds with a smaller sample
+	minX = Infinity;
+	maxX = -Infinity;
+	minY = Infinity;
+	maxY = -Infinity;
 	calculatingBounds = true;
 	let boundsSamplingFactor = 0.2 / particleBoost; // Calculate bounds using 20% of the original particle count
 	let boundsSampleNum = Math.max(100, Math.floor(particle_num * boundsSamplingFactor)); // Ensure minimum sample size
@@ -259,17 +341,10 @@ function setup() {
 	let tempParticleNum = particle_num;
 	particle_num = boundsSampleNum; // Temporarily reduce particle count
 
-	let sketch = drawGenerator();
+	sketch = drawGenerator();
 	while (true) {
 		let result = sketch.next();
 		if (result.done) {
-			/* 			push();
-			translate(0, 0);
-			rotate(225);
-			stroke(0, 100, 100, 100);
-			noFill();
-			rect(0, 0, maxX - minX, maxY - minY);
-			pop(); */
 			break;
 		}
 	}
@@ -289,9 +364,6 @@ function setup() {
 	elapsedTime = 0;
 	framesRendered = 0;
 
-	// Reset the generator_frameCount since drawGenerator relies on this
-	startTime = frameCount;
-
 	// Start actual drawing
 	sketch = drawGenerator();
 	function animate() {
@@ -305,61 +377,47 @@ function* drawGenerator() {
 	let count = 0;
 	let generator_frameCount = 0;
 	let draw_every = cycle;
+	const p = CURRENT_PARAMS;
 
 	while (true) {
-		// Draw with p5.js things
-		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 50); //! lower when col_cos is {sin} ex 12
-		sin_val = sin(generator_frameCount * 50); //! lower when col_cos is {sin} ex 12
-		noise_cos = sin(generator_frameCount * 40); //! try cos for different pattern
-		off_cos = sin(generator_frameCount * 800);
-		col_cos = cos(generator_frameCount * 50); //!change to sin for different color
-		x_val = sin(generator_frameCount * 20);
-		y_val = sin(generator_frameCount * 20);
-		//nd_cos = sin(generator_frameCount * 5);
-		//noise_cos: 25,40,45(5), 48,50,54,60,100
-
-		//cos_val = 125;//!test
-		//sin_val = 125;//!test
-		//n_cos = 125;//!test
-		//off_cos = 250;//!test
-
-		/* 		cos_val = cos(generator_frameCount * 10);
-		sin_val = cos(generator_frameCount * 10);
-		noise_cos = tan(generator_frameCount * 6);
-		off_cos = tan(generator_frameCount * 2);
-		nd_cos = tan(generator_frameCount * 6); */
-		// noise_cos: 6,8,9,10,11 / 12, 15,18,20,25,30,35,36,40,45(stable),50,54,60(stable)70,75,80,90(stable),100,200,500
-		// off_cos: 26,30,50,60,150,500,1250,1500
-		//35+26 together with low noise ;)
+		cos_val = cos(generator_frameCount * p.oscFreq);
+		sin_val = sin(generator_frameCount * p.oscFreq);
+		noise_cos = noiseCosFn(generator_frameCount * p.noiseCosFreq);
+		off_cos = sin(generator_frameCount * p.offCosFreq);
+		col_cos = colorCosFn(generator_frameCount * p.oscFreq);
 
 		// ink only depends on per-frame values, so compute it once per frame instead of per particle
-		updateInk(cos_val, col_cos);
+		updateInk(cos_val, p.colorSource === "noise_cos" ? noise_cos : col_cos);
 
 		let scale1 = 1;
 		let xoff_l_high;
 		let xoff_l_low;
 		for (let i = 0; i < angle1.length; i++) {
-			xoff_l_high = mapValue(abs(noise_cos), 0, 1, offValues_h[i].low, offValues_h[i].high, true);
-			xoff_l_low = mapValue(abs(noise_cos), 0, 1, offValues_l[i].low, offValues_l[i].high, true);
-			/* xoff_l_high = mapValue(noise_cos, -1, 1, offValues_h[i].low, offValues_h[i].high, true);
-			xoff_l_low = mapValue(noise_cos, -1, 1, offValues_l[i].low, offValues_l[i].high, true); */
-			/* xoff_l_high = mapValue(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
-			xoff_l_low = mapValue(noise_cos, -1, 1, offValues_h[i].high, offValues_h[i].low, true); */
+			if (p.noiseCosMap === "abs") {
+				xoff_l_high = mapValue(abs(noise_cos), 0, 1, offValues_h[i].low, offValues_h[i].high, true);
+				xoff_l_low = mapValue(abs(noise_cos), 0, 1, offValues_l[i].low, offValues_l[i].high, true);
+			} else if (p.noiseCosMap === "signed") {
+				xoff_l_high = mapValue(noise_cos, -1, 1, offValues_h[i].low, offValues_h[i].high, true);
+				xoff_l_low = mapValue(noise_cos, -1, 1, offValues_l[i].low, offValues_l[i].high, true);
+			} else {
+				xoff_l_high = mapValue(noise_cos, -1, 1, offValues_l[i].high, offValues_l[i].low, true);
+				xoff_l_low = mapValue(noise_cos, -1, 1, offValues_h[i].high, offValues_h[i].low, true);
+			}
 
-			xoff_h = xoff_l_high + 0.001;
-			yoff_h = xoff_l_high + 0.001;
-			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
-			// peut aussi etre alterné
+			xoff_h = xoff_l_high + p.offSpread;
+			yoff_h = xoff_l_high + p.offSpread;
 
-			xoff_l = mapValue(cos_val, -1.0, 1.0, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, -1.0, 1.0, xoff_l_low, xoff_l_high, true);
+			if (p.offMap === "cos") {
+				xoff_l = mapValue(cos_val, -1.0, 1.0, xoff_l_high, xoff_l_low, true);
+				yoff_l = mapValue(cos_val, -1.0, 1.0, xoff_l_low, xoff_l_high, true);
+			} else if (p.offMap === "cos split") {
+				xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
+				yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true);
+			} else {
+				xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
+				yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true);
+			}
 
-			/* 	xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true); */
-
-			/* 			xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true); */
 			push();
 			rotate(angle1[i]);
 			scale(scale1);
@@ -367,7 +425,7 @@ function* drawGenerator() {
 			// use the bounding box to draw the particles so that it can be centered along with the bounding box
 
 			for (let s = 0; s < particle_num; s++) {
-				paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale1, cos_val, sin_val, noise_cos, col_cos, off_cos);
+				paint(xoff_l, xoff_h, yoff_l, yoff_h);
 
 				if (count >= draw_every) {
 					count = 0;
@@ -384,10 +442,13 @@ function* drawGenerator() {
 
 		generator_frameCount++;
 		if (elapsedTime > MAX_FRAMES && drawing) {
+			if (calculatingBounds) return;
+
 			window.rendered = c.canvas;
+			window.dispatchEvent(new CustomEvent("render:completed"));
 			//hl.token.capturePreview();
-			/// add a 20s delay before setting document.complete to true to ensure the preview is captured correctly
-			setTimeout(() => {
+			/// add a 2s delay before setting document.complete to true to ensure the preview is captured correctly
+			completeTimer = setTimeout(() => {
 				document.complete = true;
 				// calculate the time it took to render the image
 				let endTime = Date.now();
@@ -395,82 +456,19 @@ function* drawGenerator() {
 				console.log("Render time: " + timeDiff + " ms");
 			}, 2000);
 
+			clearTimeout(animation);
 			noLoop();
 			return;
 		}
 	}
 }
 
-function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_val, sin_val, noise_cos, col_cos, off_cos) {
+function paint(xoff_l, xoff_h, yoff_l, yoff_h) {
 	xoff = random(xoff_l, xoff_h);
 	yoff = random(yoff_l, yoff_h);
-	/* 	xoff = ZZ(xoff, 1.15, -0.001, 0.001);
-	yoff = ZZ(yoff, 1.15, -0.001, 0.001); */
-	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
-	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	//! Simple Block
-	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-	//! Electron microscope
-	/* let x = mapValue(noise(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-	/* let x = mapValue(oct(xoff, yoff, nx_scale, 1, 1), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(oct(yoff, xoff, ny_scale, 1, 1), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-	//!block Rect
-	/*let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
 
-	//! block Rect 2
-	/*let x = mapValue(noise(xoff, xoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, yoff, xi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
-
-	//!Drapery Yin Yang
-	/* let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(xoff, yoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
-
-	//!Drapery Equilibrium
-	/* 	let x = mapValue(noise(xoff, yoff, xi), n_range_min, n_range_max, -pos_range_x, pos_range_x, true); */
-	/* let y = mapValue(noise(yoff, xoff, yi), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);*/
-
-	//! Jellyfish
-	/* 	let x = mapValue(noise(xoff, xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, yoff, xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-
-	//! Jellyfish 2
-	/* 	let x = mapValue(noise(xoff, random([xoff, yi]), yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, random([yoff, yi]), xoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-
-	//! Jellyfish 3
-	let x = mapValue(noise(xoff, random([xoff, xi]), random([yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, random([yoff, xi]), random([xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
-
-	//! Astral Beings
-	/* 		let x = mapValue(noise(xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-
-	//! Astral Beings 2
-	/* 	let x = mapValue(noise(xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-	let y = mapValue(noise(yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-
-	//! Astral Beings 3
-	/* 		let x = mapValue(noise(xoff, xoff, random([yoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, yoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-
-	//! astral beings 4
-	/* 		let x = mapValue(noise(yoff, xoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(xoff, yoff, random([xoff, yoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-
-	//! Astral Beings Asymmetrical
-	/* 		let x = mapValue(noise(xoff, random([xoff, yoff, xi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-
-	//! Hybrid Drapery Blocks
-	/* 		let x = mapValue(noise(xoff, random([xoff, xoff, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, random([yoff, xoff, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
-
-	//!complex organism (aliens)
-	/* 		let x = mapValue(noise(xoff, yoff, random([xoff, xi, yi])), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
-		let y = mapValue(noise(yoff, xoff, random([yoff, xi, yi])), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
+	let x = mapValue(shapeX(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
+	let y = mapValue(shapeY(xoff, yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);
 
 	if (x < minX) minX = x;
 	if (x > maxX) maxX = x;
@@ -491,24 +489,21 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	drawingContext.fillRect(ab_x, ab_y, inkW, inkW);
 }
 
-function updateInk(cos_val, col_cos) {
+function updateInk(cos_val, col_value) {
 	let w = mapValue(abs(cos_val), 0.9, 1, 0.42, 1.46, true);
-	inkW = w * MULTIPLIER;
+	inkW = w * MULTIPLIER * inkScale;
 
-	let index = Math.floor(mapValue(abs(col_cos), 0, 1, 0, palette.length - 1, true));
+	let index = Math.floor(mapValue(abs(col_value), 0, 1, 0, palette.length - 1, true));
 
 	hue = palette[index].hsl[0];
 	sat = palette[index].hsl[1];
-	b = palette[index].hsl[2];
+	let b = palette[index].hsl[2];
 
-	/* 	hue = mapValue(abs(cos_val), 0, 1, 360, 190, true);
-		sat = mapValue(elapsedTime, 0, MAX_FRAMES / 2.5, 100, 75, true); */
-
+	// locals on purpose: `alpha` is a p5 global function and can't be reassigned in p5 2.x
 	bri = mapValue(abs(cos_val), 0.5, 1, b, 0, true);
-	a_min = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 50, true);
-	a_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
-	a = 100;
-	alpha = mapValue(abs(cos_val), 0.95, 1, 50 - a_min, 100 - a_max, true) * alphaScale;
+	let a_min = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 50, true);
+	let a_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
+	let alpha = mapValue(abs(cos_val), 0.95, 1, 50 - a_min, 100 - a_max, true) * alphaScale;
 	inkStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 }
 
