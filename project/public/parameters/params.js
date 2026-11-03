@@ -217,13 +217,18 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		noiseRange: "standard [0,1]",
 		noiseOctaves: 4,
 		noiseFalloff: 0.6,
-		...Object.fromEntries(WAVES.flatMap((w) => [[`${w.key}Fn`, w.fn], [`${w.key}Freq`, w.freq]])),
+		...Object.fromEntries(
+			WAVES.flatMap((w) => [
+				[`${w.key}Fn`, w.fn],
+				[`${w.key}Freq`, w.freq],
+			]),
+		),
 		colorSource: "col_cos",
 		paletteStart: "random",
 		particleBoost: 2,
 		alphaScale: 0.5,
 		renderFrames: "auto",
-		pixelRatio: 3,
+		pixelRatio: 2,
 	},
 
 	// ---- UI metadata (drives ParamsPanel control generation) ----

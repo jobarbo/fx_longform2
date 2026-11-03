@@ -16,6 +16,19 @@ const basePalette = [
 // rotated copy of basePalette, see applyConfig (starting index is random unless fixed in the panel)
 let palette = basePalette;
 
+//! Shaders: the artwork is drawn into mainCanvas (2D) and shown through the shader pipeline
+// on the WEBGL display canvas. Effects are edited in the shader panel (key E / button bottom right).
+const ENABLE_SHADERS = true;
+const PERSIST_SHADER_PANEL = true; // localStorage: keep shader panel edits across refresh
+const SHADER_PREVIEW_INTERVAL = 100; // ms between shader passes while particles are drawn
+const SHOW_FPS_UI = false; // FPS overlay drawn by shaderEffects (read in shaderEffects.setup)
+let mainCanvas; // offscreen 2D buffer holding the artwork
+let shaderCanvas = null; // WEBGL display canvas, null when shaders are off or failed to start
+let artCtx; // mainCanvas.drawingContext, used by the particle hot loop
+let displayLoopId = null;
+let lastDisplay = 0;
+let renderDone = false;
+
 let RATIO = 1.41;
 
 let W = window.innerWidth;
@@ -241,7 +254,8 @@ function applyConfig() {
 	palette = basePalette.slice(start).concat(basePalette.slice(0, start));
 }
 
-function setup() {
+// p5 2.x has no preload(): shaders are loaded in the async setup
+async function setup() {
 	features = $fx.getFeatures();
 
 	console.log(features);
@@ -251,24 +265,96 @@ function setup() {
 	window.groupPanelControls();
 	window.resolveParams();
 
-	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
-	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
-	c = createCanvas(C_WIDTH, C_WIDTH * 1);
-	currentPixelRatio = CURRENT_PARAMS.pixelRatio;
-	pixelDensity(dpi(currentPixelRatio));
-	colorMode(HSB, 360, 100, 100, 100);
-	rectMode(CENTER);
-	angleMode(DEGREES);
-
-	// seeds are drawn once per page load and reused by every Apply
+	// seeds are drawn once per page load and reused by every Apply.
+	// Drawn before the shader setup, which also calls fxrand() (grain / chromatic seed).
 	window.PARAMS_UI.lockedSeeds = {
 		randomSeed: fxrand() * 10000,
 		noiseSeed: fxrand() * 10000,
 		paletteStart: Math.floor(Math.random() * basePalette.length),
 	};
 
+	if (shadersEnabled(ENABLE_SHADERS)) {
+		try {
+			await shaderEffects.preload(window);
+		} catch (error) {
+			console.warn("Shaders failed to load, drawing without them:", error);
+		}
+	}
+
+	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
+	MULTIPLIER = C_WIDTH / DEFAULT_SIZE;
+	currentPixelRatio = CURRENT_PARAMS.pixelRatio;
+	const density = dpi(currentPixelRatio);
+
+	mainCanvas = createGraphics(C_WIDTH, C_WIDTH * 1);
+	mainCanvas.pixelDensity(density);
+	mainCanvas.angleMode(DEGREES);
+	artCtx = mainCanvas.drawingContext;
+	createDisplayCanvas(density);
+
+	colorMode(HSB, 360, 100, 100, 100);
+	rectMode(CENTER);
+	angleMode(DEGREES); // also used by the sin / cos oscillators
+
 	applyConfig();
 	renderPiece();
+
+	if (shaderCanvas && typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.init(shaderEffects);
+	startDisplayLoop();
+}
+
+// WEBGL canvas fed by the shader pipeline, or a plain 2D canvas when shaders are off / unavailable
+function createDisplayCanvas(density) {
+	if (shadersEnabled(ENABLE_SHADERS) && shaderEffects.shaderManager) {
+		try {
+			c = createCanvas(C_WIDTH, C_WIDTH * 1, WEBGL);
+			pixelDensity(density);
+			// panel edits saved in localStorage win over the defaults in shaders/sketch-shaders.js
+			if (PERSIST_SHADER_PANEL) shaderEffects.loadPersistedPanelConfig();
+			shaderEffects.setup(width, height, mainCanvas, c, density);
+			shaderCanvas = c;
+			return;
+		} catch (error) {
+			console.warn("Shader setup failed, drawing without shaders:", error);
+			shaderCanvas = null;
+		}
+	}
+
+	c = createCanvas(C_WIDTH, C_WIDTH * 1);
+	pixelDensity(density);
+	// style.css renders canvas.p5Canvas pixelated unless .is-smooth (shader panel "crisp pixels")
+	c.canvas.classList.add("is-smooth");
+}
+
+function setArtworkPixelDensity(density) {
+	mainCanvas.pixelDensity(density); // resizes (and clears) the buffer, renderPiece redraws it
+	mainCanvas.angleMode(DEGREES);
+	artCtx = mainCanvas.drawingContext;
+	pixelDensity(density);
+	if (shaderCanvas) shaderEffects.setPixelDensity(density);
+}
+
+// Puts mainCanvas on screen. While particles are drawn the shader pass is throttled so it doesn't
+// slow the render down; once done, shaders run every frame (animated effects + live panel edits).
+function startDisplayLoop() {
+	if (displayLoopId !== null) return;
+	const tick = (now) => {
+		displayLoopId = requestAnimationFrame(tick);
+		if (shaderCanvas && typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.update();
+
+		if (!renderDone && now - lastDisplay < SHADER_PREVIEW_INTERVAL) return;
+		showFrame();
+	};
+	displayLoopId = requestAnimationFrame(tick);
+}
+
+function showFrame() {
+	lastDisplay = performance.now();
+	if (shaderCanvas) {
+		shaderEffects.renderFrame(renderDone);
+	} else {
+		image(mainCanvas, 0, 0, width, height);
+	}
 }
 
 // Apply from the panel: same hash and seeds, new settings
@@ -280,7 +366,7 @@ window.applyGenerativeSettings = async function applyGenerativeSettings(settings
 
 	if (CURRENT_PARAMS.pixelRatio !== currentPixelRatio) {
 		currentPixelRatio = CURRENT_PARAMS.pixelRatio;
-		pixelDensity(dpi(currentPixelRatio));
+		setArtworkPixelDensity(dpi(currentPixelRatio));
 	}
 
 	applyConfig();
@@ -288,12 +374,14 @@ window.applyGenerativeSettings = async function applyGenerativeSettings(settings
 };
 
 function drawBackground() {
-	drawingContext.globalCompositeOperation = "source-over";
-	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
+	const w = mainCanvas.width;
+	const h = mainCanvas.height;
+	artCtx.globalCompositeOperation = "source-over";
+	let gradient = artCtx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
 	gradient.addColorStop(0.5, "hsl(25, 100%, 95%)");
 	gradient.addColorStop(0.8, "hsl(36, 100%, 95%)");
-	drawingContext.fillStyle = gradient;
-	drawingContext.fillRect(0, 0, width, height);
+	artCtx.fillStyle = gradient;
+	artCtx.fillRect(0, 0, w, h);
 }
 
 function renderPiece() {
@@ -308,9 +396,13 @@ function renderPiece() {
 	drawing = true;
 	startTime = 0;
 	renderStart = Date.now();
+	renderDone = false;
+	if (shaderCanvas) shaderEffects.setParticleAnimationComplete(false);
 
-	resetMatrix();
+	mainCanvas.resetMatrix();
 	drawBackground();
+	// shown right away: the bounds pass below blocks the page for a moment
+	showFrame();
 	document.title = "0%";
 
 	// let the browser paint the canvas + background before the blocking bounds pass,
@@ -329,13 +421,13 @@ function startRender() {
 	noiseSeed(seeds.noiseSeed);
 	noiseDetail(CURRENT_PARAMS.noiseOctaves, CURRENT_PARAMS.noiseFalloff);
 
-	resetMatrix();
+	mainCanvas.resetMatrix();
 	xi = random(1000000000000);
 	yi = random(1000000000000);
 	pos_range_x = height * CURRENT_PARAMS.posRange;
 	pos_range_y = height * CURRENT_PARAMS.posRange;
 
-	translate(width / 2, height / 2);
+	mainCanvas.translate(width / 2, height / 2);
 
 	// First pass: calculate bounds with a smaller sample
 	minX = Infinity;
@@ -431,10 +523,10 @@ function* drawGenerator() {
 				yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true);
 			}
 
-			push();
-			rotate(angle1[i]);
-			scale(scale1);
-			drawingContext.fillStyle = inkStyle;
+			mainCanvas.push();
+			mainCanvas.rotate(angle1[i]);
+			mainCanvas.scale(scale1);
+			artCtx.fillStyle = inkStyle;
 			// use the bounding box to draw the particles so that it can be centered along with the bounding box
 
 			for (let s = 0; s < particle_num; s++) {
@@ -446,7 +538,7 @@ function* drawGenerator() {
 				}
 				count++;
 			}
-			pop();
+			mainCanvas.pop();
 		}
 
 		elapsedTime = generator_frameCount - startTime;
@@ -457,6 +549,10 @@ function* drawGenerator() {
 		generator_frameCount++;
 		if (elapsedTime > MAX_FRAMES && drawing) {
 			if (calculatingBounds) return;
+
+			// the display loop shows the final frame (through the shaders) on its next tick
+			renderDone = true;
+			if (shaderCanvas) shaderEffects.setParticleAnimationComplete(true);
 
 			window.rendered = c.canvas;
 			window.dispatchEvent(new CustomEvent("render:completed"));
@@ -500,7 +596,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h) {
 	let ab_y = centeredY * MULTIPLIER; // Use centered coordinates
 
 	// Draw your actual particles (fillStyle is set once per frame in drawGenerator)
-	drawingContext.fillRect(ab_x, ab_y, inkW, inkW);
+	artCtx.fillRect(ab_x, ab_y, inkW, inkW);
 }
 
 function updateInk(cos_val, col_value) {
@@ -540,4 +636,12 @@ function showLoadingBar(elapsedTime, MAX_FRAMES, renderStart) {
 	// put the percent in the title of the page
 	document.title = percent.toFixed(0) + "%";
 	// show a loading bar on the bottom of the canvas
+}
+
+function keyPressed() {
+	// don't hijack keys while typing in panel inputs
+	const el = document.activeElement;
+	if (["INPUT", "TEXTAREA", "SELECT"].includes(el?.tagName) || el?.isContentEditable) return;
+
+	if ((key === "E" || key === "e") && shaderCanvas && typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.toggle();
 }
