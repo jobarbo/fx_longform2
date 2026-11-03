@@ -4,10 +4,13 @@
 		<title>Generative Art</title>
 		<meta charset="utf-8" />
 
+		<link rel="stylesheet" href="./library/styles/paramsPanel.css" />
 		<link rel="stylesheet" href="./style.css" />
 		<script src="./library/utils/fxhash.js"></script>
 		<script src="./library/p5/p5.min.js"></script>
+		<script src="./parameters/configs.js"></script>
 		<script src="./parameters/params.js"></script>
+		<script src="./library/utils/paramsPanel.js"></script>
 		<script src="./library/utils/utils.js"></script>
 		<script src="./library/utils/artworkLayout.js"></script>
 		<script src="./library/utils/shaderEffectsPanel.js"></script>
@@ -22,6 +25,56 @@
 		<!-- if you need to import js scripts do it here -->
 	</head>
 	<body>
+		<div class="params-toggles">
+			<div class="info-toggle">Edit parameters</div>
+			<button type="button" class="generate-toggle" id="param-generate">Generate new piece</button>
+		</div>
+		<div class="container" aria-label="Controls panel">
+			<div class="title-wrapper">
+				<h1 class="title">Controls</h1>
+				<h6 class="spec">Apply updates without changing seed/hash</h6>
+				<p class="status">
+					Activity status:
+					<span class="spin-container">
+						<span class="spin">.</span>
+					</span>
+				</p>
+			</div>
+
+			<div class="info-wrapper">
+				<hr />
+				<p class="info-container"><span class="info">Hash : </span><span class="kb-params hash"></span></p>
+				<hr />
+
+				<p class="info-container"><span class="info">Render status : </span><span class="kb-params dashboard"></span></p>
+				<hr />
+			</div>
+
+			<div class="controls-form"></div>
+
+			<div class="save-wrapper">
+				<button class="button btn-apply" id="param-apply">
+					<span>Apply</span>
+				</button>
+				<button class="button btn-download" id="param-download" style="margin-top: 10px">
+					<span>Download</span>
+				</button>
+				<div class="params-io-row">
+					<button type="button" class="params-io" id="param-export-json" title="Export settings as JSON">↓ json</button>
+					<button type="button" class="params-io" id="param-import-json" title="Import settings from JSON">↑ json</button>
+					<input type="file" accept="application/json,.json" id="param-import-file" hidden />
+				</div>
+				<label class="persist-clear" title="Clear saved controls from localStorage and restore defaults">
+					<input type="checkbox" id="param-clear-storage" />
+					<span>Clear saved</span>
+				</label>
+			</div>
+		</div>
+
+		<main class="main">
+			<span class="frame"></span>
+		</main>
+
 		<!-- Debug bounds overlay -->
 		<div id="debug-bounds" class="debug-bounds">
 			<div id="debug-base-padding" class="debug-rect base-padding"></div>

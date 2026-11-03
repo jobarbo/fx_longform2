@@ -45,16 +45,21 @@ const CANVAS_CONFIG = {
 const WRAP_PADDING_FACTOR = CANVAS_CONFIG.WRAP_PADDING_FACTOR;
 const BASE_PADDING = CANVAS_CONFIG.ARTWORK_PADDING;
 
-// Particle size, in canvas units at PARTICLE_DPI_REFERENCE density
+// Particle size comes from the active config (render.particleSize), in canvas units at PARTICLE_DPI_REFERENCE density
 // (curve + defaults in library/utils/utils.js → particleDensityScale)
-const PARTICLE_SIZE = 0.75;
-const PARTICLE_DPI_REFERENCE = 4; // density PARTICLE_SIZE is expressed at
+const PARTICLE_DPI_REFERENCE = 4; // density particle sizes are expressed at
 const PARTICLE_DPI_COMPENSATION = 0.7; // 0 = no compensation; omit either to use utils defaults
 
-// Animation configuration
-const maxFrames = 25;
-const particleNum = 500000;
-const cycle = parseInt((maxFrames * particleNum) / 1150);
+// Animation configuration — overwritten from ACTIVE_CONFIG in setup() / Apply
+let maxFrames = 25;
+let particleNum = 500000;
+let cycle = computeCycle(maxFrames, particleNum);
+
+function computeCycle(frames, population) {
+	// Divisor scales with population: 1150 @ 500k, ~150 @ 100k
+	const divisor = Math.max(1, Math.round(1150 * Math.pow(population / 500000, 1.25)));
+	return parseInt((frames * population) / divisor);
+}
 
 // Debug flags
 let debugBounds = false;
@@ -73,12 +78,13 @@ let ARTWORK_RATIO = CANVAS_CONFIG.ARTWORK_RATIO;
 // Calculated dimensions (set in setup())
 let DIM; // Canvas dimension (min of canvas width/height)
 let MULTIPLIER; // Scaling factor based on screen size
+let CONFIG_MULTIPLIER = 1; // MULTIPLIER as the active config knew it (render.sizeRef) — set in INIT
 let W = window.innerWidth; // Window width
 let H = window.innerHeight; // Window height
 
 function getPixelDensity() {
 	const isMobile = typeof isSafariMobile === "function" && isSafariMobile();
-	return isMobile ? CANVAS_CONFIG.PIXEL_DENSITY_MOBILE : CANVAS_CONFIG.PIXEL_DENSITY;
+	return isMobile ? CANVAS_CONFIG.PIXEL_DENSITY_MOBILE : (CURRENT_PARAMS.printDPI ?? CANVAS_CONFIG.PIXEL_DENSITY);
 }
 
 function getCanvasDimensions() {
@@ -110,11 +116,16 @@ function getCanvasDimensions() {
 }
 
 /**
- * Equal absolute padding on every side.
- * ARTWORK_PADDING is a fraction of min(canvasW, canvasH); returns normalized {x, y}.
+ * Artwork padding from the active framing (ACTIVE_CONFIG.layout.padding); returns normalized {x, y}.
+ * Number = equal absolute padding, a fraction of min(canvasW, canvasH).
+ * {x, y} = legacy per-axis padding, already normalized to width / height.
  */
 function getArtworkPaddingNorm(canvasW = width, canvasH = height) {
-	const pad = Math.max(0, Math.min(0.49, Number(CANVAS_CONFIG.ARTWORK_PADDING) || 0));
+	const padding = ACTIVE_CONFIG.layout?.padding ?? CANVAS_CONFIG.ARTWORK_PADDING;
+	if (typeof padding === "object") {
+		return {x: padding.x, y: padding.y};
+	}
+	const pad = Math.max(0, Math.min(0.49, Number(padding) || 0));
 	const shortEdge = Math.min(canvasW, canvasH) || 1;
 	const padPx = pad * shortEdge;
 	return {
@@ -210,15 +221,7 @@ let rseed, nseed; // Random and noise seeds
 let xMin, xMax, yMin, yMax;
 let isBordered = true;
 
-function preload() {
-	// Initialize shader effects (will load all shaders) - optional
-	if (shadersEnabled()) {
-		shaderEffects.preload(this);
-	}
-
-	// Initialize swatch palette system
-	swatchPalette = new SwatchPalette();
-}
+let drawLoop = null; // createSketchDrawLoop instance
 
 async function setup() {
 	console.log(features);
@@ -228,6 +231,15 @@ async function setup() {
 
 	// Reset the random seed to ensure consistency
 	$fx.rand.reset();
+
+	// p5.js 2.0 removed preload() — load assets here with async/await
+	// Initialize shader effects (will load all shaders) - optional
+	if (shadersEnabled()) {
+		await shaderEffects.preload(window);
+	}
+
+	// Initialize swatch palette system
+	swatchPalette = new SwatchPalette();
 
 	// Load swatch palettes - REQUIRED for this project (no hardcoded fallback)
 	try {
@@ -309,49 +321,36 @@ async function setup() {
 	rseed = fxrand() * 10000;
 	nseed = fxrand() * 10000;
 
+	// Lock seeds on first run so Apply doesn't change the underlying randomness
+	if (window.PARAMS_UI && !window.PARAMS_UI.lockedSeeds) {
+		window.PARAMS_UI.lockedSeeds = {
+			mainRandomSeed,
+			mainNoiseSeed,
+			rseed,
+			nseed,
+		};
+	}
+
 	randomSeed(mainRandomSeed);
 	noiseSeed(mainNoiseSeed);
-	mainCanvas.translate(width / 2, height / 2);
-	mainCanvas.scale(CANVAS_CONFIG.SCALE_FACTOR_X, CANVAS_CONFIG.SCALE_FACTOR_Y);
-	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
+	canvasSetup();
 
+	applyRenderSettings();
 	INIT(rseed, nseed);
+	dispatchSwatchesReady();
 
-	// Calculate the center offset based on scale
+	if (CURRENT_PARAMS.showExternalFrame) {
+		renderOutsideFrame();
+	}
 
-	// Create animation generator with configuration
-	const animConfig = {
-		items: movers,
-		maxFrames: maxFrames,
-		startTime: startTime,
-		cycleLength: cycle,
-		currentFrame: 0, // Add current frame tracking
-		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0) {
-				mover.show(mainCanvas);
-			}
-		},
-		moveItem: (mover, currentFrame) => {
-			// Simple movement - no complex color calculations needed
-			mover.move(currentFrame, maxFrames);
-		},
-		onComplete: () => {
-			executionTimer.stop().logElapsedTime("Sketch completed in");
-			if (shadersEnabled() && shaderCanvas) {
-				shaderEffects.setParticleAnimationComplete(true);
-			}
-			$fx.preview();
-			document.complete = true;
+	drawLoop = createSketchDrawLoop({
+		getGenerator: () => generator,
+		isShadersEnabled: shadersEnabled,
+		getShaderCanvas: () => shaderCanvas,
+		getMainCanvas: () => mainCanvas,
+	});
 
-			// Create download button after sketch is complete
-			if (typeof createDownloadButton === "function" && SHOW_DOWNLOAD_UI) {
-				createDownloadButton();
-			}
-		},
-	};
-
-	// Create and start the animation
-	generator = createAnimationGenerator(animConfig);
+	startSketchAnimation();
 
 	// Create download button immediately (will only show if not in iframe)
 	if (typeof createDownloadButton === "function" && SHOW_DOWNLOAD_UI) {
@@ -371,7 +370,7 @@ async function setup() {
 	}
 
 	// Start the custom draw loop
-	customDraw();
+	drawLoop.start();
 
 	// Initialize debug overlay after setup is complete
 	updateDebugOverlay();
@@ -420,6 +419,120 @@ function startPanelLoop() {
 	panelLoopId = requestAnimationFrame(tick);
 }
 
+// Zoom from CANVAS_CONFIG × active framing (ACTIVE_CONFIG.layout.scale). Re-applied on Apply.
+function canvasSetup() {
+	try {
+		mainCanvas?.resetMatrix?.();
+	} catch {
+		// ignore
+	}
+	const layoutScale = ACTIVE_CONFIG.layout?.scale ?? 1;
+	mainCanvas.translate(width / 2, height / 2);
+	mainCanvas.scale(CANVAS_CONFIG.SCALE_FACTOR_X * layoutScale, CANVAS_CONFIG.SCALE_FACTOR_Y * layoutScale);
+	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
+}
+
+// External frame (ported from retro-futura) — drawn around the artwork bounds set in INIT
+function renderOutsideFrame() {
+	mainCanvas.colorMode(HSL, 360, 100, 100, 100);
+	let firstParticleColor = baseHSLPalette[baseHSLPalette.length - 1];
+	let lastParticleColor = baseHSLPalette[Math.min(2, baseHSLPalette.length - 1)];
+	let s_hue = lastParticleColor.h;
+	let s_sat = lastParticleColor.s;
+	let s_bri = lastParticleColor.l;
+	let s_alpha = 1;
+	let compHue = lastParticleColor.h;
+
+	mainCanvas.rectMode(CENTER);
+	mainCanvas.noFill();
+	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
+	const baseRectW = mainCanvas.width * (xMax - xMin);
+	const baseRectH = mainCanvas.height * (yMax - yMin);
+	const rectShrink = baseRectW / 35;
+	for (let i = 0; i < 10000; i++) {
+		let randShrink = fxrand() * rectShrink;
+		let rectW = baseRectW + randShrink;
+		let rectH = baseRectH + randShrink;
+		mainCanvas.strokeWeight(map(randShrink, 0, rectShrink / 1.5, 2, 0.1, true));
+		s_alpha = map(randShrink, rectShrink, rectShrink / 1.25, 100, 100, true);
+		s_sat = map(randShrink, rectShrink, 0, 30, 100, true);
+		s_bri = map(randShrink, rectShrink / 1.5, -rectShrink / 1.5, 20, 1, true);
+
+		mainCanvas.stroke(s_hue, s_sat, s_bri, s_alpha);
+		mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, rectW, rectH);
+	}
+
+	compHue = (firstParticleColor.h + 180) % 360;
+	mainCanvas.fill(compHue, 4, 100, 100);
+	mainCanvas.noStroke();
+
+	mainCanvas.rect(mainCanvas.width / 2, mainCanvas.height / 2, baseRectW, baseRectH);
+}
+
+// Exposure / population from the active config (or the panel override)
+function applyRenderSettings() {
+	maxFrames = ACTIVE_CONFIG.render.maxFrames;
+	particleNum = ACTIVE_CONFIG.render.particleNum;
+	cycle = computeCycle(maxFrames, particleNum);
+}
+
+function startSketchAnimation() {
+	// Notify UI that a render is starting (panel spinner, status text, etc.)
+	window.dispatchEvent(new CustomEvent("render:started"));
+
+	const drawFirstFrame = ACTIVE_CONFIG.render.drawFirstFrame;
+
+	// Create animation generator with configuration
+	const animConfig = {
+		items: movers,
+		maxFrames: maxFrames,
+		startTime: startTime,
+		cycleLength: cycle,
+		currentFrame: 0, // Add current frame tracking
+		renderItem: (mover, currentFrame) => {
+			if (currentFrame > 0 || drawFirstFrame) {
+				mover.show(mainCanvas);
+			}
+		},
+		moveItem: (mover, currentFrame) => {
+			// Simple movement - no complex color calculations needed
+			mover.move(currentFrame, maxFrames);
+		},
+		onComplete: () => {
+			executionTimer.stop().logElapsedTime("Sketch completed in");
+			if (shadersEnabled() && shaderCanvas) {
+				shaderEffects.setParticleAnimationComplete(true);
+			}
+			$fx.preview();
+			document.complete = true;
+
+			// Notify UI that render is complete
+			window.dispatchEvent(new CustomEvent("render:completed"));
+
+			// Create download button after sketch is complete
+			if (typeof createDownloadButton === "function" && SHOW_DOWNLOAD_UI) {
+				createDownloadButton();
+			}
+		},
+	};
+
+	// Create and start the animation
+	generator = createAnimationGenerator(animConfig);
+}
+
+// Inform UI about available palettes + selected palette (after INIT chooses it)
+function dispatchSwatchesReady() {
+	window.dispatchEvent(
+		new CustomEvent("swatches:ready", {
+			detail: {
+				names: [...swatchPalette.getSwatchNames()].sort(),
+				localNames: [],
+				selected: CURRENT_PARAMS.paletteName || "",
+			},
+		}),
+	);
+}
+
 function INIT(rseed, nseed) {
 	movers = [];
 
@@ -445,8 +558,14 @@ function INIT(rseed, nseed) {
 	// across different environments regardless of loading timing
 	const sortedSwatchNames = [...swatchNames].sort();
 
-	// Select directly from sorted swatch palettes
-	selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
+	// Select directly from sorted swatch palettes, unless the panel forces one by name
+	// (the fxrand draw above always happens so the rest of the sequence stays the same)
+	const forcedPaletteName = CURRENT_PARAMS.paletteName;
+	if (forcedPaletteName && sortedSwatchNames.includes(forcedPaletteName)) {
+		selectedPalette = sortedSwatchNames.indexOf(forcedPaletteName);
+	} else {
+		selectedPalette = Math.floor(paletteSelectionRand * sortedSwatchNames.length);
+	}
 	currentPaletteName = sortedSwatchNames[selectedPalette];
 	baseHSLPalette = swatchPalette.getPalette(currentPaletteName);
 
@@ -454,19 +573,29 @@ function INIT(rseed, nseed) {
 		throw new Error(`Selected swatch palette '${currentPaletteName}' is empty or invalid`);
 	}
 
+	// Copy before reversing — getPalette may return the cached array
+	if (CURRENT_PARAMS.paletteDirection === "reversed") {
+		baseHSLPalette = [...baseHSLPalette].reverse();
+	}
+
+	const cfg = ACTIVE_CONFIG;
+	console.log(`[config] ${configLabel(cfg.id)} (${cfg.commit}) · palette ${currentPaletteName}`);
+
+	// MULTIPLIER as it was when the config was made (older layouts used another reference size)
+	CONFIG_MULTIPLIER = cfg.render.sizeRef ? min(width, height) / cfg.render.sizeRef : MULTIPLIER;
+
 	// Scale noise values based on MULTIPLIER
-	scl1 = 0.002 / MULTIPLIER;
-	scl2 = 0.002 / MULTIPLIER;
-	scl3 = 0.002 / MULTIPLIER;
+	scl1 = cfg.noise.scl[0] / CONFIG_MULTIPLIER;
+	scl2 = cfg.noise.scl[1] / CONFIG_MULTIPLIER;
+	scl3 = cfg.noise.scl[2] / CONFIG_MULTIPLIER;
 
-	let sclOffset1 = 1;
-	let sclOffset2 = 1;
-	let sclOffset3 = 1;
+	let [sclOffset1, sclOffset2, sclOffset3] = cfg.noise.sclOffset;
 
-	let amplitude1 = 1 * MULTIPLIER;
-	let amplitude2 = 1 * MULTIPLIER;
+	let amplitudeScale = cfg.flow.scaleAmplitude ? CONFIG_MULTIPLIER : 1;
+	let amplitude1 = cfg.flow.a1 * amplitudeScale;
+	let amplitude2 = cfg.flow.a2 * amplitudeScale;
 
-	// Equal absolute padding on all sides (fraction of the shorter canvas edge)
+	// Artwork padding from the active framing (see getArtworkPaddingNorm)
 	const {x: padX, y: padY} = getArtworkPaddingNorm(width, height);
 	xMin = padX;
 	xMax = 1 - padX;
@@ -498,35 +627,62 @@ function shadersEnabled() {
 	return ENABLE_SHADERS && typeof shaderEffects !== "undefined";
 }
 
-// Custom draw loop - advances sketch animation and applies shader effects
-function customDraw() {
-	const result = generator.next();
+// ============================================================================
+// UI APPLY HOOK (ParamsPanel → re-render with the same seeds)
+// ============================================================================
 
-	// Render shader effects for this frame (if shaders are enabled)
-	if (shadersEnabled() && shaderCanvas) {
-		const shouldContinue = shaderEffects.renderFrame(result.done, customDraw);
+window.applyGenerativeSettings = async function applyGenerativeSettings(settings) {
+	if (!settings) return;
 
-		// Continue animation if not complete
-		if (shouldContinue) {
-			requestAnimationFrame(customDraw);
-		}
-	} else {
-		// No shaders - just copy mainCanvas to main display canvas
-		clear();
-		image(mainCanvas, 0, 0);
+	const locked = window.PARAMS_UI?.lockedSeeds;
+	if (!locked) return;
 
-		// If FPS overlay is available, update/draw it even without shaders
-		if (shadersEnabled()) {
-			shaderEffects.updateFPS();
-			shaderEffects.drawFPS();
-		}
-
-		// Continue animation if not complete
-		if (!result.done) {
-			requestAnimationFrame(customDraw);
-		}
+	if (window.PARAMS_UI?.current) {
+		window.PARAMS_UI.current = {...window.PARAMS_UI.current, ...settings};
 	}
-}
+	if (typeof window.resolveParams === "function") window.resolveParams();
+
+	applyRenderSettings();
+
+	pixel_density = getPixelDensity();
+	try {
+		pixelDensity(pixel_density);
+		mainCanvas?.pixelDensity(pixel_density);
+		if (shaderCanvas?.pixelDensity) shaderCanvas.pixelDensity(pixel_density);
+		if (typeof shaderEffects?.setPixelDensity === "function") {
+			shaderEffects.setPixelDensity(pixel_density);
+		}
+	} catch {
+		// ignore
+	}
+
+	randomSeed(locked.mainRandomSeed);
+	noiseSeed(locked.mainNoiseSeed);
+	rseed = locked.rseed;
+	nseed = locked.nseed;
+
+	drawLoop?.stop();
+
+	document.complete = false;
+	executionTimer.start();
+	if (shadersEnabled() && shaderCanvas) {
+		shaderEffects.setParticleAnimationComplete(false);
+	}
+	mainCanvas?.clear();
+	canvasSetup();
+	flushGraphicsStyleCache(mainCanvas);
+	mainCanvas.colorMode(HSB, 360, 100, 100, 100);
+
+	INIT(rseed, nseed);
+	updateDebugOverlay();
+
+	if (CURRENT_PARAMS.showExternalFrame) {
+		renderOutsideFrame();
+	}
+
+	startSketchAnimation();
+	drawLoop?.start();
+};
 
 // Setup mobile touch controls
 function setupMobileControls() {

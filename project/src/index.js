@@ -37,3 +37,19 @@ console.log('Current param values:');
 // Added addtional transformation to the parameter for easier usage
 // e.g. color.hex.rgba, color.obj.rgba.r, color.arr.rgb[0]
 console.log($fx.getParams());
+
+// ============================================================================
+// ParamsPanel (library/utils/paramsPanel.js) — project boot
+// ============================================================================
+if (typeof ParamsPanel !== "undefined") {
+	ParamsPanel.init({
+		storageKey: "ex-lignis:userPalettes",
+		features: {
+			paletteCreator: false, // needs the chroma paletteManager — ex-lignis uses SwatchPalette
+			presentation: true,
+		},
+	});
+	if (typeof groupNoiseScaleControls === "function") {
+		groupNoiseScaleControls();
+	}
+}
