@@ -425,7 +425,7 @@ class ShaderEffects {
 			},
 			grain: {
 				enabled: true,
-				amount: 0.1,
+				amount: 0.04,
 				grainSize: 1.0, // 1 = original look; higher values make larger grain
 				angle: 0.25, // grain field rotation in radians (0.25 = original look)
 				timeMultiplier: 0.0,
@@ -1369,13 +1369,7 @@ class ShaderEffects {
 			if (value === "loadingProgress") return this.loadingProgress;
 			if (value === "width") return this.getPhysicalResolution()[0];
 			if (value === "height") return this.getPhysicalResolution()[1];
-			if (
-				value === "renderDensity" ||
-				value === "pixelDensity" ||
-				value === "densityScale" ||
-				value === "viewportScale" ||
-				value === "sizeScale"
-			) {
+			if (value === "renderDensity" || value === "pixelDensity" || value === "densityScale" || value === "viewportScale" || value === "sizeScale") {
 				const scales = this.getSizeScaleFactors();
 				return scales[value];
 			}

@@ -436,7 +436,7 @@ function startRender() {
 	maxY = -Infinity;
 	calculatingBounds = true;
 	let boundsSamplingFactor = 0.2 / particleBoost; // Calculate bounds using 20% of the original particle count
-	let boundsSampleNum = Math.max(100, Math.floor(particle_num * boundsSamplingFactor)); // Ensure minimum sample size
+	let boundsSampleNum = Math.max(100, Math.floor(particle_num * boundsSamplingFactor)); // Ensure minimum sample sizes
 
 	console.log(`Calculating bounds with ${boundsSampleNum} particles (${boundsSamplingFactor * 100}% of total)`);
 
