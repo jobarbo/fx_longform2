@@ -245,9 +245,9 @@ function setup() {
 
 	console.log(features);
 
-	// hash features are the defaults, then the panel restores saved controls on top
-	window.applyFeatureDefaults(features);
+	// the panel restores saved controls on top of the defaults in params.js
 	ParamsPanel.init({features: {paletteCreator: false, presentation: false}});
+	window.groupPanelControls();
 	window.resolveParams();
 
 	C_WIDTH = min(DEFAULT_SIZE * CM, DEFAULT_SIZE * CM);
@@ -288,14 +288,10 @@ window.applyGenerativeSettings = async function applyGenerativeSettings(settings
 
 function drawBackground() {
 	drawingContext.globalCompositeOperation = "source-over";
-	if (CURRENT_PARAMS.backdrop === "gradient") {
-		let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
-		gradient.addColorStop(0.5, "hsl(25, 100%, 95%)");
-		gradient.addColorStop(0.8, "hsl(36, 100%, 95%)");
-		drawingContext.fillStyle = gradient;
-	} else {
-		drawingContext.fillStyle = CURRENT_PARAMS.backdrop === "dark" ? "hsl(45, 0%, 5%)" : "hsl(45, 0%, 100%)";
-	}
+	let gradient = drawingContext.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
+	gradient.addColorStop(0.5, "hsl(25, 100%, 95%)");
+	gradient.addColorStop(0.8, "hsl(36, 100%, 95%)");
+	drawingContext.fillStyle = gradient;
 	drawingContext.fillRect(0, 0, width, height);
 }
 
