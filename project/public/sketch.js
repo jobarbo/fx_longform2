@@ -319,9 +319,6 @@ function* drawGenerator() {
 		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
 
-		// ink only depends on per-frame values, so compute it once per frame instead of per particle
-		updateInk(cos_val, col_cos);
-
 		//cos_val = 125;//!test
 		//sin_val = 125;//!test
 		//n_cos = 125;//!test
@@ -335,6 +332,9 @@ function* drawGenerator() {
 		// noise_cos: 6,8,9,10,11 / 12, 15,18,20,25,30,35,36,40,45(stable),50,54,60(stable)70,75,80,90(stable),100,200,500
 		// off_cos: 26,30,50,60,150,500,1250,1500
 		//35+26 together with low noise ;)
+
+		// ink only depends on per-frame values, so compute it once per frame instead of per particle
+		updateInk(cos_val, col_cos);
 
 		let scale1 = 1;
 		let xoff_l_high;
