@@ -58,12 +58,12 @@ class Mover {
 		this.colorIndex = this.palette.length - 1;
 
 		// Pre-calculate padding values
-		const [wrapFactorX, wrapFactorY] = this.cfg.wrap.padding;
-		this.wrapPaddingX = (min(width, height) * wrapFactorX) / width;
-		this.wrapPaddingY = WRAP_Y_MODES[this.cfg.wrap.yMode](this.wrapPaddingX, wrapFactorY);
+		const wrapPaddingFactor = typeof WRAP_PADDING_FACTOR !== "undefined" ? WRAP_PADDING_FACTOR : 0.1;
+		this.wrapPaddingX = (min(width, height) * wrapPaddingFactor) / width;
+		this.wrapPaddingY = ((min(width, height) * wrapPaddingFactor) / height) * ARTWORK_RATIO;
 		this.reentryOffsetX = (min(width, height) * reentryFactor(this.cfg.wrap.reentry)) / width;
 		this.reentryOffsetY = (min(width, height) * reentryFactor(this.cfg.wrap.reentry)) / height;
-		this.wrapPaddingMultiplier = this.cfg.wrap.multiplier;
+		this.wrapPaddingMultiplier = 1; //! or 0.5
 
 		// Pre-calculate bounds
 		this.minBoundX = (this.xMin - this.wrapPaddingX) * width;
@@ -140,12 +140,6 @@ class Mover {
 // ============================================================================
 // WRAP HELPERS
 // ============================================================================
-
-const WRAP_Y_MODES = {
-	ratio: (padX, factorY) => ((min(width, height) * factorY) / height) * ARTWORK_RATIO,
-	plain: (padX, factorY) => (min(width, height) * factorY) / height,
-	fromX: (padX) => padX * ARTWORK_RATIO,
-};
 
 function reentryFactor(reentry) {
 	return Array.isArray(reentry) ? random(reentry[0], reentry[1]) : reentry;

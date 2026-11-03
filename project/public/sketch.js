@@ -107,13 +107,12 @@ function getCanvasDimensions() {
 	return {width: viewportDim, height: viewportDim / r};
 }
 
-// Padding from ACTIVE_CONFIG.layout: number = fraction of the short edge, {x, y} = per axis
+/**
+ * Equal absolute padding on every side.
+ * ARTWORK_PADDING is a fraction of min(canvasW, canvasH); returns normalized {x, y}.
+ */
 function getArtworkPaddingNorm(canvasW = width, canvasH = height) {
-	const padding = ACTIVE_CONFIG.layout?.padding ?? CANVAS_CONFIG.ARTWORK_PADDING;
-	if (typeof padding === "object") {
-		return {x: padding.x, y: padding.y};
-	}
-	const pad = Math.max(0, Math.min(0.49, Number(padding) || 0));
+	const pad = Math.max(0, Math.min(0.49, Number(CANVAS_CONFIG.ARTWORK_PADDING) || 0));
 	const shortEdge = Math.min(canvasW, canvasH) || 1;
 	const padPx = pad * shortEdge;
 	return {
@@ -411,9 +410,8 @@ function canvasSetup() {
 	} catch {
 		// ignore
 	}
-	const layoutScale = ACTIVE_CONFIG.layout?.scale ?? 1;
 	mainCanvas.translate(width / 2, height / 2);
-	mainCanvas.scale(CANVAS_CONFIG.SCALE_FACTOR_X * layoutScale, CANVAS_CONFIG.SCALE_FACTOR_Y * layoutScale);
+	mainCanvas.scale(CANVAS_CONFIG.SCALE_FACTOR_X, CANVAS_CONFIG.SCALE_FACTOR_Y);
 	mainCanvas.translate(-width / 2, -height / 2); // Move back to maintain center
 }
 
@@ -463,8 +461,6 @@ function applyRenderSettings() {
 function startSketchAnimation() {
 	window.dispatchEvent(new CustomEvent("render:started"));
 
-	const drawFirstFrame = ACTIVE_CONFIG.render.drawFirstFrame;
-
 	// Create animation generator with configuration
 	const animConfig = {
 		items: movers,
@@ -473,7 +469,7 @@ function startSketchAnimation() {
 		cycleLength: cycle,
 		currentFrame: 0, // Add current frame tracking
 		renderItem: (mover, currentFrame) => {
-			if (currentFrame > 0 || drawFirstFrame) {
+			if (currentFrame > 0) {
 				mover.show(mainCanvas);
 			}
 		},

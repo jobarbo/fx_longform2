@@ -14,7 +14,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 	// ---- Available options (drives the UI dropdowns) ----
 	options: {
 		configs: Object.keys(LIGNIS_CONFIGS),
-		framings: ["config", "uniform"],
+		reentryModes: ["degrade", "ligne"],
 		populations: ["config", 100000, 300000, 500000, 1000000, 1500000, 2500000, 3500000],
 		particleSizes: ["config", 0.25, 0.35, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0],
 		horizontalSpeeds: ["veryFast", "fast", "standard", "slow", "snail"],
@@ -49,7 +49,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 	// ---- Current selections (string keys or plain numbers) ----
 	current: {
 		config: DEFAULT_CONFIG_ID,
-		framing: "config",
+		reentry: "degrade",
 		population: "config",
 		particleSize: "config",
 		horizontalSpeed: "standard",
@@ -84,10 +84,11 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			format: (id) => configLabel(id),
 		},
 		{
-			key: "framing",
-			id: "param-framing",
-			label: "Framing",
-			optionsKey: "framings",
+			key: "reentry",
+			id: "param-reentry",
+			label: "Re-entry",
+			optionsKey: "reentryModes",
+			format: (mode) => (mode === "degrade" ? "dégradé" : mode),
 		},
 		{
 			key: "paletteName",
@@ -261,6 +262,8 @@ function resolveActiveConfig(current, maps) {
 	const zigzagV = maps.zigzag[current.verticalZigzag] ?? 1;
 	const noiseScales = [current.noiseScale1, current.noiseScale2, current.noiseScale3, current.noiseScale4].map((level) => maps.noiseScale[level] ?? 1);
 	const scaleRange = ([lo, hi], k) => [lo * k, hi * k];
+	// dégradé = OG re-entry, ligne = the config's own
+	const reentry = current.reentry === "ligne" ? base : LIGNIS_CONFIGS.og;
 
 	const resolved = defineConfig(base, {
 		flow: {
@@ -280,13 +283,13 @@ function resolveActiveConfig(current, maps) {
 			span: base.uv.span * (maps.outerFlow[current.outerFlowLevel] ?? 1),
 		},
 		zz: {ku: base.zz.ku * zigzagU, kv: base.zz.kv * zigzagV, kNeg: base.zz.kNeg === null ? null : base.zz.kNeg * zigzagU},
-		motion: {xDiv: base.motion.xDiv * speedX, yDiv: base.motion.yDiv * speedY},
+		motion: {xDiv: base.motion.xDiv * speedX, yDiv: base.motion.yDiv * speedY, reentryDecay: reentry.motion.reentryDecay},
+		wrap: {reentry: reentry.wrap.reentry},
 		render: {
 			particleSize: configOverride(current.particleSize, base.render.particleSize),
 			particleNum: configOverride(current.population, base.render.particleNum),
 			maxFrames: configOverride(current.exposure, base.render.maxFrames),
 		},
-		layout: current.framing === "uniform" ? UNIFORM_LAYOUT : base.layout,
 	});
 
 	for (const key of Object.keys(ACTIVE_CONFIG)) delete ACTIVE_CONFIG[key];
@@ -297,7 +300,7 @@ window.resolveParams = function resolveParams() {
 	const {current, maps} = window.PARAMS_UI;
 	Object.assign(window.PARAMS_UI.resolved, {
 		config: current.config,
-		framing: current.framing,
+		reentry: current.reentry,
 		paletteName: current.paletteName,
 		paletteDirection: current.paletteDirection ?? "default",
 		printDPI: configOverride(current.printDPI, 2),
