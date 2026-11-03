@@ -342,11 +342,11 @@ function* drawGenerator() {
 			// 0.001,0.0025,0.005,0.007,0.01,0.025,0.05,0.07
 			// peut aussi etre alterné
 
-			/* xoff_l = mapValue(cos_val, -1.0, 1.0, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, -1.0, 1.0, xoff_l_low, xoff_l_high, true); */
+			xoff_l = mapValue(cos_val, -1.0, 1.0, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, -1.0, 1.0, xoff_l_low, xoff_l_high, true);
 
-			xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
-			yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true);
+			/* 	xoff_l = mapValue(cos_val, -1, 0, xoff_l_high, xoff_l_low, true);
+			yoff_l = mapValue(cos_val, -0, 1, xoff_l_low, xoff_l_high, true); */
 
 			/* 			xoff_l = mapValue(off_cos, -1, 1, xoff_l_high, xoff_l_low, true);
 			yoff_l = mapValue(off_cos, -1, 1, xoff_l_low, xoff_l_high, true); */
