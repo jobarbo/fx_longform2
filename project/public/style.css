@@ -298,38 +298,64 @@ canvas.p5Canvas {
 	accent-color: #e8a070;
 }
 
+/* icon tabs, top left; they move right of the open panel so they stay clickable */
 .params-toggles {
 	top: 12px;
-	right: 12px;
+	right: auto;
+	left: 12px;
 	gap: 6px;
+	align-items: flex-start;
+	transition: left 0.2s ease-in-out;
+}
+
+body:has(.container.show) .params-toggles {
+	left: calc(clamp(40px, 27.78vw, 1570px) + 12px);
 }
 
 .info-toggle,
 .generate-toggle {
-	padding: 6px 10px;
-	border: 1px solid rgba(255, 255, 255, 0.28);
+	width: 34px;
+	height: 34px;
+	padding: 0;
+	border: 1px solid rgba(255, 255, 255, 0.18);
 	border-radius: 4px;
-	background: rgba(0, 0, 0, 0.72);
-	color: #fff;
-	font:
-		10px/1.2 "Courier New",
-		ui-monospace,
-		monospace;
-	font-weight: 400;
-	letter-spacing: 0.04em;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+	background: rgba(0, 0, 0, 0.5);
+	color: rgba(255, 255, 255, 0.85);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	backdrop-filter: blur(6px);
+	transition:
+		background 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease;
+}
+
+.info-toggle svg,
+.generate-toggle svg {
+	width: 17px;
+	height: 17px;
+	display: block;
 }
 
 .info-toggle.show,
 .generate-toggle.show {
-	font-size: 10px;
-	font-weight: 400;
+	font-size: 0;
 }
 
 .info-toggle:hover,
-.generate-toggle:hover {
-	background: rgba(0, 0, 0, 0.88);
+.generate-toggle:hover,
+.info-toggle.is-open {
+	background: #000;
 	border-color: rgba(255, 255, 255, 0.5);
+	color: #fff;
+}
+
+.info-toggle:focus-visible,
+.generate-toggle:focus-visible {
+	outline: 1px solid rgba(110, 200, 255, 0.8);
+	outline-offset: 2px;
 }
 
 
