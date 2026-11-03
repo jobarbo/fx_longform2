@@ -495,12 +495,6 @@ function updateInk(cos_val, col_cos) {
 	let w = mapValue(abs(cos_val), 0.9, 1, 0.42, 1.46, true);
 	inkW = w * MULTIPLIER;
 
-	/* 		let index = Math.floor(mapValue(abs(noise_cos), 0, 1, 0, palette.length - 1, true));
-
-		hue = palette[index].h;
-		sat = palette[index].s;
-		b = palette[index].l; */
-
 	let index = Math.floor(mapValue(abs(col_cos), 0, 1, 0, palette.length - 1, true));
 
 	hue = palette[index].hsl[0];
