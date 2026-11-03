@@ -58,6 +58,7 @@ let angle1 = [225];
 
 let sketch;
 let animation;
+let renderToken = 0; // invalidates a deferred render start when Apply is pressed again
 let completeTimer;
 let drawing = true;
 let startTime = 0;
@@ -89,6 +90,8 @@ let col_cos;
 let off_cos;
 let noise_cos;
 let sin_val;
+let x_val;
+let y_val;
 let angle_index = 0;
 
 let offValues_l;
@@ -178,9 +181,8 @@ const SHAPES = {
 let shapeX = SHAPES["jellyfish 3"].x;
 let shapeY = SHAPES["jellyfish 3"].y;
 
-// per-frame oscillators, resolved from the panel in applyConfig
-let noiseCosFn;
-let colorCosFn;
+// per-frame oscillator functions (p5 sin / cos / tan), resolved from the panel in applyConfig
+let waveFns = {};
 
 function generateUpDownPattern(maxPatternValue) {
 	const pattern = [];
@@ -233,8 +235,7 @@ function applyConfig() {
 	shapeX = SHAPES[p.shape].x;
 	shapeY = SHAPES[p.shape].y;
 
-	noiseCosFn = window[p.noiseCosFn];
-	colorCosFn = window[p.colorCosFn];
+	waveFns = Object.fromEntries(Object.entries(p.waves).map(([key, wave]) => [key, window[wave.fn]]));
 
 	const start = p.paletteStart ?? window.PARAMS_UI.lockedSeeds.paletteStart;
 	palette = basePalette.slice(start).concat(basePalette.slice(0, start));
@@ -308,14 +309,27 @@ function renderPiece() {
 	startTime = 0;
 	renderStart = Date.now();
 
+	resetMatrix();
+	drawBackground();
+	document.title = "0%";
+
+	// let the browser paint the canvas + background before the blocking bounds pass,
+	// otherwise the frame stays empty (collapsed) until the bounds are computed
+	const token = ++renderToken;
+	requestAnimationFrame(() =>
+		setTimeout(() => {
+			if (token === renderToken) startRender();
+		}, 0),
+	);
+}
+
+function startRender() {
 	const seeds = window.PARAMS_UI.lockedSeeds;
 	randomSeed(seeds.randomSeed);
 	noiseSeed(seeds.noiseSeed);
-	noiseDetail(4, 0.6);
+	noiseDetail(CURRENT_PARAMS.noiseOctaves, CURRENT_PARAMS.noiseFalloff);
 
 	resetMatrix();
-	drawBackground();
-
 	xi = random(1000000000000);
 	yi = random(1000000000000);
 	pos_range_x = height * CURRENT_PARAMS.posRange;
@@ -376,11 +390,14 @@ function* drawGenerator() {
 	const p = CURRENT_PARAMS;
 
 	while (true) {
-		cos_val = cos(generator_frameCount * p.oscFreq);
-		sin_val = sin(generator_frameCount * p.oscFreq);
-		noise_cos = noiseCosFn(generator_frameCount * p.noiseCosFreq);
-		off_cos = sin(generator_frameCount * p.offCosFreq);
-		col_cos = colorCosFn(generator_frameCount * p.oscFreq);
+		// fn / frequency of each oscillator come from the panel (Waves section)
+		cos_val = waveFns.cos(generator_frameCount * p.waves.cos.freq);
+		sin_val = waveFns.sin(generator_frameCount * p.waves.sin.freq);
+		noise_cos = waveFns.noise(generator_frameCount * p.waves.noise.freq);
+		off_cos = waveFns.off(generator_frameCount * p.waves.off.freq);
+		col_cos = waveFns.col(generator_frameCount * p.waves.col.freq);
+		x_val = waveFns.x(generator_frameCount * p.waves.x.freq);
+		y_val = waveFns.y(generator_frameCount * p.waves.y.freq);
 
 		// ink only depends on per-frame values, so compute it once per frame instead of per particle
 		updateInk(cos_val, p.colorSource === "noise_cos" ? noise_cos : col_cos);
@@ -434,7 +451,8 @@ function* drawGenerator() {
 
 		elapsedTime = generator_frameCount - startTime;
 
-		showLoadingBar(elapsedTime, MAX_FRAMES, renderStart);
+		// the bounds pass runs the whole generator too: keep the title for the real render
+		if (!calculatingBounds) showLoadingBar(elapsedTime, MAX_FRAMES, renderStart);
 
 		generator_frameCount++;
 		if (elapsedTime > MAX_FRAMES && drawing) {

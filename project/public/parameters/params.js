@@ -116,6 +116,18 @@ const SHAPE_LABELS = {
 
 const labelFrom = (labels) => (v) => labels[v] ?? String(v);
 
+// per-frame oscillators in drawGenerator: name = fn(generator_frameCount * freq)
+// fn / freq are the values hardcoded before the panel; drives = what reads the value
+const WAVES = [
+	{key: "cos", name: "cos_val", fn: "cos", freq: 50, drives: "ink, sweep"},
+	{key: "sin", name: "sin_val", fn: "sin", freq: 50, drives: "unused"},
+	{key: "noise", name: "noise_cos", fn: "sin", freq: 40, drives: "pattern"},
+	{key: "off", name: "off_cos", fn: "sin", freq: 800, drives: "sweep"},
+	{key: "col", name: "col_cos", fn: "cos", freq: 50, drives: "color"},
+	{key: "x", name: "x_val", fn: "sin", freq: 20, drives: "unused"},
+	{key: "y", name: "y_val", fn: "sin", freq: 20, drives: "unused"},
+];
+
 window.PARAMS_UI = window.PARAMS_UI ?? {
 	// ---- Available options (drives the UI dropdowns) ----
 	options: {
@@ -144,12 +156,12 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		noiseRanges: ["standard [0,1]", "custom [-1,1]"],
 		noiseCosMaps: ["abs", "signed", "signed crossed"],
 		offMaps: ["cos", "cos split", "off_cos"],
-		oscFreqs: [10, 12, 20, 50, 100],
-		oscFns: ["sin", "cos", "tan"],
-		noiseCosFreqs: [6, 8, 9, 10, 11, 12, 15, 18, 20, 25, 30, 35, 36, 40, 45, 50, 54, 60, 70, 75, 80, 90, 100, 200, 500],
-		offCosFreqs: [2, 26, 30, 50, 60, 150, 500, 800, 1250, 1500],
+		noiseOctaves: [1, 2, 3, 4, 5, 6, 7, 8],
+		noiseFalloffs: [0.25, 0.3, 0.4, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.9],
+		waveFns: ["sin", "cos", "tan"],
+		// union of the values noted in the sketch comments over time
+		waveFreqs: [2, 5, 6, 8, 9, 10, 11, 12, 15, 18, 20, 25, 26, 30, 35, 36, 40, 45, 48, 50, 54, 60, 70, 75, 80, 90, 100, 150, 200, 250, 500, 800, 1250, 1500],
 		colorSources: ["col_cos", "noise_cos"],
-		colorCosFns: ["cos", "sin"],
 		paletteStarts: ["random", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
 		particleBoosts: [1, 2, 3, 4],
 		alphaScales: [0.25, 0.5, 0.75, 1],
@@ -200,15 +212,13 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		lineWidth: "normal",
 		offPattern: "original",
 		offSpread: 0.001,
-		noiseRange: "standard [0,1]",
 		noiseCosMap: "abs",
 		offMap: "cos",
-		oscFreq: 50,
-		noiseCosFn: "sin",
-		noiseCosFreq: 40,
-		offCosFreq: 800,
+		noiseRange: "standard [0,1]",
+		noiseOctaves: 4,
+		noiseFalloff: 0.6,
+		...Object.fromEntries(WAVES.flatMap((w) => [[`${w.key}Fn`, w.fn], [`${w.key}Freq`, w.freq]])),
 		colorSource: "col_cos",
-		colorCosFn: "cos",
 		paletteStart: "random",
 		particleBoost: 2,
 		alphaScale: 0.5,
@@ -241,35 +251,33 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		{
 			key: "noiseCosMap",
 			group: "Particle path",
-			label: "Pattern wave mapping",
+			label: "noise_cos mapping",
 			optionsKey: "noiseCosMaps",
-			format: labelFrom({abs: "Folded |wave|", signed: "Full wave", "signed crossed": "Full wave, low/high swapped"}),
+			format: labelFrom({abs: "Folded |noise_cos|", signed: "Full noise_cos", "signed crossed": "Full, low/high swapped"}),
 		},
 		{
 			key: "offMap",
 			group: "Particle path",
 			label: "x/y offset sweep",
 			optionsKey: "offMaps",
-			format: labelFrom({cos: "Main wave, full", "cos split": "Main wave, halves", off_cos: "Fast wave"}),
+			format: labelFrom({cos: "cos_val, full", "cos split": "cos_val, halves", off_cos: "off_cos"}),
 		},
+
 		{
 			key: "noiseRange",
-			group: "Particle path",
+			group: "Noise",
 			label: "Noise to position",
 			optionsKey: "noiseRanges",
 			format: labelFrom({"standard [0,1]": "Standard (0 to 1)", "custom [-1,1]": "Offset (-1 to 1)"}),
 		},
+		{key: "noiseOctaves", group: "Noise", label: "noiseDetail octaves", optionsKey: "noiseOctaves"},
+		{key: "noiseFalloff", group: "Noise", label: "noiseDetail falloff", optionsKey: "noiseFalloffs"},
 
-		{key: "oscFreq", group: "Waves", label: "Main wave frequency", optionsKey: "oscFreqs"},
-		{
-			key: "noiseCosFn",
-			group: "Waves",
-			label: "Pattern wave shape",
-			optionsKey: "oscFns",
-			format: labelFrom({sin: "Sine", cos: "Cosine", tan: "Tangent (spiky)"}),
-		},
-		{key: "noiseCosFreq", group: "Waves", label: "Pattern wave frequency", optionsKey: "noiseCosFreqs"},
-		{key: "offCosFreq", group: "Waves", label: "Fast wave frequency", optionsKey: "offCosFreqs"},
+		// one row per oscillator: value = fn(frame × frequency)
+		...WAVES.flatMap((w) => [
+			{key: `${w.key}Fn`, group: "Waves: fn(frame × frequency)", label: `${w.name} (${w.drives})`, optionsKey: "waveFns"},
+			{key: `${w.key}Freq`, group: "Waves: fn(frame × frequency)", label: `${w.name} frequency`, optionsKey: "waveFreqs"},
+		]),
 
 		{
 			key: "paletteStart",
@@ -284,9 +292,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			group: "Color",
 			label: "Color follows",
 			optionsKey: "colorSources",
-			format: labelFrom({col_cos: "Color wave", noise_cos: "Pattern wave"}),
 		},
-		{key: "colorCosFn", group: "Color", label: "Color wave shape", optionsKey: "colorCosFns", format: labelFrom({cos: "Cosine", sin: "Sine"})},
 
 		{key: "particleBoost", group: "Render", label: "Particle density", optionsKey: "particleBoosts", format: (v) => `×${v}`},
 		{key: "alphaScale", group: "Render", label: "Ink opacity", optionsKey: "alphaScales", format: (v) => `${v * 100}%`},
@@ -329,15 +335,14 @@ window.resolveParams = function resolveParams() {
 		inkScale: maps.lineWidth[pick("lineWidth", "lineWidths")],
 		offPattern: maps.offPattern[pick("offPattern", "offPatterns")],
 		offSpread: Number(pick("offSpread", "offSpreads")),
-		noiseRange: maps.noiseRange[pick("noiseRange", "noiseRanges")],
 		noiseCosMap: pick("noiseCosMap", "noiseCosMaps"),
 		offMap: pick("offMap", "offMaps"),
-		oscFreq: Number(pick("oscFreq", "oscFreqs")),
-		noiseCosFn: pick("noiseCosFn", "oscFns"),
-		noiseCosFreq: Number(pick("noiseCosFreq", "noiseCosFreqs")),
-		offCosFreq: Number(pick("offCosFreq", "offCosFreqs")),
+		noiseRange: maps.noiseRange[pick("noiseRange", "noiseRanges")],
+		noiseOctaves: Number(pick("noiseOctaves", "noiseOctaves")),
+		noiseFalloff: Number(pick("noiseFalloff", "noiseFalloffs")),
+		// waves.cos = {fn: "cos", freq: 50}, waves.noise = ...
+		waves: Object.fromEntries(WAVES.map((w) => [w.key, {fn: pick(`${w.key}Fn`, "waveFns"), freq: Number(pick(`${w.key}Freq`, "waveFreqs"))}])),
 		colorSource: pick("colorSource", "colorSources"),
-		colorCosFn: pick("colorCosFn", "colorCosFns"),
 		paletteStart: paletteStart === "random" ? null : Number(paletteStart),
 		particleBoost: Number(pick("particleBoost", "particleBoosts")),
 		alphaScale: Number(pick("alphaScale", "alphaScales")),
