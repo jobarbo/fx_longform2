@@ -48,6 +48,12 @@ let sat = 0;
 let bri = 0;
 let bri_min = 60;
 
+//! Ink
+let particleBoost = 2; // particle multiplier, paid for by drawing each particle once with a per-frame style
+let alphaScale = 0.5; // particle transparency (1 = original alpha)
+let inkStyle = "";
+let inkW = 0;
+
 let displacement1 = 0;
 let displacement2 = 100;
 
@@ -75,11 +81,11 @@ let framesRendered = 0;
 let totalElapsedTime = 0;
 
 let MAX_FRAMES = Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
-let particle_num = Math.floor(10000 / angle1.length);
+let particle_num = Math.floor((10000 * particleBoost) / angle1.length);
 
 //let cycle = Math.floor(mapValue(angle1.length, 1, 36, 1, 20));
 //let cycle = parseInt(MAX_FRAMES / angle1.length);
-let cycle = 15000;
+let cycle = 15000 * particleBoost; // keep the same number of yields per render
 
 let nx_scale = 0.00005;
 let ny_scale = 0.00005;
@@ -224,6 +230,7 @@ function setup() {
 	colorMode(HSB, 360, 100, 100, 100);
 	randomSeed(fxrand() * 10000);
 	noiseSeed(fxrand() * 10000);
+	noiseDetail(4, 0.6);
 	rectMode(CENTER);
 	angleMode(DEGREES);
 	//background(45, 0, 5);
@@ -244,7 +251,7 @@ function setup() {
 
 	// First pass: calculate bounds with a smaller sample
 	calculatingBounds = true;
-	let boundsSamplingFactor = 0.2; // Calculate bounds using 20% of particles
+	let boundsSamplingFactor = 0.2 / particleBoost; // Calculate bounds using 20% of the original particle count
 	let boundsSampleNum = Math.max(100, Math.floor(particle_num * boundsSamplingFactor)); // Ensure minimum sample size
 
 	console.log(`Calculating bounds with ${boundsSampleNum} particles (${boundsSamplingFactor * 100}% of total)`);
@@ -302,8 +309,8 @@ function* drawGenerator() {
 	while (true) {
 		// Draw with p5.js things
 		//blendMode(SCREEN);
-		cos_val = cos(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
-		sin_val = sin(generator_frameCount * 12); //! lower when col_cos is {sin} ex 12
+		cos_val = cos(generator_frameCount * 50); //! lower when col_cos is {sin} ex 12
+		sin_val = sin(generator_frameCount * 50); //! lower when col_cos is {sin} ex 12
 		noise_cos = sin(generator_frameCount * 40); //! try cos for different pattern
 		off_cos = sin(generator_frameCount * 800);
 		col_cos = cos(generator_frameCount * 50); //!change to sin for different color
@@ -311,6 +318,9 @@ function* drawGenerator() {
 		y_val = sin(generator_frameCount * 20);
 		//nd_cos = sin(generator_frameCount * 5);
 		//noise_cos: 25,40,45(5), 48,50,54,60,100
+
+		// ink only depends on per-frame values, so compute it once per frame instead of per particle
+		updateInk(cos_val, col_cos);
 
 		//cos_val = 125;//!test
 		//sin_val = 125;//!test
@@ -353,6 +363,7 @@ function* drawGenerator() {
 			push();
 			rotate(angle1[i]);
 			scale(scale1);
+			drawingContext.fillStyle = inkStyle;
 			// use the bounding box to draw the particles so that it can be centered along with the bounding box
 
 			for (let s = 0; s < particle_num; s++) {
@@ -397,7 +408,6 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	yoff = ZZ(yoff, 1.15, -0.001, 0.001); */
 	//let nd = floor(map(abs(nd_cos), 1, 0, 2, 5, true));
 	//let ni = map(nd, 1, 6, 0.7, 0.4, true);
-	noiseDetail(4, 0.6);
 	//! Simple Block
 	/* 		let x = mapValue(noise(xoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 		let y = mapValue(noise(yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true); */
@@ -474,10 +484,16 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	let centeredX = x + centerOffsetX;
 	let centeredY = y + centerOffsetY;
 
-	let w = mapValue(abs(cos_val), 0.9, 1, 0.42, 1.46, true);
-	let elW = w * MULTIPLIER;
 	let ab_x = centeredX * MULTIPLIER; // Use centered coordinates
 	let ab_y = centeredY * MULTIPLIER; // Use centered coordinates
+
+	// Draw your actual particles (fillStyle is set once per frame in drawGenerator)
+	drawingContext.fillRect(ab_x, ab_y, inkW, inkW);
+}
+
+function updateInk(cos_val, col_cos) {
+	let w = mapValue(abs(cos_val), 0.9, 1, 0.42, 1.46, true);
+	inkW = w * MULTIPLIER;
 
 	/* 		let index = Math.floor(mapValue(abs(noise_cos), 0, 1, 0, palette.length - 1, true));
 
@@ -498,13 +514,8 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h, particle_num, xi, yi, scale, cos_
 	a_min = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 50, true);
 	a_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
 	a = 100;
-	alpha = mapValue(abs(cos_val), 0.95, 1, 50 - a_min, 100 - a_max, true);
-	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
-	drawingContext.fillRect(ab_x, ab_y, elW, elW);
-
-	// Draw your actual particles
-	drawingContext.fillStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
-	drawingContext.fillRect(ab_x, ab_y, elW, elW);
+	alpha = mapValue(abs(cos_val), 0.95, 1, 50 - a_min, 100 - a_max, true) * alphaScale;
+	inkStyle = `hsla(${hue}, ${sat}%, ${bri}%, ${alpha}%)`;
 }
 
 function showLoadingBar(elapsedTime, MAX_FRAMES, renderStart) {
