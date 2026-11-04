@@ -120,12 +120,10 @@ const labelFrom = (labels) => (v) => labels[v] ?? String(v);
 // fn / freq are the values hardcoded before the panel; drives = what reads the value
 const WAVES = [
 	{key: "cos", name: "cos_val", fn: "cos", freq: 50, drives: "ink, sweep"},
-	{key: "sin", name: "sin_val", fn: "sin", freq: 50, drives: "unused"},
+	{key: "sin", name: "sin_val", fn: "sin", freq: 50, drives: "bri / col"},
 	{key: "noise", name: "noise_cos", fn: "sin", freq: 40, drives: "pattern"},
 	{key: "off", name: "off_cos", fn: "sin", freq: 800, drives: "sweep"},
 	{key: "col", name: "col_cos", fn: "cos", freq: 50, drives: "color"},
-	{key: "x", name: "x_val", fn: "sin", freq: 20, drives: "unused"},
-	{key: "y", name: "y_val", fn: "sin", freq: 20, drives: "unused"},
 ];
 
 window.PARAMS_UI = window.PARAMS_UI ?? {
@@ -163,7 +161,8 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		waveFns: ["sin", "cos", "tan"],
 		// union of the values noted in the sketch comments over time
 		waveFreqs: [2, 5, 6, 8, 9, 10, 11, 12, 15, 18, 20, 25, 26, 30, 35, 36, 40, 45, 48, 50, 54, 60, 70, 75, 80, 90, 100, 150, 200, 250, 500, 800, 1250, 1500],
-		colorSources: ["col_cos", "noise_cos"],
+		colorSources: ["col_cos", "noise_cos", "sin_val"],
+		briSources: ["cos_val", "sin_val"],
 		paletteStarts: ["random", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
 		particleBoosts: [1, 2, 3, 4],
 		alphaScales: [0.25, 0.5, 0.75, 1],
@@ -228,6 +227,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			]),
 		),
 		colorSource: "col_cos",
+		briSource: "cos_val",
 		paletteStart: "random",
 		particleBoost: 2,
 		alphaScale: 0.5,
@@ -302,6 +302,12 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 			label: "Color follows",
 			optionsKey: "colorSources",
 		},
+		{
+			key: "briSource",
+			group: "Color",
+			label: "Brightness follows",
+			optionsKey: "briSources",
+		},
 
 		{key: "particleBoost", group: "Render", label: "Particle density", optionsKey: "particleBoosts", format: (v) => `×${v}`},
 		{key: "alphaScale", group: "Render", label: "Ink opacity", optionsKey: "alphaScales", format: (v) => `${v * 100}%`},
@@ -352,6 +358,7 @@ window.resolveParams = function resolveParams() {
 		// waves.cos = {fn: "cos", freq: 50}, waves.noise = ...
 		waves: Object.fromEntries(WAVES.map((w) => [w.key, {fn: pick(`${w.key}Fn`, "waveFns"), freq: Number(pick(`${w.key}Freq`, "waveFreqs"))}])),
 		colorSource: pick("colorSource", "colorSources"),
+		briSource: pick("briSource", "briSources"),
 		paletteStart: paletteStart === "random" ? null : Number(paletteStart),
 		particleBoost: Number(pick("particleBoost", "particleBoosts")),
 		alphaScale: Number(pick("alphaScale", "alphaScales")),

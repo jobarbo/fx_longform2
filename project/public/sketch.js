@@ -103,8 +103,6 @@ let col_cos;
 let off_cos;
 let noise_cos;
 let sin_val;
-let x_val;
-let y_val;
 let angle_index = 0;
 
 let offValues_l;
@@ -515,11 +513,11 @@ function* drawGenerator() {
 		noise_cos = waveFns.noise(generator_frameCount * p.waves.noise.freq);
 		off_cos = waveFns.off(generator_frameCount * p.waves.off.freq);
 		col_cos = waveFns.col(generator_frameCount * p.waves.col.freq);
-		x_val = waveFns.x(generator_frameCount * p.waves.x.freq);
-		y_val = waveFns.y(generator_frameCount * p.waves.y.freq);
 
 		// ink only depends on per-frame values, so compute it once per frame instead of per particle
-		updateInk(cos_val, p.colorSource === "noise_cos" ? noise_cos : col_cos);
+		const colorValue = p.colorSource === "noise_cos" ? noise_cos : p.colorSource === "sin_val" ? sin_val : col_cos;
+		const briValue = p.briSource === "sin_val" ? sin_val : cos_val;
+		updateInk(cos_val, colorValue, briValue);
 
 		let scale1 = 1;
 		let xoff_l_high;
@@ -624,7 +622,7 @@ function paint(xoff_l, xoff_h, yoff_l, yoff_h) {
 	artCtx.fillRect(ab_x, ab_y, inkW, inkW);
 }
 
-function updateInk(cos_val, col_value) {
+function updateInk(cos_val, col_value, bri_value = cos_val) {
 	let w = mapValue(abs(cos_val), 0.9, 1, 0.42, 1.46, true);
 	inkW = w * MULTIPLIER * inkScale;
 
@@ -635,7 +633,7 @@ function updateInk(cos_val, col_value) {
 	let b = palette[index].hsl[2];
 
 	// locals on purpose: `alpha` is a p5 global function and can't be reassigned in p5 2.x
-	bri = mapValue(abs(cos_val), 0.5, 1, b, 0, true);
+	bri = mapValue(abs(bri_value), 0.5, 1, b, 0, true);
 	let a_min = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 50, true);
 	let a_max = mapValue(elapsedTime, MAX_FRAMES / 1.31, MAX_FRAMES / 1.3, 0, 0, true);
 	let alpha = mapValue(abs(cos_val), 0.95, 1, 50 - a_min, 100 - a_max, true) * alphaScale;
