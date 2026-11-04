@@ -20,8 +20,10 @@ let palette = basePalette;
 // on the WEBGL display canvas. Effects are edited in the shader panel (key E / button bottom right).
 const ENABLE_SHADERS = true;
 const PERSIST_SHADER_PANEL = true; // localStorage: keep shader panel edits across refresh
-const SHADER_PREVIEW_INTERVAL = 100; // ms between shader passes while particles are drawn
 const SHOW_FPS_UI = false; // FPS overlay drawn by shaderEffects (read in shaderEffects.setup)
+// One rAF loop draws particles and shows the result (see startDisplayLoop)
+const SHADER_PREVIEW_INTERVAL = 33; // min ms between displays while particles are drawn (0 = every frame)
+const BOUNDS_BUDGET_MS = 12; // per-frame time spent on the bounds pass (draws nothing)
 let mainCanvas; // offscreen 2D buffer holding the artwork
 let shaderCanvas = null; // WEBGL display canvas, null when shaders are off or failed to start
 let artCtx; // mainCanvas.drawingContext, used by the particle hot loop
@@ -69,9 +71,7 @@ let displacement2 = 100;
 
 let angle1 = [225];
 
-let sketch;
-let animation;
-let renderToken = 0; // invalidates a deferred render start when Apply is pressed again
+let sketch = null; // render generator stepped by the display loop, null when idle
 let completeTimer;
 let drawing = true;
 let startTime = 0;
@@ -118,8 +118,38 @@ let centerOffsetX = 0;
 let centerOffsetY = 0;
 let calculatingBounds = true;
 
+//! Seeded random: same LCG and state handling as p5 2.x random() / randomSeed(), so the exact same
+// sequence, without p5's per-call overhead (it was ~28% of the render time). Only sketch.js draws from it.
+const LCG_M = 4294967296;
+let randState = 0;
+function seedRand(seed) {
+	randState = seed >>> 0;
+}
+function rand() {
+	randState = (1664525 * randState + 1013904223) % LCG_M;
+	return randState / LCG_M;
+}
+// p5 random(min, max)
+function randRange(min, max) {
+	const r = rand();
+	if (min > max) {
+		const t = min;
+		min = max;
+		max = t;
+	}
+	return r * (max - min) + min;
+}
+// p5 random([a, b]) / random([a, b, c]), without allocating the array
+function pick2(a, b) {
+	return Math.floor(rand() * 2) === 0 ? a : b;
+}
+function pick3(a, b, c) {
+	const i = Math.floor(rand() * 3);
+	return i === 0 ? a : i === 1 ? b : c;
+}
+
 //! Shapes: noise formulas returning the particle position in noise space (mapped to pos_range in paint)
-// x is always evaluated before y so the random() call order matches the original blocks
+// x is always evaluated before y so the rand() call order matches the original blocks
 const SHAPES = {
 	"simple block": {
 		x: (xoff, yoff) => noise(xoff),
@@ -150,44 +180,44 @@ const SHAPES = {
 		y: (xoff, yoff) => noise(yoff, xoff, yi),
 	},
 	"hybrid drapery/blocks": {
-		x: (xoff, yoff) => noise(xoff, random([xoff, xoff, yi])),
-		y: (xoff, yoff) => noise(yoff, random([yoff, xoff, yi])),
+		x: (xoff, yoff) => noise(xoff, pick3(xoff, xoff, yi)),
+		y: (xoff, yoff) => noise(yoff, pick3(yoff, xoff, yi)),
 	},
 	jellyfish: {
 		x: (xoff, yoff) => noise(xoff, xoff, yoff),
 		y: (xoff, yoff) => noise(yoff, yoff, xoff),
 	},
 	"jellyfish 2": {
-		x: (xoff, yoff) => noise(xoff, random([xoff, yi]), yoff),
-		y: (xoff, yoff) => noise(yoff, random([yoff, yi]), xoff),
+		x: (xoff, yoff) => noise(xoff, pick2(xoff, yi), yoff),
+		y: (xoff, yoff) => noise(yoff, pick2(yoff, yi), xoff),
 	},
 	"jellyfish 3": {
-		x: (xoff, yoff) => noise(xoff, random([xoff, xi]), random([yoff, yi])),
-		y: (xoff, yoff) => noise(yoff, random([yoff, xi]), random([xoff, yi])),
+		x: (xoff, yoff) => noise(xoff, pick2(xoff, xi), pick2(yoff, yi)),
+		y: (xoff, yoff) => noise(yoff, pick2(yoff, xi), pick2(xoff, yi)),
 	},
 	"astral beings": {
-		x: (xoff, yoff) => noise(xoff, random([xoff, yoff, yi])),
-		y: (xoff, yoff) => noise(yoff, random([yoff, xoff, yi])),
+		x: (xoff, yoff) => noise(xoff, pick3(xoff, yoff, yi)),
+		y: (xoff, yoff) => noise(yoff, pick3(yoff, xoff, yi)),
 	},
 	"astral beings 2": {
-		x: (xoff, yoff) => noise(xoff, random([yoff, yoff, yi])),
-		y: (xoff, yoff) => noise(yoff, random([xoff, xoff, yi])),
+		x: (xoff, yoff) => noise(xoff, pick3(yoff, yoff, yi)),
+		y: (xoff, yoff) => noise(yoff, pick3(xoff, xoff, yi)),
 	},
 	"astral beings 3": {
-		x: (xoff, yoff) => noise(xoff, xoff, random([yoff, yoff, yi])),
-		y: (xoff, yoff) => noise(yoff, yoff, random([xoff, xoff, yi])),
+		x: (xoff, yoff) => noise(xoff, xoff, pick3(yoff, yoff, yi)),
+		y: (xoff, yoff) => noise(yoff, yoff, pick3(xoff, xoff, yi)),
 	},
 	"astral beings 4": {
-		x: (xoff, yoff) => noise(yoff, xoff, random([xoff, yoff, yi])),
-		y: (xoff, yoff) => noise(xoff, yoff, random([xoff, yoff, yi])),
+		x: (xoff, yoff) => noise(yoff, xoff, pick3(xoff, yoff, yi)),
+		y: (xoff, yoff) => noise(xoff, yoff, pick3(xoff, yoff, yi)),
 	},
 	"astral beings asym": {
-		x: (xoff, yoff) => noise(xoff, random([xoff, yoff, xi])),
-		y: (xoff, yoff) => noise(yoff, random([yoff, xoff, yi])),
+		x: (xoff, yoff) => noise(xoff, pick3(xoff, yoff, xi)),
+		y: (xoff, yoff) => noise(yoff, pick3(yoff, xoff, yi)),
 	},
 	"complex organism": {
-		x: (xoff, yoff) => noise(xoff, yoff, random([xoff, xi, yi])),
-		y: (xoff, yoff) => noise(yoff, xoff, random([yoff, xi, yi])),
+		x: (xoff, yoff) => noise(xoff, yoff, pick3(xoff, xi, yi)),
+		y: (xoff, yoff) => noise(yoff, xoff, pick3(yoff, xi, yi)),
 	},
 };
 
@@ -243,7 +273,10 @@ function applyConfig() {
 
 	MAX_FRAMES = p.maxFrames ?? Math.floor(mapValue(angle1.length, 1, 36, 700, 1400));
 	particle_num = Math.floor((10000 * particleBoost) / angle1.length);
-	cycle = 15000 * particleBoost; // keep the same number of yields per render
+	// particles drawn per display frame (one generator step). Part of the look: Chrome rasterizes the
+	// 2D canvas in batches that end with each JS task, and the blending depends on where they end.
+	// Changing it, or drawing more than one step per task, changes the image (same hash, other pixels).
+	cycle = 15000 * particleBoost;
 
 	shapeX = SHAPES[p.shape].x;
 	shapeY = SHAPES[p.shape].y;
@@ -334,15 +367,26 @@ function setArtworkPixelDensity(density) {
 	if (shaderCanvas) shaderEffects.setPixelDensity(density);
 }
 
-// Puts mainCanvas on screen. While particles are drawn the shader pass is throttled so it doesn't
-// slow the render down; once done, shaders run every frame (animated effects + live panel edits).
+// Single rAF loop: advances the render generator, then puts mainCanvas on screen. Once the render
+// is done it keeps running the shaders (animated effects + live panel edits).
+// While drawing: exactly one generator step (`cycle` particles) per frame. A time budget would make
+// the batch boundaries timing dependent, and so the pixels (see cycle in applyConfig).
+// The bounds pass draws nothing, so it gets a time budget instead.
 function startDisplayLoop() {
 	if (displayLoopId !== null) return;
-	const tick = (now) => {
+	const tick = () => {
 		displayLoopId = requestAnimationFrame(tick);
 		if (shaderCanvas && typeof shaderEffectsPanel !== "undefined") shaderEffectsPanel.update();
 
-		if (!renderDone && now - lastDisplay < SHADER_PREVIEW_INTERVAL) return;
+		if (sketch) {
+			const deadline = performance.now() + BOUNDS_BUDGET_MS;
+			let step;
+			do step = sketch.next();
+			while (!step.done && calculatingBounds && performance.now() < deadline);
+			if (step.done) sketch = null;
+		}
+
+		if (!renderDone && performance.now() - lastDisplay < SHADER_PREVIEW_INTERVAL) return;
 		showFrame();
 	};
 	displayLoopId = requestAnimationFrame(tick);
@@ -386,7 +430,7 @@ function drawBackground() {
 
 function renderPiece() {
 	// stop a render that is still running
-	clearTimeout(animation);
+	sketch = null;
 	clearTimeout(completeTimer);
 	document.complete = false;
 	window.dispatchEvent(new CustomEvent("render:started"));
@@ -401,29 +445,24 @@ function renderPiece() {
 
 	mainCanvas.resetMatrix();
 	drawBackground();
-	// shown right away: the bounds pass below blocks the page for a moment
 	showFrame();
 	document.title = "0%";
 
-	// let the browser paint the canvas + background before the blocking bounds pass,
-	// otherwise the frame stays empty (collapsed) until the bounds are computed
-	const token = ++renderToken;
-	requestAnimationFrame(() =>
-		setTimeout(() => {
-			if (token === renderToken) startRender();
-		}, 0),
-	);
+	// stepped by the display loop (startDisplayLoop), bounds pass included
+	sketch = renderGenerator();
 }
 
-function startRender() {
+// Whole render as one generator: a bounds pass on a particle sample (nothing drawn) to center
+// the piece, then the actual drawing. Same rand() call order as running both passes back to back.
+function* renderGenerator() {
 	const seeds = window.PARAMS_UI.lockedSeeds;
-	randomSeed(seeds.randomSeed);
+	seedRand(seeds.randomSeed);
 	noiseSeed(seeds.noiseSeed);
 	noiseDetail(CURRENT_PARAMS.noiseOctaves, CURRENT_PARAMS.noiseFalloff);
 
 	mainCanvas.resetMatrix();
-	xi = random(1000000000000);
-	yi = random(1000000000000);
+	xi = rand() * 1000000000000;
+	yi = rand() * 1000000000000;
 	pos_range_x = height * CURRENT_PARAMS.posRange;
 	pos_range_y = height * CURRENT_PARAMS.posRange;
 
@@ -443,13 +482,7 @@ function startRender() {
 	let tempParticleNum = particle_num;
 	particle_num = boundsSampleNum; // Temporarily reduce particle count
 
-	sketch = drawGenerator();
-	while (true) {
-		let result = sketch.next();
-		if (result.done) {
-			break;
-		}
-	}
+	yield* drawGenerator();
 
 	// Calculate offsets to center the drawing
 	centerOffsetX = -(minX + maxX) / 2;
@@ -466,19 +499,13 @@ function startRender() {
 	elapsedTime = 0;
 	framesRendered = 0;
 
-	// Start actual drawing
-	sketch = drawGenerator();
-	function animate() {
-		animation = setTimeout(animate, 0);
-		sketch.next();
-	}
-	animate();
+	// Actual drawing
+	yield* drawGenerator();
 }
 
 function* drawGenerator() {
 	let count = 0;
 	let generator_frameCount = 0;
-	let draw_every = cycle;
 	const p = CURRENT_PARAMS;
 
 	while (true) {
@@ -532,7 +559,7 @@ function* drawGenerator() {
 			for (let s = 0; s < particle_num; s++) {
 				paint(xoff_l, xoff_h, yoff_l, yoff_h);
 
-				if (count >= draw_every) {
+				if (count >= cycle) {
 					count = 0;
 					yield;
 				}
@@ -566,16 +593,14 @@ function* drawGenerator() {
 				console.log("Render time: " + timeDiff + " ms");
 			}, 2000);
 
-			clearTimeout(animation);
-			noLoop();
 			return;
 		}
 	}
 }
 
 function paint(xoff_l, xoff_h, yoff_l, yoff_h) {
-	xoff = random(xoff_l, xoff_h);
-	yoff = random(yoff_l, yoff_h);
+	xoff = randRange(xoff_l, xoff_h);
+	yoff = randRange(yoff_l, yoff_h);
 
 	let x = mapValue(shapeX(xoff, yoff), n_range_min, n_range_max, -pos_range_x, pos_range_x, true);
 	let y = mapValue(shapeY(xoff, yoff), n_range_min, n_range_max, -pos_range_y, pos_range_y, true);

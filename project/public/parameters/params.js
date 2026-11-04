@@ -135,9 +135,11 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		symmetries: [
 			"1 copy, 225°",
 			"1 copy, 45°",
+			"2 copies, 225° / 45°",
 			"2 copies, 90° / 270°",
 			"2 copies, 180° / 270°",
 			"3 copies, 0° / 45° / 90°",
+			"3 copies, 180° / 225° / 270°",
 			"3 copies, 0° / 90° / 270°",
 			"4 copies, diagonals",
 			"4 copies, cross",
@@ -174,9 +176,11 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		symmetry: {
 			"1 copy, 225°": [225],
 			"1 copy, 45°": [45],
+			"2 copies, 225° / 45°": [225, 45],
 			"2 copies, 90° / 270°": [90, 270],
 			"2 copies, 180° / 270°": [180, 270],
 			"3 copies, 0° / 45° / 90°": [0, 45, 90],
+			"3 copies, 180° / 225° / 270°": [180, 225, 270],
 			"3 copies, 0° / 90° / 270°": [0, 90, 270],
 			"4 copies, diagonals": [45, 135, 225, 315],
 			"4 copies, cross": [0, 90, 180, 270],
