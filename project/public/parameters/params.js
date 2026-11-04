@@ -152,7 +152,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		zooms: ["close", "medium", "far"],
 		lineWidths: ["hairline", "very thin", "thin", "normal", "medium", "semibold", "bold", "black"],
 		offPatterns: ["original", "inverted", "eidolons"],
-		offSpreads: [0.001, 0.0025, 0.005, 0.007, 0.01, 0.025, 0.05, 0.07],
+		offSpreads: [0.00001, 0.001, 0.0025, 0.005, 0.007, 0.01, 0.025, 0.05, 0.07],
 		noiseRanges: ["standard [0,1]", "custom [-1,1]"],
 		noiseCosMaps: ["abs", "signed", "signed crossed"],
 		offMaps: ["cos", "cos split", "off_cos"],
@@ -204,7 +204,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		// fraction of the canvas height used as the particle position range
 		zoom: {close: 0.75, medium: 0.6, far: 0.45},
 		// multiplier on the ink square size
-		lineWidth: {hairline: 0.4, "very thin": 0.55, thin: 0.75, normal: 1, medium: 1.25, semibold: 1.5, bold: 1.8, black: 2.2},
+		lineWidth: {hairline: 0.1, "very thin": 0.25, thin: 0.5, normal: 1, medium: 1.25, semibold: 1.5, bold: 1.8, black: 2.2},
 	},
 
 	// ---- Current selections (defaults = the config hardcoded in sketch.js before the panel) ----
@@ -212,7 +212,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		shape: "jellyfish 3",
 		symmetry: "1 copy, 225°",
 		zoom: "medium",
-		lineWidth: "normal",
+		lineWidth: "hairline",
 		offPattern: "original",
 		offSpread: 0.001,
 		noiseCosMap: "abs",
