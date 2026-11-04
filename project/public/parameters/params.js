@@ -230,7 +230,7 @@ window.PARAMS_UI = window.PARAMS_UI ?? {
 		briSource: "cos_val",
 		paletteStart: "random",
 		particleBoost: 2,
-		alphaScale: 0.5,
+		alphaScale: 1,
 		renderFrames: "auto",
 		pixelRatio: 2,
 	},
