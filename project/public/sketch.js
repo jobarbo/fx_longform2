@@ -387,6 +387,8 @@ async function setup() {
 }
 
 function setupDevPanels() {
+	// Embedded (iframe): no shader panel and no panel rAF loop
+	if (typeof isInIframe === "function" && isInIframe()) return;
 	if (typeof shaderEffectsPanel !== "undefined" && shadersEnabled() && shaderCanvas) {
 		shaderEffectsPanel.init(shaderEffects);
 	}
@@ -696,6 +698,9 @@ function setupMobileControls() {
 }
 // Key controls for debugging and performance monitoring
 function keyPressed() {
+	// Embedded (iframe): viewer only, no debug / panel / FPS shortcuts
+	if (typeof isInIframe === "function" && isInIframe()) return;
+
 	// Don't hijack keys while typing in panel inputs
 	const tag = document.activeElement?.tagName;
 	if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || document.activeElement?.isContentEditable) {
