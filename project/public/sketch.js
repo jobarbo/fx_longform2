@@ -621,7 +621,7 @@ function keyPressed() {
 	}
 
 	if (key === "G" || key === "g") {
-		if (sketchShadersEnabled()) {
+		if (sketchShadersEnabled() && shaderEffects.effectsConfig.symmetry) {
 			const currentDebug = shaderEffects.effectsConfig.symmetry.debug;
 			const newDebug = currentDebug > 0.5 ? 0.0 : 1.0;
 			shaderEffects.updateEffectParam("symmetry", "debug", newDebug);

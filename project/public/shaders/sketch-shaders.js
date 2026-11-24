@@ -60,8 +60,9 @@ class ShaderEffects {
 		// Default false to preserve this project's smooth (LINEAR) rendering.
 		this.crispPixels = false;
 
-		// Effects configuration - customize these for your sketch
-		this.effectsConfig = {
+		// Every available effect — these become the panel's "add effect" templates.
+		// Only the names in DEFAULT_STACK below are in the stack at startup.
+		const availableEffects = {
 			deform: {
 				enabled: false,
 				amount: 0.1,
@@ -547,13 +548,23 @@ class ShaderEffects {
 		// Default templates for create-from-dropdown in the shader panel
 		// (survive delete of the last instance of an effect)
 		this.effectTemplates = {};
-		for (const [name, cfg] of Object.entries(this.effectsConfig)) {
+		for (const [name, cfg] of Object.entries(availableEffects)) {
 			const root = String(name).replace(/\d+$/, "") || name;
 			if (this.effectTemplates[root]) continue;
 			const template = JSON.parse(JSON.stringify(cfg));
 			template.enabled = false;
 			template.pass = cfg.pass || root;
 			this.effectTemplates[root] = template;
+		}
+
+		// Startup stack (order = pass order). Everything else is added from the panel.
+		const DEFAULT_STACK = ["chromatic", "grain"];
+		this.effectsConfig = {};
+		for (const name of DEFAULT_STACK) {
+			const cfg = JSON.parse(JSON.stringify(availableEffects[name]));
+			cfg.enabled = true;
+			cfg.pass = cfg.pass || name;
+			this.effectsConfig[name] = cfg;
 		}
 
 		// Snapshot for panel Reset / persist restore (constructor defaults only)
