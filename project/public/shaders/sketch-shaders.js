@@ -207,6 +207,7 @@ class ShaderEffects {
 				translationSpeedY: 0.01, // Vertical translation speed (0 = none)
 				translationMode: 3.0, // 0=sine, 1=noise, 2=FBM, 3=vector field, 4=continuous scroll
 				translationNoiseScale: 0.5, // Scale of noise variation (lower = smoother, higher = more frequent changes)
+				translationAmount: [0.0, 0.0], // static UV offset [-1..1] (applied even when animation is off)
 				translationPhaseX: 0.0, // Accumulated phase for X translation (prevents jumps)
 				translationPhaseY: 0.0, // Accumulated phase for Y translation (prevents jumps)
 				rotationEnabled: 1.0, // Master toggle for animated rotation
@@ -231,6 +232,7 @@ class ShaderEffects {
 					uTranslationSpeedY: "translationSpeedY",
 					uTranslationMode: "translationMode",
 					uTranslationNoiseScale: "translationNoiseScale",
+					uTranslationAmount: "translationAmount",
 					uTranslationPhaseX: "translationPhaseX",
 					uTranslationPhaseY: "translationPhaseY",
 					uRotationEnabled: "rotationEnabled",
@@ -321,6 +323,70 @@ class ShaderEffects {
 				mix: 1.0,
 				uniforms: {
 					uLevels: "levels",
+					uMix: "mix",
+				},
+			},
+			colorTint: {
+				enabled: false,
+				hue: 0.0, // hue rotation, degrees 0–360
+				saturation: 1.0, // 0 = gray, 1 = unchanged, 2 = boosted
+				tintColor: [1.0, 0.5, 0.2], // filter color RGB 0–1
+				tintAmount: 0.0, // 0 = no filter, 1 = full blend
+				tintMode: 0.0, // 0=multiply (gel), 1=screen, 2=soft light, 3=colorize
+				mix: 1.0, // 0 = original, 1 = full effect
+				uniforms: {
+					uHue: "hue",
+					uSaturation: "saturation",
+					uTintColor: "tintColor",
+					uTintAmount: "tintAmount",
+					uTintMode: "tintMode",
+					uMix: "mix",
+				},
+			},
+			pixelShift: {
+				enabled: false,
+				timeMultiplier: 1.0, // global speed (1 = 1/10 of the width per second)
+				shiftAxis: 0.0, // 0 = horizontal bands ←→, 1 = vertical columns ↑↓
+				shiftBands: 8.0, // bands/columns, each with its own speed
+				shiftDirection: 0.0, // 0=left/up, 1=right/down, 2=alternate, 3=random per band
+				shiftSpread: 0.6, // 0 = same speed everywhere, 1 = fully random per band
+				shiftGradient: 0.0, // -1..1 speed ramp across bands
+				shiftSeed: 0.0, // reroll the random speeds/directions
+				mix: 1.0,
+				_phase: 0.0, // integrated from timeMultiplier — no jump when speed changes
+				uniforms: {
+					uTime: "_phase",
+					uShiftAxis: "shiftAxis",
+					uShiftBands: "shiftBands",
+					uShiftDirection: "shiftDirection",
+					uShiftSpread: "shiftSpread",
+					uShiftGradient: "shiftGradient",
+					uShiftSeed: "shiftSeed",
+					uMix: "mix",
+				},
+			},
+			pixelRing: {
+				enabled: false,
+				timeMultiplier: 1.0, // global speed (1 = 1/10 of a turn per second)
+				center: [0.5, 0.5], // rotation centre in UV (0–1)
+				ringBands: 8.0, // concentric rings, each with its own speed
+				ringRadius: 0.8, // outer radius in short-edge units (0.8 ≈ covers corners at ARTWORK_LAYOUT 1:1.21)
+				ringDirection: 0.0, // 0=counter-clockwise, 1=clockwise, 2=alternate, 3=random per ring
+				ringSpread: 0.6, // 0 = same speed everywhere, 1 = fully random per ring
+				ringGradient: 0.0, // -1..1 speed ramp centre→edge
+				ringSeed: 0.0, // reroll the random speeds/directions
+				mix: 1.0,
+				_phase: 0.0, // integrated from timeMultiplier — no jump when speed changes
+				uniforms: {
+					uTime: "_phase",
+					uResolution: "[width, height]",
+					uCenter: "center",
+					uRingBands: "ringBands",
+					uRingRadius: "ringRadius",
+					uRingDirection: "ringDirection",
+					uRingSpread: "ringSpread",
+					uRingGradient: "ringGradient",
+					uRingSeed: "ringSeed",
 					uMix: "mix",
 				},
 			},
@@ -553,6 +619,9 @@ class ShaderEffects {
 			shaderManager.loadShader("zoom", "zoom/fragment.frag", "zoom/vertex.vert"),
 			shaderManager.loadShader("pixelGrid", "pixel-grid/fragment.frag", "pixel-grid/vertex.vert"),
 			shaderManager.loadShader("colorQuantize", "color-quantize/fragment.frag", "color-quantize/vertex.vert"),
+			shaderManager.loadShader("colorTint", "color-tint/fragment.frag", "color-tint/vertex.vert"),
+			shaderManager.loadShader("pixelShift", "pixel-shift/fragment.frag", "pixel-shift/vertex.vert"),
+			shaderManager.loadShader("pixelRing", "pixel-ring/fragment.frag", "pixel-ring/vertex.vert"),
 			shaderManager.loadShader("dither", "dither/fragment.frag", "dither/vertex.vert"),
 			shaderManager.loadShader("crtWarp", "crt-warp/fragment.frag", "crt-warp/vertex.vert"),
 			shaderManager.loadShader("blur", "blur/fragment.frag", "blur/vertex.vert"),
