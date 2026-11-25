@@ -70,40 +70,52 @@ function draw() {
 
 ### Customizing Shaders
 
-Edit `shaders/sketch-shaders.js` to:
+Shaders are plug-and-play: every effect declared in the library's
+`library/shaders/catalog.js` (`SHADER_CATALOG`) is loaded automatically and shows up
+in the shader panel's "add effect" menu. `catalog.js` must be loaded before
+`sketch-shaders.js` in `index.html`.
 
-1. **Load different shaders** in the `preload()` method:
+**Adding a shader to the library** (no change needed in the sketch):
 
-```javascript
-preload(p5Instance) {
-    // ... existing code ...
-
-    // Load your custom shaders
-    shaderManager.loadShader("myShader", "myShader/fragment.frag", "myShader/vertex.vert");
-}
-```
-
-2. **Configure effects** in the `effectsConfig` object:
+1. Create `library/shaders/my-shader/fragment.frag` (+ `vertex.vert`)
+2. Add an entry to `library/shaders/catalog.js`:
 
 ```javascript
-this.effectsConfig = {
-	myShader: {
-		enabled: true,
+myShader: {
+	dir: "my-shader",
+	config: {
+		enabled: false,
 		amount: 1.0,
 		timeMultiplier: 1.0,
 		uniforms: {
 			uTime: "shaderTime * timeMultiplier",
 			uAmount: "amount",
-			// Add more uniforms as needed
 		},
 	},
-	// ... other effects
-};
+},
+```
+
+The `ShaderEffects` class itself lives in the library (`library/utils/shaderEffects.js`).
+Load order in `index.html`: `shaderManager.js`, `shaderPipeline.js`,
+`library/shaders/catalog.js`, `library/utils/shaderEffects.js`, then `shaders/sketch-shaders.js`.
+
+**Per sketch**, `shaders/sketch-shaders.js` only creates the instance with its options:
+
+```javascript
+const shaderEffects = new ShaderEffects({
+	defaultStack: ["chromatic", "grain"], // startup stack, order = pass order
+	overrides: {grain: {amount: 0.1}}, // pin this sketch's values on top of the catalog
+	storageKey: "my-sketch:shaderPanel", // localStorage key for the panel state
+	renderRatio: {fitCanvas: true, width: 1, height: 1},
+	crispPixels: false,
+	continueAfterCompletion: true,
+	applyDuringSketch: true,
+});
 ```
 
 ### Effect Configuration Options
 
-Each effect in `effectsConfig` supports:
+Each effect `config` in the catalog supports:
 
 - `enabled`: (boolean) Enable/disable the effect
 - Custom parameters (e.g., `amount`, `timeMultiplier`)
